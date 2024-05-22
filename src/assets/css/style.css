@@ -8710,7 +8710,7 @@ div.nk-error {
     font-size: 35px;
     color: #fff;
     margin: 100px 0 20px;
-
+    width: 300px;
 }
 
 
@@ -9269,7 +9269,7 @@ video {
 
 .nk-news-box {
     box-shadow: 1px 580px 383px 400px rgba(23, 30, 34, 1);
-    -webkit-box-shadow: 1px 200px 383px 550px rgba(23, 30, 34, 1);
+    -webkit-box-shadow: 1px 400px 383px 550px rgba(23, 30, 34, 1);
     -moz-box-shadow: 1px 80px 383px 400px rgba(23, 30, 34, 1);
     /* height: 425px; */
     overflow: hidden;

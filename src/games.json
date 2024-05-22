@@ -2484,6 +2484,15 @@
                 "video": null,
                 "date": "2024-02-21",
                 "new": "ELDEN RING Shadow of the Erdtree ouvre les frontières de l'Entre-terre et emmène les joueurs à travers les contrées inexplorées du Royaume des Ombres. Dans ce lieu mythique, de nouvelles armes, équipements, ennemis, donjons, boss et intrigues viendront prolonger le voyage de chaque sans-éclat."
+            },
+            {
+                "news_id": 2,
+                "id": 19,
+                "title": "Elden Ring Shadow of the Erdtree se montre un peu plus via un trailer inédit",
+                "imageUrl": "https://gaming-cdn.com/images/news/articles/6490/cover/1000x563/elden-ring-shadow-of-the-erdtree-se-montre-un-peu-plus-via-un-trailer-inedit-cover664cb88428d9d.jpg",
+                "video": "6uT8wGtB3yQ",
+                "date": "2024-05-21",
+                "new": "À tout juste un mois de sa sortie, Elden Ring: Shadow of the Erdtree s'est rappelé à notre bon souvenir via une nouvelle vidéo. L'extension prépare son arrivée sur consoles et PC le 21 juin 2024. La bande-annonce en question s'attarde sur l'histoire du DLC. Nous avons donc uniquement le droit à une vidéo en images de synthèse dotée d'une réalisation maîtrisée. Les sous-titres sont également disponibles pour une quinzaine de langues différentes."
             }
         ],
         "about": [
@@ -3076,6 +3085,136 @@
                 "promo": "-31%",
                 "Stock": true,
                 "buy": "https://www.instant-gaming.com/fr/13731-acheter-crown-wars-the-black-prince-pc-jeu-steam-europe/",
+                "buySteam": ""
+            }
+        ]
+    },
+    {
+        "id": 24,
+        "exclu": false,
+        "popular": false,
+        "precommande": true,
+        "DLC": false,
+        "DLCtext": "",
+        "dateSortie": "2024-09-05",
+        "date": "",
+        "title": "S.T.A.L.K.E.R. 2: Heart of Chornobyl",
+        "resume": "S.T.A.L.K.E.R. 2 : Heart of Chernobyl pour PC est un jeu de survie d'horreur à la première personne (FPS), le quatrième de la très populaire série S.T.A.L.K.E.R.. Il s'agit d'un jeu solo dont le développement a duré près de 11 ans, le studio qui le développait ayant dû faire face à divers problèmes financiers et juridiques, mais il est enfin arrivé et a tenu toutes ses promesses !",
+        "imageUrl": "https://gaming-cdn.com/images/products/5376/616x353/s-t-a-l-k-e-r-2-heart-of-chornobyl-pc-jeu-steam-europe-cover.jpg?v=1709717150",
+        "genres": " Action, Aventure, RPG",
+        "genre": "Action",
+        "video": "XNGbS0fY80s",
+        "videoHover": "https://res.cloudinary.com/dzhhs7sfk/video/upload/v1716315140/S.T.A.L.K.E.R._2-_Heart_of_Chornobyl_Bolts_Bullets_Trailer_oph5z0.mp4",
+        "critique": "",
+        "critiqueTitle": "",
+        "gifs": [
+            {
+                "id": 1,
+                "img": " ",
+                "title": "A propos du jeu",
+                "texte": "Le jeu est un mélange d'action de tir à la première personne, combiné à un jeu de simulation immersif et à un jeu d'horreur, le tout réuni en un seul jeu et envoyé dans le monde avec un monde ouvert atmosphérique à explorer - si vous êtes assez courageux ! Vous faites partie d'un groupe hétéroclite de traqueurs, qui signifie : Scavengers (charognards), Trespassers (intrus), Adventurers (aventuriers), Loners (solitaires), Killers (tueurs), Explorers (explorateurs) et Robbers (voleurs), qui vivent en marge de la zone d'exclusion de Tchernobyl et gagnent leur vie comme ils le peuvent. Les rôdeurs gagnent leur vie (et vous jouez le jeu) en vous aventurant au cœur de la zone de contamination pour découvrir les aventures et les quêtes qui vous attendent. Le jeu se déroule dans une réalité alternative, où une seconde explosion a causé encore plus de ravages que celle de 1986. Cela a créé toutes sortes de changements étranges dans le monde connu, affectant la flore, la faune et tout le reste ! (Voir plus de détails sur ces antagonistes ci-dessous). Vous retrouverez dans la Zone, et ses environs, certains de vos compagnons de traque, mais n’oubliez pas que l'amitié n'existe pas dans la Zone. Cependant, après une bataille épuisante et réussie, vous trouverez peut-être des âmes sœurs assises autour d'un feu de camp que vous pourrez rejoindre pour un moment de répit et quelques histoires de feu de camp, avant de repartir pour votre prochaine quête. Comme on dit dans la Zone : on ne s'y habitue jamais. Il n'y a pas de place pour la complaisance ou la relaxation dans ce lieu atmosphérique et véritablement effrayant !"
+            },
+            {
+                "id": 2,
+                "img": " ",
+                "title": "Les petits détails",
+                "texte": "Le jeu comporte un immense arbre scénaristique dans lequel vos décisions n'affecteront pas seulement les petites décisions immédiates, mais elles se répercuteront sur toute la longueur de l'arc. Ainsi, les décisions prises à la hâte dans les premières étapes pourraient bien devenir une source de regret extrême plus tard ! Avec un inventaire décent à portée de main, vous pouvez être armé de diverses armes et gadgets qui vous aideront à éviter les pires dangers, pour autant que vous soyez intelligent, prudent et attentif. Il s'agit notamment d'appareils tels que des lentilles télescopiques, des compteurs Geiger et des détecteurs d'anomalies. Combattez jusqu'au cœur de Tchernobyl et voyez ce qui se cache dans les profondeurs de ce terrain vague - c'est un terrain vague, oui, mais il n'est certainement pas stérile..."
+            }
+            
+        ],
+        "screen": [
+            {
+                "id": 1,
+                "img": "https://cdn.cloudflare.steamstatic.com/steam/apps/1643320/ss_a62978b2a16aacba2bc99e6e41e56a524116ef02.600x338.jpg?t=1705420866"
+            },
+            {
+                "id": 2,
+                "img": "https://cdn.cloudflare.steamstatic.com/steam/apps/1643320/ss_33db24b3dddd9e823e6556a739141c3f9ffd45e8.600x338.jpg?t=1705420866"
+            },
+            {
+                "id": 3,
+                "img": "https://cdn.cloudflare.steamstatic.com/steam/apps/1643320/ss_ec754287f34c9302b27ff5d57ba83a2ec2e54035.600x338.jpg?t=1705420866"
+            },
+            {
+                "id": 4,
+                "img": "https://cdn.cloudflare.steamstatic.com/steam/apps/1643320/ss_bb0d9a5b981ada1e0045cc49327e2cc26566766f.600x338.jpg?t=1705420866"
+            },
+            {
+                "id": 5,
+                "img": "https://cdn.cloudflare.steamstatic.com/steam/apps/1643320/ss_befdb7e7851e809e6910fb202e57212cae193d51.600x338.jpg?t=1705420866"
+            }
+        ],
+        "price": "32.99€",
+        "priceOrigin": "",
+        "promo": "-45%",
+        "stock": false,
+        "buySteam": "",
+        "config": [
+            {
+                "id": 1,
+                "OSmin": "Windows 10/11 64 Bit",
+                "OSmax": "Windows 10/11 64 Bit",
+                "PROCmin": "AMD Ryzen 5 1600X / Intel Core i5-7600K",
+                "PROCmax": "AMD Ryzen 7 3700X / Intel Core i7-9700K",
+                "MEMmin": " 8 GB de mémoire",
+                "MEMmax": " 16 GB de mémoire",
+                "GRAPHmin": "AMD Radeon RX 580 8GB / NVIDIA GeForce GTX 1060 6GB",
+                "GRAPHmax": "AMD Radeon RX 5700 XT 8GB / NVIDIA GeForce RTX 2070 SUPER 8GB / NVIDIA GeForce GTX 1080 Ti 11GB",
+                "DirectXmin": "11",
+                "DirectXmax": "11",
+                "HDD": "150 GB"
+            }
+        ],
+        "news": [
+            {
+                "news_id": 1,
+                "id": 24,
+                "title": "S.T.AL.K.E.R. 2 sortira finalement le 5 septembre 2024",
+                "imageUrl": "https://gaming-cdn.com/images/news/articles/4332/cover/1000x563/s-t-al-k-e-r-2-sortira-finalement-le-5-septembre-2024-cover65a6aeb79694e.jpg",
+                "video": "8LoKSdzT89A",
+                "date": "2024-01-16",
+                "new": "Le FPS très attendu de GSC Game World possède enfin une date de sortie. Si la précédente fenêtre de lancement était fixée au premier trimestre 2024, un nouveau report est malheureusement à signaler. Ainsi, la brève vidéo mise en ligne par le studio ukrainien nous apprend que S.T.A.L.K.E.R. 2 sortira le 5 septembre prochain sur Xbox Series et PC. Le jeu débarquera également dans le Game Pass à cette date."
+ 
+            },
+            {
+                "news_id": 2,
+                "id": 24,
+                "title": "S.T.A.L.K.E.R. 2 : un bref teaser en VO a été diffusé",
+                "imageUrl": "https://gaming-cdn.com/images/news/articles/6097/cover/1000x563/s-t-a-l-k-e-r-2-un-bref-teaser-en-vo-a-ete-diffuse-cover662ba2aad2e36.jpg",
+                "video": "zHQs4n-U94U",
+                "date": "2024-01-26",
+                "new": "GSC Game World nous donne rapidement des petites nouvelles au sujet de S.T.A.L.K.E.R. 2: Heart of Chornobyl. Attendu pour le 5 septembre prochain sur Xbox Series et PC, le FPS s'est illustré par l'intermédiaire d'un court teaser. La vidéo en question ne propose que la langue ukrainienne, mais des sous-titres sont disponibles pour la plupart des nationalités. On peut y voir plusieurs environnements et une discussion entre deux personnages."
+ 
+            }
+        ],
+       
+        "about": [
+            {
+                "id": 1,
+                "dev": " GSC Game World",
+                "editeur": " GSC Game World",
+                "sortie": "2024-09-05"
+            }
+        ],
+        "plateformes": [
+            {
+                "id": 1,
+                "support": "Steam",
+                "price": "32.99€",
+                "priceOrigin": "60€",
+                "promo": "-45%",
+                "Stock": true,
+                "buy": "https://www.instant-gaming.com/fr/5376-acheter-s-t-a-l-k-e-r-2-heart-of-chornobyl-pc-jeu-steam-europe/",
+                "buySteam": ""
+            },
+            {
+                "id": 1,
+                "support": "Xbox Series",
+                "price": "",
+                "priceOrigin": "",
+                "promo": "",
+                "Stock": false,
+                "buy": "https://www.instant-gaming.com/fr/9766-acheter-s-t-a-l-k-e-r-2-heart-of-chornobyl-xbox-series-x-s-xbox-series-x-s-jeu-microsoft-store/",
                 "buySteam": ""
             }
         ]
