@@ -1,0 +1,139 @@
+
+
+[
+        {
+            "id": 1,
+            "Precommande" : "",
+            "dateSortie" :"",
+            "date" : "",
+            "title" : "Manor Lords",
+            "titleNews": "Un seul développeur, pourtant ce jeu est le plus attendu de l'année sur Steam",
+            "text": "Manor Lords, un jeu de gestion au Moyen Âge, est l'un des titres PC les plus attendus de l'année. Présent dans énormément de Wishlist Steam, il sort ce 26 avril en early access. Beau, bien optimisé, l'unique développeur du jeu s'est surpassé dans cette gestion de village ultra-détaillée.",
+            "imageUrl": "images/post-1.jpg",
+            "genres": "Jeux solo, Simulation, Stratégie, Early Access",
+            "genre": "Stratégie",
+            "section": "news",
+            "video": ""
+        },
+        {
+          "id": 2,
+          "Precommande" : "",
+            "dateSortie" :"",
+          "date" : "",
+          "title" : "Fallout 4",
+          "titleNews":
+            "Fallout 4 : la mise à niveau « next-gen » sera proposée plus tard aux abonnés PlayStation Plus Extra",
+          "text": "C'est en ce mardi 25 avril que Fallout 4 a été optimisé pour les Xbox Series et la PS5. Mais certains joueurs qui possèdent la console de Sony ont eu la mauvaise surprise de ne pas pouvoir profiter de cette optimisation.En effet, celles et ceux qui accèdent au jeu via leur abonnement PlayStation Plus ne bénéficient pas des améliorations graphiques et techniques. La polémique a vite enflé sur les réseaux sociaux et Bethesda Game Studios a dû rapidement prendre la parole. La firme américaine a donc précisé que la version « next-gen » sera bientôt téléchargeable par les abonnés au PlayStation Plus Extra, par l'intermédiaire du catalogue de jeux. Aucune date précise n'a été donnée.",
+          "imageUrl": "images/post-2.jpg",
+          "genres": "Jeux solo, RPG",
+          "genre": "RPG",
+          "section": "news",
+          "video": ""
+        },
+        {
+          "id": 3,
+          "Precommande" : "",
+            "dateSortie" :"",
+          "date" : "25 avril 2024",
+          "title" : "",
+          "titleNews": "La BlizzCon 2024 a été annulée",
+          "text": "Malgré un retour en force en 2023, la BlizzCon va prendre une année sabbatique. Dans un communiqué, Blizzard a donc officialisé le fait que son évènement annuel n'aura pas lieu en 2024.    L'entreprise a tenté d'expliquer sa décision, bien que les raisons réelles restent finalement assez floues. Cette décision n'a pas été prise à la légère, car la BlizzCon est un événement très spécial pour nous tous, et nous savons que beaucoup d'entre vous l'attendent avec impatience. Bien que nous abordions cette année différemment et que nous ayons exploré différents formats d'événements par le passé, soyez assurés que nous sommes toujours aussi enthousiastes à l'idée de faire revenir la BlizzCon dans les années à venir. À la place, Blizzard donne rendez-vous à sa communauté pour d'autres rassemblements comme la Gamescom et les Overwatch Champions Series. La firme promet aussi divers évènements physiques afin de célébrer le 30ᵉ anniversaire de Warcraft.",
+          "imageUrl":"images/post-3.jpg",
+          "genres": "",
+          "genre": "",
+          "section": "news",
+          "video": ""
+        },
+        {
+          "id": 4,
+          "Precommande" : "",
+            "dateSortie" :"",
+          "date" : "24 avril 2024",
+          "title" : "Stellar Blade",
+          "titleNews":
+            "Stellar Blade a reçu des premières notes très encourageantes via la presse spécialisée",
+          "text": "Avant sa sortie programmée au 26 avril prochain, Stellar Blade est passé entre les mains de la presse. Ainsi, les notes sont tombées pour l'exclusivité PS5 développée par SHIFT UP.Sur Metacritic, le jeu a obtenu une moyenne de 82 % (sur 98 critiques) à l'heure où nous écrivons ces lignes. L'agrégateur OpenCritic affiche quant à lui un score de 84 % (sur 41 avis).Parmi les points positifs, on notera un gameplay orienté action extrêmement plaisant, l'univers très intéressant, l'aspect visuel et artistique du titre ou encore sa durée de vie convaincante. Pour ce qui est des éléments plus critiquables, les testeurs évoquent une progression redondante, les phases de plateforme embêtantes et un rythme pas toujours maîtrisé.",
+          "imageUrl": "images/post-4.jpg",
+          "genres": "Action, Aventure",
+          "genre": "Aventure",
+          "section": "news",
+          "video": ""
+        },
+        {
+          "id": 5,
+          "Precommande" : "",
+            "dateSortie" :"",
+          "date" : "25 avril 2024",
+          "title" : "F1 24",
+          "titleNews": "Une plongée en vidéo dans le mode Carrière de F1 24",
+          "text": "Electronic Arts et Codemasters se font une nouvelle fois entendre avec cette vidéo inédite de F1 24. Quelques jours après la diffusion du trailer de présentation, nous avons l'opportunité d'en apprendre plus au sujet du mode Carrière.Celle-ci pourra être réalisée en solo ou bien à deux avec un ami. Elle permettra d'incarner des pilotes célèbres de la Formule 1 et des petits nouveaux de Formule 2. Des légendes de la course, comme Ayrton Senna et Michael Schumacher, figureront au programme. La vidéo, qui est sous-titrée en plusieurs langues, revient sur d'autres ajouts majeurs en Carrière. On peut notamment souligner le fait de négocier son contrat, de vivre de véritables rivalités sportives ou encore le fait d'avoir accès à de nouveaux défis réguliers. Précisons que la Carrière en coopération a été totalement repensée. F1 24 est attendu le 31 mai prochain sur consoles et PC.",
+          "imageUrl": "images/post-5.jpg",
+          "genres": "Jeux solo, Course, Sport",
+          "genre": "Course",
+          "section": "news",
+          "video": "vxQIKjRJm40"
+          
+        },
+        {
+          "id": 6,
+          "Precommande" : "",
+            "dateSortie" :"",
+          "date" : "25 avril 2024",
+          "title" : "",
+          "titleNews":
+            "Microsoft Gaming révèle ses derniers résultats financiers plutôt positifs",
+          "text": "Microsoft a fait le point sur ses résultats pour le compte du trimestre financier qui s'est achevé le 31 mars dernier. La multinationale dans son ensemble a enregistré un chiffre d'affaires de 61,9 milliards de dollars et 21,9 milliards de dollars de bénéfice net. Soit une hausse respective de 17 % et de 20 % par rapport au même trimestre en 2023. Pour ce qui est de la branche gaming, les revenus atteignent 5,451 milliards de dollars. Des résultats qui découlent en grande partie de l'intégration des revenus générés par Activision Blizzard. La section dédiée au hardware connait une nouvelle chute de 31 % et les revenus des contenus et des services Xbox ont augmenté de 62 %. À lui seul, Activision Blizzard pèse pour un chiffre d'affaires de 1,97 milliard de dollars. Un résultat à nuancer puisque les coûts de l'intégration ou encore de transaction montent à 980 millions de dollars. Si on y ajoute les autres dépenses estimées à 1,34 milliard de dollars, cela débouche sur une perte de 350 millions de dollars.",
+          "imageUrl": "images/post-6.jpg",
+          "genres": "",
+          "genre": "",
+          "section": "news",
+          "video": ""
+        },
+        {
+          "id": 7,
+          "Precommande" : "",
+            "dateSortie" :"",
+          "date" : "26 avril 2024",
+          "title" : "Manor Lords",
+          "titleNews":
+            "Manor Lords lance son accès anticipé aujourd'hui",
+          "text": "L'impatience montait depuis plusieurs semaines et le jour tant attendu est enfin venu ! Le jeu de stratégie médiéval Manor Lords a maintenant ouvert son accès anticipé sur PC. Les utilisateurs peuvent y jouer via Steam, GOG, Microsoft et l'Epic Games Store. Il est inclus dans le PC Game Pass.C'est également l'occasion d'apprendre que le tarif du titre de Slavic Magic a été fixé à une quarantaine d'euros. Cependant, une promotion valable jusqu'au 10 mai permet de l'acheter dix euros moins cher. La bande originale et l'artbook numérique sont aussi proposés en DLC. Enfin, le trailer de lancement a été dévoilé.",
+          "imageUrl": "images/post-7.jpg",
+          "genres": "Jeux solo, Simulation, Stratégie, Early Access",
+          "genre": "Stratégie",
+          "section": "news",
+          "video":  "hhk4HAxLhq8"
+        },
+        {
+          "id": 8,
+          "Precommande" : "",
+            "dateSortie" :"",
+          "date" : "27 avril 2024",
+          "title" : "Fallout",
+          "titleNews":
+            "Microsoft a conscience de l'attente autour du prochain Fallout",
+          "text": "Si la saga Fallout a toujours été appréciée des joueurs, la série TV a intensifié cet amour et a même attiré un nouveau public. Microsoft semble avoir bien conscience de cela. Durant le podcast Xbox Two, le journaliste de Windows Central Jez Corden a déclaré que Microsoft mesure bien l'attente autour d'un nouveau Fallout. Le constructeur américain sait que le jeu est attendu au tournant et aimerait donc ne pas jouer trop longtemps avec la patience des fans. Hélas, puisque Bethesda Game Studios est actuellement à l'œuvre sur The Elder Scrolls VI, un Fallout 5 ne devrait pas voir le jour avant 2030, au mieux. Une solution serait de placer la franchise entre de nouvelles mains. Nombreux sont les fans qui espèrent un épisode inédit développé par Obsidian. Rappelons que le studio s'était déjà occupé de l'excellent New Vegas. Bien entendu, rien de concret ne vient donner du crédit à cette hypothèse pour l'instant.",
+          "imageUrl": "images/post-8.jpg",
+          "genres": "Jeux solo, RPG",
+          "genre": "RPG",
+          "section": "news",
+          "video": ""
+        },
+        {
+            "id": 9,
+            "Precommande" : "",
+            "dateSortie" :"",
+            "date" : "28 avril 2024",
+            "title" : "Assassin's Creed Codename Hexe",
+            "titleNews":
+              "Assassin's Creed Codename Hexe vous permettra de posséder et de contrôler un chat",
+            "text": "Depuis son premier teasing lors de la présentation Ubisoft Forward axée sur Assassin's-Creed en septembre 2022, nous n'avons rien entendu parler d'Assassin's Creed Codename Hexe, une nouvelle entrée dans la franchise apparemment centrée sur la sorcellerie et l'occulte. Un nouveau rapport a enfin partagé de nouveaux détails sur l'aventure à venir, notamment la possibilité de posséder un ami à quatre pattes pour avoir un avantage contre les ennemis. Selon Insider Gaming , Codename Hexe placera les joueurs dans le rôle d'une héroïne nommée Elsa, alors qu'elle tente de naviguer dans l'Europe du XVIe siècle à l'époque du Saint Empire romain germanique. Le jeu s'appuiera davantage sur le surnaturel que les précédents jeux AC, car Elsa a accès à de multiples capacités de sorcellerie.",
+            "imageUrl": "images/post-9.jpg",
+            "genres": "Jeux solo, , Aventure, Action",
+            "genre": "Aventure",
+            "section": "news",
+            "video": ""
+          }
+      
+       
+    ]

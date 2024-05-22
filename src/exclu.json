@@ -1,0 +1,132 @@
+[
+    
+    {
+        "id": 21,
+        "exclu": false,
+        "popular": false,
+        "precommande": true,
+        "DLC": false,
+        "DLCtext": "",
+        "dateSortie": "2024-05-21",
+        "date": "",
+        "title": "Senua's Saga: Hellblade II",
+        "resume": "Dans cette suite du jeu aux multiples récompenses, Hellblade : Senua's Sacrifice, Senua reprend sa violente lutte pour survivre à travers les mythes et tourments de l'Islande viking. Résolue à sauver les victimes des affres de la tyrannie, Senua livre une lutte pour surmonter des ténèbres intérieures et extérieures. Plongez-vous dans le prochain épisode de l'histoire de Senua, une expérience élaborée et narrée grâce à l'immersion des cinématiques, à des graphismes superbement réalisés et à un bande son évocatrice.",
+        "imageUrl": "https://res.cloudinary.com/dzhhs7sfk/image/upload/v1716230927/hellblade-2-4k-wallpaper-3840x2160-18749_rhrlpg.png",
+        "genres": "  Action, Aventure",
+        "genre": "Aventure",
+        "video": "fukYzbthEVU",
+        "videoHover": "https://res.cloudinary.com/dzhhs7sfk/video/upload/v1716231157/Senua_s_Saga-_Hellblade_II_Official_Trailer_-_The_Game_Awards_2023_taeejo.mp4",
+        "critique": "",
+        "critiqueTitle": "",
+        "gifs": [
+            {
+                "id": 1,
+                "img": " https://cdn.cloudflare.steamstatic.com/steam/apps/2461850/extras/Hellblade2_Screenshot-08_480x270_RGB.png?t=1716224073",
+                "title": "Une expérience unique d’immersion cinématographique",
+                "texte": "Plonge dans le monde et l’histoire de Senua, avec des graphismes magnifiques et un son captivant."
+            },
+            {
+                "id": 2,
+                "img": " https://cdn.cloudflare.steamstatic.com/steam/apps/2461850/extras/Senua_Side_Look_480x270.png?t=1716224073",
+                "title": "La perspective unique de Senua",
+                "texte": "Explore le monde à travers les yeux et les oreilles de Senua, une guerrière celte atteinte de psychose."
+            }
+        ],
+        "screen": [
+            {
+                "id": 1,
+                "img": "https://cdn.cloudflare.steamstatic.com/steam/apps/2461850/ss_10c82e3cc0f38c433975168679e93a91310ef466.600x338.jpg?t=1716224073"
+            },
+            {
+                "id": 2,
+                "img": "https://cdn.cloudflare.steamstatic.com/steam/apps/2461850/ss_067bf57d04ccc1322184d6a33fd5284e2252a6b9.600x338.jpg?t=1716224073"
+            },
+            {
+                "id": 3,
+                "img": "https://cdn.cloudflare.steamstatic.com/steam/apps/2461850/ss_fcb80f5cb3eec049b95cdfde2988f919289f9c31.600x338.jpg?t=1716224073"
+            },
+            {
+                "id": 4,
+                "img": "https://cdn.cloudflare.steamstatic.com/steam/apps/2461850/ss_b794c2a9bcef64ff626ae726c19ceed94d15a234.600x338.jpg?t=1716224073"
+            },
+            {
+                "id": 5,
+                "img": "https://cdn.cloudflare.steamstatic.com/steam/apps/2461850/ss_1428e5fca7e9670c4f63976f5226ff4a006ba45f.600x338.jpg?t=1716224073"
+            }
+        ],
+        "price": "36.99€",
+        "priceOrigin": "",
+        "promo": "-26%",
+        "stock": false,
+        "buySteam": "",
+        "config": [
+            {
+                "id": 1,
+                "OSmin": "Windows 10/11 64 Bit",
+                "OSmax": "Windows 10/11 64 Bit",
+                "PROCmin": " Intel i5-8400 | AMD Ryzen 5 2600",
+                "PROCmax": "Intel i7-10700K | AMD Ryzen 5 5600X",
+                "MEMmin": " 16 GB de mémoire",
+                "MEMmax": " 16 GB de mémoire",
+                "GRAPHmin": " Nvidia GTX 1070 | AMD RX 5700 | Intel Arc A580",
+                "GRAPHmax": "Nvidia RTX 3080 | AMD RX 6800 XT | Intel Arc A770",
+                "DirectXmin": "12",
+                "DirectXmax": "12",
+                "HDD": "70 GB"
+            }
+        ],
+        "news": [
+            {
+                "news_id": 1,
+                "id": 21,
+                "title": "Hellblade 2 : les horaires de lancement et le mode photo sont à l'honneur",
+                "imageUrl": "https://gaming-cdn.com/images/news/articles/6371/cover/1000x563/hellblade-2-les-horaires-de-lancement-et-le-mode-photo-sont-a-l-honneur-cover6643c54527d0a.jpg",
+                "video": null,
+                "date": "2024-05-14",
+                "new": "L'heure de vérité approche pour Senua's Saga: Hellblade II. Avant son lancement la semaine prochaine, Ninja Theory nous offre un aperçu des fonctionnalités incluses dans le mode photo.  Il sera notamment possible de modifier la luminosité de l'image, d'ajouter des filtres, de l'intensité aux couleurs, des effets et bien plus encore.  Enfin, le studio britannique a détaillé les horaires de sortie en fonction des différents territoires. Il va falloir patienter jusqu'au 21 mai à 10 h, heure de Paris (1 am PDT / 4 am EDT / 9 am BST /5 pm JST).",
+                "img1": "https://gaming-cdn.com/images/news/articles/6371/image/hellblade-2-les-horaires-de-lancement-et-le-mode-photo-sont-a-l-honneur-image6643c47a586f2.jpg"
+               
+            },
+            {
+                "news_id": 2,
+                "id": 21,
+                "title": "Un dernier trailer avant la sortie pour Senua's Saga: Hellblade 2",
+                "imageUrl": "https://gaming-cdn.com/images/news/articles/6466/cover/1000x563/un-dernier-trailer-avant-la-sortie-pour-senua-s-saga-hellblade-2-cover664b530f9922a.jpg",
+                "video": "PRbOmIcVXak",
+                "date": "2024-05-20",
+                "new": "Une longue attente de plus de quatre ans va prendre fin cette semaine. Annoncé en décembre 2019, Senua's Saga: Hellblade 2 sera disponible dans une poignée d'heures sur Xbox Series et PC.  Pour fêter ce lancement, Ninja Theory nous propose une ultime bande-annonce qui vient mettre en avant la beauté du jeu."
+            }
+        ],
+        "about": [
+            {
+                "id": 1,
+                "dev": "Ninja Theory",
+                "editeur": "Xbox Game Studios",
+                "sortie": "2024-05-21"
+            }
+        ],
+        "plateformes": [
+            {
+                "id": 1,
+                "support": "Steam",
+                "price": "36.99€",
+                "priceOrigin": "50€",
+                "promo": "-26%",
+                "Stock": true,
+                "buy": "https://www.instant-gaming.com/fr/5954-acheter-senua-s-saga-hellblade-ii-pc-jeu-steam/",
+                "buySteam": ""
+            },
+          
+            {
+                "id": 2,
+                "price": "36.99€",
+                "priceOrigin": "50€",
+                "promo": "-26%",
+                "Stock": true,
+                "buy": "https://www.instant-gaming.com/fr/16557-acheter-senua-s-saga-hellblade-ii-pc-xbox-series-x-s-xbox-series-x-s-pc-jeu-microsoft-store/",
+                "buySteam": ""
+            }
+        ]
+    }
+ 
+]
