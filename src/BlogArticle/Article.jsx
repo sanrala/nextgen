@@ -100,7 +100,8 @@ import CircularProgress from '@mui/material/CircularProgress';
                      
                      
                       <div className="priceBloc d-flex flex-start flex-column justify-content-center ">
-                        <h3 class="nk-post-title ">{article.title}</h3>
+                       
+                        {/* <h3 class="nk-post-title ">{article.title}</h3> */}
                         <div class="subinfos">
                          
                     
