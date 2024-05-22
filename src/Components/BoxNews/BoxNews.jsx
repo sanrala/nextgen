@@ -51,7 +51,7 @@ function BoxNews() {
   // Afficher les nouvelles triées
   console.log("Toutes les nouvelles triées par date croissante :");
   console.log(sixLatestNews);
-  console.log();
+  
 
 
   return (
@@ -60,8 +60,19 @@ function BoxNews() {
 
 
 
+<Link
 
+to={{
+  pathname: `/actualités/`,
 
+}}>
+<h3 class="nk-decorated-h-2">
+            <span>
+              <span class="text-main-1"> 
+Actualités</span> du jour
+            </span>
+          </h3></Link>
+          <div class="nk-gap"></div>
 
       <div className="nk-news-box">
 

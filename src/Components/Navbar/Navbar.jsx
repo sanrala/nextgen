@@ -27,7 +27,12 @@ function NavBar() {
               data-nav-mobile="#nk-nav-mobile"
             >
               <li>
-                <a href="#news">Actualités</a>
+              <Link
+
+to={{
+  pathname: `/actualités/`,
+
+}}>Actualités</Link>
               </li>
               <li>
                 <a href="">Populaires</a>

@@ -13,10 +13,7 @@ import Footer from "./Components/Footer/Footer";
 import gameData from "./exclu.json";
 import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
+
 import CircularProgress from '@mui/material/CircularProgress';
 
 function Home() {
@@ -58,16 +55,12 @@ function Home() {
         <div class="container">
           <ImgSlider />
           {/* <StartCatego /> */}
-          <div class="nk-gap-2"></div>
-          <h3 class="nk-decorated-h-2">
-            <span>
-              <span class="text-main-1">Actualités</span> du jour
-            </span>
-          </h3>
-          <div class="nk-gap"></div>
+          <div class="separator product-panel"></div>
+        
           <BoxNews />
+          <div class="separator product-panel"></div>
           <Popular/>
-          <div class="nk-gap-2"></div>
+          <div class="separator product-panel"></div>
           </div>
       
           <section class="banner-img" style={{ backgroundImage: `url(${bg})` }}>
@@ -89,11 +82,12 @@ function Home() {
           />
         </div>
       </section>
-      <div class="nk-gap-2"></div>
+      <div class="separator product-panel"></div>
        
       <div class="container">
         
           <Precommandes/>
+          <div class="separator product-panel"></div>
           <LastPosts />
           {/* <BestGenre/> */}
         
@@ -111,6 +105,7 @@ function Home() {
 
         {/* <!-- END: Page Background --> */}
       </div>
+      <div class="separator product-panel"></div>
       <Footer/>
     </div>
             ) : (

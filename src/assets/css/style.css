@@ -3425,9 +3425,11 @@ img.rounded {
     .nk-navbar.nk-navbar-top .nk-nav-logo {
         display: none;
     }
-
+ 
 }
-
+.ima {
+    margin-right: 3rem;
+}
 .nk-navbar a {
     color: inherit;
 }
@@ -4339,6 +4341,7 @@ img.rounded {
     z-index: 1;
 }
 
+
 .nk-widget-highlighted .nk-widget-title>span {
     display: inline-block;
     padding-right: 23px;
@@ -4390,7 +4393,7 @@ img.rounded {
 .nk-widget-post .nk-post-image,
 .nk-widget-post-2 .nk-post-image {
     float: left;
-    width: 90px;
+    width: 110px;
     margin-left: -110px;
     overflow: hidden;
     -webkit-transition: opacity .15s ease-in-out;
@@ -4432,13 +4435,20 @@ img.rounded {
     margin-top: 0;
     margin-bottom: 10px;
     font-size: 1.15rem;
+    margin-left: 20px;
+    font-size: 15px;
 }
 
 .nk-widget-post .nk-product-price,
 .nk-widget-post-2 .nk-product-price {
-    margin-top: 20px;
+    margin-top: 10px;
+    margin-left: 20px;
+    font-size: 13px;
+    color: #dd163b;
 }
-
+.date {
+    color: #478eff;
+}
 .nk-widget-post-2 {
     position: relative;
 }
@@ -11327,6 +11337,8 @@ max-width: 616px;
   @media (max-width: 1400px) {
     .large-image-container {
       flex-basis: 100%;
+      margin-right: auto;
+      margin-bottom: 20px;
     }
   
     .small-images-container {

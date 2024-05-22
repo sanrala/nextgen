@@ -2,13 +2,10 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Header from "./../Components/Header/Header";
 import { Link, useParams, useLocation } from "react-router-dom";
-
+import Footer from "./../Components/Footer/Footer";
 import gameData from "./../games.json";
 import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
+
 import CircularProgress from '@mui/material/CircularProgress';
 
   function BlocArticle() {
@@ -230,9 +227,10 @@ import CircularProgress from '@mui/material/CircularProgress';
         )}
       </div>
 
-      <div class="nk-gap-2"></div>
-
-  
+      <div class="separator product-panel"></div>
+      <div class="separator product-panel"></div>
+      
+      <Footer/>
   
      {/* <h2>{article.title}</h2>
 

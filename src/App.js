@@ -22,7 +22,7 @@ function App() {
 <Route path="/Playstation/:id/:title" element={<ProductPS />}/>
 
 <Route path="/news/:id/:news_id" element={<Article />} />
-
+<Route path="/actualités" element={<BlocArticle />} />
 <Route path="/précommandes/:id/:title" element={<Preco />}/>
 
 </Routes>
