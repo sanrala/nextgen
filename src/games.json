@@ -2627,9 +2627,20 @@
                 "id": 20,
                 "title": "Sortie de Call of Duty dans le Game Pass, c'est officiel ! ",
                 "imageUrl": "https://imageio.forbes.com/specials-images/imageserve/5e8bd4f301879f000703ec09/0x0.jpg?format=jpg&width=1200",
-                "video": "",
+                "video": null,
                 "date": "2024-05-21",
                 "new": "Le Wall Street Journal a annoncé que le prochain épisode de Call of Duty pourrait être disponible dans le Game Pass dès son lancement. Mais l'arrivée de cette franchise  conduirait également a une hausse du prix de l'abonnement, selon certaines rumeurs…"
+            },
+           
+            {
+                "news_id": 5,
+                "id": 20,
+                "title": "Activision officialise Call of Duty: Black Ops 6",
+                "imageUrl": "https://gaming-cdn.com/images/news/articles/6541/cover/1000x563/activision-officialise-call-of-duty-black-ops-6-cover664f48e639578.jpg",
+                "video": null,
+                "date": "2024-05-23",
+                "new": "Les leaks se faisaient bien trop nombreux et Activision a été contraint de réagir en les confirmant. Ainsi, l'éditeur américain a révélé de manière officielle l'existence de Call of Duty: Black Ops 6. Pour le moment, il faut se contenter d'un simple logo animé. On nous promet « un nouveau chapitre sombre de la franchise Black Ops commence ». Il ne nous reste plus qu'à attendre la présentation détaillée du jeu, qui se tiendra le 9 juin après le Xbox Games Showcase.",
+            "img" : "https://gaming-cdn.com/images/news/articles/6541/image/activision-officialise-call-of-duty-black-ops-6-image664f52b4d3b6a.jpg"
             }
         ],
         "about": [
