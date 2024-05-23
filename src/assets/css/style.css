@@ -8945,7 +8945,7 @@ display: flex;
 }
 @media (max-width : 1400px) {
     .nk-post-imgBloc {
-        flex-direction: column-reverse;
+        
          justify-content: left;
      
      }

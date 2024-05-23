@@ -2543,7 +2543,7 @@
         "precommande": false,
         "DLC": false,
         "DLCtext": "",
-        "dateSortie": "2024",
+        "dateSortie": "Fin 2024",
         "date": "",
         "title": "Call of Duty Black Ops: Gulf War",
         "resume": "",
@@ -3208,13 +3208,146 @@
                 "buySteam": ""
             },
             {
-                "id": 1,
+                "id": 2,
                 "support": "Xbox Series",
                 "price": "",
                 "priceOrigin": "",
                 "promo": "",
                 "Stock": false,
                 "buy": "https://www.instant-gaming.com/fr/9766-acheter-s-t-a-l-k-e-r-2-heart-of-chornobyl-xbox-series-x-s-xbox-series-x-s-jeu-microsoft-store/",
+                "buySteam": ""
+            }
+        ]
+    },
+    {
+        "id": 25,
+        "exclu": false,
+        "popular": false,
+        "precommande": false,
+        "DLC": false,
+        "DLCtext": "",
+        "dateSortie": "2025",
+        "date": "",
+        "title": "Grand Theft Auto VI",
+        "resume": "Grand Theft Auto VI (GTA VI) est le huitième opus principal de la série, la suite tant attendue après GTA V, sorti en 2013. Il est également le seizième jeu de la série globale, célébrant le crime pour lequel le jeu est nommé !",
+        "imageUrl": "https://gaming-cdn.com/images/products/15506/616x353/grand-theft-auto-vi-ps5-playstation-5-jeu-playstation-store-cover.jpg?v=1702542535",
+        "genres": "Action, Aventure, Multijoueur",
+        "genre": "Action",
+        "video": "Rs6Km7-Iz3k",
+        "videoHover": "",
+        "critique": "",
+        "critiqueTitle": "",
+        "gifs": [
+            {
+                "id": 1,
+                "img": " ",
+                "title": "A propos du jeu",
+                "texte": "Comme toujours, le jeu se déroule dans un monde ouvert, dans une version fictive de Miami, en Floride, appelée Vice City, Leonida. Vous incarnez Lucia, le tout premier personnage principal féminin de la série. Son complice (au sens propre du terme) , quant à lui, est un personnage masculin. Ensemble, ils partent à la conquête de Vice City, enfin, du moins, assez pour s'offrir des voitures rapides, de la bonne nourriture et éviter la prison locale. Comme toujours, vous progresserez à travers le mode histoire, parcourant la ville tout en réalisant vos missions et quêtes secondaires, combattant, pour vous sortir des ennuis tout en gagnant de l'argent virtuel ainsi que votre butin. Mais GTA VI, ce n'est pas que des batailles sombres et des combats, vous pouvez également, si vous le souhaitez, vous promener le long des larges autoroutes de Miami - euh - Vice City qui longent l'océan, en écoutant de la musique et en profitant d'un moment de détente."
+            },
+            {
+                "id": 2,
+                "img": " ",
+                "title": "Les Détails Techniques",
+                "texte": "Les commandes du jeu sont faciles à comprendre, et le moteur physique bénéficie de dix années d'avancées pour vous offrir la conduite la plus fluide, tout en vous confrontant aux éléments de casse-tête du vol de voitures ! Gardez un œil sur votre santé – ça serait dommage de manquer d'énergie juste avant que la loi ne vienne perturber vos plans, que ce soit pour prendre un repas, voler cette voiture brillante qui vous fait de l'oeil, ou des magouilles plus illicites que vous aimeriez pouvoir mener à bien !"
+            }
+            
+        ],
+        "screen": [
+            {
+                "id": 1,
+                "img": "https://gaming-cdn.com/images/products/2462/screenshot/grand-theft-auto-vi-pc-jeu-rockstar-wallpaper-2.jpg?v=1702542565"
+            },
+            {
+                "id": 2,
+                "img": "https://gaming-cdn.com/images/products/2462/screenshot/grand-theft-auto-vi-pc-jeu-rockstar-wallpaper-3.jpg?v=1702542565"
+            },
+            {
+                "id": 3,
+                "img": "https://gaming-cdn.com/images/products/2462/screenshot/grand-theft-auto-vi-pc-jeu-rockstar-wallpaper-4.jpg?v=1702542565"
+            },
+            {
+                "id": 4,
+                "img": "https://gaming-cdn.com/images/products/2462/screenshot/grand-theft-auto-vi-pc-jeu-rockstar-wallpaper-1.jpg?v=1702542565"
+            },
+            {
+                "id": 5,
+                "img": "https://gaming-cdn.com/images/products/2462/screenshot/grand-theft-auto-vi-pc-jeu-rockstar-wallpaper-5.jpg?v=1702542565"
+            }
+        ],
+        "price": "",
+        "priceOrigin": "",
+        "promo": "",
+        "stock": false,
+        "buySteam": "",
+        "config": [
+            {
+                "id": 1,
+                "OSmin": "inconnu pour le moment",
+                "OSmax": "inconnu pour le moment",
+                "PROCmin": "inconnu pour le moment",
+                "PROCmax": "inconnu pour le moment",
+                "MEMmin": " inconnu pour le moment",
+                "MEMmax": " inconnu pour le moment",
+                "GRAPHmin": "inconnu pour le moment",
+                "GRAPHmax": "inconnu pour le moment",
+                "DirectXmin": "inconnu pour le moment",
+                "DirectXmax": "inconnu pour le moment",
+                "HDD": "inconnu pour le moment"
+            }
+        ],
+        "news": [
+            {
+                "news_id": 1,
+                "id": 25,
+                "title": "GTA 6 cible la fenêtre de sortie vers l’automne 2025",
+                "imageUrl": "https://www.gameinformer.com/sites/default/files/styles/full/public/2023/12/04/c04beab6/gta6_02.jpg",
+                "video": "Rs6Km7-Iz3k",
+                "date": "2024-05-23",
+                "new": "L’éditeur Take-Two a publié aujourd’hui son rapport financier de fin d’année 2024 (merci, PC Gamer), dans lequel il indique que Rockstar vise une fenêtre de sortie à l’automne 2025 pour GTA VI.",
+                "title2": "Ce calendrier est réitéré dans un calendrier des prochaines sorties de l’éditeur, publié ci-dessous.",
+                "img": "https://www.gameinformer.com/sites/default/files/styles/body_default/public/2024/05/16/335cd20e/take_two_calendar_1.jpg",
+ "new2" : "En ce qui concerne GTA VI, Take-Two déclare : « Nous sommes très confiants que Rockstar Games offrira une expérience de divertissement inégalée, et nos attentes quant à l’impact commercial du titre continuent d’augmenter. » Le jeu devrait sortir sur PlayStation 5 et Xbox Series X/S. Une version PC n’a pas encore été mentionnée. "
+            }
+        ],
+       
+        "about": [
+            {
+                "id": 1,
+                "dev": "Rockstar Games",
+                "editeur": "Rockstar Games",
+                "sortie": "2025"
+            }
+        ],
+        "plateformes": [
+            {
+                "id": 1,
+                "support": "Rockstar",
+                "price": "",
+                "priceOrigin": "",
+                "promo": "",
+                "Stock": false,
+                "buy": "https://www.instant-gaming.com/fr/2462-acheter-rockstar-grand-theft-auto-vi-pc-jeu-rockstar/",
+                "buySteam": ""
+            },
+            {
+                "id": 2,
+                "support": "Xbox Series",
+                "price": "",
+                "priceOrigin": "",
+                "promo": "",
+                "Stock": false,
+                "buy": "https://www.instant-gaming.com/fr/15505-acheter-grand-theft-auto-vi-xbox-series-x-s-xbox-series-x-s-jeu-microsoft-store/",
+                "buySteam": ""
+            },
+            
+            {
+                "id": 3,
+                "support": "Playstation 5",
+                "price": "",
+                "priceOrigin": "",
+                "promo": "",
+                "Stock": false,
+                "buy": "https://www.instant-gaming.com/fr/15506-acheter-grand-theft-auto-vi-ps5-playstation-5-jeu-playstation-store/",
                 "buySteam": ""
             }
         ]

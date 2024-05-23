@@ -14,7 +14,8 @@ import 'photoswipe/dist/photoswipe.css'
 import ReadMore from "./../Components/ReadMore/ReadMore"
 import { Gallery, Item } from 'react-photoswipe-gallery'
 import 'photoswipe/style.css';
-
+import Footer from "./../Components/Footer/Footer";
+import Header from "./../Components/Header/Header";
 function Product(props) {
 
   function formatDate(dateString) {
@@ -46,6 +47,7 @@ function Product(props) {
 
   return (
     <div>
+      <Header />
     <div class="nk-gap-1"></div>
     {item ? (
       <div class="container">
@@ -223,7 +225,7 @@ function Product(props) {
                            <Link
                             key={item.id}
                             to={{
-                              pathname: `/PC-Steam/${item.id}/${item.title}`,
+                              pathname: `/PC/${item.id}/${item.title}`,
                               state: { itemData: item },
                             }}
                           >
@@ -235,6 +237,19 @@ function Product(props) {
                                         </MenuItem>
                   </Link>
                           )}
+                            {ab.support === "Rockstar"  && (
+                                <Link
+                                  key={item.id}
+                                  to={{
+                                    pathname: `/PC_Rockstar/${item.id}/${item.title}`,
+                                    state: { itemData: item },
+                                  }}
+                                >
+                                  <MenuItem className="text-white" value={10}>
+                                    {ab.support}
+                                  </MenuItem>
+                                </Link>
+                              )}
                         </>
                       ))}
                          </Select>
@@ -789,7 +804,7 @@ function Product(props) {
                   key={i.id}
                   {...i}
                   to={{
-                    pathname: `/PC-Steam/${i.id}/${i.title}`,
+                    pathname: `/PC/${i.id}/${i.title}`,
                     state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
                   }}
                   class="nk-post-img">
@@ -804,7 +819,7 @@ function Product(props) {
                   key={i.id}
                   {...i}
                   to={{
-                    pathname: `/PC-Steam/${i.id}/${i.title}`,
+                    pathname: `/PC/${i.id}/${i.title}`,
                     state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
                   }}
                   class="nk-post-img">{i.title}  </Link>
@@ -860,6 +875,9 @@ function Product(props) {
         <CircularProgress />
       </Box>
     )}
+         <div class="separator product-panel"></div>
+        <div class="separator product-panel"></div>
+             <Footer/>
   </div>
   );
 }

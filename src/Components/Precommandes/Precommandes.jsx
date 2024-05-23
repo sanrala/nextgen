@@ -34,7 +34,7 @@ function Precommandes() {
                       key={item.id}
                       {...item}
                       to={{
-                        pathname: `/PC-Steam/${item.id}/${item.title}`,
+                        pathname: `/PC/${item.id}/${item.title}`,
                         state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
                       }}
                       class="nk-post-img"
@@ -66,7 +66,7 @@ function Precommandes() {
                         key={item.id}
                         {...item}
                         to={{
-                          pathname: `/PC-Steam/${item.id}/${item.title}`,
+                          pathname: `/PC/${item.id}/${item.title}`,
                           state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
                         }}
                       >

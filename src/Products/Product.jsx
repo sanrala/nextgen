@@ -11,11 +11,11 @@ import CircularProgress from "@mui/material/CircularProgress";
 import HoverVideoPlayer from "react-hover-video-player";
 import PhotoSwipeLightbox from 'photoswipe/lightbox';
 import 'photoswipe/dist/photoswipe.css'
-
+import Footer from "./../Components/Footer/Footer";
 import { Gallery, Item } from 'react-photoswipe-gallery'
 import 'photoswipe/style.css';
 import ReadMore from "./../Components/ReadMore/ReadMore"
-
+import Header from "./../Components/Header/Header";
 function Product(props) {
   function formatDate(dateString) {
     const date = new Date(dateString);
@@ -48,7 +48,7 @@ function Product(props) {
  
   return (
     <div>
-   
+   <Header />
 
       <div class="nk-gap-1"></div>
       {item ? (
@@ -222,11 +222,24 @@ function Product(props) {
                                   </MenuItem>
                                 </Link>
                               )}
-                              {ab.support === "Steam" && (
+                              {ab.support === "Steam"  && (
                                 <Link
                                   key={item.id}
                                   to={{
-                                    pathname: `/PC-Steam/${item.id}/${item.title}`,
+                                    pathname: `/PC/${item.id}/${item.title}`,
+                                    state: { itemData: item },
+                                  }}
+                                >
+                                  <MenuItem className="text-white" value={10}>
+                                    {ab.support}
+                                  </MenuItem>
+                                </Link>
+                              )}
+                               {ab.support === "Rockstar"  && (
+                                <Link
+                                  key={item.id}
+                                  to={{
+                                    pathname: `/PC_Rockstar/${item.id}/${item.title}`,
                                     state: { itemData: item },
                                   }}
                                 >
@@ -786,7 +799,7 @@ function Product(props) {
                   {...i}
                   
                   to={{
-                    pathname: `/PC-Steam/${i.id}/${i.title}`,
+                    pathname: `/PC/${i.id}/${i.title}`,
                     state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
                   }}
                   onClick={() => {
@@ -805,7 +818,7 @@ function Product(props) {
                   key={i.id}
                   {...i}
                   to={{
-                    pathname: `/PC-Steam/${i.id}/${i.title}`,
+                    pathname: `/PC/${i.id}/${i.title}`,
                     state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
                   }}
                   class="nk-post-img">{i.title}  </Link>
@@ -815,16 +828,21 @@ function Product(props) {
                   ) : null}
                 </div>
               ))}
-              {/* </Slider> */}
+           
             </div>
           </div>
+   
         </div>
+        
       ) : (
         // Code à exécuter lorsque item est null
         <Box sx={{ display: "flex" }}>
           <CircularProgress />
         </Box>
       )}
+        <div class="separator product-panel"></div>
+        <div class="separator product-panel"></div>
+             <Footer/>
     </div>
   );
 }

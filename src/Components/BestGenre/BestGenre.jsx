@@ -157,7 +157,7 @@ function BestGenre() {
                       key={v.id}
                       {...v}
                       to={{
-                        pathname: `/PC-Steam/${v.id}/${v.title}`,
+                        pathname: `/PC/${v.id}/${v.title}`,
                         state: { itemData: v }, // Passer les données de l'élément à la page BlocArticle
                       }} class="nk-post-img">
                   <HoverVideoPlayer
@@ -189,7 +189,7 @@ function BestGenre() {
                       key={v.id}
                       {...v}
                       to={{
-                        pathname: `/PC-Steam/${v.id}/${v.title}`,
+                        pathname: `/PC/${v.id}/${v.title}`,
                         state: { itemData: v }, // Passer les données de l'élément à la page BlocArticle
                       }}>
                     {v.title}
@@ -205,7 +205,7 @@ function BestGenre() {
                     {v.resume.slice(0, 200)+ "..."}
                     </p>
                     <Link  key={v.id} {...v}  to={{
-    pathname: `/PC-Steam/${v.id}/${v.title}`,
+    pathname: `/PC/${v.id}/${v.title}`,
     state: { itemData: v } // Passer les données de l'élément à la page BlocArticle
   }}
                 class="nk-btn nk-btn-rounded nk-btn-color-dark-3 nk-btn-hover-color-main-1"

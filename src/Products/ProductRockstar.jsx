@@ -11,20 +11,19 @@ import CircularProgress from "@mui/material/CircularProgress";
 import HoverVideoPlayer from "react-hover-video-player";
 import PhotoSwipeLightbox from 'photoswipe/lightbox';
 import 'photoswipe/dist/photoswipe.css'
-import ReadMore from "./../Components/ReadMore/ReadMore"
+import Footer from "./../Components/Footer/Footer";
 import { Gallery, Item } from 'react-photoswipe-gallery'
 import 'photoswipe/style.css';
-import Footer from "./../Components/Footer/Footer";
+import ReadMore from "../Components/ReadMore/ReadMore"
 import Header from "./../Components/Header/Header";
 function Product(props) {
-
   function formatDate(dateString) {
     const date = new Date(dateString);
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     return date.toLocaleDateString('fr-FR', options);
   }
   const [item, setItem] = useState(null);
-  const { id } = useParams();
+  const { id, title } = useParams();
   useEffect(() => {
     // Récupérer l'ID depuis l'URL
 
@@ -39,15 +38,18 @@ function Product(props) {
   const handleChange = (event) => {
     setAge(event.target.value);
   };
+
   const [activeTab, setActiveTab] = useState('description');
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
 
+
   return (
     <div>
-      <Header />
+
+<Header />
       <div class="nk-gap-1"></div>
       {item ? (
         <div class="container">
@@ -100,35 +102,38 @@ function Product(props) {
                         class="nk-gallery-item"
                         data-size="1200x554"
                       >
-                      {/* <div class="nk-gallery-item-overlay">
+                        {/* <div class="nk-gallery-item-overlay">
                           <span class="ion-eye"></span>
                         </div> */}
                         <HoverVideoPlayer
-                    className="tot"
-                    videoSrc={item.videoHover}
-                    style={{
-                      // Make the image expand to cover the video's dimensions
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}pausedOverlay={<img src={item.imageUrl} alt={item.title} />}
-                    />
+                          className="tot"
+                          videoSrc={item.videoHover}
+                          style={{
+                            // Make the image expand to cover the video's dimensions
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                          pausedOverlay={
+                            <img src={item.imageUrl} alt={item.title} />
+                          }
+                        />
                       </a>
                     </div>
 
                     <div class="nk-gap-1"></div>
                     <div class="row vertical-gap sm-gap">
-                    {item.screen &&
+                      {item.screen &&
                         item.screen.slice(1).map((screens, index) => (
                           <Gallery>
-                          <Item
-                            original={screens.img}
-                            thumbnail={screens.img}
-                            width="1920"
-                            height="1024"
-                          >
-                            {({ ref, open }) => (
-                              // <a class="nk-gallery-item" data-size="622x942">
+                            <Item
+                              original={screens.img}
+                              thumbnail={screens.img}
+                              width="1920"
+                              height="1024"
+                            >
+                              {({ ref, open }) => (
+                                // <a class="nk-gallery-item" data-size="622x942">
                                 <div class="col-6 col-md-3">
                                   <div class="nk-gallery-item-box">
                                     <img
@@ -140,111 +145,89 @@ function Product(props) {
                                     />
                                   </div>
                                 </div>
-                              // </a>
-                            )}
-                          </Item>
-                        </Gallery>
+                                // </a>
+                              )}
+                            </Item>
+                          </Gallery>
                         ))}
                     </div>
                   </div>
                 </div>
                 <div class="col-md-6">
-                <div class="subinfos">
-                          <a
-                            href=""
-                            class="platform steam"
-                          >
-                            <div class="single platform-xbox">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                height="32"
-                                width="32"
-                                viewBox="0 0 512 512"
-                              >
-                                <path d="M369.9 318.2c44.3 54.3 64.7 98.8 54.4 118.7-7.9 15.1-56.7 44.6-92.6 55.9-29.6 9.3-68.4 13.3-100.4 10.2-38.2-3.7-76.9-17.4-110.1-39C93.3 445.8 87 438.3 87 423.4c0-29.9 32.9-82.3 89.2-142.1 32-33.9 76.5-73.7 81.4-72.6 9.4 2.1 84.3 75.1 112.3 109.5zM188.6 143.8c-29.7-26.9-58.1-53.9-86.4-63.4-15.2-5.1-16.3-4.8-28.7 8.1-29.2 30.4-53.5 79.7-60.3 122.4-5.4 34.2-6.1 43.8-4.2 60.5 5.6 50.5 17.3 85.4 40.5 120.9 9.5 14.6 12.1 17.3 9.3 9.9-4.2-11-.3-37.5 9.5-64 14.3-39 53.9-112.9 120.3-194.4zm311.6 63.5C483.3 127.3 432.7 77 425.6 77c-7.3 0-24.2 6.5-36 13.9-23.3 14.5-41 31.4-64.3 52.8C367.7 197 427.5 283.1 448.2 346c6.8 20.7 9.7 41.1 7.4 52.3-1.7 8.5-1.7 8.5 1.4 4.6 6.1-7.7 19.9-31.3 25.4-43.5 7.4-16.2 15-40.2 18.6-58.7 4.3-22.5 3.9-70.8-.8-93.4zM141.3 43C189 40.5 251 77.5 255.6 78.4c.7 .1 10.4-4.2 21.6-9.7 63.9-31.1 94-25.8 107.4-25.2-63.9-39.3-152.7-50-233.9-11.7-23.4 11.1-24 11.9-9.4 11.2z" />
-                              </svg>
-                            </div>
-                            Xbox Series
-                            <div class="spacer"></div>
-                          </a>{" "}
-                          <div class="preorder">
-                          <h2 class="nk-productpro-title h3pro">{item.title} </h2>
-                          </div>
-                        </div>
-                  
-                 
-                        <Box sx={{ minWidth: 300 }}>
-                          <FormControl fullWidth>
-                            <InputLabel
-                              className="text-white"
-                              id="demo-simple-select-label"
-                            >
-                              Plateforme
-                            </InputLabel>
-                            <Select
-                              labelId="demo-simple-select-label"
-                              id="demo-simple-select"
-                              value={age}
-                              label="Age"
-                              onChange={handleChange}
-                            >
-                    {item.plateformes &&
-                      item.plateformes.map((ab, index) => (
-                        <>
-                          {ab.support === "Xbox Series" && (
-                          
-                              <Link
-                                        key={item.id}
-                                        to={{
-                                          pathname: `/Xbox/${item.id}/${item.title}`,
-                                          state: { itemData: item },
-                                        }}
-                                      >
-                                 <MenuItem
-                                          className="text-white"
-                                          value={10}
-                                        >
-                                          {ab.support}
-                                        </MenuItem>
-                               </Link>
-                           
-                          )}
+                  <div class="subinfos">
+                    <a href="" class="platform steam">
+                      <div class="single platform">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 64 64">
+                          <path fill="url(#VVci68TESUPE9SF_mOydEa_Y9ACIcuVAdi9_gr1)" d="M62.98,58.41C62.77,60.49,60.9,62,58.81,62H4c-2.34,0-4.22-2.03-3.98-4.41	C0.23,55.51,2.1,54,4.19,54H5c1.11,0,2-0.9,2-2c0-0.55-0.22-1.05-0.58-1.41C6.06,50.22,5.56,50,5,50c-1.65,0-3-1.35-3-3s1.35-3,3-3	h17V32H5c-2.34,0-4.22-2.03-3.98-4.41C1.23,25.51,3.1,24,5.19,24H8.5c1.93,0,3.5-1.57,3.5-3.5S10.43,17,8.5,17h-2	c-2.4,0-4.36-1.87-4.49-4.24C2,12.67,2,12.59,2,12.5c0-1.24,0.5-2.37,1.32-3.18C4.13,8.5,5.26,8,6.5,8h13.23	c0-0.01,0.01-0.01,0.01-0.02C20.46,7.86,21,7.25,21,6.5C21,5.67,20.33,5,19.5,5h-4c-1.47,0-2.64-1.26-2.49-2.76	C13.14,0.94,14.34,0,15.64,0H48.5c1.47,0,2.64,1.26,2.49,2.76C50.86,4.06,49.66,5,48.36,5H45.5C44.67,5,44,5.67,44,6.5	S44.67,8,45.5,8h14c1.47,0,2.64,1.26,2.49,2.76c-0.13,1.3-1.33,2.24-2.63,2.24H59c-1.1,0-2,0.9-2,2s0.9,2,2,2h0.81	c2.09,0,3.96,1.51,4.17,3.59C64.22,22.97,62.33,25,60,25H42v7h17c1.65,0,3,1.35,3,3s-1.35,3-3,3h-9c-1.38,0-2.5,1.12-2.5,2.5	S48.62,43,50,43h10.5c1.92,0,3.5,1.58,3.5,3.5S62.42,50,60.5,50H59c-1.1,0-2,0.9-2,2s0.9,2,2,2C61.33,54,63.22,56.03,62.98,58.41z"></path><linearGradient id="VVci68TESUPE9SF_mOydEb_Y9ACIcuVAdi9_gr2" x1="32" x2="32" y1="-440" y2="-364.17" gradientTransform="matrix(1 0 0 -1 0 -384)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#feaa53"></stop><stop offset=".612" stop-color="#ffcd49"></stop><stop offset="1" stop-color="#ffde44"></stop></linearGradient><path fill="url(#VVci68TESUPE9SF_mOydEb_Y9ACIcuVAdi9_gr2)" d="M55,20v26c0,5.5-4.5,10-10,10H19c-5.5,0-10-4.5-10-10V20c0-5.5,4.5-10,10-10h26	C50.5,10,55,14.5,55,20z"></path><polygon fill="#212121" points="36.101,41.144 38.643,43.108 38.181,39.758 40.722,38.025 37.949,38.025 37.372,34.791 35.523,38.025 32.52,38.025 34.253,39.874 32.866,42.993"></polygon><linearGradient id="VVci68TESUPE9SF_mOydEc_Y9ACIcuVAdi9_gr3" x1="32" x2="32" y1="18.362" y2="44.251" gradientUnits="userSpaceOnUse"><stop offset=".122" stop-color="#5e6d7b"></stop><stop offset=".191" stop-color="#5d6b79"></stop><stop offset="1" stop-color="#515c69"></stop></linearGradient><path fill="url(#VVci68TESUPE9SF_mOydEc_Y9ACIcuVAdi9_gr3)" d="M48,35.715h-8.087l-1.271-7.509l-4.505,7.509h-0.185l-0.97-1.617	c-0.115-0.116-0.347-0.809-0.115-3.235c0.115-1.617-0.116-2.657-0.578-3.35c1.617-0.924,2.426-2.31,2.657-4.39	c0.116-1.733-0.231-3.119-1.155-4.043c-1.271-1.617-3.581-1.848-5.314-1.848h-8.549l-0.231,0.924l-3.35,15.827L16,35.368h6.238	l0.231-0.924l1.04-4.968h2.195c0.578,0,0.809,0.231,0.809,0.231c0.231,0.231,0.462,1.04,0.231,3.235	c-0.116,1.271,0.115,2.079,0.231,2.195l0.289,0.578l4.217,4.621l-3.812,8.433l8.318-4.852l5.892,4.505l-1.155-7.509L48,35.715z M23.162,25.664l1.04-4.274c0,0,3.581,0,3.928,0c1.155,0,2.195,0.578,1.848,2.195c-0.347,1.502-1.617,2.079-2.773,2.079	C25.82,25.664,23.162,25.664,23.162,25.664z"></path><path fill="#fff" d="M29.863,36.87h4.968l3.235-5.43l0.924,5.43h5.43l-4.968,3.466l0.809,5.43l-4.274-3.235l-5.661,3.35	l2.657-5.776L29.863,36.87z"></path>
+                        </svg>
+                      </div>
+                      Rockstar
+                      <div class="spacer"></div>
+                    </a>{" "}
+                    <div class="preorder">
+                      <h2 class="nk-productpro-title h3pro">{item.title} </h2>
+                    </div>
+                  </div>
 
-                          {ab.support === "Playstation 5" && (
-                        
-                                 <Link
-                                        key={item.id}
-                                        to={{
-                                          pathname: `/Playstation/${item.id}/${item.title}`,
-                                          state: { itemData: item },
-                                        }}
-                                      >
-                                <MenuItem
-                                          className="text-white"
-                                          value={10}
-                                        >
-                                          {ab.support}
-                                        </MenuItem>
-                              </Link>
-                        
-                          )}
-                          {ab.support === "Steam" && (
-                           <Link
-                            key={item.id}
-                            to={{
-                              pathname: `/PC/${item.id}/${item.title}`,
-                              state: { itemData: item },
-                            }}
-                          >
-                   <MenuItem
-                                          className="text-white"
-                                          value={10}
-                                        >
-                                          {ab.support}
-                                        </MenuItem>
-                  </Link>
-                          )}
-                            {ab.support === "Rockstar"  && (
+                  <Box sx={{ minWidth: 300 }}>
+                    <FormControl fullWidth>
+                      <InputLabel
+                        className="text-white"
+                        id="demo-simple-select-label"
+                      >
+                        Plateforme
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={age}
+                        label="Age"
+                        onChange={handleChange}
+                      >
+                        {item.plateformes &&
+                          item.plateformes.map((ab, index) => (
+                            <>
+                              {ab.support === "Xbox Series" && (
+                                <Link
+                                  key={item.id}
+                                  to={{
+                                    pathname: `/Xbox/${item.id}/${item.title}`,
+                                    state: { itemData: item },
+                                  }}
+                                >
+                                  <MenuItem className="text-white" value={10}>
+                                    {ab.support}
+                                  </MenuItem>
+                                </Link>
+                              )}
+
+                              {ab.support === "Playstation 5" && (
+                                <Link
+                                  key={item.id}
+                                  to={{
+                                    pathname: `/Playstation/${item.id}/${item.title}`,
+                                    state: { itemData: item },
+                                  }}
+                                >
+                                  <MenuItem className="text-white" value={10}>
+                                    {ab.support}
+                                  </MenuItem>
+                                </Link>
+                              )}
+                              {ab.support === "Steam" && (
+                                <Link
+                                  key={item.id}
+                                  to={{
+                                    pathname: `/PC-Steam/${item.id}/${item.title}`,
+                                    state: { itemData: item },
+                                  }}
+                                >
+                                  <MenuItem className="text-white" value={10}>
+                                    {ab.support}
+                                  </MenuItem>
+                                </Link>
+                              )}
+                              {ab.support === "Rockstar" && (
                                 <Link
                                   key={item.id}
                                   to={{
@@ -257,91 +240,83 @@ function Product(props) {
                                   </MenuItem>
                                 </Link>
                               )}
-                        </>
-                      ))}
-                         </Select>
-                          </FormControl>
-                        </Box>
+                            </>
+                          ))}
+                      </Select>
+                    </FormControl>
+                  </Box>
 
                   <div class="nk-product-description">
-                  <ReadMore text={item.resume} />
+                    <ReadMore text={item.resume} />
                   </div>
 
                   {/* <div class="nk-gap-2"></div> */}
+
                   {item.plateformes &&
-                                item.plateformes.map((ab, index) => (
-                                  <>
-               <div class="info"  key={ab.id}>
-                        {ab.support === "Xbox Series" && ( 
+                    item.plateformes.map((ab, index) => (
+                      <>
+                        <div class="info">
+                          {ab.support === "Steam" && (
+                            <>
+                              <div className="priceOrigin text-white">
+                                {ab.priceOrigin}
+                              </div>{" "}
+                              <div className="priceSlidePromo ">{ab.promo}</div>{" "}
+                              <div class="price text-white">{ab.price}</div>
+                            </>
+                          )}
+                        </div>
+
+                        {ab.support === "Steam" && (
                           <>
-                          <div className="priceOrigin text-white">
-                        
-                            {ab.priceOrigin}
-                          
-                          </div>{" "}
-                          <div className="priceSlidePromo ">{ab.promo}</div>{" "}
-                          <div class="price text-white">{ab.price}</div>
+                            {ab.Stock === false ? (
+                              <>
+                                <a class="nk-btn nk-btn-rounded nk-btn-color-main-1">
+                                  Hors Stock
+                                </a>
+                              </>
+                            ) : (
+                              <>
+                                <a
+                                  href={item.buy}
+                                  class="nk-btn nk-btn-rounded nk-btn-color-main-1"
+                                >
+                                  Instant Gaming
+                                </a>
+                              </>
+                            )}
                           </>
                         )}
-                        </div>
-                        {ab.support === "Xbox Series" && ( 
-                          <>
-                         {ab.Stock === false ? ( 
-                          <>
-                        <a
-                         
-                          class="nk-btn nk-btn-rounded nk-btn-color-main-1"
-                        >
-                         Hors Stock
-                        </a>
-                        </>
-                         ) :(
-                          <>
-                          <a
-                           href={item.buy}
-                            class="nk-btn nk-btn-rounded nk-btn-color-main-1"
-                          >
-                           Instant Gaming
-                          </a>
-                          </>
-                         
-                       )}
-                     </>
-                       )}
-                  </>
-                        ))}
-                    <div class="nk-gap-1"></div>
-               
+                      </>
+                    ))}
+                  <div class="nk-gap-1"></div>
+
                   <div class="nk-product-meta">
                     <div>{/* <strong>SKU</strong>: 300-200-503 */}</div>
-                  
+
                     <div>
                       <strong>Categories </strong>:{" "}
                       <a href="#"> {item.genres}</a>
                     </div>
                     {item.about &&
-                            item.about.map((ab, index) => (
-                              <>
-                    <div>
-                      <strong>Date de sortie </strong>:{" "}
-                      <a href="#">{formatDate(ab.sortie)}</a>
-                    </div>
-                    <div>
-                      <strong>Développeur </strong>:{" "}
-                      <a href="#"> {ab.dev}</a>
-                    </div>
-                    <div>
-                      <strong>Editeur</strong>:{" "}
-                      <a href="#"> {ab.editeur}</a>
-                    </div>
-                    </>
-                        ))}
-                    <div>
-                
-                    </div>
-                    
+                      item.about.map((ab, index) => (
+                        <>
+                          <div>
+                            <strong>Date de sortie </strong>:{" "}
+                            <a href="#"> {formatDate(ab.sortie)}</a>
+                          </div>
+                          <div>
+                            <strong>Développeur </strong>:{" "}
+                            <a href="#"> {ab.dev}</a>
+                          </div>
+                          <div>
+                            <strong>Editeur</strong>:{" "}
+                            <a href="#"> {ab.editeur}</a>
+                          </div>
+                        </>
+                      ))}
+                    <div></div>
                   </div>
-                 
                 </div>
               </div>
             </div>
@@ -411,20 +386,20 @@ function Product(props) {
             <div class="nk-tabs">
               <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item"
-               >
-                <a
-            className={activeTab === 'description' ? 'active nav-link' : 'nav-link'}
-            onClick={() => handleTabChange('description')}
-          >
+                >
+                  <a
+                    className={activeTab === 'description' ? 'active nav-link' : 'nav-link'}
+                    onClick={() => handleTabChange('description')}
+                  >
                     Description
                   </a>
                 </li>
                 <li class="nav-item"
-                 >
-                 <a
-            className={activeTab === 'comment' ? 'active nav-link' : 'nav-link'}
-            onClick={() => handleTabChange('comment')}
-          >
+                >
+                  <a
+                    className={activeTab === 'comment' ? 'active nav-link' : 'nav-link'}
+                    onClick={() => handleTabChange('comment')}
+                  >
                     Commentaires (3)
                   </a>
                 </li>
@@ -432,16 +407,16 @@ function Product(props) {
 
               <div class="tab-content">
                 {/* <!-- START: Tab Description --> */}
-         
+
                 <div
                   role="tabpanel"
                   className={activeTab === 'description' ? 'tab-pane fade show active' : 'tab-pane fade'}
                   class="tab-pane fade show active"
                   id="tab-description"
-                  
+
                 >
                   <div class="nk-gap"></div>
-             
+
                   <div class="nk-gap"></div>
                   {!item.gifs ? null : (
                     <div className="text-center">
@@ -458,20 +433,20 @@ function Product(props) {
                   )}
                   {/* <p></p> */}
                 </div>
-             
+
                 {/* <!-- END: Tab Description --> */}
 
                 {/* <!-- START: Tab Reviews --> */}
-  
-                <div role="tabpanel" 
-                 className={activeTab === 'comment' ? 'tab-pane fade show active' : 'tab-pane fade'}
-                class="tab-pane fade" 
-                id="tab-reviews">
+
+                <div role="tabpanel"
+                  className={activeTab === 'comment' ? 'tab-pane fade show active' : 'tab-pane fade'}
+                  class="tab-pane fade"
+                  id="tab-reviews">
                   <div class="nk-gap-2"></div>
                   {/* <!-- START: Reply --> */}
-                  <h3 class="h4">Ajouter un commentaire</h3> 
+                  <h3 class="h4">Ajouter un commentaire</h3>
                   <div class="nk-rating">
-                    
+
                     <input
                       type="radio"
                       id="review-rate-5"
@@ -548,7 +523,7 @@ function Product(props) {
                     </label>
                   </div>
                   <div class="nk-gap-1"></div>
-                    
+
                   <div class="nk-reply">
                     <form action="#" class="nk-form">
                       <div class="row vertical-gap sm-gap">
@@ -578,12 +553,12 @@ function Product(props) {
                         aria-required="true"
                       ></textarea>
                       <div class="nk-gap-1"></div>
-                    
-                    
+
+
                       <button class="nk-btn nk-btn-rounded nk-btn-color-dark-3 float-right">
                         Envoyer
                       </button>
-                    
+
                     </form>
                   </div>
                   {/* <!-- END: Reply --> */}
@@ -610,10 +585,10 @@ function Product(props) {
                       </div>
                       <div class="nk-comment-text">
                         <p>
-                       texte
+                          texte
                         </p>
 
-                     
+
                       </div>
                     </div>
                     {/* <!-- END: Review -->
@@ -637,7 +612,7 @@ function Product(props) {
                       </div>
                       <div class="nk-comment-text">
                         <p>
-                        texte
+                          texte
                         </p>
                       </div>
                     </div>
@@ -661,221 +636,191 @@ function Product(props) {
                       </div>
                       <div class="nk-comment-text">
                         <p>
-                         texte
+                          texte
                         </p>
                       </div>
                     </div>
                     {/* <!-- END: Review --> */}
                   </div>
                 </div>
-                 
+
                 {/* <!-- END: Tab Reviews --> */}
               </div>
             </div>
-            <div class="nk-gap-1"></div>
-         
-            {item.plateformes &&
-                                item.plateformes.map((ab, index) => (
-                                  <>
-                                   {!ab.support === "Xbox Series" ?(
-                    <>
+            {/* <div class="nk-gap-3"></div> */}
             <h3 class="nk-decorated-h-2">
               <span>
-                <span class="text-main-1">Configurations</span> 
+                <span class="text-main-1">Configurations</span>
               </span>
             </h3>
             <div class="nk-gap"></div>
-        
             <div class="specs-container listing-slider">
-                    {item.config &&
-                      item.config.map((v, index) => (
-                        
-                        <>
-                          <div class="minimal" key={index}>
-                            <h3>
-                              minimale<span class="asterix">*</span>
-                            </h3>{" "}
-                            <div class="specs">
-                              <li>
-                                <strong>OS:</strong> {v.OSmin}
-                              </li>
-                              <li>
-                                <strong>Processor:</strong> {v.PROCmin}
-                              </li>
-                              <li>
-                                <strong>Memory:</strong> {v.MEMmin}
-                              </li>
-                              <li>
-                                <strong>Graphics:</strong> {v.GRAPHmin}
-                              </li>
-                              <li>
-                                <strong>Storage:</strong> {v.HDD}
-                              </li>
-                            </div>
-                          </div>
-                          <div class="recommended">
-                            <h3>
-                              recommandée<span class="asterix">*</span>
-                            </h3>{" "}
-                            <div class="specs">
-                              <li>
-                                <strong>OS:</strong> {v.OSmax}
-                              </li>
-                              <li>
-                                <strong>Processor:</strong> {v.PROCmax}
-                              </li>
-                              <li>
-                                <strong>Memory:</strong> {v.MEMmax}
-                              </li>
-                              <li>
-                                <strong>Graphics:</strong>
-                                {v.GRAPHmax}
-                              </li>
-                              <li>
-                                <strong>Storage:</strong> {v.HDD}
-                              </li>
-                            </div>
-                          </div>
-                        </>
-                      ))}
-                  </div>
+              {item.config &&
+                item.config.map((v, index) => (
+                  <>
+                    <div class="minimal" key={index}>
+                      <h3>
+                        minimale<span class="asterix">*</span>
+                      </h3>{" "}
+                      <div class="specs">
+                        <li>
+                          <strong>OS:</strong> {v.OSmin}
+                        </li>
+                        <li>
+                          <strong>Processor:</strong> {v.PROCmin}
+                        </li>
+                        <li>
+                          <strong>Memory:</strong> {v.MEMmin}
+                        </li>
+                        <li>
+                          <strong>Graphics:</strong> {v.GRAPHmin}
+                        </li>
+                        <li>
+                          <strong>Storage:</strong> {v.HDD}
+                        </li>
+                      </div>
+                    </div>
+                    <div class="recommended">
+                      <h3>
+                        recommandée<span class="asterix">*</span>
+                      </h3>{" "}
+                      <div class="specs">
+                        <li>
+                          <strong>OS:</strong> {v.OSmax}
+                        </li>
+                        <li>
+                          <strong>Processor:</strong> {v.PROCmax}
+                        </li>
+                        <li>
+                          <strong>Memory:</strong> {v.MEMmax}
+                        </li>
+                        <li>
+                          <strong>Graphics:</strong>
+                          {v.GRAPHmax}
+                        </li>
+                        <li>
+                          <strong>Storage:</strong> {v.HDD}
+                        </li>
+                      </div>
+                    </div>
                   </>
-  ) : (
-    <div className="div"></div>
-  )}
-     </>
-                                ))}
+                ))}
+            </div>
 
-                  <div class="nk-gap-3"></div>
+            <div class="nk-gap-3"></div>
             <h3 class="nk-decorated-h-2">
               <span>
                 <span class="text-main-1">L'actualité </span> du jeu
               </span>
             </h3>
             {item.news &&
-                    item.news.map((v, index) => (
-                      <div
-                        class="nk-blog-post nk-blog-post-border-bottom"
-                        key={v.id}
-                      >
-                        <div class="row vertical-gap">
-                          <div class="col-lg-3 col-md-5">
-                            <a class="nk-post-img">
-                              <img src={v.imageUrl} alt={v.title} />
+              item.news.map((v, index) => (
+                <div class="nk-blog-post nk-blog-post-border-bottom" key={v.id}>
+                  <div class="row vertical-gap">
+                    <div class="col-lg-3 col-md-5">
+                      <Link
 
-                              <span class="nk-post-categories">
-                                {/* <span class="bg-main-1">{new.genre}</span> */}
-                              </span>
-                            </a>
-                          </div>
-                          <div class="col-lg-9 col-md-7">
-                            <h2 class="nk-post-title h4">
-                              <a>{v.title}</a>
-                            </h2>
-                            <div class="nk-post-date mt-10 mb-10">
-                              <span class="fa fa-calendar"></span> {formatDate(v.date)}
-                              <span class="fa fa-comments"></span>{" "}
-                              <a href="#">0 commentaires</a>
-                            </div>
-                            <div class="nk-post-text">
-                              <p>{v.new.slice(0, 200) + "..."}</p>
-                              <a class="nk-btn nk-btn-rounded nk-btn-color-dark-3 nk-btn-hover-color-main-1">
-                                Détails
-                              </a>
-                            </div>
-                          </div>
-                        </div>
+                        key={v.news_id}
+                        {...v}
+
+                        to={{
+                          pathname: `/news/${v.id}/${v.news_id}/`,
+
+                        }} class="nk-post-img">
+                        <img src={v.imageUrl} alt={v.title} />
+
+                        <span class="nk-post-categories">
+                          {/* <span class="bg-main-1">{new.genre}</span> */}
+                        </span>
+                      </Link>
+                    </div>
+                    <div class="col-lg-9 col-md-7">
+                      <h2 class="nk-post-title h4">
+                        <Link
+
+                          key={v.news_id}
+                          {...v}
+                          to={{
+                            pathname: `/news/${v.id}/${v.news_id}/`,
+
+                          }}>{v.title}</Link>
+                      </h2>
+                      <div class="nk-post-date mt-10 mb-10">
+                        <span class="fa fa-calendar"></span> {formatDate(v.date)}
+                        <span class="fa fa-comments"></span>{" "}
+                        <a href="#">0 commentaires</a>
                       </div>
-                    ))}
+                      <div class="nk-post-text">
+                        <p>{v.new.slice(0, 200) + "..."}</p>
+                        <a class="nk-btn nk-btn-rounded nk-btn-color-dark-3 nk-btn-hover-color-main-1">
+                          Détails
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             <div class="nk-gap"></div>
+            <div class="nk-gap-3"></div>
             <h3 class="nk-decorated-h-2">
               <span>
                 <span class="text-main-1">Jeux</span> Similaires
               </span>
             </h3>
+
             <div class="nk-gap"></div>
-            <div class="row vertical-gap">
             <div className="slider-container">
-                  {/* <Slider {...settings}> */}
-                  {gameData.map((i, id) => (
-                    <div
-                      className="nk-blog-poste"
-                      key={id}
-                      style={{
-                        display: item.genre !== i.genre ? "none" : "block",
-                      }}
-                    >
-                       {item.genre === i.genre ? (
-                    <div
-                      key={id}
-                      // style={{ width: '40%' }}
-                    >
-                     <Link
-                  key={i.id}
-                  {...i}
-                  to={{
-                    pathname: `/PC/${i.id}/${i.title}`,
-                    state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
+              {/* <Slider {...settings}> */}
+              {gameData.map((i, id) => (
+                <div
+                  className="nk-blog-poste"
+                  key={id}
+                  style={{
+                    display: item.genre !== i.genre ? "none" : "block",
                   }}
-                  class="nk-post-img">
+
+                >
+                  {item.genre === i.genre ? (
+                    <div
+                      key={id}
+                    // style={{ width: '40%' }}
+                    >
+                      <Link
+
+                        key={i.id}
+                        {...i}
+
+                        to={{
+                          pathname: `/PC-Steam/${i.id}/${i.title}`,
+                          state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
+                        }}
+                        onClick={() => {
+                          window.scrollTo(0, 0)
+                        }}
+                        class="nk-post-img">
                         <img src={i.imageUrl} alt={i.title} />
                         <span className="nk-post-comments-count">
                           {i.promo}
                         </span>
-                        </Link>
+                      </Link>
                       <div className="nk-gap"></div>
                       <h2 className="nk-post-title h4 d-flex justify-content-between">
-                      <Link
-                  key={i.id}
-                  {...i}
-                  to={{
-                    pathname: `/PC/${i.id}/${i.title}`,
-                    state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
-                  }}
-                  class="nk-post-img">{i.title}  </Link>
+                        <Link
+
+                          key={i.id}
+                          {...i}
+                          to={{
+                            pathname: `/PC-Steam/${i.id}/${i.title}`,
+                            state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
+                          }}
+                          class="nk-post-img">{i.title}  </Link>
                         <span>{i.price}</span>
                       </h2>
                     </div>
                   ) : null}
-                    </div>
-                  ))}
-                  {/* </Slider> */}
                 </div>
-
-              {/* {gameData.map((i, id) => (
-              <div
-                class="col-md-6"
-                key={id}
-                style={{
-                  display: item.genre !== i.genre ? "none" : "block",
-                }}
-              >
-                {item.genre === i.genre ? (
-                     
-                <div class="nk-product-cat"  key={id}>
-                  <a class="nk-product-image" href="store-product.html">
-                    <img
-                      src={i.imageUrl} alt={i.title}
-                    />
-                  </a>
-                  <div class="nk-product-cont">
-                    <h3 class="nk-product-title h5">
-                      <a href="store-product.html">{i.title}</a>
-                    </h3>
-                    <div class="nk-gap-1"></div>
-                    <div class="nk-product-rating" data-rating="3">
-                      {" "}
-                      <i class="fa fa-star"></i> <i class="fa fa-star"></i>{" "}
-                      <i class="fa fa-star"></i> <i class="far fa-star"></i>{" "}
-                      <i class="far fa-star"></i>
-                    </div>
-                    <div class="nk-gap-1"></div>
-                    <div class="nk-product-price">{i.price}</div>
-                  </div>
-                </div>
-                ) : null}
-              </div>
-             ))} */}
+              ))}
+              {/* </Slider> */}
             </div>
           </div>
         </div>
