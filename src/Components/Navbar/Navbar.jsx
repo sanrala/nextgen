@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import logo from "./../../assets/images/logoGames/logo.png";
 import { Link } from "react-router-dom";
+import Burger from "./Burger"
 function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -26,52 +27,24 @@ function NavBar() {
               class="nk-nav nk-nav-right d-none d-lg-table-cell"
               data-nav-mobile="#nk-nav-mobile"
             >
+             
               <li>
-              <Link
-
-to={{
-  pathname: `/actualités/`,
-
-}}>Actualités</Link>
-              </li>
-              <li>
-                <a href="">Populaires</a>
-              </li>
-              <li>
-                <a href="">Précommandes</a>
-              </li>
-              <li>
-                <a href="">Meilleures ventes</a>
-              </li>
-            </ul>
-            <ul class="nk-nav nk-nav-right nk-nav-icons">
-              <li class="single-icon d-lg-none">
-                <a
-                  href="#"
-                  class="no-link-effect"
-                  data-nav-toggle="#nk-nav-mobile"
+                <Link
+                  to={{
+                    pathname: `/actualités/`,
+                  }}
                 >
-                  <span
-                    class={`nk-icon-burger ${isOpen ? "open" : ""}`}
-                    onClick={toggleMenu}
-                  >
-                    <span class="nk-t-1"></span>
-                    <span class="nk-t-2"></span>
-                    <span class="nk-t-3"></span>
-                  </span>
-                </a>
-                <div className={`menu ${isOpen ? "open" : ""}`}>
-                  <div className="close-icon" onClick={toggleMenu}>
-                    <div className="close-line"></div>
-                    <div className="close-line"></div>
-                  </div>
-            
-                  <ul>
-                  <li>
-                <a href="">Actualités</a>
+                  Actualités
+                </Link>
               </li>
               <li>
-                <a href="">Populaires</a>
+                <Link
+                  to={{
+                    pathname: `/Populaires/`,
+                  }}
+                >
+                  Populaires
+                </Link>
               </li>
               <li>
                 <a href="">Précommandes</a>
@@ -79,14 +52,12 @@ to={{
               <li>
                 <a href="">Meilleures ventes</a>
               </li>
-                    <li>
-                      <a href="">Mon compte</a>
-                    </li>
-                    
-                  </ul>
-                 
-                </div>
-              </li>
+          
+            </ul>
+        
+            <ul class="nk-nav nk-nav-right nk-nav-icons">
+            <Burger/>
+          
             </ul>
           </div>
         </div>

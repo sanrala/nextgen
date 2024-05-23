@@ -2,91 +2,64 @@ import React, { useState, useMemo, useEffect } from "react";
 import HoverVideoPlayer from "react-hover-video-player";
 import { Link } from "react-router-dom";
 import data from "./../../games.json";
-import axios from 'axios';
-
+import axios from "axios";
 
 function Popular() {
- 
   const [articles, setArticles] = useState([]);
 
-  const popularGames = data.filter(item => item.popular === true);
+  const popularGames = data.filter((item) => item.popular === true);
   useEffect(() => {
     setArticles(data.articles); // Charger les données du fichier JSON
   }, []);
 
-//   const [games, setGames] = useState([]);
+  //   const [games, setGames] = useState([]);
 
-//   useEffect(() => {
-//     // GitHub raw URL to fetch the JSON file
-//     const url = 'https://raw.githubusercontent.com/sanrala/gamesJSON/main/games.json';
-    
-//     const fetchGames = async () => {
-//       try {
-//         const response = await fetch(url);
-//         const data = await response.json();
-//         setGames(data);
-//       } catch (error) {
-//         console.error('Error fetching the games data:', error);
-//       }
-//     };
+  //   useEffect(() => {
+  //     // GitHub raw URL to fetch the JSON file
+  //     const url = 'https://raw.githubusercontent.com/sanrala/gamesJSON/main/games.json';
 
-//     fetchGames();
-//   }, []);
-//   const popularGames = games.filter(item => item.popular === true);
-//   useEffect(() => {
-//     setArticles(games.articles); 
-//   }, []);
-// console.log(games);
+  //     const fetchGames = async () => {
+  //       try {
+  //         const response = await fetch(url);
+  //         const data = await response.json();
+  //         setGames(data);
+  //       } catch (error) {
+  //         console.error('Error fetching the games data:', error);
+  //       }
+  //     };
+
+  //     fetchGames();
+  //   }, []);
+  //   const popularGames = games.filter(item => item.popular === true);
+  //   useEffect(() => {
+  //     setArticles(games.articles);
+  //   }, []);
+  // console.log(games);
   return (
     <div>
       <div class="nk-gap-2"></div>
-      <h3 class="nk-decorated-h-2">
-        <span>
-          <span class="text-main-1">Jeux</span> Populaires
-        </span>
-      </h3>
+      <Link
+        to={{
+          pathname: `/Populaires/`,
+        }}
+      >
+        <h3 class="nk-decorated-h-2">
+          <span>
+            <span class="text-main-1">Jeux</span> Populaires
+          </span>
+        </h3>
+      </Link>
       <div class="nk-gap"></div>
       <div class="nk-blog-grid">
         <div class="row">
+          {popularGames
+            .slice(-6)
+            .reverse()
+            .map((item, id) => (
+              <div class="col-md-6 col-lg-4" key={item.id}>
+                {/* <!-- START: Post --> */}
 
- 
-
-
-
-          {popularGames.slice(-6).reverse().map((item, id) => (
-            <div class="col-md-6 col-lg-4" key={item.id}>
-              {/* <!-- START: Post --> */}
-
-              <div class="nk-blog-post">
-                <Link
-                  key={item.id}
-                  {...item}
-                  to={{
-                    pathname: `/PC/${item.id}/${item.title}`,
-                    state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
-                  }}
-                  class="nk-post-img"
-                >
-                  <HoverVideoPlayer
-                    className="tot"
-                    videoSrc={item.videoHover}
-                    style={{
-                      // Make the image expand to cover the video's dimensions
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                    pausedOverlay={<img src={item.imageUrl} alt={item.title} />}
-                  />
-                  <span class="nk-post-comments-count">{item.promo}</span>
-
-                  <span class="nk-post-categories">
-                    <span class="bg-main-5">{item.genre}</span>
-                  </span>
-                </Link>
-                <div class="nk-gap"></div>
-                <div className="title_price d-flex justify-content-between align-items-baseline">
-                <h2 class="nk-post-title h4">
+                <div class="nk-blog-post">
                   <Link
                     key={item.id}
                     {...item}
@@ -94,23 +67,52 @@ function Popular() {
                       pathname: `/PC/${item.id}/${item.title}`,
                       state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
                     }}
+                    class="nk-post-img"
                   >
-                    {item.title.slice(0, 17) + "..."}
+                    <HoverVideoPlayer
+                      className="tot"
+                      videoSrc={item.videoHover}
+                      style={{
+                        // Make the image expand to cover the video's dimensions
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                      pausedOverlay={
+                        <img src={item.imageUrl} alt={item.title} />
+                      }
+                    />
+                    <span class="nk-post-comments-count">{item.promo}</span>
+
+                    <span class="nk-post-categories">
+                      <span class="bg-main-5">{item.genre}</span>
+                    </span>
                   </Link>
-                </h2>
-                {item.price}
-                </div>
-                {/* <div class="nk-post-text">
+                  <div class="nk-gap"></div>
+                  <div className="title_price d-flex justify-content-between align-items-baseline">
+                    <h2 class="nk-post-title h4">
+                      <Link
+                        key={item.id}
+                        {...item}
+                        to={{
+                          pathname: `/PC/${item.id}/${item.title}`,
+                          state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
+                        }}
+                      >
+                        {item.title.slice(0, 17) + "..."}
+                      </Link>
+                    </h2>
+                    {item.price}
+                  </div>
+                  {/* <div class="nk-post-text">
                   <p>{item.resume.slice(0, 190) + "..."}</p>
                 </div> */}
-                <div class="nk-gap"></div>
-             
-              </div>
+                  <div class="nk-gap"></div>
+                </div>
 
-              {/* <!-- END: Post --> */}
-            </div>
-          ))}
-        
+                {/* <!-- END: Post --> */}
+              </div>
+            ))}
         </div>
       </div>
     </div>

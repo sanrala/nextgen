@@ -1,6 +1,8 @@
 import Home from "./Home";
 import BlocArticle from "./BlogArticle/BlocArticle";  
 import Article from "./BlogArticle/Article"; 
+
+import Populaires from "./BlogArticle/PopularArticle"; 
 import Preco from "./BlogArticle/Preco"; 
 import ProductRockstar from "./Products/ProductRockstar";
 import Products from "./Products/Product";
@@ -23,6 +25,7 @@ function App() {
 <Route path="/PC_Rockstar/:id/:title" element={<ProductRockstar />}/>
 <Route path="/news/:id/:news_id" element={<Article />} />
 <Route path="/actualités" element={<BlocArticle />} />
+<Route path="/Populaires" element={<Populaires />} />
 <Route path="/précommandes/:id/:title" element={<Preco />}/>
 
 </Routes>

@@ -56,39 +56,33 @@ function BoxNews() {
 
   return (
     <div>
-
-
-
-
-<Link
-
-to={{
-  pathname: `/actualités/`,
-
-}}>
-<h3 class="nk-decorated-h-2">
-            <span>
-              <span class="text-main-1"> 
-Actualités</span> du jour
-            </span>
-          </h3></Link>
-          <div class="nk-gap"></div>
+      <Link
+        to={{
+          pathname: `/actualités/`,
+        }}
+      >
+        <h3 class="nk-decorated-h-2">
+          <span>
+            <span class="text-main-1">Actualités</span> du jour
+          </span>
+        </h3>
+      </Link>
+      <div class="nk-gap"></div>
 
       <div className="nk-news-box">
-
-
         <div className="gallery-container">
-
           <div className="large-image-container">
             <Link
-
               to={{
                 pathname: `/news/${sixLatestNews[0].id}/${sixLatestNews[0].news_id}/`,
-
               }}
               className="nk-post-img"
             >
-              <img src={sixLatestNews[0].imageUrl} alt={sixLatestNews[0].title} className="large-image" />
+              <img
+                src={sixLatestNews[0].imageUrl}
+                alt={sixLatestNews[0].title}
+                className="large-image"
+              />
               <span className="nk-post-categories">
                 <span className="bg-main-1">NEWS</span>
               </span>
@@ -103,7 +97,6 @@ Actualités</span> du jour
                   {...v}
                   to={{
                     pathname: `/news/${v.id}/${v.news_id}/`,
-
                   }}
                   className="nk-post-img"
                 >
@@ -117,8 +110,6 @@ Actualités</span> du jour
             ))}
           </div>
         </div>
-
-
 
         {/* {sixLatestNews.map((v, id) => (
           <div class="nk-blog-post nk-blog-post-border-bottom" key={v.id}>
@@ -179,11 +170,8 @@ Actualités</span> du jour
             </div>
           </div>
         ))} */}
-
       </div>
-
-
-    </div >
+    </div>
   );
 }
 

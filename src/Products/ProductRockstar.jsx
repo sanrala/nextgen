@@ -278,7 +278,7 @@ function Product(props) {
                             ) : (
                               <>
                                 <a
-                                  href={item.buy}
+                                  href={ab.buy}
                                   class="nk-btn nk-btn-rounded nk-btn-color-main-1"
                                 >
                                   Instant Gaming

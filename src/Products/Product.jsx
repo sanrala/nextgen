@@ -286,7 +286,7 @@ function Product(props) {
                             ) : (
                               <>
                                 <a
-                                  href={item.buy}
+                                  href={ab.buy}
                                   class="nk-btn nk-btn-rounded nk-btn-color-main-1"
                                 >
                                   Instant Gaming
@@ -427,7 +427,7 @@ function Product(props) {
                
                   <div class="nk-gap"></div>
                   {!item.gifs ? null : (
-                    <div className="text-center">
+                    <div className="text-left">
                       {item.gifs &&
                         item.gifs.map((gif, index) => (
                           <div key={index}>
@@ -777,8 +777,10 @@ function Product(props) {
             </h3>
 
             <div class="nk-gap"></div>
+            {gameData ?  (
             <div className="slider-container">
               {/* <Slider {...settings}> */}
+
               {gameData.map((i, id) => (
                 <div
                   className="nk-blog-poste"
@@ -830,6 +832,14 @@ function Product(props) {
               ))}
            
             </div>
+            ) : (
+           
+                // Code à exécuter lorsque item est null
+                <Box sx={{ display: "flex" }}>
+                  <CircularProgress />
+                </Box>
+           
+            )}
           </div>
    
         </div>
