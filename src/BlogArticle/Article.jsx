@@ -50,10 +50,40 @@ function BlocArticle() {
               <span class="fa fa-angle-right"></span>
             </li>
             <li>
-              <a href="">{article.title}</a>
+            {article.plateformes &&
+              article.plateformes.map((v, index) => (
+                <>
+                {v.support === "Steam" && ( 
+            <Link
+                    
+                    key={article.id}
+                    {...article}
+                    
+                    to={{
+                      pathname: `/PC/${article.id}/${article.title}`,
+                      state: { itemData: article }, // Passer les données de l'élément à la page BlocArticle
+                    }}
+                   >{article.title}</Link>
+                )} 
+                
+                {v.support === "Rockstar" && ( 
+                  <Link
+                    
+                  key={article.id}
+                  {...article}
+                  
+                  to={{
+                    pathname: `/PC_Rockstar/${article.id}/${article.title}`,
+                    state: { itemData: article }, // Passer les données de l'élément à la page BlocArticle
+                  }}
+                 >{article.title}</Link>
+                )
+                  }
+                   </>
+                  ))}
+
             </li>
-
-
+        
           </ul>
         ) : (
           // Code à exécuter lorsque item est null
