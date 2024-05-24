@@ -11,6 +11,7 @@ import Popular from "./Components/Popular/Popular";
 import BestGenre from './Components/BestGenre/BestGenre'
 import Footer from "./Components/Footer/Footer";
 import gameData from "./exclu.json";
+import game from "./games.json";
 import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
 
@@ -81,7 +82,7 @@ function Home() {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+            setCurrentImageIndex((prevIndex) => (prevIndex + 1) % game.length);
         }, 3000); // Changer d'image toutes les 3 secondes
 
         return () => clearInterval(interval);
@@ -144,20 +145,20 @@ function Home() {
           <div class="separator product-panel"></div>
 
           <div className="carousel">
-            <div className="main-image" style={{ backgroundImage: `url(${images[currentImageIndex].url})` }}>
+            <div className="main-image" style={{ backgroundImage: `url(${game[currentImageIndex].imageUrl})` }}>
                 <div className="image-overlay">
-                    <h2>{images[currentImageIndex].title}</h2>
-                    <p>{images[currentImageIndex].text}</p>
+                    <h2>{game[currentImageIndex].title}</h2>
+                    {/* <p>{game[currentImageIndex].resume}</p> */}
                 </div>
             </div>
             <div className="thumbnail-background">
                 <div className="thumbnail-container">
-                    {images.map((image, index) => (
+                    {game.map((image, index) => (
                         <div 
                             key={index} 
                             className={`thumbnail ${index === currentImageIndex ? 'selected' : ''}`}
                             onClick={() => handleImageClick(index)}
-                            style={{ backgroundImage: `url(${image.url})` }}
+                            style={{ backgroundImage: `url(${image.imageUrl})` }}
                         />
                     ))}
                 </div>
