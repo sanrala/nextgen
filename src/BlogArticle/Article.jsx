@@ -202,12 +202,13 @@ function BlocArticle() {
                           </div>
                           <div class="separator product-panel"></div>
                           <div className="text-center">
-                            {item.new2 != undefined || item.title2 != undefined || item.img != undefined ? (
+                            {item.new2 != undefined || item.title2 != undefined || item.img != undefined || item.Link != undefined || item.LinkUrl != undefined ? (
                               <div >
                                 <h3 className="h4">{item.title2}</h3>
-                                <img className="img-fluid " src={item.img} alt={item.title} />
+                                <img className="img-fluid " src={item.img}  />
                                 <div class="nk-gap-2"></div>
                                 <p>{item.new2}</p>
+                                <a href={item.LinkUrl} className="know" >{item.Link}</a>
                               </div>
                             ) : (
                               <div className="div"></div>
