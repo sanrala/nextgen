@@ -49,8 +49,8 @@ function BoxNews() {
   // Sélectionner les 6 plus récentes nouvelles
   var sixLatestNews = allNews.slice(0, 5);
   // Afficher les nouvelles triées
-  console.log("Toutes les nouvelles triées par date croissante :");
-  console.log(sixLatestNews);
+  // console.log("Toutes les nouvelles triées par date croissante :");
+  // console.log(sixLatestNews);
   
 
 
