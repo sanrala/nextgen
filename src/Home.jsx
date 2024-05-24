@@ -15,7 +15,7 @@ import game from "./games.json";
 import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Sorties from "./Components/Sorties/Sorties"
-
+import TwitchEmbedVideo from 'react-twitch-embed-video';
 import CircularProgress from '@mui/material/CircularProgress';
 
 function Home() {
@@ -45,7 +45,22 @@ function Home() {
   }, []);
 
 
-  
+   
+const [liveChannel, setLiveChannel] = useState(false);
+const [videos, setVideos] = useState([]);
+console.log(videos)
+useEffect(() => {
+    const fetchVideos = async () => {
+        // Code pour récupérer les vidéos enregistrées
+    };
+
+    const checkLiveStatus = async () => {
+        // Code pour vérifier si la chaîne est en direct
+    };
+
+    checkLiveStatus(); // Vérifier le statut en direct au chargement initial
+}, []);
+
   
   return (
     <div>
@@ -65,10 +80,25 @@ function Home() {
           <BoxNews />
           <div class="separator product-panel"></div>
          
-         
+        
+ 
           <Sorties/>
           <div class="separator product-panel"></div>
-      
+          </div>
+        <div className="cover-container">
+     
+     <TwitchEmbedVideo channel="cryptelo_" 
+      allowfullscreen={true} // Ajouter l'attribut allowfullscreen
+      controls={true} // Désactiver les contrôles de jeu mature
+      withChat={true}
+      apiKey="wrr5jchxkl0nvgbnx14nvt7mt4wbx5"
+      width="100%"
+     height="100%" />
+
+
+</div>
+<div class="separator product-panel"></div>
+        <div class="container">
           <Popular/>
           <div class="separator product-panel"></div>
           </div>
@@ -93,7 +123,7 @@ function Home() {
         </div>
       </section>
       <div class="separator product-panel"></div>
-       
+     
       <div class="container">
         
           <Precommandes/>
