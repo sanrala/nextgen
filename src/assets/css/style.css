@@ -11411,3 +11411,130 @@ max-width: 616px;
     color: #d9d9d9;
     background-color: #fe0000;
   }
+
+  
+
+
+
+  .carousel {
+    position: relative;
+    display: flex;
+    flex-direction: row-reverse;
+    height: 80vh;
+    max-height: 600px;
+    overflow: hidden;
+}
+
+.main-image {
+    flex-grow: 1;
+    background-size: cover;
+    background-position: center;
+    transition: background-image 0.5s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    position: relative;
+    /* padding: 100px; */
+    color: white;
+    text-align: center;
+    width: 100%;
+}
+
+.image-overlay {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    color: white;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.image-overlay p {
+    font-size: small;
+    margin-bottom: 0;
+}
+.image-overlay h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0;
+}
+
+.thumbnail-background {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    bottom: 10px;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(60px) saturate(100%);
+    -webkit-backdrop-filter: blur(60px) saturate(100%);
+    border-radius: 10px;
+    padding: 20px;
+    /* overflow-y: auto; */
+}
+
+.thumbnail-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.thumbnail {
+    width: 100%;
+    height: 85px;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    transition: transform 0.3s, border 0.3s;
+}
+
+.thumbnail.selected {
+    border: 2px solid #000;
+    transform: scale(1.1);
+}
+
+.thumbnail:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .carousel {
+        flex-direction: column;
+        height: 40vh;
+    }
+    .main-image {
+    
+        padding: 100px;
+   
+    }
+    .image-overlay {
+    
+ bottom: auto;
+       
+    }
+    .thumbnail-background {
+        flex-direction: row;
+        width: 100%;
+        height: 100px;
+        margin: 0;
+        overflow-x: auto;
+        right: 0;
+        bottom: 0;
+        top: auto;
+        border-radius: 0;
+    }
+
+    .thumbnail-container {
+        flex-direction: row;
+    }
+
+    .thumbnail {
+        height: 100%;
+        width: 80px;
+        margin-right: 10px;
+    }
+}
