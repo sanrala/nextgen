@@ -4,6 +4,23 @@ import data from "./../../games.json";
 import HoverVideoPlayer from "react-hover-video-player";
 
 function Precommandes() {
+  const [games, setGames] = useState([]);
+
+  useEffect(() => {
+    const today = new Date();
+    const updatedGames = data.map(game => {
+      const releaseDate = new Date(game.dateSortie);
+      if (releaseDate <= today) {
+        return { ...game, precommande: false };
+      }
+      return game;
+    });
+
+    // Trier les jeux par date de sortie du plus proche au plus loin
+    const sortedGames = updatedGames.sort((a, b) => new Date(a.dateSortie) - new Date(b.dateSortie));
+
+    setGames(sortedGames);
+  }, []);
 
   function formatDate(dateString) {
     const date = new Date(dateString);
@@ -11,15 +28,22 @@ function Precommandes() {
     return date.toLocaleDateString('fr-FR', options);
   }
 
-  const preco = data.filter(item => item.precommande === true);
+  // Filtrer les jeux en précommande et prendre les 6 premiers
+  const preco = games.filter(item => item.precommande === true).slice(0, 6);
   return (
     <div>
       <div class="nk-gap-2"></div>
+      <Link
+        to={{
+          pathname: `/PrecoFull/`,
+        }}
+      >
       <h3 class="nk-decorated-h-2">
         <span>
           <span class="text-main-1">Jeux</span> en précommandes
         </span>
       </h3>
+      </Link>
       <div class="nk-gap"></div>
       <div class="nk-blog-grid">
         <div class="row">

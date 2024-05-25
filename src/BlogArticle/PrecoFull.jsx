@@ -1,10 +1,10 @@
 import { ListItem } from "@mui/material";
 import React, { useState, useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import Header from "./../Components/Header/Header";
+import Header from "../Components/Header/Header";
 
-import Footer from "./../Components/Footer/Footer";
-import gameData from "./../games.json";
+import Footer from "../Components/Footer/Footer";
+import gameData from "../games.json";
 
 import { Link } from "react-router-dom";
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
@@ -22,22 +22,44 @@ function BlocArticle(props) {
     };
     return date.toLocaleDateString("fr-FR", options);
   }
+  const [games, setGames] = useState([]);
 
+  useEffect(() => {
+    const today = new Date();
+    const updatedGames = gameData.map(game => {
+      const releaseDate = new Date(game.dateSortie);
+      if (releaseDate <= today) {
+        return { ...game, precommande: false };
+      }
+      return game;
+    });
+
+    // Trier les jeux par date de sortie du plus proche au plus loin
+    const sortedGames = updatedGames.sort((a, b) => new Date(a.dateSortie) - new Date(b.dateSortie));
+
+    setGames(sortedGames);
+  }, []);
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString('fr-FR', options);
+  }
+
+  // Filtrer les jeux en précommande et prendre les 6 premiers
+  const preco = games.filter(item => item.precommande === true)
   
+  const [isAccordionOpen, setIsAccordionOpen] = useState(false);
 
+  const toggleAccordion = () => {
+    setIsAccordionOpen(!isAccordionOpen);
+  };
   const [articles, setArticles] = useState([]);
 
   const popularGames = gameData.filter((item) => item.popular === true);
   useEffect(() => {
     setArticles(gameData.articles); // Charger les données du fichier JSON
   }, []);
-  const preco = gameData.filter(item => item.precommande === true);
-  const [isAccordionOpen, setIsAccordionOpen] = useState(false);
-
-  const toggleAccordion = () => {
-    setIsAccordionOpen(!isAccordionOpen);
-  };
-  
   return (
     <div>
       <Header />
@@ -62,7 +84,7 @@ function BlocArticle(props) {
 
 
           <li>
-            <span>Les jeux les plus populaires</span>
+            <span>Les jeux en précommandes</span>
           </li>
         </ul>
       </div>
@@ -74,7 +96,7 @@ function BlocArticle(props) {
           <div class="col-lg-8">
             <div class="separator product-panel"></div>
             <div class="separator product-panel"></div>
-            {popularGames.reverse().map((v, index) => {
+            {preco.reverse().map((v, index) => {
         // Afficher les dix premiers articles normalement
         if (index < 10) {
           return (
@@ -82,7 +104,7 @@ function BlocArticle(props) {
               <div className="row vertical-gap">
                 <div className="col-lg-3 col-md-5">
                   <Link
-                    to={`/news/${v.id}/${v.news_id}/`}
+                    to={`/PC/${v.id}/${v.news_id}/`}
                     className="nk-post-img"
                   >
                     <img src={v.imageUrl} alt={v.title} />
@@ -132,7 +154,7 @@ function BlocArticle(props) {
               </div>
               {isAccordionOpen && (
                 <div>
-                  {popularGames.slice(12).map((v) => (
+                  {preco.slice(12).map((v) => (
                     <div
                       className="nk-blog-post nk-blog-post-border-bottom"
                       key={v.id}
@@ -140,7 +162,7 @@ function BlocArticle(props) {
                       <div className="row vertical-gap">
                         <div className="col-lg-3 col-md-5">
                           <Link
-                            to={`/news/${v.id}/${v.news_id}/`}
+                            to={`/PC/${v.id}/${v.news_id}/`}
                             className="nk-post-img"
                           >
                             <img src={v.imageUrl} alt={v.title} />
@@ -151,7 +173,7 @@ function BlocArticle(props) {
                         </div>
                         <div className="col-lg-9 col-md-7">
                           <h2 className="nk-post-title h4">
-                            <Link to={`/news/${v.id}/${v.news_id}/`}>
+                            <Link to={`/PC/${v.id}/${v.news_id}/`}>
                               {v.title}
                             </Link>
                           </h2>
@@ -188,14 +210,19 @@ function BlocArticle(props) {
             <aside class="nk-sidebar nk-sidebar-right nk-sidebar-sticky">
               <div class="nk-widget"></div>
 
+         
+
               <div class="nk-widget nk-widget-highlighted">
                 <h4 class="nk-widget-title">
                   <span>
-                    <span class="text-main-1">Les</span> Précommandes
+                    <span class="text-main-1">les</span> Populaires
                   </span>
                 </h4>
                 <div class="nk-widget-content">
-                {preco.map((item) => (
+                {popularGames
+                    .slice(-6)
+                    .reverse()
+                    .map((item, id) => (
                       <div class="nk-widget-post">
                         <Link
                           key={item.id}
@@ -220,55 +247,6 @@ function BlocArticle(props) {
                               state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
                             }}
                           >
-                            {item.title.slice(0, 20) + "..."}
-                          </Link>
-                        </h3>
-<div className="d-flex justify-content-between align-items-baseline">
-                        <div class="nk-product-price">{item.price}
-                       
-                        </div>
-                        <div className="date">{item.dateSortie}</div>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </div>
-
-              {/* <div class="nk-widget nk-widget-highlighted">
-                <h4 class="nk-widget-title">
-                  <span>
-                    <span class="text-main-1">les</span> Populaires
-                  </span>
-                </h4>
-                <div class="nk-widget-content">
-                {popularGames
-                    .slice(-6)
-                    .reverse()
-                    .map((item, id) => (
-                      <div class="nk-widget-post">
-                        <Link
-                          key={item.id}
-                          {...item}
-                          to={{
-                            pathname: `/PC-Steam/${item.id}/${item.title}`,
-                            state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
-                          }}
-                          class="nk-post-image"
-                        >
-                          <img
-                            src={item.imageUrl}
-                            alt={item.title}
-                          />
-                        </Link>
-                        <h3 class="nk-post-title">
-                          <Link
-                            key={item.id}
-                            {...item}
-                            to={{
-                              pathname: `/PC-Steam/${item.id}/${item.title}`,
-                              state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
-                            }}
-                          >
                             {item.title}
                           </Link>
                         </h3>
@@ -277,7 +255,7 @@ function BlocArticle(props) {
                       </div>
                     ))}
                 </div>
-              </div> */}
+              </div>
             </aside>
           </div>
         </div>

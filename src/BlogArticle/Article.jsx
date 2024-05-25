@@ -197,6 +197,7 @@ function BlocArticle() {
                               <div class="nk-post-categories d-flex align-items-center">
 
                                 <img src={item.imageUrl} alt={item.title} />
+                                
                               </div>
                             </div>
                           </div>
@@ -205,9 +206,11 @@ function BlocArticle() {
                             {item.new2 != undefined || item.title2 != undefined || item.img != undefined || item.Link != undefined || item.LinkUrl != undefined ? (
                               <div >
                                 <h3 className="h4">{item.title2}</h3>
+                                
                                 <img className="img-fluid " src={item.img}  />
                                 <div class="nk-gap-2"></div>
                                 <p>{item.new2}</p>
+                               
                                 <a href={item.LinkUrl} className="know" >{item.Link}</a>
                               </div>
                             ) : (

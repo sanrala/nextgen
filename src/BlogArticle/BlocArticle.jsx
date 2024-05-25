@@ -168,7 +168,7 @@ function BlocArticle(props) {
                   <div className="nk-post-text">
                     <p>{v.new.slice(0, 200) + "..."}</p>
                     <Link
-                      to={`/news/${v.id}/${v.news_id}/`}
+                      to={`/PC/${v.id}/${v.news_id}/`}
                       className="nk-btn nk-btn-rounded nk-btn-color-dark-3 nk-btn-hover-color-main-1"
                     >
                       Détails
@@ -205,7 +205,7 @@ function BlocArticle(props) {
                       <div className="row vertical-gap">
                         <div className="col-lg-3 col-md-5">
                           <Link
-                            to={`/news/${v.id}/${v.news_id}/`}
+                            to={`/PC/${v.id}/${v.news_id}/`}
                             className="nk-post-img"
                           >
                             <img src={v.imageUrl} alt={v.title} />
@@ -216,7 +216,7 @@ function BlocArticle(props) {
                         </div>
                         <div className="col-lg-9 col-md-7">
                           <h2 className="nk-post-title h4">
-                            <Link to={`/news/${v.id}/${v.news_id}/`}>
+                            <Link to={`/PC/${v.id}/${v.news_id}/`}>
                               {v.title}
                             </Link>
                           </h2>
@@ -228,7 +228,7 @@ function BlocArticle(props) {
                           <div className="nk-post-text">
                             <p>{v.new.slice(0, 200) + "..."}</p>
                             <Link
-                              to={`/news/${v.id}/${v.news_id}/`}
+                              to={`/PC/${v.id}/${v.news_id}/`}
                               className="nk-btn nk-btn-rounded nk-btn-color-dark-3 nk-btn-hover-color-main-1"
                             >
                               Détails
@@ -266,7 +266,7 @@ function BlocArticle(props) {
                           key={item.id}
                           {...item}
                           to={{
-                            pathname: `/PC-Steam/${item.id}/${item.title}`,
+                            pathname: `/PC/${item.id}/${item.title}`,
                             state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
                           }}
                           class="nk-post-image"
@@ -281,7 +281,7 @@ function BlocArticle(props) {
                             key={item.id}
                             {...item}
                             to={{
-                              pathname: `/PC-Steam/${item.id}/${item.title}`,
+                              pathname: `/PC/${item.id}/${item.title}`,
                               state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
                             }}
                           >
@@ -315,7 +315,7 @@ function BlocArticle(props) {
                           key={item.id}
                           {...item}
                           to={{
-                            pathname: `/PC-Steam/${item.id}/${item.title}`,
+                            pathname: `/PC/${item.id}/${item.title}`,
                             state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
                           }}
                           class="nk-post-image"
@@ -330,7 +330,7 @@ function BlocArticle(props) {
                             key={item.id}
                             {...item}
                             to={{
-                              pathname: `/PC-Steam/${item.id}/${item.title}`,
+                              pathname: `/PC/${item.id}/${item.title}`,
                               state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
                             }}
                           >
