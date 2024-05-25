@@ -3385,7 +3385,7 @@
         "precommande": true,
         "DLC": false,
         "DLCtext": "",
-        "dateSortie": "2025",
+        "dateSortie": "2024-06-13",
         "date": "",
         "title": "Kingdom Hearts HD 1.5+2.5 ReMIX",
         "resume": "KINGDOM HEARTS -HD 1.5+2.5 ReMIX- est une collection indispensable remastérisée en HD réunissant les six premières expériences KINGDOM HEARTS nées de la collaboration entre Disney et SQUARE ENIX. Brandissez la Keyblade légendaire et révélez le véritable pouvoir de l'amitié tout en explorant les mondes Disney et en repoussant les ténèbres.",
@@ -3510,7 +3510,7 @@
                 "id": 1,
                 "dev": "Square Enix",
                 "editeur": "Square Enix",
-                "sortie": "2025"
+                "sortie": "2024-06-13"
             }
         ],
         "plateformes": [
@@ -3523,6 +3523,116 @@
                 "Stock": true,
                 "buy": "https://www.instant-gaming.com/fr/16872-acheter-kingdom-hearts-hd-1-5-2-5-remix-pc-jeu-steam/?igr=gamer-707207",
                 "buySteam": ""
+            }
+        ]
+    },
+    {
+        "id": 27,
+        "exclu": false,
+        "popular": false,
+        "precommande": true,
+        "DLC": false,
+        "DLCtext": "",
+        "dateSortie": "2024-09-09",
+        "date": "",
+        "title": "Warhammer 40,000: Space Marine 2",
+        "resume": "Devenez un Space Marine, véritable incarnation de puissance surhumaine. Massacrez les nuées tyranides grâce à vos talents mortels et à votre armement. Défendez l’Imperium seul ou à plusieurs au cœur de combats spectaculaires à la troisième personne.",
+        "imageUrl": "https://images6.alphacoders.com/131/1319952.jpeg",
+        "genres": " Action, Aventure, RPG",
+        "genre": "Action",
+        "video": "SC2ljNcZ_OI",
+        "videoHover": "https://res.cloudinary.com/dzhhs7sfk/video/upload/v1716629313/Warhammer_40_000-_Space_Marine_2_-_Trailer_de_r%C3%A9v%C3%A9lation_des_modes_multijoueur_-_4K_-_PS5_eo50wn.mp4",
+        "critique": "",
+        "critiqueTitle": "",
+        "gifs": [
+            {
+                "id": 1,
+                "img": " https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2183900/extras/SM2_Gif_Intro_FINAL.gif?t=1716544397",
+                "texte": "",
+                "title": "Incarnez un Space Marine brutal et puissant. Massacrez des nuées tyranides grâce à vos talents mortels et à votre armement. Défendez l’Imperium seul ou à plusieurs au cœur de combats spectaculaires à la troisième personne."
+            },
+            {
+                "id": 2,
+                "img": "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2183900/extras/SM2_Gif_Campaign_FINAL.gif?t=1716544397",
+                "texte": "",
+                "title": ""
+            }
+            
+        ],
+        "screen": [
+            {
+                "id": 1,
+                "img": "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2183900/ss_ee88e4cc463b7b25b0ec03930a9e58e5fba2afdf.600x338.jpg?t=1716544397"
+            },
+            {
+                "id": 2,
+                "img": "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2183900/ss_66a8bc13bf868d0e2a76e4d797e6408c271065d7.600x338.jpg?t=1716544397"
+            },
+            {
+                "id": 3,
+                "img": "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2183900/ss_20a753725a34225553c5873fbc079626451ebcf9.600x338.jpg?t=1716544397"
+            },
+            {
+                "id": 4,
+                "img": "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2183900/ss_4751069d565b92fadeb6bfd507cef64cf6c70cd1.600x338.jpg?t=1716544397"
+            },
+            {
+                "id": 5,
+                "img": "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2183900/ss_d0bc9105e638b0f8a5364c4a6c70c6ccaf9268bb.600x338.jpg?t=1716544397"
+            }
+        ],
+        "price": "",
+        "priceOrigin": "59,99€",
+        "promo": "",
+        "stock": false,
+        "buySteam": "",
+        "config": [
+            {
+                "id": 1,
+                "OSmin": "",
+                "OSmax": "",
+                "PROCmin": "",
+                "PROCmax": "",
+                "MEMmin": "",
+                "MEMmax": " ",
+                "GRAPHmin": "",
+                "GRAPHmax": "",
+                "DirectXmin": "",
+                "DirectXmax": "",
+                "HDD": ""
+            }
+        ],
+        "news": [
+            {
+                "news_id": 1,
+                "id": 27,
+                "title": "Warhammer 40,000: Space Marine 2 nous montre ses modes multijoueur en vidéo",
+                "imageUrl": "https://gaming-cdn.com/images/news/articles/6551/cover/1000x563/warhammer-40-000-space-marine-2-nous-montre-ses-modes-multijoueur-en-video-cover664f9321e6c4e.jpg",
+                "video": "cS22JKUVrzU",
+                "date": "2024-05-25",
+                "new": "Focus Entertainment a profité du « Warhammer Skulls Event » pour donner des informations sur différents projets autour de la franchise. Le jeu le plus surveillé étant sans aucun doute Warhammer 40,000: Space Marine 2. Justement, cet épisode a eu droit à un trailer inédit pour présenter ses modes jouables à plusieurs. Il y aura des missions PvE en coopération jusqu'à trois joueurs et bien entendu un mode PvP tout droit tiré du premier jeu. Warhammer 40,000: Space Marine 2 sortira le 9 septembre 2024 sur PS5, Xbox Series et PC."
+              
+            }
+        ],
+       
+        "about": [
+            {
+                "id": 1,
+                "dev": "Saber Interactive",
+                "editeur": "Focus Home Interactive, Focus Entertainment",
+                "sortie": "2024-09-09"
+            }
+        ],
+        "plateformes": [
+            {
+                "id": 1,
+                "support": "Steam",
+                "price": "",
+                "priceOrigin": "59,99€",
+                "promo": "",
+                "Stock": true,
+                "buy": "https://www.instant-gaming.com/fr/10140-acheter-steam-warhammer-40-000-space-marine-2-pc-jeu-steam/?igr=gamer-707207",
+                "buySteam": "https://store.steampowered.com/app/2183900/Warhammer_40000_Space_Marine_2/?l=french"
             }
         ]
     }
