@@ -89,10 +89,11 @@
   }
   
   /* Responsive */
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 698px) {
     .login-container {
       flex-direction: column;
-      height: auto;
+      height: 100vh;
+      justify-content: space-around;
     }
   
     .login-form,
@@ -100,10 +101,25 @@
       width: 100%;
       border-radius: 0;
     }
-  
+ 
     .login-image {
       display: none;
     }
+    .login-form {
+       
+        padding: 40px;
+      
+      }
+    
+  }
+  @media screen and (max-width: 1200px) {
+   
+    .login-form {
+       
+        padding: 40px;
+      
+      }
+    
   }
   
   .login-form .login-separator {
