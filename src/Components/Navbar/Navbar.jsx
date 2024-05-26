@@ -38,6 +38,15 @@ function NavBar() {
                 </Link>
               </li>
               <li>
+              <Link
+                  to={{
+                    pathname: `/Sorties/`,
+                  }}
+                >
+                Nouveautés
+              </Link>
+              </li>
+              <li>
                 <Link
                   to={{
                     pathname: `/Populaires/`,
@@ -52,9 +61,7 @@ function NavBar() {
                     pathname: `/PrecoFull/`,
                   }}>Précommandes</Link>
               </li>
-              <li>
-                <a href="">Meilleures ventes</a>
-              </li>
+            
           
             </ul>
         

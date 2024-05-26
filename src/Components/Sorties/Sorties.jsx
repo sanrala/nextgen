@@ -22,11 +22,17 @@ function Sorties() {
   };
   return (
     <div>
+       <Link
+                  to={{
+                    pathname: `/Sorties/`,
+                  }}
+                >
             <h3 class="nk-decorated-h-2">
           <span>
             <span class="text-main-1">Les dernières</span> sorties
           </span>
         </h3>
+        </Link>
 
       <div class="nk-gap"></div>
           <div className="carousel">

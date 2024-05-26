@@ -85,6 +85,15 @@ const RightNav = ({ open }) => {
                 </Link>
               </li>
               <li>
+              <Link
+                  to={{
+                    pathname: `/Sorties/`,
+                  }}
+                >
+                Nouveautés
+              </Link>
+              </li>
+              <li>
                 <Link
                   to={{
                     pathname: `/Populaires/`,
@@ -99,9 +108,7 @@ const RightNav = ({ open }) => {
                     pathname: `/PrecoFull/`,
                   }}>Précommandes</Link>
               </li>
-              <li>
-                <a href="">Meilleures ventes</a>
-              </li>
+            
               <li>
                 <a href="">Mon compte</a>
               </li>

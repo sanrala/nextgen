@@ -4,6 +4,7 @@ import Article from "./BlogArticle/Article";
 import PrecoFull from "./BlogArticle/PrecoFull"; 
 import Populaires from "./BlogArticle/PopularArticle"; 
 import Preco from "./BlogArticle/Preco"; 
+import Sorties from "./BlogArticle/SortiesArticle"; 
 import ProductRockstar from "./Products/ProductRockstar";
 import Products from "./Products/Product";
 import ProductPS from "./Products/ProductPS";
@@ -26,6 +27,7 @@ function App() {
 <Route path="/news/:id/:news_id" element={<Article />} />
 <Route path="/actualités" element={<BlocArticle />} />
 <Route path="/Populaires" element={<Populaires />} />
+<Route path="/Sorties" element={<Sorties />} />
 <Route path="/PrecoFull" element={<PrecoFull />} />
 <Route path="/précommandes/:id/:title" element={<Preco />}/>
 

@@ -14,14 +14,14 @@ function Footer() {
 				<img src="https://technext.github.io/endgame/img/footer-right-pic.png" alt=""/>
 			</div>
 		
-			<ul class="main-menu footer-menu">
+			{/* <ul class="main-menu footer-menu">
 			
 				<li><a href="">News</a></li>
 				<li><a href="">Tendances</a></li>
 				<li><a href="">Précommandes</a></li>
 				<li><a href="">Prochaines Sorties</a></li>
                 <li><a href="">Nous Contacter</a></li>
-			</ul>
+			</ul> */}
 			<div class="footer-social d-flex justify-content-center">
 				<a href="#"><i class="fa fa-instagram"></i></a>
 				<a href="#"><i class="fa fa-facebook"></i></a>

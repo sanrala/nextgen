@@ -703,8 +703,8 @@
         "title": "Gray Zone Warfare",
         "resume": "Après un événement mystérieux sur une île fictive d'Asie du Sud-Est, l'ensemble de la zone a été soumis à une quarantaine internationale. Suite à l'évacuation de presque toute la population civile par les Nations Unies, trois compagnies militaires privées ont été engagées par des clients mystérieux pour explorer la région, en dévoiler les secrets et récupérer des objets de valeur.",
         "imageUrl": "https://pbs.twimg.com/media/GL3SHlLW8AAD9ZV?format=jpg&name=4096x4096",
-        "genres": "MMO, Action, Aventure, Early Access",
-        "genre": "Action",
+        "genres": "MMO, FPS, Action, Aventure, Early Access",
+        "genre": "FPS",
         "videoHover": "https://res.cloudinary.com/drirhxu6q/video/upload/v1716239632/Gray_Zone_Warfare_Gameplay_Reveal_Trailer_2_l2zmr6.mp4",
         "video": "CEqmu4QvkKE",
         "critique": "Gray Zone Warfare, un futur bon shooter",
@@ -933,8 +933,8 @@
         "title": "Apex Legends",
         "resume": "Dominez vos adversaires dans Apex Legends, un jeu de tir gratuit* où des personnages légendaires aux capacités surpuissantes combattent ensemble aux confins de la Frontière pour la gloire et la fortune. Maîtrisez une équipe de Légendes en croissance constante, avec une grande profondeur tactique et une kyrielle d'innovations qui enrichissent votre expérience de Battle Royale au sein d'un monde sauvage où tout peut arriver. Bienvenue dans la nouvelle évolution des jeux de tir de héros.",
         "imageUrl": "https://res.cloudinary.com/drirhxu6q/image/upload/v1715108008/v7bqjgnbpamz64yi6lsg.jpg",
-        "genres": "PvP en ligne, Action, Aventure",
-        "genre": "Action",
+        "genres": "PvP en ligne,FPS, Action, Aventure",
+        "genre": "FPS",
         "video": "TQXlZyrQmsc",
         "videoHover": "https://res.cloudinary.com/drirhxu6q/video/upload/v1715108283/Apex_Legends_-_Trailer_de_lancement_de_la_saison_20_-_R%C3%A9v%C3%A9lation_-_PS5_PS4_ehib3f.mp4",
         "critique": "Apex Legends : Un vent de fraîcheur dans le battle royale",
@@ -2087,8 +2087,8 @@
         "title": "Destiny 2 : La Forme Finale",
         "resume": "Destiny 2 est un MMO d'action avec un monde évolutif unique, auquel vous et vos amis pouvez jouer gratuitement, à tout moment et de n'importe où.",
         "imageUrl": "https://blog.fr.playstation.com/tachyon/sites/10/2023/08/e10d3dec4b0cb06c8e8289abb0e8cd653d108e55.jpg?resize=1088%2C612&crop_strategy=smart&zoom=1.5",
-        "genres": "Action, Aventure, Free-to-play, MMORPG",
-        "genre": "MMORPG",
+        "genres": "Action, FPS, Aventure, Free-to-play, MMORPG",
+        "genre": "FPS",
         "video": "dNoOhaXVgbE",
         "videoHover": "https://res.cloudinary.com/drirhxu6q/video/upload/v1715712191/Destiny_2_-_La_Forme_Finale_-_Trailer_de_gameplay_-_VF_-_PS5_PS4_rekuqk.mp4",
         "critique": "",
@@ -2240,8 +2240,8 @@
         "title": "Call of Duty: Modern Warfare III",
         "resume": "ADAPTEZ-VOUS OU MOURREZ DANS UN COMBAT CONTRE LA MENACE ULTIME Dans la suite directe de Call of Duty: Modern Warfare II, le capitaine Price et la Task Force 141 affrontent la menace ultime. Le criminel de guerre ultranationaliste Vladimir Makarov étend son emprise à travers le monde, obligeant la Task Force 141 à se battre comme jamais auparavant.",
         "imageUrl": "https://www.callofduty.com/content/dam/atvi/callofduty/cod-touchui/blog/hero/mwiii/MWIII-REVEAL-FULL-TOUT.jpg",
-        "genres": "Jeux solo, Action",
-        "genre": "Action",
+        "genres": "FPS, Action",
+        "genre": "FPS",
         "video": "zUz-90z11dk",
         "videoHover": "https://res.cloudinary.com/dzhhs7sfk/video/upload/v1715799343/Gameplay_Reveal_Trailer_-_Call_of_Duty-_Modern_Warfare_III_iwpsv0.mp4",
         "critique": "",
@@ -2548,8 +2548,8 @@
         "title": "Call of Duty Black Ops: Gulf War",
         "resume": "",
         "imageUrl": "https://www.presse-citron.net/app/uploads/2024/05/COD-UNREDACTED-TOUT-680x453.jpg",
-        "genres": " Action",
-        "genre": "Action",
+        "genres": "FPS, Action",
+        "genre": "FPS",
         "video": null,
         "videoHover": "",
         "critique": "",
@@ -3127,8 +3127,8 @@
         "title": "S.T.A.L.K.E.R. 2: Heart of Chornobyl",
         "resume": "S.T.A.L.K.E.R. 2 : Heart of Chernobyl pour PC est un jeu de survie d'horreur à la première personne (FPS), le quatrième de la très populaire série S.T.A.L.K.E.R.. Il s'agit d'un jeu solo dont le développement a duré près de 11 ans, le studio qui le développait ayant dû faire face à divers problèmes financiers et juridiques, mais il est enfin arrivé et a tenu toutes ses promesses !",
         "imageUrl": "https://gaming-cdn.com/images/products/5376/616x353/s-t-a-l-k-e-r-2-heart-of-chornobyl-pc-jeu-steam-europe-cover.jpg?v=1709717150",
-        "genres": " Action, Aventure, RPG",
-        "genre": "Action",
+        "genres": "FPS, Action, Aventure, RPG",
+        "genre": "FPS",
         "video": "XNGbS0fY80s",
         "videoHover": "https://res.cloudinary.com/dzhhs7sfk/video/upload/v1716315140/S.T.A.L.K.E.R._2-_Heart_of_Chornobyl_Bolts_Bullets_Trailer_oph5z0.mp4",
         "critique": "",
@@ -3633,6 +3633,81 @@
                 "Stock": true,
                 "buy": "https://www.instant-gaming.com/fr/10140-acheter-steam-warhammer-40-000-space-marine-2-pc-jeu-steam/?igr=gamer-707207",
                 "buySteam": "https://store.steampowered.com/app/2183900/Warhammer_40000_Space_Marine_2/?l=french"
+            }
+        ]
+    },
+    {
+        "id": 28,
+        "exclu": false,
+        "popular": false,
+        "precommande": false,
+        "DLC": false,
+        "DLCtext": "",
+        "dateSortie": "",
+        "date": "",
+        "title": "DOOM: The Dark Ages",
+        "resume": "Prochain jeu de la série DOOM.",
+        "imageUrl": "https://i0.wp.com/insider-gaming.com/wp-content/uploads/2024/05/doom-the-dark-ages.jpg?resize=1024%2C576&ssl=1",
+        "genres": "FPS, Action",
+        "genre": "FPS",
+        "video": "",
+        "videoHover": "",
+        "critique": "",
+        "critiqueTitle": "",
+       
+       
+        "price": "",
+        "priceOrigin": "",
+        "promo": "",
+        "stock": false,
+        "buySteam": "",
+        "config": [
+            {
+                "id": 1,
+                "OSmin": "",
+                "OSmax": "",
+                "PROCmin": "",
+                "PROCmax": "",
+                "MEMmin": "",
+                "MEMmax": " ",
+                "GRAPHmin": "",
+                "GRAPHmax": "",
+                "DirectXmin": "",
+                "DirectXmax": "",
+                "HDD": ""
+            }
+        ],
+        "news": [
+            {
+                "news_id": 1,
+                "id": 28,
+                "title": "DOOM : THE DARK AGES SERA RÉVÉLÉ AU XBOX GAMES SHOWCASE",
+                "imageUrl": "https://gaming-cdn.com/images/news/articles/6570/cover/1000x563/doom-the-dark-ages-sera-presente-au-xbox-games-showcase-cover665116b27cbfd.jpg",
+                "video": "",
+                "date": "2024-05-26",
+                "new": "Le prochain jeu de la franchise DOOM devrait être révélé lors du Xbox Games Showcase de cette année, le 9 juin. Le jeu, qui portait le nom de code/titre réservé « Année zéro », aurait le nom définitif « DOOM : The Dark Ages' et est en développement depuis au moins quatre ans."
+              
+            }
+        ],
+       
+        "about": [
+            {
+                "id": 1,
+                "dev": "id Software",
+                "editeur": "Bethesda Softworks",
+                "sortie": ""
+            }
+        ],
+        "plateformes": [
+            {
+                "id": 1,
+                "support": "",
+                "price": "",
+                "priceOrigin": "",
+                "promo": "",
+                "Stock": false,
+                "buy": "",
+                "buySteam": ""
             }
         ]
     }
