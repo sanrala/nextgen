@@ -2656,8 +2656,20 @@
 "img":"https://assets.xboxservices.com/assets/48/cf/48cf520a-5830-40f8-ac9e-676d0473523f.jpg?n=7400229_Content-Placement-0_2023_788x444_02.jpg",
                 "Link" : "En savoir plus",
 "LinkUrl" : "https://www.xbox.com/fr-FR/events/xbox-games-showcase?utm_source=cod-save-the-date-3-20240523&utm_medium=email&utm_campaign=marketing-fr-3&utm_content=button-link-learn-more"
+            },
+           
+            {
+                "news_id": 8,
+                "id": 20,
+                "title": "BLACK OPS 6 sortira sur les consoles de dernières générations",
+                "imageUrl": "https://i0.wp.com/insider-gaming.com/wp-content/uploads/2024/05/black-ops-6-top-top.jpg?resize=1024%2C576&ssl=1",
+                "video": null,
+                "date": "2024-05-26",   
+               "new2" : "Insider Gaming a pu vérifier auprès de plusieurs sources que l'image est légitime et que Black Ops 6 arrivera sur les consoles de génération précédente. Quant à savoir pourquoi l'image ne présente pas de version Xbox One, il est entendu que la version Series S|X est une version multigénération, ce qui signifie qu'elle fonctionnera également sur Xbox One.",
+                "new": "Des informations concernant Black Ops 6 ont fait surface en ligne, notamment concernant l'état de précommande du jeu sur GameStop. Dans une image partagée en ligne, il semble que GameStop se prépare à accepter les précommandes de Black Ops 6 sur les consoles PlayStation 4, PlayStation 5 et Xbox Series X.",
+            "new3": "Quant à savoir si le jeu arrivera sur Nintendo Switch (puisque Call of Duty arrivera désormais sur les plateformes Nintendo pendant 10 ans dans le cadre de l'accord Activision/Microsoft), Insider Gaming comprend que cela commencera avec la Nintendo Switch 2, qui devrait probablement être lancé l’année prochaine. La nouvelle sera probablement confirmée lors de la vitrine Call of Duty le 9 juin."
             }
-        ],
+            ],
         "about": [
             {
                 "id": 1,
@@ -3683,7 +3695,7 @@
                 "id": 28,
                 "title": "DOOM : THE DARK AGES SERA RÉVÉLÉ AU XBOX GAMES SHOWCASE",
                 "imageUrl": "https://gaming-cdn.com/images/news/articles/6570/cover/1000x563/doom-the-dark-ages-sera-presente-au-xbox-games-showcase-cover665116b27cbfd.jpg",
-                "video": "",
+                "video": null,
                 "date": "2024-05-26",
                 "new": "Le prochain jeu de la franchise DOOM devrait être révélé lors du Xbox Games Showcase de cette année, le 9 juin. Le jeu, qui portait le nom de code/titre réservé « Année zéro », aurait le nom définitif « DOOM : The Dark Ages' et est en développement depuis au moins quatre ans."
               

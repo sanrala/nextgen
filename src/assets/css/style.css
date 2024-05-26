@@ -10810,6 +10810,7 @@ video {
     }
 
     .title__price {
+        width: 200px;
         font-size: 15px;
         /* margin-top: 45px; */
         /* text-align: center; */
@@ -11360,7 +11361,7 @@ max-width: 616px;
     }
   .nk-news-box {
     box-shadow: 1px 80px 103px 300px rgba(23, 30, 34, 1);
-    -webkit-box-shadow: 1px 80px 103px 300px rgba(23, 30, 34, 1);
+    -webkit-box-shadow: 1px 80px 503px 30px rgba(23, 30, 34, 1);
     -moz-box-shadow: 1px 80px 103px 300px rgba(23, 30, 34, 1);
 
     }
@@ -11452,17 +11453,14 @@ max-width: 616px;
 }
 .price-tag {
     position: absolute;
-    top: 25px;
-    left: 10px;
-    background-color: red;
-    color: #fff;
+    top: 10px; /* Adjust as needed */
+    left: 10px; /* Adjust as needed */
+    background: rgba(255, 255, 255, 0.8); /* Optional: Background for the price tag */
     padding: 5px 10px;
-    border-radius: 20px; /* Augmentation de la bordure pour une apparence plus arrondie */
-    font-weight: bold;
-    font-size: 1.2em; /* Augmentation de la taille du texte */
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3); /* Ajout d'une ombre légère pour un effet 3D */
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Ajout d'une légère ombre pour le contraste */
-    transition: transform 0.3s, box-shadow 0.3s; /* Animation sur le survol */
+    border-radius: 5px;
+    color: #fff; /* Adjust text color as needed */
+    background-color: red;
+
 }
 
 .price-tag:hover {
@@ -11529,10 +11527,15 @@ max-width: 616px;
         padding: 100px;
    
     }
-    .image-overlay {
-    
+ 
+    .image-overlay { 
+
  bottom: auto;
        
+    }
+    .image-overlay h2 {
+        font-size: 1rem;
+      
     }
     .thumbnail-background {
         flex-direction: row;

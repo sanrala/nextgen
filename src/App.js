@@ -7,6 +7,7 @@ import Preco from "./BlogArticle/Preco";
 import Sorties from "./BlogArticle/SortiesArticle"; 
 import ProductRockstar from "./Products/ProductRockstar";
 import Products from "./Products/Product";
+import Login from "./Components/Login/Login";
 import ProductPS from "./Products/ProductPS";
 import ProductXBOX from "./Products/ProductXBOX";
 import {Routes, Route} from "react-router-dom"
@@ -20,6 +21,8 @@ function App() {
 <Routes>
 
 <Route path="/" element={<Home />}/>
+
+<Route path="/Login" element={<Login />}/>
 <Route path="/PC/:id/:title" element={<Products />}/>
 <Route path="/Xbox/:id/:title" element={<ProductXBOX />}/>
 <Route path="/Playstation/:id/:title" element={<ProductPS />}/>

@@ -91,14 +91,15 @@ function Home() {
    
             <div className="cover-container">
               <TwitchEmbedVideo
-                channel="tonton"
+                channel="JLTomy"
                 allowfullscreen={true} // Ajouter l'attribut allowfullscreen
-                controls={true} // Désactiver les contrôles de jeu mature
-                withChat={true}
+                controls={false} // Désactiver les contrôles de jeu mature
+                withChat={false}
                 apiKey="wrr5jchxkl0nvgbnx14nvt7mt4wbx5"
                 width="100%"
                 height="100%"
               />
+             
             </div>
             <div class="separator product-panel"></div>
          

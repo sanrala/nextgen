@@ -38,7 +38,8 @@ function Sorties() {
           <div className="carousel">
 
             <div className="main-image" style={{ backgroundImage: `url(${sortedImages[currentImageIndex].imageUrl})` }}>
-          
+            <div className="price-tag">{sortedImages[currentImageIndex].price}</div>
+              
             <div className="image-overlay">
             <Link
                       key={sortedImages[currentImageIndex].id}
@@ -49,8 +50,7 @@ function Sorties() {
                       }}>
                     <h2>{sortedImages[currentImageIndex].title}</h2>
                     </Link>
-                    <div className="price-tag">{sortedImages[currentImageIndex].price}</div>
-              
+                 
                 </div>
             </div>
             <div className="thumbnail-background">
