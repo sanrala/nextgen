@@ -24,7 +24,8 @@
   .login-form h2 {
     margin-bottom: 20px;
     color: #fff;
-    font-size: 22px;
+    font-size: 19px;
+    width: 100%;
   }
   
   .login-form input {
@@ -65,13 +66,23 @@
     margin-top: 20px;
     text-align: center;
   }
+  .link__s {
+    margin-top: 20px;
+    display: flex !important;
+    justify-content: space-between;
+    width: calc(100% - 20px);
+  }
   
   .links a {
     color: #fff;
     text-decoration: none;
     margin-right: 10px;
   }
-  
+  .link__s a {
+    color: #fff;
+    text-decoration: none;
+    margin-right: 10px;
+  }
   .links a:hover {
     text-decoration: underline;
   }
@@ -130,9 +141,10 @@
     justify-content: center;
     margin: 40px 10px 30px;
     position: relative;
+    width: 100%;
 }
 .login-form .login-separator span {
-    background-color: #323232;
+    background-color: #171e22;
     padding: 0 10px;
     z-index: 1;
 }
@@ -144,4 +156,60 @@
     margin: 40px 0;
     position: absolute;
     width: 100%;
+}
+.links .google {
+  background-color: #fff;
+  align-items: center;
+  border-radius: 7px;
+  color: #fff;
+  font-size: 13px;
+  justify-content: center;
+  margin: 15px;
+  padding: 25px 25px;
+  transition: .2s;
+  width: 100%;
+}
+.links .discord {
+  background-color: #5865f2;
+  align-items: center;
+  border-radius: 7px;
+  color: #fff;
+  font-size: 13px;
+  justify-content: center;
+  margin: 15px;
+  padding: 25px 25px;
+  transition: .2s;
+  width: 100%;
+}
+@media screen and (max-width: 1000px) {
+ .links a {
+      height: 48px;
+      padding: 0 10px;
+      margin: 10px;
+  }
+  .link__s a {
+    height: 48px;
+    padding: 0 10px;
+    margin: 10px;
+}
+}
+
+.divider-container {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.divider-line {
+  flex-grow: 1;
+  border: 0;
+  height: 1px;
+  background-color: #ccc;
+  margin: 0 10px;
+}
+
+.divider-text {
+  padding: 0 10px;
+  background-color: #fff; /* Assurez-vous que la couleur de fond correspond à celle de votre site */
 }
