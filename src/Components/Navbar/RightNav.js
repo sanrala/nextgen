@@ -1,6 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser } from "./../../features/userSlice";
+import { auth, googleProvider } from './../../Firebase';
 // import "../../css/main.css"
 const Ul = styled.ul`
 list-style: none;
@@ -69,7 +72,11 @@ li:hover>a {
 
 
 const RightNav = ({ open }) => {
+
   const [modalShow, setModalShow] = React.useState(false);
+  const dispatch = useDispatch();
+
+  const user = useSelector(selectUser);
   return (
     <div className='burgerNav' >
     <Ul  open={open}>
@@ -110,11 +117,21 @@ const RightNav = ({ open }) => {
               </li>
             
               <li>
-              <Link
-                  to={{
-                    pathname: `/Login/`,
-                  }}
-                >Mon compte</Link>
+              {user ? (
+        // Si l'utilisateur est connecté, affichez un lien de déconnexion
+        <a href='' >
+          <span className="fa fa-sign-out" onClick={() => auth.signOut()}></span> Déconnexion
+        </a>
+      ) : (
+        // Si l'utilisateur n'est pas connecté, affichez un lien de connexion
+        <Link
+        to={{
+          pathname: `/Login/`,
+        }}
+      >
+                          <span class="fa fa-user"></span>
+                      </Link>
+      )}
               </li>
               </div>
     </Ul>

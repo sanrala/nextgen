@@ -1,6 +1,12 @@
 import React from 'react'
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser } from "./../../features/userSlice";
+import { auth, googleProvider } from './../../Firebase';
 function Social() {
+    const dispatch = useDispatch();
+
+    const user = useSelector(selectUser);
     return (
         <div>
             <div class="nk-contacts-top">
@@ -25,13 +31,22 @@ function Social() {
 
 
                             <li>
-                            <Link
-                  to={{
-                    pathname: `/Login/`,
-                  }}
-                >
-                                    <span class="fa fa-user"></span>
-                                </Link>
+                            {user ? (
+        // Si l'utilisateur est connecté, affichez un lien de déconnexion
+        <a href='' >
+          <span className="fa fa-sign-out" onClick={() => auth.signOut()}></span> Déconnexion
+        </a>
+      ) : (
+        // Si l'utilisateur n'est pas connecté, affichez un lien de connexion
+        <Link
+        to={{
+          pathname: `/Login/`,
+        }}
+      >
+                          <span class="fa fa-user"></span>
+                      </Link>
+      )}
+              
                             </li>
 
 
