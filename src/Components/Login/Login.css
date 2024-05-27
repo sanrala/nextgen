@@ -65,6 +65,8 @@
   .links {
     margin-top: 20px;
     text-align: center;
+    width: 100%;
+   
   }
   .link__s {
     margin-top: 20px;
@@ -73,17 +75,17 @@
     width: calc(100% - 20px);
   }
   
-  .links a {
+  .links button {
     color: #fff;
     text-decoration: none;
     margin-right: 10px;
   }
-  .link__s a {
+  .link__s button {
     color: #fff;
     text-decoration: none;
     margin-right: 10px;
   }
-  .links a:hover {
+  .links button:hover {
     text-decoration: underline;
   }
   
@@ -161,11 +163,11 @@
   background-color: #fff;
   align-items: center;
   border-radius: 7px;
-  color: #fff;
+  color: black;
   font-size: 13px;
   justify-content: center;
-  margin: 15px;
-  padding: 25px 25px;
+  /* margin: 15px;
+  padding: 25px 25px; */
   transition: .2s;
   width: 100%;
 }
@@ -176,8 +178,8 @@
   color: #fff;
   font-size: 13px;
   justify-content: center;
-  margin: 15px;
-  padding: 25px 25px;
+  /* margin: 15px;
+  padding: 25px 25px; */
   transition: .2s;
   width: 100%;
 }
@@ -191,6 +193,9 @@
     height: 48px;
     padding: 0 10px;
     margin: 10px;
+} .logo {
+  
+  width: 70px;
 }
 }
 
