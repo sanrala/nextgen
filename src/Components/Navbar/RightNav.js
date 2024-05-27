@@ -119,9 +119,9 @@ const RightNav = ({ open }) => {
               <li>
               {user ? (
         // Si l'utilisateur est connecté, affichez un lien de déconnexion
-        <a href='' >
-          <span className="fa fa-sign-out" onClick={() => auth.signOut()}></span> Déconnexion
-        </a>
+      <button onClick={() => auth.signOut()}>
+          <span className="fa fa-sign-out" ></span> Déconnexion</button>
+      
       ) : (
         // Si l'utilisateur n'est pas connecté, affichez un lien de connexion
         <Link
