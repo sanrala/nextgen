@@ -3,7 +3,7 @@ import './Login.css'; // Importez votre fichier CSS de style
 import logo from './../../assets/images/logoGames/logo.png'; // Importez votre logo
 import LoginBG from "./../../assets/images/login.jpg"
 import { auth, googleProvider } from './../../Firebase';
-import { signInWithPopup } from 'firebase/auth';
+import { signInWithPopup, signInWithRedirect } from 'firebase/auth';
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "./../../features/userSlice";
 import { login, logout } from "./../../features/userSlice";
@@ -22,8 +22,12 @@ const Login = () => {
 
   const handleGoogleSignIn = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      console.log('User Info:', result.user);
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
+        await signInWithRedirect(auth, googleProvider);
+      } else {
+        await signInWithPopup(auth, googleProvider);
+      }
     } catch (error) {
       console.error('Error signing in with Google:', error);
     }
