@@ -65,6 +65,7 @@
   .links {
     margin-top: 20px;
     text-align: center;
+    display: flex;
   }
   .link__s {
     margin-top: 20px;
