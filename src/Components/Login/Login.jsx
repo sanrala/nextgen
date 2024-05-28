@@ -3,7 +3,7 @@ import './Login.css'; // Importez votre fichier CSS de style
 import logo from './../../assets/images/logoGames/logo.png'; // Importez votre logo
 import LoginBG from "./../../assets/images/login.jpg"
 import { auth, googleProvider } from './../../Firebase';
-import { signInWithPopup, signInWithRedirect, getRedirectResult } from 'firebase/auth';
+import { signInWithPopup, signInWithRedirect, getRedirectResult, signInWithEmailAndPassword } from 'firebase/auth';
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "./../../features/userSlice";
 import { login, logout } from "./../../features/userSlice";
@@ -12,13 +12,7 @@ import { Link } from "react-router-dom";
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Ajoutez votre logique de validation et d'envoi du formulaire ici
-    console.log('Email:', email);
-    console.log('Password:', password);
-  };
+  const [error, setError] = useState('');
 
 
 
@@ -34,6 +28,7 @@ const Login = () => {
       console.error('Error signing in with Google:', error);
     }
   };
+  
   
   // Utilisez le hook useEffect pour gérer la redirection après la connexion
   useEffect(() => {
@@ -53,7 +48,24 @@ const Login = () => {
       navigate('/'); // Remplacez '/home' par le chemin de votre page d'accueil
     }
   }, [user, navigate]);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("Trying to login with:", email, password); // Debug
 
+    try {
+      // Connexion de l'utilisateur avec email et mot de passe
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log("User logged in successfully:", userCredential.user);
+      dispatch(login({
+        uid: userCredential.user.uid,
+        email: userCredential.user.email,
+      }));
+      navigate('/'); // Rediriger l'utilisateur après connexion
+    } catch (error) {
+      console.error("Error logging in:", error); // Debug
+      setError(error.message);
+    }
+  };
   return (
     
     <div className="login-container">
@@ -89,32 +101,35 @@ const Login = () => {
       <hr className="divider-line" />
     </div>
         </div>
-        <form onSubmit={handleSubmit}>
-
-          <div className="form-group">
-
-            <input
-              type="text"
-              id="email"
-              placeholder="Votre e-mail ou nom d'utilisateur"
-              required
-            />
-          </div>
-          <div className="form-group">
-
-            <input
-              type="password"
-              id="password"
-              placeholder="Votre mot de passe"
-              required
-            />
-          </div>
-          <button type="submit" className="login-btn">Se connecter</button>
-
-        </form>
+        {error && <div className="error">{error}</div>}
+            {/* Votre code JSX */}
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <input
+            type="text"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Votre e-mail ou nom d'utilisateur"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Votre mot de passe"
+            required
+          />
+        </div>
+        <button type="submit" className="login-btn">Se connecter</button>
+      </form>
+      {/* Fin de votre code JSX */}
         <div className="link__s">
           <a href="#">Mot de passe oublié ?</a>
-          <a href="#">Inscription</a>
+          <Link       to={{
+          pathname: `/Register/`,
+        }}>Inscription</Link>
         </div>
       </div>
       <div className="login-image" style={{ backgroundImage: `url(${LoginBG})` }}></div>
