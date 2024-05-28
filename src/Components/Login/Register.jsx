@@ -3,7 +3,7 @@ import './Login.css';
 import logo from './../../assets/images/logoGames/logo.png';
 import LoginBG from "./../../assets/images/login.jpg"
 import { auth, googleProvider } from './../../Firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { useNavigate  } from 'react-router-dom';
 import { Link } from "react-router-dom";
 
@@ -40,8 +40,12 @@ const Register = () => {
     try {
       // Création de l'utilisateur avec email et mot de passe
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      // Vous pouvez ici ajouter le code pour sauvegarder le nom d'utilisateur dans la base de données ou autre
-      console.log("User registered successfully:", userCredential.user);
+      const user = userCredential.user;
+  
+      // Mise à jour du profil avec le nom d'utilisateur
+      await updateProfile(auth.currentUser, { displayName: name });
+  
+      console.log("User registered successfully:", user);
       navigate('/login');
     } catch (error) {
       setError(error.message);
@@ -53,7 +57,7 @@ const Register = () => {
       <div className="login-form">
         <img src={logo} alt="Logo" className="logo" />
         <h2>Inscription</h2>
-        {error && <div className="error">{error}</div>}
+      
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <input
@@ -91,10 +95,11 @@ const Register = () => {
               required
             />
           </div>
+          {error && <div className="error">{error}</div>}
           <button type="submit" className="login-btn">S'inscrire</button>
         </form>
         <div className="link__s">
-         
+
           <Link       to={{
           pathname: `/Login/`,
         }}>  Retour </Link>

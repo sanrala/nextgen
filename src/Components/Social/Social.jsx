@@ -1,13 +1,26 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser, logout } from "./../../features/userSlice";
 import { auth, googleProvider } from './../../Firebase';
 import { Avatar } from "@mui/material";
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+
 function Social() {
     const dispatch = useDispatch();
     const user = useSelector(selectUser);
+    // menu deroulant
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const handleMenuOpen = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
   
+    const handleMenuClose = () => {
+      setAnchorEl(null);
+    };
+    // fin menu deroulant
     const handleSignOut = () => {
       console.log('Déconnexion en cours...');
       auth.signOut()
@@ -33,7 +46,7 @@ function Social() {
       // you have one. Use User.getToken() instead.
       const uid = userN.uid;
     }
-  
+  console.log(userN);
     return (
         <div>
             <div class="nk-contacts-top">
@@ -59,22 +72,38 @@ function Social() {
 
                             <li>
                             {user ? (
-                                 <>
-     <a>{userN.displayName}</a>
-        <button onClick={handleSignOut}>
-          <span className="fa fa-sign-out"></span> Déconnexion
-        </button>
-      {/* <Avatar src={userN.photoURL} /> */}
-     </>
+        <>
+          <Avatar 
+            src={userN.photoURL} 
+            onClick={handleMenuOpen}
+            style={{ cursor: 'pointer' }} 
+          />
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+          >
+            <MenuItem onClick={() => {  handleMenuClose(); }}>
+            <Link to="/profile">   <span className="fa fa-user"></span> Profil </Link>
+            </MenuItem>
+            <MenuItem onClick={handleMenuClose}>
+              <Link to="/settings">
+                <span className="fa fa-cog"></span> Paramètres
+              </Link>
+            </MenuItem>
+            <MenuItem onClick={handleMenuClose}>
+              <Link onClick={() => { handleSignOut()}}>
+              <span className="fa fa-sign-out"></span> Déconnexion
+              
+              </Link>
+            </MenuItem>
+          </Menu>
+        </>
       ) : (
         // Si l'utilisateur n'est pas connecté, affichez un lien de connexion
-        <Link
-        to={{
-          pathname: `/Login/`,
-        }}
-      >
-                          <span class="fa fa-user"></span>
-                      </Link>
+        <Link to="/Login">
+          <span className="fa fa-user"></span>
+        </Link>
       )}
               
                             </li>

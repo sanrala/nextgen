@@ -1,10 +1,14 @@
-import React from 'react';
+import React, {useState} from 'react'
 import styled from 'styled-components';
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser } from "./../../features/userSlice";
+import { selectUser, logout } from "./../../features/userSlice";
 import { auth, googleProvider } from './../../Firebase';
-// import "../../css/main.css"
+import { Avatar } from "@mui/material";
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+
+
 const Ul = styled.ul`
 list-style: none;
 display: none;
@@ -72,11 +76,47 @@ li:hover>a {
 
 
 const RightNav = ({ open }) => {
+   // menu deroulant
+   const [anchorEl, setAnchorEl] = useState(null);
 
+   const handleMenuOpen = (event) => {
+     setAnchorEl(event.currentTarget);
+   };
+ 
+   const handleMenuClose = () => {
+     setAnchorEl(null);
+   };
+   // fin menu deroulant
   const [modalShow, setModalShow] = React.useState(false);
   const dispatch = useDispatch();
 
   const user = useSelector(selectUser);
+
+  const handleSignOut = () => {
+    console.log('Déconnexion en cours...');
+    auth.signOut()
+      .then(() => {
+        console.log('Déconnexion réussie');
+        dispatch(logout());
+      })
+      .catch((error) => {
+        console.error('Erreur lors de la déconnexion:', error);
+      });
+  };
+
+  const userN = auth.currentUser;
+  if (userN !== null) {
+    // The user object has basic properties such as display name, email, etc.
+    const displayName = userN.displayName;
+    const email = userN.email;
+    const photoURL = userN.photoURL;
+    const emailVerified = userN.emailVerified;
+
+    // The user's ID, unique to the Firebase project. Do NOT use
+    // this value to authenticate with your backend server, if
+    // you have one. Use User.getToken() instead.
+    const uid = userN.uid;
+  }
   return (
     <div className='burgerNav' >
     <Ul  open={open}>
@@ -118,19 +158,38 @@ const RightNav = ({ open }) => {
             
               <li>
               {user ? (
-        // Si l'utilisateur est connecté, affichez un lien de déconnexion
-      <button onClick={() => auth.signOut()}>
-          <span className="fa fa-sign-out" ></span> Déconnexion</button>
-      
+        <>
+          <Avatar 
+            src={userN.photoURL} 
+            onClick={handleMenuOpen}
+            style={{ cursor: 'pointer' }} 
+          />
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+          >
+            <MenuItem onClick={() => {  handleMenuClose(); }}>
+            <Link to="/profile">   <span className="fa fa-user"></span> Profil </Link>
+            </MenuItem>
+            <MenuItem onClick={handleMenuClose}>
+              <Link to="/settings">
+                <span className="fa fa-cog"></span> Paramètres
+              </Link>
+            </MenuItem>
+            <MenuItem onClick={handleMenuClose}>
+              <Link onClick={() => { handleSignOut()}}>
+              <span className="fa fa-sign-out"></span> Déconnexion
+              
+              </Link>
+            </MenuItem>
+          </Menu>
+        </>
       ) : (
         // Si l'utilisateur n'est pas connecté, affichez un lien de connexion
-        <Link
-        to={{
-          pathname: `/Login/`,
-        }}
-      >
-                          <span class="fa fa-user"></span>
-                      </Link>
+        <Link to="/Login">
+          <span className="fa fa-user"></span>
+        </Link>
       )}
               </li>
               </div>
