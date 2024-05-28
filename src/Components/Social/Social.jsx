@@ -1,12 +1,23 @@
 import React from 'react'
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser } from "./../../features/userSlice";
+import { selectUser, logout } from "./../../features/userSlice";
 import { auth, googleProvider } from './../../Firebase';
 function Social() {
     const dispatch = useDispatch();
-
     const user = useSelector(selectUser);
+  
+    const handleSignOut = () => {
+      console.log('Déconnexion en cours...');
+      auth.signOut()
+        .then(() => {
+          console.log('Déconnexion réussie');
+          dispatch(logout());
+        })
+        .catch((error) => {
+          console.error('Erreur lors de la déconnexion:', error);
+        });
+    };
     return (
         <div>
             <div class="nk-contacts-top">
@@ -32,10 +43,11 @@ function Social() {
 
                             <li>
                             {user ? (
-        // Si l'utilisateur est connecté, affichez un lien de déconnexion
-        <a href='' >
-          <span className="fa fa-sign-out" onClick={() => auth.signOut()}></span> Déconnexion
-        </a>
+        // Si l'utilisateur est connecté, affichez un bouton de déconnexion
+        <button onClick={handleSignOut}>
+          <span className="fa fa-sign-out"></span> Déconnexion
+        </button>
+     
       ) : (
         // Si l'utilisateur n'est pas connecté, affichez un lien de connexion
         <Link
