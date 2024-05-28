@@ -3,7 +3,7 @@ import './Login.css'; // Importez votre fichier CSS de style
 import logo from './../../assets/images/logoGames/logo.png'; // Importez votre logo
 import LoginBG from "./../../assets/images/login.jpg"
 import { auth, googleProvider } from './../../Firebase';
-import { signInWithPopup, signInWithRedirect } from 'firebase/auth';
+import { signInWithPopup, signInWithRedirect, getRedirectResult } from 'firebase/auth';
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "./../../features/userSlice";
 import { login, logout } from "./../../features/userSlice";
@@ -20,18 +20,6 @@ const Login = () => {
     console.log('Password:', password);
   };
 
-  const handleGoogleSignIn = async () => {
-    try {
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (isMobile) {
-        await signInWithRedirect(auth, googleProvider);
-      } else {
-        await signInWithPopup(auth, googleProvider);
-      }
-    } catch (error) {
-      console.error('Error signing in with Google:', error);
-    }
-  };
 
 
 
@@ -39,27 +27,27 @@ const Login = () => {
 
   const user = useSelector(selectUser);
   const navigate = useNavigate ();
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithRedirect(auth, googleProvider);
+    } catch (error) {
+      console.error('Error signing in with Google:', error);
+    }
+  };
+  
+  // Utilisez le hook useEffect pour gérer la redirection après la connexion
   useEffect(() => {
-    auth.onAuthStateChanged((authUser) => {
-      // console.log("user is ", authUser);
-      if (authUser) {
-        // login
-        dispatch(
-          login({
-            uid: authUser.uid,
-            photo: authUser.photoURL,
-            email: authUser.email,
-            displayName: authUser.displayName,
-          })
-        
-        );
-        // console.log(authUser.displayName)
-      } else {
-        // logout
-        dispatch(logout());
-      }
-    });
-  }, [dispatch]);
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result?.user) {
+          console.log('User Info:', result.user);
+          // Traitez les informations de l'utilisateur ici si nécessaire
+        }
+      })
+      .catch((error) => {
+        console.error('Error getting redirect result:', error);
+      });
+  }, []);
   useEffect(() => {
     if (user) {
       navigate('/'); // Remplacez '/home' par le chemin de votre page d'accueil
