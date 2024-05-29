@@ -16,7 +16,8 @@ import { Gallery, Item } from 'react-photoswipe-gallery'
 import 'photoswipe/style.css';
 import ReadMore from "./../Components/ReadMore/ReadMore"
 import Header from "./../Components/Header/Header";
-import '@fortawesome/fontawesome-free/css/all.min.css';
+import StarIcon from '@mui/icons-material/Star';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 
 import { Avatar } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -600,28 +601,30 @@ function Product(props) {
 
 {user ? (
           <div className="nk-reply">
-            <div className="nk-rating">
-              {[...Array(5)].map((_, index) => (
+            {/* <div className="nk-rating">
+              
+            {[...Array(5)].map((_, index) => (
                 <React.Fragment key={index}>
                   <input
                     type="radio"
                     id={`review-rate-${5 - index}`}
-                    name="review-rate"
+                    name="rating"
                     value={5 - index}
                     onChange={handleRatingChange}
                     checked={newComment.rating === 5 - index}
-                 
+                    style={{ display: "none" }}
                   />
                   <label htmlFor={`review-rate-${5 - index}`} style={{ cursor: 'pointer' }}>
                     <span>
-                      <i className={newComment.rating >= 5 - index ? "fa fa-star" : "far fa-star"}></i>
+                      {newComment.rating >= 5 - index ? <StarIcon /> : <StarBorderIcon />}
                     </span>
                   </label>
                 </React.Fragment>
               ))}
-            </div>
+            </div> */}
             <div className="nk-gap-1"></div>
             <form onSubmit={handleSubmit} className="nk-form">
+              
               <div className="d-flex flex-column row vertical-gap sm-gap">
                 <div className="d-flex col-sm-2">
                   <div className="avatar_product">
@@ -632,6 +635,35 @@ function Product(props) {
                     /> {user.displayName}
                   </div>
                 </div>
+                <div className="rating">
+              {/* {[...Array(5)].map((_, index) => (
+                <React.Fragment key={index}>
+                  <input type="radio" id={`review-rate-${5 - index}`} name="rating" value={5 - index} onChange={handleChanges} checked={newComment.rating == 5 - index} />
+                  <label htmlFor={`review-rate-${5 - index}`}>
+                    <span><i className={newComment.rating >= 5 - index ? "fa fa-star" : "far fa-star"}></i></span>
+                  </label>
+                </React.Fragment>
+              ))} */}
+
+{[...Array(5)].map((_, index) => (
+                <React.Fragment key={index}>
+                  <input
+                    type="radio"
+                    id={`review-rate-${5 - index}`}
+                    name="rating"
+                    value={5 - index}
+                    onChange={handleRatingChange}
+                    checked={newComment.rating === 5 - index}
+                    style={{ display: "none" }}
+                  />
+                  <label htmlFor={`review-rate-${5 - index}`} style={{ cursor: 'pointer' }}>
+                    <span>
+                      {newComment.rating >= 5 - index ? <StarIcon /> : <StarBorderIcon />}
+                    </span>
+                  </label>
+                </React.Fragment>
+              ))}
+            </div>
                 <div className="col-sm-6">
                   <input
                     type="text"
@@ -834,37 +866,7 @@ function Product(props) {
 
                   <div class="clearfix"></div>
                   <div class="nk-gap-2"></div>
-                  <div class="nk-comments">
-                    {/* <!-- START: Review --> */}
-                    <div class="nk-comment">
-                      <div class="nk-comment-meta">
-                        <img
-                          src=""
-                          alt="Witch Murder"
-                          class="rounded-circle"
-                          width="35"
-                        />{" "}
-                        par <a href="#">Pseudo</a>date
-                        <div class="nk-review-rating" data-rating="4.5">
-                          {" "}
-                          <i class="fa fa-star"></i> <i class="fa fa-star"></i>{" "}
-                          <i class="fa fa-star"></i> <i class="fa fa-star"></i>{" "}
-                          <i class="far fa-star"></i>
-                        </div>
-                      </div>
-                      <div class="nk-comment-text">
-                        <p>
-                          texte
-                        </p>
-
-
-                      </div>
-                    </div>
-                    {/* <!-- END: Review -->
-                                <!-- START: Review --> */}
-           
-                    {/* <!-- END: Review --> */}
-                  </div>
+                
                 </div>
 
                 {/* <!-- END: Tab Reviews --> */}
