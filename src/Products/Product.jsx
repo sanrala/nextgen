@@ -16,7 +16,17 @@ import { Gallery, Item } from 'react-photoswipe-gallery'
 import 'photoswipe/style.css';
 import ReadMore from "./../Components/ReadMore/ReadMore"
 import Header from "./../Components/Header/Header";
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
+import { Avatar } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser, logout } from "./../features/userSlice";
+import { db, auth, googleProvider } from './../Firebase';
+import { collection, addDoc, query, where, onSnapshot, serverTimestamp  } from "firebase/firestore";
 function Product(props) {
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
+
   function formatDate(dateString) {
     const date = new Date(dateString);
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -44,11 +54,100 @@ function Product(props) {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
- 
- 
+
+  const userN = auth.currentUser;
+  if (userN !== null) {
+    // The user object has basic properties such as display name, email, etc.
+    const displayName = userN.displayName;
+    const email = userN.email;
+    const photoURL = userN.photoURL;
+    const emailVerified = userN.emailVerified;
+
+    // The user's ID, unique to the Firebase project. Do NOT use
+    // this value to authenticate with your backend server, if
+    // you have one. Use User.getToken() instead.
+    const uid = userN.uid;
+  }
+
+
+
+
+
+
+
+
+
+
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState({ title: "", message: "", rating: 0 });
+
+  useEffect(() => {
+    const selectedItem = gameData.find((item) => item.id === parseInt(id));
+    setItem(selectedItem);
+
+    const q = query(collection(db, "comments"), where("gameId", "==", id));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const commentsArray = [];
+      querySnapshot.forEach((doc) => {
+        commentsArray.push({ ...doc.data(), id: doc.id });
+      });
+      setComments(commentsArray);
+    });
+
+    return () => unsubscribe();
+  }, [id]);
+
+  const handleChanges = (event) => {
+    const { name, value } = event.target;
+    setNewComment((prevComment) => ({
+      ...prevComment,
+      [name]: value
+    }));
+  };
+
+  const handleRatingChange = (event) => {
+    setNewComment((prevComment) => ({
+      ...prevComment,
+      rating: parseInt(event.target.value)
+    }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!user) {
+      console.error("User is not authenticated");
+      return;
+    }
+
+    const userName = userN.displayName || "Anonymous";
+    const userPhoto = userN.photoURL || "default-avatar.png";
+
+    try {
+      await addDoc(collection(db, "comments"), {
+        gameId: id,
+        ...newComment,
+        userName,
+        userPhoto,
+        createdAt: serverTimestamp()
+      });
+      setNewComment({ title: "", message: "", rating: 0 });
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+  };
+
+  const calculateAverageRating = () => {
+    const totalRating = comments.reduce((acc, comment) => acc + parseInt(comment.rating), 0);
+    return (totalRating / comments.length) || 0;
+  };
+
+
+
+
   return (
     <div>
-   <Header />
+      <Header />
 
       <div class="nk-gap-1"></div>
       {item ? (
@@ -126,14 +225,14 @@ function Product(props) {
                       {item.screen &&
                         item.screen.slice(1).map((screens, index) => (
                           <Gallery>
-                          <Item
-                            original={screens.img}
-                            thumbnail={screens.img}
-                            width="1920"
-                            height="1024"
-                          >
-                            {({ ref, open }) => (
-                              // <a class="nk-gallery-item" data-size="622x942">
+                            <Item
+                              original={screens.img}
+                              thumbnail={screens.img}
+                              width="1920"
+                              height="1024"
+                            >
+                              {({ ref, open }) => (
+                                // <a class="nk-gallery-item" data-size="622x942">
                                 <div class="col-6 col-md-3">
                                   <div class="nk-gallery-item-box">
                                     <img
@@ -145,10 +244,10 @@ function Product(props) {
                                     />
                                   </div>
                                 </div>
-                              // </a>
-                            )}
-                          </Item>
-                        </Gallery>
+                                // </a>
+                              )}
+                            </Item>
+                          </Gallery>
                         ))}
                     </div>
                   </div>
@@ -222,7 +321,7 @@ function Product(props) {
                                   </MenuItem>
                                 </Link>
                               )}
-                              {ab.support === "Steam"  && (
+                              {ab.support === "Steam" && (
                                 <Link
                                   key={item.id}
                                   to={{
@@ -235,7 +334,7 @@ function Product(props) {
                                   </MenuItem>
                                 </Link>
                               )}
-                               {ab.support === "Rockstar"  && (
+                              {ab.support === "Rockstar" && (
                                 <Link
                                   key={item.id}
                                   to={{
@@ -255,7 +354,7 @@ function Product(props) {
                   </Box>
 
                   <div class="nk-product-description">
-                  <ReadMore text={item.resume} />
+                    <ReadMore text={item.resume} />
                   </div>
 
                   {/* <div class="nk-gap-2"></div> */}
@@ -297,7 +396,7 @@ function Product(props) {
                         )}
                       </>
                     ))}
-                 <div class="nk-gap-1"></div>
+                  <div class="nk-gap-1"></div>
 
                   <div class="nk-product-meta">
                     <div>{/* <strong>SKU</strong>: 300-200-503 */}</div>
@@ -394,20 +493,20 @@ function Product(props) {
             <div class="nk-tabs">
               <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item"
-               >
-                <a
-            className={activeTab === 'description' ? 'active nav-link' : 'nav-link'}
-            onClick={() => handleTabChange('description')}
-          >
+                >
+                  <a
+                    className={activeTab === 'description' ? 'active nav-link' : 'nav-link'}
+                    onClick={() => handleTabChange('description')}
+                  >
                     Description
                   </a>
                 </li>
                 <li class="nav-item"
-                 >
-                 <a
-            className={activeTab === 'comment' ? 'active nav-link' : 'nav-link'}
-            onClick={() => handleTabChange('comment')}
-          >
+                >
+                  <a
+                    className={activeTab === 'comment' ? 'active nav-link' : 'nav-link'}
+                    onClick={() => handleTabChange('comment')}
+                  >
                     Commentaires (3)
                   </a>
                 </li>
@@ -415,16 +514,16 @@ function Product(props) {
 
               <div class="tab-content">
                 {/* <!-- START: Tab Description --> */}
-         
+
                 <div
                   role="tabpanel"
                   className={activeTab === 'description' ? 'tab-pane fade show active' : 'tab-pane fade'}
                   class="tab-pane fade show active"
                   id="tab-description"
-                  
+
                 >
                   <div class="nk-gap"></div>
-               
+
                   <div class="nk-gap"></div>
                   {!item.gifs ? null : (
                     <div className="text-left">
@@ -441,134 +540,296 @@ function Product(props) {
                   )}
                   {/* <p></p> */}
                 </div>
-             
+
                 {/* <!-- END: Tab Description --> */}
 
                 {/* <!-- START: Tab Reviews --> */}
-  
-                <div role="tabpanel" 
-                 className={activeTab === 'comment' ? 'tab-pane fade show active' : 'tab-pane fade'}
-                class="tab-pane fade" 
-                id="tab-reviews">
+
+                <div role="tabpanel"
+                  className={activeTab === 'comment' ? 'tab-pane fade show active' : 'tab-pane fade'}
+                  class="tab-pane fade"
+                  id="tab-reviews">
                   <div class="nk-gap-2"></div>
                   {/* <!-- START: Reply --> */}
-                  <h3 class="h4">Ajouter un commentaire</h3> 
-                  <div class="nk-rating">
-                    
-                    <input
-                      type="radio"
-                      id="review-rate-5"
-                      name="review-rate"
-                      value="5"
-                    />
-                    <label for="review-rate-5">
-                      <span>
-                        <i class="far fa-star"></i>
-                      </span>
-                      <span>
-                        <i class="fa fa-star"></i>
-                      </span>
-                    </label>
+                  <h3 class="h4">Ajouter un commentaire</h3>
 
-                    <input
-                      type="radio"
-                      id="review-rate-4"
-                      name="review-rate"
-                      value="4"
-                    />
-                    <label for="review-rate-4">
-                      <span>
-                        <i class="far fa-star"></i>
-                      </span>
-                      <span>
-                        <i class="fa fa-star"></i>
-                      </span>
-                    </label>
+                  {/* {user ? (
+          <form onSubmit={handleSubmit}>
+            <input type="text" name="title" placeholder="Titre *" value={newComment.title} onChange={handleChanges} required />
+            <textarea name="message" placeholder="Ton message *" value={newComment.message} onChange={handleChanges} required></textarea>
+            <div className="rating">
+              {[...Array(5)].map((_, index) => (
+                <React.Fragment key={index}>
+                  <input type="radio" id={`review-rate-${5 - index}`} name="rating" value={5 - index} onChange={handleChanges} checked={newComment.rating == 5 - index} />
+                  <label htmlFor={`review-rate-${5 - index}`}>
+                    <span><i className={newComment.rating >= 5 - index ? "fa fa-star" : "far fa-star"}></i></span>
+                  </label>
+                </React.Fragment>
+              ))}
+            </div>
+            <button type="submit">Envoyer</button>
+          </form>
+        ) : (
+          <Link to="/Login"><button className="fa fa-user">Se connecter</button></Link>
+        )}
+      </div>
 
-                    <input
-                      type="radio"
-                      id="review-rate-3"
-                      name="review-rate"
-                      value="3"
-                    />
-                    <label for="review-rate-3">
-                      <span>
-                        <i class="far fa-star"></i>
-                      </span>
-                      <span>
-                        <i class="fa fa-star"></i>
-                      </span>
-                    </label>
+      <div>
+        <h3>Commentaires</h3>
+        <p>Note globale : {calculateAverageRating().toFixed(1)} / 5</p>
+        {comments.map((comment) => (
+          <div key={comment.id} className="nk-comment">
+            <div className="nk-comment-meta">
+              <img src={comment.userPhoto || "default-avatar.png"} alt={comment.userName} className="rounded-circle" width="35" />{" "}
+              par <a href="#">{comment.userName}</a> {comment.createdAt ? `le ${new Date(comment.createdAt.seconds * 1000).toLocaleDateString("fr-FR")}` : ""}
+              <div className="nk-review-rating" data-rating={comment.rating}>
+                {" "}{[...Array(5)].map((_, index) => (
+                  <i key={index} className={comment.rating > index ? "fa fa-star" : "far fa-star"}></i>
+                ))}
+              </div>
+            </div>
+            <div className="nk-comment-text">
+              <p>{comment.message}</p>
+            </div>
+          </div>
+        ))} */}
 
-                    <input
-                      type="radio"
-                      id="review-rate-2"
-                      name="review-rate"
-                      value="2"
-                    />
-                    <label for="review-rate-2">
-                      <span>
-                        <i class="far fa-star"></i>
-                      </span>
-                      <span>
-                        <i class="fa fa-star"></i>
-                      </span>
-                    </label>
 
-                    <input
-                      type="radio"
-                      id="review-rate-1"
-                      name="review-rate"
-                      value="1"
-                    />
-                    <label for="review-rate-1">
-                      <span>
-                        <i class="far fa-star"></i>
-                      </span>
-                      <span>
-                        <i class="fa fa-star"></i>
-                      </span>
-                    </label>
+
+
+
+{user ? (
+          <div className="nk-reply">
+            <div className="nk-rating">
+              {[...Array(5)].map((_, index) => (
+                <React.Fragment key={index}>
+                  <input
+                    type="radio"
+                    id={`review-rate-${5 - index}`}
+                    name="review-rate"
+                    value={5 - index}
+                    onChange={handleRatingChange}
+                    checked={newComment.rating === 5 - index}
+                 
+                  />
+                  <label htmlFor={`review-rate-${5 - index}`} style={{ cursor: 'pointer' }}>
+                    <span>
+                      <i className={newComment.rating >= 5 - index ? "fa fa-star" : "far fa-star"}></i>
+                    </span>
+                  </label>
+                </React.Fragment>
+              ))}
+            </div>
+            <div className="nk-gap-1"></div>
+            <form onSubmit={handleSubmit} className="nk-form">
+              <div className="d-flex flex-column row vertical-gap sm-gap">
+                <div className="d-flex col-sm-2">
+                  <div className="avatar_product">
+                    <Avatar
+                      src={userN.photoURL}
+                      className="me-2"
+                      style={{ cursor: 'pointer' }}
+                    /> {user.displayName}
                   </div>
-                  <div class="nk-gap-1"></div>
-                    
-                  <div class="nk-reply">
-                    <form action="#" class="nk-form">
-                      <div class="row vertical-gap sm-gap">
-                        <div class="col-sm-6">
-                          <input
-                            type="text"
-                            class="form-control required"
-                            name="name"
-                            placeholder="Name *"
-                          />
-                        </div>
-                        <div class="col-sm-6">
-                          <input
-                            type="text"
-                            class="form-control required"
-                            name="title"
-                            placeholder="Title *"
-                          />
-                        </div>
+                </div>
+                <div className="col-sm-6">
+                  <input
+                    type="text"
+                    className="form-control required"
+                    name="title"
+                    placeholder="Titre *"
+                    value={newComment.title}
+                    onChange={handleChanges}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="nk-gap-1"></div>
+              <textarea
+                className="form-control required"
+                name="message"
+                rows="5"
+                placeholder="Ton message *"
+                value={newComment.message}
+                onChange={handleChanges}
+                required
+              ></textarea>
+              <div className="nk-gap-1"></div>
+              <button className="nk-btn nk-btn-rounded nk-btn-color-dark-3 float-right">
+                Envoyer
+              </button>
+            </form>
+          </div>
+        ) : (
+          <Link to="/Login">
+            <button className="fa fa-user">Se connecter</button>
+          </Link>
+        )}
+
+        <div className="clearfix"></div>
+        <div className="nk-gap-2"></div>
+        <div className="nk-comments">
+          <h3>Commentaires</h3>
+          <p>Note globale : {calculateAverageRating().toFixed(1)} / 5</p>
+          {comments.map((comment) => (
+            <div key={comment.id} className="nk-comment">
+              <div className="nk-comment-meta">
+                <img
+                  src={comment.userPhoto || "default-avatar.png"}
+                  alt={comment.userName}
+                  className="rounded-circle"
+                  width="35"
+                />{" "}
+                par <a href="#">{comment.userName}</a>{" "}
+                {comment.createdAt ? `le ${new Date(comment.createdAt.seconds * 1000).toLocaleDateString("fr-FR")}` : ""}
+                <div className="nk-review-rating" data-rating={comment.rating}>
+                  {" "}{[...Array(5)].map((_, index) => (
+                    <i key={index} className={comment.rating > index ? "fa fa-star" : "far fa-star"}></i>
+                  ))}
+                </div>
+              </div>
+              <div className="nk-comment-text">
+                <p>{comment.message}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+
+
+
+
+
+
+
+{/* 
+                  {user ? (
+
+                    <div class="nk-reply">
+                      <div class="nk-rating">
+
+                        <input
+                          type="radio"
+                          id="review-rate-5"
+                          name="review-rate"
+                          value="5"
+                        />
+                        <label for="review-rate-5">
+                          <span>
+                            <i class="far fa-star"></i>
+                          </span>
+                          <span>
+                            <i class="fa fa-star"></i>
+                          </span>
+                        </label>
+
+                        <input
+                          type="radio"
+                          id="review-rate-4"
+                          name="review-rate"
+                          value="4"
+                        />
+                        <label for="review-rate-4">
+                          <span>
+                            <i class="far fa-star"></i>
+                          </span>
+                          <span>
+                            <i class="fa fa-star"></i>
+                          </span>
+                        </label>
+
+                        <input
+                          type="radio"
+                          id="review-rate-3"
+                          name="review-rate"
+                          value="3"
+                        />
+                        <label for="review-rate-3">
+                          <span>
+                            <i class="far fa-star"></i>
+                          </span>
+                          <span>
+                            <i class="fa fa-star"></i>
+                          </span>
+                        </label>
+
+                        <input
+                          type="radio"
+                          id="review-rate-2"
+                          name="review-rate"
+                          value="2"
+                        />
+                        <label for="review-rate-2">
+                          <span>
+                            <i class="far fa-star"></i>
+                          </span>
+                          <span>
+                            <i class="fa fa-star"></i>
+                          </span>
+                        </label>
+
+                        <input
+                          type="radio"
+                          id="review-rate-1"
+                          name="review-rate"
+                          value="1"
+                        />
+                        <label for="review-rate-1">
+                          <span>
+                            <i class="far fa-star"></i>
+                          </span>
+                          <span>
+                            <i class="fa fa-star"></i>
+                          </span>
+                        </label>
                       </div>
                       <div class="nk-gap-1"></div>
-                      <textarea
-                        class="form-control required"
-                        name="message"
-                        rows="5"
-                        placeholder="Your Review *"
-                        aria-required="true"
-                      ></textarea>
-                      <div class="nk-gap-1"></div>
-                    
-                    
-                      <button class="nk-btn nk-btn-rounded nk-btn-color-dark-3 float-right">
-                        Envoyer
-                      </button>
-                    
-                    </form>
-                  </div>
+                      <form action="#" class="nk-form">
+                        <div class="d-flex flex-column row vertical-gap sm-gap">
+                          <div class="d-flex col-sm-2">
+                            <div className="avatar_product">
+                              <Avatar
+                                src={userN.photoURL}
+                                className="me-2"
+                                style={{ cursor: 'pointer' }}
+                              /> {userN.displayName}
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <input
+                              type="text"
+                              class="form-control required"
+                              name="title"
+                              placeholder="Titre *"
+
+                            />
+                          </div>
+                        </div>
+                        <div class="nk-gap-1"></div>
+                        <textarea
+                          class="form-control required"
+                          name="message"
+                          rows="5"
+                          placeholder="Ton message *"
+                          aria-required="true"
+                        ></textarea>
+                        <div class="nk-gap-1"></div>
+
+
+                        <button class="nk-btn nk-btn-rounded nk-btn-color-dark-3 float-right">
+                          Envoyer
+                        </button>
+
+                      </form>
+                    </div>
+                  ) : (
+                    // Si l'utilisateur n'est pas connecté, affichez un lien de connexion
+                    <Link to="/Login">
+                      <button className="fa fa-user">Se connecter</button>
+                    </Link>
+                  )} */}
+
+
                   {/* <!-- END: Reply --> */}
 
                   <div class="clearfix"></div>
@@ -593,65 +854,19 @@ function Product(props) {
                       </div>
                       <div class="nk-comment-text">
                         <p>
-                       texte
+                          texte
                         </p>
 
-                     
+
                       </div>
                     </div>
                     {/* <!-- END: Review -->
                                 <!-- START: Review --> */}
-                    <div class="nk-comment">
-                      <div class="nk-comment-meta">
-                        <img
-                          src="assets/images/avatar-1.jpg"
-                          alt="Hitman"
-                          class="rounded-circle"
-                          width="35"
-                        />{" "}
-                        par <a href="#">pseudo2</a> date
-                        <div class="nk-review-rating" data-rating="0.5">
-                          {" "}
-                          <i class="fa fa-star"></i> <i class="far fa-star"></i>{" "}
-                          <i class="far fa-star"></i>{" "}
-                          <i class="far fa-star"></i>{" "}
-                          <i class="far fa-star"></i>
-                        </div>
-                      </div>
-                      <div class="nk-comment-text">
-                        <p>
-                        texte
-                        </p>
-                      </div>
-                    </div>
-                    {/* <!-- END: Review -->
-                                <!-- START: Review --> */}
-                    <div class="nk-comment">
-                      <div class="nk-comment-meta">
-                        <img
-                          src="assets/images/avatar-3.jpg"
-                          alt="Wolfenstein"
-                          class="rounded-circle"
-                          width="35"
-                        />{" "}
-                        par <a href="#">pseudo</a> date
-                        <div class="nk-review-rating" data-rating="3.5">
-                          {" "}
-                          <i class="fa fa-star"></i> <i class="fa fa-star"></i>{" "}
-                          <i class="fa fa-star"></i> <i class="fa fa-star"></i>{" "}
-                          <i class="fa fa-star"></i>
-                        </div>
-                      </div>
-                      <div class="nk-comment-text">
-                        <p>
-                         texte
-                        </p>
-                      </div>
-                    </div>
+           
                     {/* <!-- END: Review --> */}
                   </div>
                 </div>
-                 
+
                 {/* <!-- END: Tab Reviews --> */}
               </div>
             </div>
@@ -726,15 +941,15 @@ function Product(props) {
                 <div class="nk-blog-post nk-blog-post-border-bottom" key={v.id}>
                   <div class="row vertical-gap">
                     <div class="col-lg-3 col-md-5">
-                    <Link
-                  
-      key={v.news_id}
-      {...v}
-      
-      to={{
-        pathname: `/news/${v.id}/${v.news_id}/`,
-      
-      }} class="nk-post-img">
+                      <Link
+
+                        key={v.news_id}
+                        {...v}
+
+                        to={{
+                          pathname: `/news/${v.id}/${v.news_id}/`,
+
+                        }} class="nk-post-img">
                         <img src={v.imageUrl} alt={v.title} />
 
                         <span class="nk-post-categories">
@@ -744,14 +959,14 @@ function Product(props) {
                     </div>
                     <div class="col-lg-9 col-md-7">
                       <h2 class="nk-post-title h4">
-                      <Link
-                    
-      key={v.news_id}
-      {...v}
-      to={{
-        pathname: `/news/${v.id}/${v.news_id}/`,
-      
-      }}>{v.title}</Link>
+                        <Link
+
+                          key={v.news_id}
+                          {...v}
+                          to={{
+                            pathname: `/news/${v.id}/${v.news_id}/`,
+
+                          }}>{v.title}</Link>
                       </h2>
                       <div class="nk-post-date mt-10 mb-10">
                         <span class="fa fa-calendar"></span> {formatDate(v.date)}
@@ -777,82 +992,82 @@ function Product(props) {
             </h3>
 
             <div class="nk-gap"></div>
-            {gameData ?  (
-            <div className="slider-container">
-              {/* <Slider {...settings}> */}
+            {gameData ? (
+              <div className="slider-container">
+                {/* <Slider {...settings}> */}
 
-              {gameData.map((i, id) => (
-                <div
-                  className="nk-blog-poste"
-                  key={id}
-                  style={{
-                    display: item.genre !== i.genre ? "none" : "block",
-                  }}
-                  
-                >
-                  {item.genre === i.genre ? (
-                    <div
-                      key={id}
+                {gameData.map((i, id) => (
+                  <div
+                    className="nk-blog-poste"
+                    key={id}
+                    style={{
+                      display: item.genre !== i.genre ? "none" : "block",
+                    }}
+
+                  >
+                    {item.genre === i.genre ? (
+                      <div
+                        key={id}
                       // style={{ width: '40%' }}
-                    >
-                     <Link
-                    
-                  key={i.id}
-                  {...i}
-                  
-                  to={{
-                    pathname: `/PC/${i.id}/${i.title}`,
-                    state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
-                  }}
-                  onClick={() => {
-                    window.scrollTo(0, 0)
-                  }}
-                  class="nk-post-img">
-                        <img src={i.imageUrl} alt={i.title} />
-                        <span className="nk-post-comments-count">
-                          {i.promo}
-                        </span>
+                      >
+                        <Link
+
+                          key={i.id}
+                          {...i}
+
+                          to={{
+                            pathname: `/PC/${i.id}/${i.title}`,
+                            state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
+                          }}
+                          onClick={() => {
+                            window.scrollTo(0, 0)
+                          }}
+                          class="nk-post-img">
+                          <img src={i.imageUrl} alt={i.title} />
+                          <span className="nk-post-comments-count">
+                            {i.promo}
+                          </span>
                         </Link>
-                      <div className="nk-gap"></div>
-                      <h2 className="nk-post-title h4 d-flex justify-content-between">
-                      <Link
-                  
-                  key={i.id}
-                  {...i}
-                  to={{
-                    pathname: `/PC/${i.id}/${i.title}`,
-                    state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
-                  }}
-                  class="nk-post-img">{i.title}  </Link>
-                        <span>{i.price}</span>
-                      </h2>
-                    </div>
-                  ) : null}
-                </div>
-              ))}
-           
-            </div>
+                        <div className="nk-gap"></div>
+                        <h2 className="nk-post-title h4 d-flex justify-content-between">
+                          <Link
+
+                            key={i.id}
+                            {...i}
+                            to={{
+                              pathname: `/PC/${i.id}/${i.title}`,
+                              state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
+                            }}
+                            class="nk-post-img">{i.title}  </Link>
+                          <span>{i.price}</span>
+                        </h2>
+                      </div>
+                    ) : null}
+                  </div>
+                ))}
+
+              </div>
             ) : (
-           
-                // Code à exécuter lorsque item est null
-                <Box sx={{ display: "flex" }}>
-                  <CircularProgress />
-                </Box>
-           
+
+              // Code à exécuter lorsque item est null
+              <Box sx={{ display: "flex" }}>
+                <CircularProgress />
+              </Box>
+
             )}
           </div>
-   
+
         </div>
-        
+
       ) : (
         // Code à exécuter lorsque item est null
         <Box sx={{ display: "flex" }}>
           <CircularProgress />
         </Box>
       )}
-        <div class="separator product-panel"></div>
-        <div class="separator product-panel"></div>
-             <Footer/>
+      <div class="separator product-panel"></div>
+      <div class="separator product-panel"></div>
+      <Footer />
     </div>
   );
 }

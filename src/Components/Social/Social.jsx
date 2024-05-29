@@ -47,7 +47,7 @@ function Social() {
       // you have one. Use User.getToken() instead.
       const uid = userN.uid;
     }
-  console.log(userN);
+
 
 // État de recherche
 const [searchOpen, setSearchOpen] = useState(false);

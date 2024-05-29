@@ -11639,3 +11639,8 @@ max-width: 616px;
   .resultSearch {
     color: white;
   }
+
+  .avatar_product {
+    display: flex;
+    align-items: center;
+  }
