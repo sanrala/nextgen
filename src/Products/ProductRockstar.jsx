@@ -16,7 +16,64 @@ import { Gallery, Item } from 'react-photoswipe-gallery'
 import 'photoswipe/style.css';
 import ReadMore from "../Components/ReadMore/ReadMore"
 import Header from "./../Components/Header/Header";
+
+import { Avatar } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser, logout } from "./../features/userSlice";
+import { db, auth, googleProvider } from './../Firebase';
+import { collection, addDoc, query, where, onSnapshot, serverTimestamp  } from "firebase/firestore";
+
+import StarIcon from '@mui/icons-material/Star';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import PropTypes from 'prop-types';
+import { styled } from '@mui/material/styles';
+import Rating from '@mui/material/Rating';
+import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
+import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
+import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
+import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAltOutlined';
+import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
+
+const StyledRating = styled(Rating)(({ theme }) => ({
+  '& .MuiRating-iconEmpty .MuiSvgIcon-root': {
+    color: theme.palette.action.disabled,
+  },
+}));
+
+const customIcons = {
+  1: {
+    icon: <SentimentVeryDissatisfiedIcon color="error" />,
+    label: 'Very Dissatisfied',
+  },
+  2: {
+    icon: <SentimentDissatisfiedIcon color="error" />,
+    label: 'Dissatisfied',
+  },
+  3: {
+    icon: <SentimentSatisfiedIcon color="warning" />,
+    label: 'Neutral',
+  },
+  4: {
+    icon: <SentimentSatisfiedAltIcon color="success" />,
+    label: 'Satisfied',
+  },
+  5: {
+    icon: <SentimentVerySatisfiedIcon color="success" />,
+    label: 'Very Satisfied',
+  },
+};
 function Product(props) {
+  function IconContainer(props) {
+    const { value, ...other } = props;
+    return <span {...other}>{customIcons[value].icon}</span>;
+  }
+  
+  IconContainer.propTypes = {
+    value: PropTypes.number.isRequired,
+  };
+
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
   function formatDate(dateString) {
     const date = new Date(dateString);
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -46,6 +103,130 @@ function Product(props) {
   };
 
 
+
+  const userN = auth.currentUser;
+  if (userN !== null) {
+    // The user object has basic properties such as display name, email, etc.
+    const displayName = userN.displayName;
+    const email = userN.email;
+    const photoURL = userN.photoURL;
+    const emailVerified = userN.emailVerified;
+
+    // The user's ID, unique to the Firebase project. Do NOT use
+    // this value to authenticate with your backend server, if
+    // you have one. Use User.getToken() instead.
+    const uid = userN.uid;
+  }
+
+  
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState({ title: "", message: "", rating: 0 });
+
+  useEffect(() => {
+    const selectedItem = gameData.find((item) => item.id === parseInt(id));
+    setItem(selectedItem);
+
+    const q = query(collection(db, "comments"), where("gameId", "==", id));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const commentsArray = [];
+      querySnapshot.forEach((doc) => {
+        commentsArray.push({ ...doc.data(), id: doc.id });
+      });
+      setComments(commentsArray);
+    });
+
+    return () => unsubscribe();
+  }, [id]);
+console.log(comments);
+  const handleChanges = (event) => {
+    const { name, value } = event.target;
+    setNewComment((prevComment) => ({
+      ...prevComment,
+      [name]: value
+    }));
+  };
+
+  const handleRatingChange = (event) => {
+    setNewComment((prevComment) => ({
+      ...prevComment,
+      rating: parseInt(event.target.value)
+    }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!user) {
+      console.error("User is not authenticated");
+      return;
+    }
+
+    const userName = userN.displayName || "Anonymous" ;
+    const userPhoto = userN.photoURL || "https://zupimages.net/up/24/22/cib6.png";
+
+    try {
+      await addDoc(collection(db, "comments"), {
+        gameId: id,
+        ...newComment,
+        userName,
+        userPhoto,
+        createdAt: serverTimestamp()
+      });
+      setNewComment({ title: "", message: "", rating: 0 });
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+  };
+
+  const calculateAverageRating = () => {
+    const totalRating = comments.reduce((acc, comment) => acc + parseInt(comment.rating), 0);
+    return (totalRating / comments.length) || 0;
+  };
+
+  const averageRating = calculateAverageRating();
+  const getRatingColor = (rating) => {
+    if (rating >= 4) return "green";
+    if (rating >= 2) return "orange";
+    if (rating > 0) return "red";
+    return "gray";
+  };
+
+  function getRatingIcon(rating) {
+    if (rating >= 0.1 && rating <= 1) {
+      return <SentimentVeryDissatisfiedIcon color="error" />;
+    } else if (rating > 1 && rating <= 2) {
+      return <SentimentDissatisfiedIcon color="error" />;
+    } else if (rating > 2 && rating <= 3) {
+      return <SentimentSatisfiedIcon color="warning" />;
+    } else if (rating > 3 && rating <= 4) {
+      return <SentimentSatisfiedAltIcon color="success" />;
+    } else if (rating > 4 && rating <= 5) {
+      return <SentimentVerySatisfiedIcon color="success" />;
+    } else {
+      return null;
+    }
+  }
+
+  function getRatingDescription(rating) {
+    switch (rating) {
+      case 0:
+        return <span style={{ color: "red" }}>Très négative</span>;
+      case 1:
+        return <span style={{ color: "red" }}>Négative</span>;
+      case 2:
+        return <span style={{ color: "orange" }}>Très moyen</span>;
+      case 3:
+        return <span style={{ color: "orange" }}>Moyen</span>;
+      case 4:
+        return <span style={{ color: "green" }}>Positives</span>;
+      case 4.5:
+        return <span style={{ color: "green" }}>Très Positives</span>;
+      case 5:
+        return <span style={{ color: "blue" }}>Divin</span>;
+      default:
+        return 'Aucune note';
+    }
+  }
   return (
     <div>
 
@@ -292,8 +473,20 @@ function Product(props) {
                   <div class="nk-gap-1"></div>
 
                   <div class="nk-product-meta">
-                    <div>{/* <strong>SKU</strong>: 300-200-503 */}</div>
-
+                  <strong>Note</strong>:{" "}
+                    <a
+                      className={`average-rating ${getRatingColor(
+                        averageRating
+                      )} ${
+                        averageRating >= 4 || averageRating < 2 ? "flash" : ""
+                      }`}
+                      style={{
+                        "--rating-percent": `${(averageRating / 5) * 100}%`,
+                      }}
+                    >
+                      {getRatingDescription(averageRating)}{" "}
+                      {getRatingIcon(averageRating)}
+                    </a>
                     <div>
                       <strong>Categories </strong>:{" "}
                       <a href="#"> {item.genres}</a>
@@ -445,203 +638,172 @@ function Product(props) {
                   <div class="nk-gap-2"></div>
                   {/* <!-- START: Reply --> */}
                   <h3 class="h4">Ajouter un commentaire</h3>
-                  <div class="nk-rating">
-
-                    <input
-                      type="radio"
-                      id="review-rate-5"
-                      name="review-rate"
-                      value="5"
-                    />
-                    <label for="review-rate-5">
-                      <span>
-                        <i class="far fa-star"></i>
-                      </span>
-                      <span>
-                        <i class="fa fa-star"></i>
-                      </span>
-                    </label>
-
-                    <input
-                      type="radio"
-                      id="review-rate-4"
-                      name="review-rate"
-                      value="4"
-                    />
-                    <label for="review-rate-4">
-                      <span>
-                        <i class="far fa-star"></i>
-                      </span>
-                      <span>
-                        <i class="fa fa-star"></i>
-                      </span>
-                    </label>
-
-                    <input
-                      type="radio"
-                      id="review-rate-3"
-                      name="review-rate"
-                      value="3"
-                    />
-                    <label for="review-rate-3">
-                      <span>
-                        <i class="far fa-star"></i>
-                      </span>
-                      <span>
-                        <i class="fa fa-star"></i>
-                      </span>
-                    </label>
-
-                    <input
-                      type="radio"
-                      id="review-rate-2"
-                      name="review-rate"
-                      value="2"
-                    />
-                    <label for="review-rate-2">
-                      <span>
-                        <i class="far fa-star"></i>
-                      </span>
-                      <span>
-                        <i class="fa fa-star"></i>
-                      </span>
-                    </label>
-
-                    <input
-                      type="radio"
-                      id="review-rate-1"
-                      name="review-rate"
-                      value="1"
-                    />
-                    <label for="review-rate-1">
-                      <span>
-                        <i class="far fa-star"></i>
-                      </span>
-                      <span>
-                        <i class="fa fa-star"></i>
-                      </span>
-                    </label>
-                  </div>
-                  <div class="nk-gap-1"></div>
-
-                  <div class="nk-reply">
-                    <form action="#" class="nk-form">
-                      <div class="row vertical-gap sm-gap">
-                        <div class="col-sm-6">
-                          <input
-                            type="text"
-                            class="form-control required"
-                            name="name"
-                            placeholder="Name *"
-                          />
+                  {user ? (
+                  <div className="nk-reply">
+                    {/* <div className="nk-rating">
+              
+            {[...Array(5)].map((_, index) => (
+                <React.Fragment key={index}>
+                  <input
+                    type="radio"
+                    id={`review-rate-${5 - index}`}
+                    name="rating"
+                    value={5 - index}
+                    onChange={handleRatingChange}
+                    checked={newComment.rating === 5 - index}
+                    style={{ display: "none" }}
+                  />
+                  <label htmlFor={`review-rate-${5 - index}`} style={{ cursor: 'pointer' }}>
+                    <span>
+                      {newComment.rating >= 5 - index ? <StarIcon /> : <StarBorderIcon />}
+                    </span>
+                  </label>
+                </React.Fragment>
+              ))}
+            </div> */}
+                    <div className="nk-gap-1"></div>
+                    <form onSubmit={handleSubmit} className="nk-form">
+                      <div className="d-flex flex-column row vertical-gap sm-gap">
+                        <div className="d-flex col-sm-2">
+                          <div className="avatar_product">
+                            <Avatar
+                              src={userN.photoURL}
+                              className="me-2"
+                              style={{ cursor: "pointer" }}
+                            />{" "}
+                            {user.displayName}
+                          </div>
                         </div>
-                        <div class="col-sm-6">
+                        <div className="rating">
+                          {/* {[...Array(5)].map((_, index) => (
+                <React.Fragment key={index}>
+                  <input type="radio" id={`review-rate-${5 - index}`} name="rating" value={5 - index} onChange={handleChanges} checked={newComment.rating == 5 - index} />
+                  <label htmlFor={`review-rate-${5 - index}`}>
+                    <span><i className={newComment.rating >= 5 - index ? "fa fa-star" : "far fa-star"}></i></span>
+                  </label>
+                </React.Fragment>
+              ))} */}
+
+                          {[...Array(5)].map((_, index) => (
+                            <React.Fragment key={index}>
+                              <input
+                                type="radio"
+                                id={`review-rate-${5 - index}`}
+                                name="rating"
+                                value={5 - index}
+                                onChange={handleRatingChange}
+                                checked={newComment.rating === 5 - index}
+                                style={{ display: "none" }}
+                              />
+                              <label
+                                htmlFor={`review-rate-${5 - index}`}
+                                style={{ cursor: "pointer" }}
+                              >
+                                <span>
+                                  {newComment.rating >= 5 - index ? (
+                                    <StarIcon />
+                                  ) : (
+                                    <StarBorderIcon />
+                                  )}
+                                </span>
+                              </label>
+                            </React.Fragment>
+                          ))}
+                        </div>
+                        <div className="col-sm-6">
                           <input
                             type="text"
-                            class="form-control required"
+                            className="form-control required"
                             name="title"
-                            placeholder="Title *"
+                            placeholder="Titre *"
+                            value={newComment.title}
+                            onChange={handleChanges}
+                            required
                           />
                         </div>
                       </div>
-                      <div class="nk-gap-1"></div>
+                      <div className="nk-gap-1"></div>
                       <textarea
-                        class="form-control required"
+                        className="form-control required"
                         name="message"
                         rows="5"
-                        placeholder="Your Review *"
-                        aria-required="true"
+                        placeholder="Ton message *"
+                        value={newComment.message}
+                        onChange={handleChanges}
+                        required
                       ></textarea>
-                      <div class="nk-gap-1"></div>
-
-
-                      <button class="nk-btn nk-btn-rounded nk-btn-color-dark-3 float-right">
+                      <div className="nk-gap-1"></div>
+                      <button className="nk-btn nk-btn-rounded nk-btn-color-dark-3 float-right">
                         Envoyer
                       </button>
-
                     </form>
                   </div>
-                  {/* <!-- END: Reply --> */}
+                ) : (
+                  <Link to="/Login">
+                    <button className="fa fa-user">Se connecter</button>
+                  </Link>
+                )}
 
-                  <div class="clearfix"></div>
-                  <div class="nk-gap-2"></div>
-                  <div class="nk-comments">
-                    {/* <!-- START: Review --> */}
-                    <div class="nk-comment">
-                      <div class="nk-comment-meta">
+                <div className="clearfix"></div>
+                <div className="nk-gap-2"></div>
+                <div className="nk-comments">
+                  <h3>Commentaires</h3>
+                  {/* <div className="average-rating-container">
+            <div
+              className={`average-rating ${getRatingColor(averageRating)} ${averageRating >= 4 || averageRating < 2 ? 'flash' : ''}`}
+              style={{ "--rating-percent": `${(averageRating / 5) * 100}%` }}
+            >
+              {averageRating.toFixed(1)}
+            </div>
+          </div> */}
+                  {/* <div className="average-rating-container">
+  <div
+    className={`average-rating ${getRatingColor(averageRating)} ${averageRating >= 4 || averageRating < 2 ? 'flash' : ''}`}
+    style={{ "--rating-percent": `${(averageRating / 5) * 100}%` }}
+  >
+    {getRatingIcon(averageRating)}
+  </div>
+</div> */}
+                  {comments.map((comment) => (
+                    <div key={comment.id} className="nk-comment">
+                      <div className="nk-comment-meta">
                         <img
-                          src=""
-                          alt="Witch Murder"
-                          class="rounded-circle"
+                          src={comment.userPhoto || "default-avatar.png"}
+                          alt={comment.userName}
+                          className="rounded-circle"
                           width="35"
                         />{" "}
-                        par <a href="#">Pseudo</a>date
-                        <div class="nk-review-rating" data-rating="4.5">
+                        par <a href="#">{comment.userName}</a>{" "}
+                        {comment.createdAt
+                          ? `le ${new Date(
+                              comment.createdAt.seconds * 1000
+                            ).toLocaleDateString("fr-FR")}`
+                          : ""}
+                        <div
+                          className="nk-review-rating"
+                          data-rating={comment.rating}
+                        >
                           {" "}
-                          <i class="fa fa-star"></i> <i class="fa fa-star"></i>{" "}
-                          <i class="fa fa-star"></i> <i class="fa fa-star"></i>{" "}
-                          <i class="far fa-star"></i>
+                          {[...Array(5)].map((_, index) => (
+                            <i
+                              key={index}
+                              className={
+                                comment.rating > index
+                                  ? "fa fa-star"
+                                  : "far fa-star"
+                              }
+                            ></i>
+                          ))}
                         </div>
                       </div>
-                      <div class="nk-comment-text">
-                        <p>
-                          texte
-                        </p>
+                      <div className="nk-comment-text">
+                        <p>{comment.message}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
 
 
-                      </div>
-                    </div>
-                    {/* <!-- END: Review -->
-                                <!-- START: Review --> */}
-                    <div class="nk-comment">
-                      <div class="nk-comment-meta">
-                        <img
-                          src="assets/images/avatar-1.jpg"
-                          alt="Hitman"
-                          class="rounded-circle"
-                          width="35"
-                        />{" "}
-                        par <a href="#">pseudo2</a> date
-                        <div class="nk-review-rating" data-rating="0.5">
-                          {" "}
-                          <i class="fa fa-star"></i> <i class="far fa-star"></i>{" "}
-                          <i class="far fa-star"></i>{" "}
-                          <i class="far fa-star"></i>{" "}
-                          <i class="far fa-star"></i>
-                        </div>
-                      </div>
-                      <div class="nk-comment-text">
-                        <p>
-                          texte
-                        </p>
-                      </div>
-                    </div>
-                    {/* <!-- END: Review -->
-                                <!-- START: Review --> */}
-                    <div class="nk-comment">
-                      <div class="nk-comment-meta">
-                        <img
-                          src="assets/images/avatar-3.jpg"
-                          alt="Wolfenstein"
-                          class="rounded-circle"
-                          width="35"
-                        />{" "}
-                        par <a href="#">pseudo</a> date
-                        <div class="nk-review-rating" data-rating="3.5">
-                          {" "}
-                          <i class="fa fa-star"></i> <i class="fa fa-star"></i>{" "}
-                          <i class="fa fa-star"></i> <i class="fa fa-star"></i>{" "}
-                          <i class="fa fa-star"></i>
-                        </div>
-                      </div>
-                      <div class="nk-comment-text">
-                        <p>
-                          texte
-                        </p>
-                      </div>
-                    </div>
-                    {/* <!-- END: Review --> */}
-                  </div>
                 </div>
 
                 {/* <!-- END: Tab Reviews --> */}

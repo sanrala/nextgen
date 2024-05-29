@@ -9,29 +9,91 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import CircularProgress from "@mui/material/CircularProgress";
 import HoverVideoPlayer from "react-hover-video-player";
-import PhotoSwipeLightbox from 'photoswipe/lightbox';
-import 'photoswipe/dist/photoswipe.css'
+import PhotoSwipeLightbox from "photoswipe/lightbox";
+import "photoswipe/dist/photoswipe.css";
 import Footer from "./../Components/Footer/Footer";
-import { Gallery, Item } from 'react-photoswipe-gallery'
-import 'photoswipe/style.css';
-import ReadMore from "./../Components/ReadMore/ReadMore"
+import { Gallery, Item } from "react-photoswipe-gallery";
+import "photoswipe/style.css";
+import ReadMore from "./../Components/ReadMore/ReadMore";
 import Header from "./../Components/Header/Header";
-import StarIcon from '@mui/icons-material/Star';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
-import ava from "./../assets/images/avatar-3.jpg"
+import StarIcon from "@mui/icons-material/Star";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
+import ava from "./../assets/images/avatar-3.jpg";
 import { Avatar } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser, logout } from "./../features/userSlice";
-import { db, auth, googleProvider } from './../Firebase';
-import { collection, addDoc, query, where, onSnapshot, serverTimestamp  } from "firebase/firestore";
+import { db, auth, googleProvider } from "./../Firebase";
+
+import PropTypes from "prop-types";
+import { styled } from "@mui/material/styles";
+import Rating from "@mui/material/Rating";
+import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
+import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
+import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
+import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
+import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
+import "./Product.css";
+
+import {
+  collection,
+  addDoc,
+  query,
+  where,
+  onSnapshot,
+  serverTimestamp,
+} from "firebase/firestore";
+
+const StyledRating = styled(Rating)(({ theme }) => ({
+  "& .MuiRating-iconEmpty .MuiSvgIcon-root": {
+    color: theme.palette.action.disabled,
+  },
+}));
+
+const customIcons = {
+  1: {
+    icon: <SentimentVeryDissatisfiedIcon color="error" />,
+    label: "Very Dissatisfied",
+  },
+  2: {
+    icon: <SentimentDissatisfiedIcon color="error" />,
+    label: "Dissatisfied",
+  },
+  3: {
+    icon: <SentimentSatisfiedIcon color="warning" />,
+    label: "Neutral",
+  },
+  4: {
+    icon: <SentimentSatisfiedAltIcon color="success" />,
+    label: "Satisfied",
+  },
+  5: {
+    icon: <SentimentVerySatisfiedIcon color="success" />,
+    label: "Very Satisfied",
+  },
+};
+
 function Product(props) {
+  function IconContainer(props) {
+    const { value, ...other } = props;
+    return <span {...other}>{customIcons[value].icon}</span>;
+  }
+
+  IconContainer.propTypes = {
+    value: PropTypes.number.isRequired,
+  };
+
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
 
   function formatDate(dateString) {
     const date = new Date(dateString);
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    return date.toLocaleDateString('fr-FR', options);
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    return date.toLocaleDateString("fr-FR", options);
   }
   const [item, setItem] = useState(null);
   const { id, title } = useParams();
@@ -50,7 +112,7 @@ function Product(props) {
     setAge(event.target.value);
   };
 
-  const [activeTab, setActiveTab] = useState('description');
+  const [activeTab, setActiveTab] = useState("description");
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -70,17 +132,12 @@ function Product(props) {
     const uid = userN.uid;
   }
 
-
-
-
-
-
-
-
-
-
   const [comments, setComments] = useState([]);
-  const [newComment, setNewComment] = useState({ title: "", message: "", rating: 0 });
+  const [newComment, setNewComment] = useState({
+    title: "",
+    message: "",
+    rating: 0,
+  });
 
   useEffect(() => {
     const selectedItem = gameData.find((item) => item.id === parseInt(id));
@@ -97,19 +154,19 @@ function Product(props) {
 
     return () => unsubscribe();
   }, [id]);
-
+  console.log(comments);
   const handleChanges = (event) => {
     const { name, value } = event.target;
     setNewComment((prevComment) => ({
       ...prevComment,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleRatingChange = (event) => {
     setNewComment((prevComment) => ({
       ...prevComment,
-      rating: parseInt(event.target.value)
+      rating: parseInt(event.target.value),
     }));
   };
 
@@ -121,8 +178,9 @@ function Product(props) {
       return;
     }
 
-    const userName = userN.displayName || "Anonymous" ;
-    const userPhoto = userN.photoURL || "default-avatar.png";
+    const userName = userN.displayName || "Anonymous";
+    const userPhoto =
+      userN.photoURL || "https://zupimages.net/up/24/22/cib6.png";
 
     try {
       await addDoc(collection(db, "comments"), {
@@ -130,7 +188,7 @@ function Product(props) {
         ...newComment,
         userName,
         userPhoto,
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
       });
       setNewComment({ title: "", message: "", rating: 0 });
     } catch (error) {
@@ -139,13 +197,62 @@ function Product(props) {
   };
 
   const calculateAverageRating = () => {
-    const totalRating = comments.reduce((acc, comment) => acc + parseInt(comment.rating), 0);
-    return (totalRating / comments.length) || 0;
+    const totalRating = comments.reduce(
+      (acc, comment) => acc + parseInt(comment.rating),
+      0
+    );
+    return totalRating / comments.length || 0;
   };
 
-  console.log(userN);
+  const averageRating = calculateAverageRating();
+  const getRatingColor = (rating) => {
+    if (rating >= 4) return "green";
+    if (rating >= 2) return "orange";
+    if (rating > 0) return "red";
+    return "gray";
+  };
 
+  function getRatingIcon(rating) {
+    if (rating >= 0.1 && rating <= 1) {
+      return <SentimentVeryDissatisfiedIcon color="error" />;
+    } else if (rating > 1 && rating <= 2) {
+      return <SentimentDissatisfiedIcon color="error" />;
+    } else if (rating > 2 && rating <= 3) {
+      return <SentimentSatisfiedIcon color="warning" />;
+    } else if (rating > 3 && rating <= 4) {
+      return <SentimentSatisfiedAltIcon color="success" />;
+    } else if (rating > 4 && rating <= 5) {
+      return <SentimentVerySatisfiedIcon color="success" />;
+    } else {
+      return null;
+    }
+  }
+  
 
+  function getRatingDescription(rating) {
+    if (rating === null || rating === undefined) {
+      return "Aucune note";
+    }
+
+    switch (rating) {
+      case 0:
+        return <span style={{ color: "red" }}>Aucune note</span>;
+      case 1:
+        return <span style={{ color: "red" }}>Négative</span>;
+      case 2:
+        return <span style={{ color: "orange" }}>Très moyen</span>;
+      case 3:
+        return <span style={{ color: "orange" }}>Moyen</span>;
+      case 4:
+        return <span style={{ color: "green" }}>Positives</span>;
+      case 4.5:
+        return <span style={{ color: "green" }}>Très Positives</span>;
+      case 5:
+        return <span style={{ color: "blue" }}>Divin</span>;
+      default:
+        return "Aucune note";
+    }
+  }
   return (
     <div>
       <Header />
@@ -400,8 +507,23 @@ function Product(props) {
                   <div class="nk-gap-1"></div>
 
                   <div class="nk-product-meta">
-                    <div>{/* <strong>SKU</strong>: 300-200-503 */}</div>
-
+                    <div>
+                      <strong>Note</strong>:{" "}
+                      <a
+                        className={`average-rating ${getRatingColor(
+                          averageRating
+                        )} ${
+                          averageRating >= 4 || averageRating < 2 ? "flash" : ""
+                        }`}
+                        style={{
+                          "--rating-percent": `${(averageRating / 5) * 100}%`,
+                        }}
+                      >
+                        {getRatingDescription(averageRating)}{" "}
+                        {getRatingIcon(averageRating)}
+                        {/* {calculateAverageRating().toFixed(1)} */}
+                      </a>
+                    </div>
                     <div>
                       <strong>Categories </strong>:{" "}
                       <a href="#"> {item.genres}</a>
@@ -411,7 +533,7 @@ function Product(props) {
                         <>
                           <div>
                             <strong>Date de sortie </strong>:{" "}
-                            <a href="#"> {formatDate(ab.sortie)}</a>
+                            <a href="#">{formatDate(ab.sortie)}</a>
                           </div>
                           <div>
                             <strong>Développeur </strong>:{" "}
@@ -493,20 +615,24 @@ function Product(props) {
             <div class="nk-gap-2"></div>
             <div class="nk-tabs">
               <ul class="nav nav-tabs" role="tablist">
-                <li class="nav-item"
-                >
+                <li class="nav-item">
                   <a
-                    className={activeTab === 'description' ? 'active nav-link' : 'nav-link'}
-                    onClick={() => handleTabChange('description')}
+                    className={
+                      activeTab === "description"
+                        ? "active nav-link"
+                        : "nav-link"
+                    }
+                    onClick={() => handleTabChange("description")}
                   >
                     Description
                   </a>
                 </li>
-                <li class="nav-item"
-                >
+                <li class="nav-item">
                   <a
-                    className={activeTab === 'comment' ? 'active nav-link' : 'nav-link'}
-                    onClick={() => handleTabChange('comment')}
+                    className={
+                      activeTab === "comment" ? "active nav-link" : "nav-link"
+                    }
+                    onClick={() => handleTabChange("comment")}
                   >
                     Commentaires (3)
                   </a>
@@ -518,10 +644,13 @@ function Product(props) {
 
                 <div
                   role="tabpanel"
-                  className={activeTab === 'description' ? 'tab-pane fade show active' : 'tab-pane fade'}
+                  className={
+                    activeTab === "description"
+                      ? "tab-pane fade show active"
+                      : "tab-pane fade"
+                  }
                   class="tab-pane fade show active"
                   id="tab-description"
-
                 >
                   <div class="nk-gap"></div>
 
@@ -546,10 +675,16 @@ function Product(props) {
 
                 {/* <!-- START: Tab Reviews --> */}
 
-                <div role="tabpanel"
-                  className={activeTab === 'comment' ? 'tab-pane fade show active' : 'tab-pane fade'}
+                <div
+                  role="tabpanel"
+                  className={
+                    activeTab === "comment"
+                      ? "tab-pane fade show active"
+                      : "tab-pane fade"
+                  }
                   class="tab-pane fade"
-                  id="tab-reviews">
+                  id="tab-reviews"
+                >
                   <div class="nk-gap-2"></div>
                   {/* <!-- START: Reply --> */}
                   <h3 class="h4">Ajouter un commentaire</h3>
@@ -595,13 +730,9 @@ function Product(props) {
           </div>
         ))} */}
 
-
-
-
-
-{user ? (
-          <div className="nk-reply">
-            {/* <div className="nk-rating">
+                  {user ? (
+                    <div className="nk-reply">
+                      {/* <div className="nk-rating">
               
             {[...Array(5)].map((_, index) => (
                 <React.Fragment key={index}>
@@ -622,21 +753,21 @@ function Product(props) {
                 </React.Fragment>
               ))}
             </div> */}
-            <div className="nk-gap-1"></div>
-            <form onSubmit={handleSubmit} className="nk-form">
-              
-              <div className="d-flex flex-column row vertical-gap sm-gap">
-                <div className="d-flex col-sm-2">
-                  <div className="avatar_product">
-                    <Avatar
-                      src={userN.photoURL}
-                      className="me-2"
-                      style={{ cursor: 'pointer' }}
-                    /> {user.displayName}
-                  </div>
-                </div>
-                <div className="rating">
-              {/* {[...Array(5)].map((_, index) => (
+                      <div className="nk-gap-1"></div>
+                      <form onSubmit={handleSubmit} className="nk-form">
+                        <div className="d-flex flex-column row vertical-gap sm-gap">
+                          <div className="d-flex col-sm-2">
+                            <div className="avatar_product">
+                              <Avatar
+                                src={userN.photoURL}
+                                className="me-2"
+                                style={{ cursor: "pointer" }}
+                              />{" "}
+                              {user.displayName}
+                            </div>
+                          </div>
+                          <div className="rating">
+                            {/* {[...Array(5)].map((_, index) => (
                 <React.Fragment key={index}>
                   <input type="radio" id={`review-rate-${5 - index}`} name="rating" value={5 - index} onChange={handleChanges} checked={newComment.rating == 5 - index} />
                   <label htmlFor={`review-rate-${5 - index}`}>
@@ -645,96 +776,126 @@ function Product(props) {
                 </React.Fragment>
               ))} */}
 
-{[...Array(5)].map((_, index) => (
-                <React.Fragment key={index}>
-                  <input
-                    type="radio"
-                    id={`review-rate-${5 - index}`}
-                    name="rating"
-                    value={5 - index}
-                    onChange={handleRatingChange}
-                    checked={newComment.rating === 5 - index}
-                    style={{ display: "none" }}
-                  />
-                  <label htmlFor={`review-rate-${5 - index}`} style={{ cursor: 'pointer' }}>
-                    <span>
-                      {newComment.rating >= 5 - index ? <StarIcon /> : <StarBorderIcon />}
-                    </span>
-                  </label>
-                </React.Fragment>
-              ))}
+                            {[...Array(5)].map((_, index) => (
+                              <React.Fragment key={index}>
+                                <input
+                                  type="radio"
+                                  id={`review-rate-${5 - index}`}
+                                  name="rating"
+                                  value={5 - index}
+                                  onChange={handleRatingChange}
+                                  checked={newComment.rating === 5 - index}
+                                  style={{ display: "none" }}
+                                />
+                                <label
+                                  htmlFor={`review-rate-${5 - index}`}
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  <span>
+                                    {newComment.rating >= 5 - index ? (
+                                      <StarIcon />
+                                    ) : (
+                                      <StarBorderIcon />
+                                    )}
+                                  </span>
+                                </label>
+                              </React.Fragment>
+                            ))}
+                          </div>
+                          <div className="col-sm-6">
+                            <input
+                              type="text"
+                              className="form-control required"
+                              name="title"
+                              placeholder="Titre *"
+                              value={newComment.title}
+                              onChange={handleChanges}
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="nk-gap-1"></div>
+                        <textarea
+                          className="form-control required"
+                          name="message"
+                          rows="5"
+                          placeholder="Ton message *"
+                          value={newComment.message}
+                          onChange={handleChanges}
+                          required
+                        ></textarea>
+                        <div className="nk-gap-1"></div>
+                        <button className="nk-btn nk-btn-rounded nk-btn-color-dark-3 float-right">
+                          Envoyer
+                        </button>
+                      </form>
+                    </div>
+                  ) : (
+                    <Link to="/Login">
+                      <button className="fa fa-user">Se connecter</button>
+                    </Link>
+                  )}
+
+                  <div className="clearfix"></div>
+                  <div className="nk-gap-2"></div>
+                  <div className="nk-comments">
+                    <h3>Commentaires</h3>
+                    {/* <div className="average-rating-container">
+            <div
+              className={`average-rating ${getRatingColor(averageRating)} ${averageRating >= 4 || averageRating < 2 ? 'flash' : ''}`}
+              style={{ "--rating-percent": `${(averageRating / 5) * 100}%` }}
+            >
+              {averageRating.toFixed(1)}
             </div>
-                <div className="col-sm-6">
-                  <input
-                    type="text"
-                    className="form-control required"
-                    name="title"
-                    placeholder="Titre *"
-                    value={newComment.title}
-                    onChange={handleChanges}
-                    required
-                  />
-                </div>
-              </div>
-              <div className="nk-gap-1"></div>
-              <textarea
-                className="form-control required"
-                name="message"
-                rows="5"
-                placeholder="Ton message *"
-                value={newComment.message}
-                onChange={handleChanges}
-                required
-              ></textarea>
-              <div className="nk-gap-1"></div>
-              <button className="nk-btn nk-btn-rounded nk-btn-color-dark-3 float-right">
-                Envoyer
-              </button>
-            </form>
-          </div>
-        ) : (
-          <Link to="/Login">
-            <button className="fa fa-user">Se connecter</button>
-          </Link>
-        )}
+          </div> */}
+                    {/* <div className="average-rating-container">
+  <div
+    className={`average-rating ${getRatingColor(averageRating)} ${averageRating >= 4 || averageRating < 2 ? 'flash' : ''}`}
+    style={{ "--rating-percent": `${(averageRating / 5) * 100}%` }}
+  >
+    {getRatingIcon(averageRating)}
+  </div>
+</div> */}
+                    {comments.map((comment) => (
+                      <div key={comment.id} className="nk-comment">
+                        <div className="nk-comment-meta">
+                          <img
+                            src={comment.userPhoto || "default-avatar.png"}
+                            alt={comment.userName}
+                            className="rounded-circle"
+                            width="35"
+                          />{" "}
+                          par <a href="#">{comment.userName}</a>{" "}
+                          {comment.createdAt
+                            ? `le ${new Date(
+                                comment.createdAt.seconds * 1000
+                              ).toLocaleDateString("fr-FR")}`
+                            : ""}
+                          <div
+                            className="nk-review-rating"
+                            data-rating={comment.rating}
+                          >
+                            {" "}
+                            {[...Array(5)].map((_, index) => (
+                              <i
+                                key={index}
+                                className={
+                                  comment.rating > index
+                                    ? "fa fa-star"
+                                    : "far fa-star"
+                                }
+                              ></i>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="nk-comment-text">
+                          <p>{comment.message}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
 
-        <div className="clearfix"></div>
-        <div className="nk-gap-2"></div>
-        <div className="nk-comments">
-          <h3>Commentaires</h3>
-          <p>Note globale : {calculateAverageRating().toFixed(1)} / 5</p>
-          {comments.map((comment) => (
-            <div key={comment.id} className="nk-comment">
-              <div className="nk-comment-meta">
-                <img
-                  src={comment.userPhoto || "default-avatar.png"}
-                  alt={comment.userName}
-                  className="rounded-circle"
-                  width="35"
-                />{" "}
-                par <a href="#">{comment.userName}</a>{" "}
-                {comment.createdAt ? `le ${new Date(comment.createdAt.seconds * 1000).toLocaleDateString("fr-FR")}` : ""}
-                <div className="nk-review-rating" data-rating={comment.rating}>
-                  {" "}{[...Array(5)].map((_, index) => (
-                    <i key={index} className={comment.rating > index ? "fa fa-star" : "far fa-star"}></i>
-                  ))}
-                </div>
-              </div>
-              <div className="nk-comment-text">
-                <p>{comment.message}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-
-
-
-
-
-
-
-{/* 
+                  {/* 
                   {user ? (
 
                     <div class="nk-reply">
@@ -861,12 +1022,10 @@ function Product(props) {
                     </Link>
                   )} */}
 
-
                   {/* <!-- END: Reply --> */}
 
                   <div class="clearfix"></div>
                   <div class="nk-gap-2"></div>
-                
                 </div>
 
                 {/* <!-- END: Tab Reviews --> */}
@@ -944,14 +1103,13 @@ function Product(props) {
                   <div class="row vertical-gap">
                     <div class="col-lg-3 col-md-5">
                       <Link
-
                         key={v.news_id}
                         {...v}
-
                         to={{
                           pathname: `/news/${v.id}/${v.news_id}/`,
-
-                        }} class="nk-post-img">
+                        }}
+                        class="nk-post-img"
+                      >
                         <img src={v.imageUrl} alt={v.title} />
 
                         <span class="nk-post-categories">
@@ -962,16 +1120,18 @@ function Product(props) {
                     <div class="col-lg-9 col-md-7">
                       <h2 class="nk-post-title h4">
                         <Link
-
                           key={v.news_id}
                           {...v}
                           to={{
                             pathname: `/news/${v.id}/${v.news_id}/`,
-
-                          }}>{v.title}</Link>
+                          }}
+                        >
+                          {v.title}
+                        </Link>
                       </h2>
                       <div class="nk-post-date mt-10 mb-10">
-                        <span class="fa fa-calendar"></span> {formatDate(v.date)}
+                        <span class="fa fa-calendar"></span>{" "}
+                        {formatDate(v.date)}
                         <span class="fa fa-comments"></span>{" "}
                         <a href="#">0 commentaires</a>
                       </div>
@@ -1005,26 +1165,24 @@ function Product(props) {
                     style={{
                       display: item.genre !== i.genre ? "none" : "block",
                     }}
-
                   >
                     {item.genre === i.genre ? (
                       <div
                         key={id}
-                      // style={{ width: '40%' }}
+                        // style={{ width: '40%' }}
                       >
                         <Link
-
                           key={i.id}
                           {...i}
-
                           to={{
                             pathname: `/PC/${i.id}/${i.title}`,
                             state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
                           }}
                           onClick={() => {
-                            window.scrollTo(0, 0)
+                            window.scrollTo(0, 0);
                           }}
-                          class="nk-post-img">
+                          class="nk-post-img"
+                        >
                           <img src={i.imageUrl} alt={i.title} />
                           <span className="nk-post-comments-count">
                             {i.promo}
@@ -1033,34 +1191,31 @@ function Product(props) {
                         <div className="nk-gap"></div>
                         <h2 className="nk-post-title h4 d-flex justify-content-between">
                           <Link
-
                             key={i.id}
                             {...i}
                             to={{
                               pathname: `/PC/${i.id}/${i.title}`,
                               state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
                             }}
-                            class="nk-post-img">{i.title}  </Link>
+                            class="nk-post-img"
+                          >
+                            {i.title}{" "}
+                          </Link>
                           <span>{i.price}</span>
                         </h2>
                       </div>
                     ) : null}
                   </div>
                 ))}
-
               </div>
             ) : (
-
               // Code à exécuter lorsque item est null
               <Box sx={{ display: "flex" }}>
                 <CircularProgress />
               </Box>
-
             )}
           </div>
-
         </div>
-
       ) : (
         // Code à exécuter lorsque item est null
         <Box sx={{ display: "flex" }}>

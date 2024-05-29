@@ -129,7 +129,7 @@ const handleSearchChange = (event) => {
             onClick={handleMenuOpen}
             style={{ cursor: 'pointer' }} 
           />
-          {userN.displayName} 
+  
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
