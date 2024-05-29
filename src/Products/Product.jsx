@@ -18,7 +18,7 @@ import ReadMore from "./../Components/ReadMore/ReadMore"
 import Header from "./../Components/Header/Header";
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
-
+import ava from "./../assets/images/avatar-3.jpg"
 import { Avatar } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser, logout } from "./../features/userSlice";
@@ -121,7 +121,7 @@ function Product(props) {
       return;
     }
 
-    const userName = userN.displayName || "Anonymous";
+    const userName = userN.displayName || "Anonymous" ;
     const userPhoto = userN.photoURL || "default-avatar.png";
 
     try {
@@ -143,7 +143,7 @@ function Product(props) {
     return (totalRating / comments.length) || 0;
   };
 
-
+  console.log(userN);
 
 
   return (
