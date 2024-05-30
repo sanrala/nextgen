@@ -217,27 +217,28 @@ console.log(comments);
   }
 
   function getRatingDescription(rating) {
-    switch (rating) {
-      case 0:
-        return <span style={{ color: "error" }}>aucune</span>;
-      case 1:
-        return <span style={{ color: "error" }}>Négative</span>;
-      case 2:
-        return <span style={{ color: "warning" }}>Très moyen</span>;
-        case 2.5:
-          return <span style={{ color: "warning" }}>Très moyen</span>;
-      case 3:
-        return <span style={{ color: "warning" }}>Moyen</span>;
-      case 4:
-        return <span style={{ color: "success" }}>Positives</span>;
-      case 4.5:
-        return <span style={{ color: "success" }}>Très Positives</span>;
-      case 5:
-        return <span style={{ color: "blue" }}>Divin</span>;
-      default:
-        return 'Aucune note';
+    if (rating === null || rating === undefined) {
+        return "Aucune note";
     }
-  }
+
+    if (rating === 0) {
+        return <span style={{ color: "red" }}>Aucune note</span>;
+    } else if (rating >= 0.1 && rating <= 1) {
+        return <span style={{ color: "red" }}>Négative</span>;
+    } else if (rating >= 1.1 && rating <= 2.5) {
+        return <span style={{ color: "orange" }}>Très moyen</span>;
+    } else if (rating >= 2.6 && rating <= 3.5) {
+        return <span style={{ color: "orange" }}>Moyen</span>;
+    } else if (rating >= 3.6 && rating <= 4) {
+        return <span style={{ color: "green" }}>Positives</span>;
+    } else if (rating >= 4.1 && rating <= 4.7) {
+        return <span style={{ color: "green" }}>Très positives</span>;
+    } else if (rating >= 4.8 && rating <= 5) {
+        return <span style={{ color: "blue" }}>Divin</span>;
+    } else {
+        return "Aucune note";
+    }
+}
   return (
     <div>
       <Header />
