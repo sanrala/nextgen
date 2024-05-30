@@ -36,6 +36,7 @@ import Actu from "./../Components/Actu/Actu"
 import VideoHover from "./../Components/VideoHover/VideoHover"
 import Similar from "./../Components/Similar/Similar"
 import Config from "./../Components/Config/Config"
+import Screen from "./../Components/Screen/Screen"
 import {
   collection,
   addDoc,
@@ -229,31 +230,31 @@ function Product(props) {
       return null;
     }
   }
-  
+
 
   function getRatingDescription(rating) {
     if (rating === null || rating === undefined) {
-        return "Aucune note";
+      return "Aucune note";
     }
 
     if (rating === 0) {
-        return <span style={{ color: "red" }}>Aucune note</span>;
+      return <span style={{ color: "red" }}>Aucune note</span>;
     } else if (rating >= 0.1 && rating <= 1) {
-        return <span style={{ color: "red" }}>Négative</span>;
+      return <span style={{ color: "red" }}>Négative</span>;
     } else if (rating >= 1.1 && rating <= 2.5) {
-        return <span style={{ color: "orange" }}>Très moyen</span>;
+      return <span style={{ color: "orange" }}>Très moyen</span>;
     } else if (rating >= 2.6 && rating <= 3.5) {
-        return <span style={{ color: "orange" }}>Moyen</span>;
+      return <span style={{ color: "orange" }}>Moyen</span>;
     } else if (rating >= 3.6 && rating <= 4) {
-        return <span style={{ color: "green" }}>Positives</span>;
+      return <span style={{ color: "green" }}>Positives</span>;
     } else if (rating >= 4.1 && rating <= 4.7) {
-        return <span style={{ color: "green" }}>Très positives</span>;
+      return <span style={{ color: "green" }}>Très positives</span>;
     } else if (rating >= 4.8 && rating <= 5) {
-        return <span style={{ color: "#478eff" }}>Divin</span>;
+      return <span style={{ color: "#478eff" }}>Divin</span>;
     } else {
-        return "Aucune note";
+      return "Aucune note";
     }
-}
+  }
   return (
     <div>
       <Header />
@@ -304,38 +305,14 @@ function Product(props) {
               <div class="row vertical-gap">
                 <div class="col-md-6">
                   <div class="nk-popup-gallery">
-                  
-<VideoHover/>
+
+                    <VideoHover />
                     <div class="nk-gap-1"></div>
-                    <div class="row vertical-gap sm-gap">
-                      {item.screen &&
-                        item.screen.slice(1).map((screens, index) => (
-                          <Gallery>
-                            <Item
-                              original={screens.img}
-                              thumbnail={screens.img}
-                              width="1920"
-                              height="1024"
-                            >
-                              {({ ref, open }) => (
-                                // <a class="nk-gallery-item" data-size="622x942">
-                                <div class="col-6 col-md-3">
-                                  <div class="nk-gallery-item-box">
-                                    <img
-                                      ref={ref}
-                                      onClick={open}
-                                      src={screens.img}
-                                      className="img-fluid me-2 mb-2"
-                                      alt={`Image ${index}`}
-                                    />
-                                  </div>
-                                </div>
-                                // </a>
-                              )}
-                            </Item>
-                          </Gallery>
-                        ))}
-                    </div>
+
+
+                    <Screen />
+
+
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -490,9 +467,8 @@ function Product(props) {
                       <a
                         className={`average-rating ${getRatingColor(
                           averageRating
-                        )} ${
-                          averageRating >= 4 || averageRating < 2 ? "flash" : ""
-                        }`}
+                        )} ${averageRating >= 4 || averageRating < 2 ? "flash" : ""
+                          }`}
                         style={{
                           "--rating-percent": `${(averageRating / 5) * 100}%`,
                         }}
@@ -667,70 +643,9 @@ function Product(props) {
                   {/* <!-- START: Reply --> */}
                   <h3 class="h4">Ajouter un commentaire</h3>
 
-                  {/* {user ? (
-          <form onSubmit={handleSubmit}>
-            <input type="text" name="title" placeholder="Titre *" value={newComment.title} onChange={handleChanges} required />
-            <textarea name="message" placeholder="Ton message *" value={newComment.message} onChange={handleChanges} required></textarea>
-            <div className="rating">
-              {[...Array(5)].map((_, index) => (
-                <React.Fragment key={index}>
-                  <input type="radio" id={`review-rate-${5 - index}`} name="rating" value={5 - index} onChange={handleChanges} checked={newComment.rating == 5 - index} />
-                  <label htmlFor={`review-rate-${5 - index}`}>
-                    <span><i className={newComment.rating >= 5 - index ? "fa fa-star" : "far fa-star"}></i></span>
-                  </label>
-                </React.Fragment>
-              ))}
-            </div>
-            <button type="submit">Envoyer</button>
-          </form>
-        ) : (
-          <Link to="/Login"><button className="fa fa-user">Se connecter</button></Link>
-        )}
-      </div>
-
-      <div>
-        <h3>Commentaires</h3>
-        <p>Note globale : {calculateAverageRating().toFixed(1)} / 5</p>
-        {comments.map((comment) => (
-          <div key={comment.id} className="nk-comment">
-            <div className="nk-comment-meta">
-              <img src={comment.userPhoto || "default-avatar.png"} alt={comment.userName} className="rounded-circle" width="35" />{" "}
-              par <a href="#">{comment.userName}</a> {comment.createdAt ? `le ${new Date(comment.createdAt.seconds * 1000).toLocaleDateString("fr-FR")}` : ""}
-              <div className="nk-review-rating" data-rating={comment.rating}>
-                {" "}{[...Array(5)].map((_, index) => (
-                  <i key={index} className={comment.rating > index ? "fa fa-star" : "far fa-star"}></i>
-                ))}
-              </div>
-            </div>
-            <div className="nk-comment-text">
-              <p>{comment.message}</p>
-            </div>
-          </div>
-        ))} */}
-
                   {user ? (
                     <div className="nk-reply">
-                      {/* <div className="nk-rating">
-              
-            {[...Array(5)].map((_, index) => (
-                <React.Fragment key={index}>
-                  <input
-                    type="radio"
-                    id={`review-rate-${5 - index}`}
-                    name="rating"
-                    value={5 - index}
-                    onChange={handleRatingChange}
-                    checked={newComment.rating === 5 - index}
-                    style={{ display: "none" }}
-                  />
-                  <label htmlFor={`review-rate-${5 - index}`} style={{ cursor: 'pointer' }}>
-                    <span>
-                      {newComment.rating >= 5 - index ? <StarIcon /> : <StarBorderIcon />}
-                    </span>
-                  </label>
-                </React.Fragment>
-              ))}
-            </div> */}
+     
                       <div className="nk-gap-1"></div>
                       <form onSubmit={handleSubmit} className="nk-form">
                         <div className="d-flex flex-column row vertical-gap sm-gap">
@@ -745,40 +660,32 @@ function Product(props) {
                             </div>
                           </div>
                           <div className="rating">
-                            {/* {[...Array(5)].map((_, index) => (
-                <React.Fragment key={index}>
-                  <input type="radio" id={`review-rate-${5 - index}`} name="rating" value={5 - index} onChange={handleChanges} checked={newComment.rating == 5 - index} />
-                  <label htmlFor={`review-rate-${5 - index}`}>
-                    <span><i className={newComment.rating >= 5 - index ? "fa fa-star" : "far fa-star"}></i></span>
-                  </label>
-                </React.Fragment>
-              ))} */}
-
-{[...Array(5)].map((_, index) => (
-  <React.Fragment key={index}>
-    <input
-      type="radio"
-      id={`review-rate-${index + 1}`}
-      name="rating"
-      value={index + 1}
-      onChange={handleRatingChange}
-      checked={newComment.rating === index + 1}
-      style={{ display: "none" }}
-    />
-    <label
-      htmlFor={`review-rate-${index + 1}`}
-      style={{ cursor: "pointer" }}
-    >
-      <span>
-        {newComment.rating >= index + 1 ? (
-          <StarIcon />
-        ) : (
-          <StarBorderIcon />
-        )}
-      </span>
-    </label>
-  </React.Fragment>
-))}
+    
+                            {[...Array(5)].map((_, index) => (
+                              <React.Fragment key={index}>
+                                <input
+                                  type="radio"
+                                  id={`review-rate-${index + 1}`}
+                                  name="rating"
+                                  value={index + 1}
+                                  onChange={handleRatingChange}
+                                  checked={newComment.rating === index + 1}
+                                  style={{ display: "none" }}
+                                />
+                                <label
+                                  htmlFor={`review-rate-${index + 1}`}
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  <span>
+                                    {newComment.rating >= index + 1 ? (
+                                      <StarIcon />
+                                    ) : (
+                                      <StarBorderIcon />
+                                    )}
+                                  </span>
+                                </label>
+                              </React.Fragment>
+                            ))}
                           </div>
                           <div className="col-sm-6">
                             <input
@@ -818,7 +725,7 @@ function Product(props) {
                   <div className="nk-gap-2"></div>
                   <div className="nk-comments">
                     <h3>Commentaires</h3>
-  
+
                     {comments.map((comment) => (
                       <div key={comment.id} className="nk-comment">
                         <div className="nk-comment-meta">
@@ -831,8 +738,8 @@ function Product(props) {
                           par <a href="#">{comment.userName}</a>{" "}
                           {comment.createdAt
                             ? `le ${new Date(
-                                comment.createdAt.seconds * 1000
-                              ).toLocaleDateString("fr-FR")}`
+                              comment.createdAt.seconds * 1000
+                            ).toLocaleDateString("fr-FR")}`
                             : ""}
                           <div
                             className="nk-review-rating"
@@ -857,37 +764,20 @@ function Product(props) {
                       </div>
                     ))}
                   </div>
-
                   {/* <!-- END: Reply --> */}
 
                   <div class="clearfix"></div>
                   <div class="nk-gap-2"></div>
-                </div>
-
-                {/* <!-- END: Tab Reviews --> */}
+                </div>           
               </div>
             </div>
-            {/* <div class="nk-gap-3"></div> */}
-
-
-<Config/>
-
- 
-
-            <div class="nk-gap-3"></div>
-
-<Actu/>
           
+            <Config />
+            <div class="nk-gap-3"></div>
+            <Actu />
             <div class="nk-gap"></div>
             <div class="nk-gap-3"></div>
-
-
-<Similar/>
-
-    
-
-
-
+            <Similar />
           </div>
         </div>
       ) : (

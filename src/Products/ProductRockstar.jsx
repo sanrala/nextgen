@@ -37,6 +37,7 @@ import Config from "./../Components/Config/Config"
 import Actu from "./../Components/Actu/Actu"
 import VideoHover from "./../Components/VideoHover/VideoHover"
 import Similar from "./../Components/Similar/Similar"
+import Screen from "./../Components/Screen/Screen"
 const StyledRating = styled(Rating)(({ theme }) => ({
   '& .MuiRating-iconEmpty .MuiSvgIcon-root': {
     color: theme.palette.action.disabled,
@@ -286,35 +287,7 @@ console.log(comments);
                   <VideoHover/>
 
                     <div class="nk-gap-1"></div>
-                    <div class="row vertical-gap sm-gap">
-                      {item.screen &&
-                        item.screen.slice(1).map((screens, index) => (
-                          <Gallery>
-                            <Item
-                              original={screens.img}
-                              thumbnail={screens.img}
-                              width="1920"
-                              height="1024"
-                            >
-                              {({ ref, open }) => (
-                                // <a class="nk-gallery-item" data-size="622x942">
-                                <div class="col-6 col-md-3">
-                                  <div class="nk-gallery-item-box">
-                                    <img
-                                      ref={ref}
-                                      onClick={open}
-                                      src={screens.img}
-                                      className="img-fluid me-2 mb-2"
-                                      alt={`Image ${index}`}
-                                    />
-                                  </div>
-                                </div>
-                                // </a>
-                              )}
-                            </Item>
-                          </Gallery>
-                        ))}
-                    </div>
+                    <Screen/>
                   </div>
                 </div>
                 <div class="col-md-6">
