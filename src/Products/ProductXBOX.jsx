@@ -33,7 +33,10 @@ import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied
 import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAltOutlined';
 import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
-
+import Config from "./../Components/Config/Config"
+import Actu from "./../Components/Actu/Actu"
+import VideoHover from "./../Components/VideoHover/VideoHover"
+import Similar from "./../Components/Similar/Similar"
 const StyledRating = styled(Rating)(({ theme }) => ({
   '& .MuiRating-iconEmpty .MuiSvgIcon-root': {
     color: theme.palette.action.disabled,
@@ -278,27 +281,7 @@ console.log(comments);
               <div class="row vertical-gap">
                 <div class="col-md-6">
                   <div class="nk-popup-gallery">
-                    <div class="nk-gallery-item-box">
-                      <a
-                        href="assets/images/product-6.jpg"
-                        class="nk-gallery-item"
-                        data-size="1200x554"
-                      >
-                      {/* <div class="nk-gallery-item-overlay">
-                          <span class="ion-eye"></span>
-                        </div> */}
-                        <HoverVideoPlayer
-                    className="tot"
-                    videoSrc={item.videoHover}
-                    style={{
-                      // Make the image expand to cover the video's dimensions
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}pausedOverlay={<img src={item.imageUrl} alt={item.title} />}
-                    />
-                      </a>
-                    </div>
+                  <VideoHover/>
 
                     <div class="nk-gap-1"></div>
                     <div class="row vertical-gap sm-gap">
@@ -703,14 +686,7 @@ console.log(comments);
                           </div>
                         </div>
                         <div className="rating">
-                          {/* {[...Array(5)].map((_, index) => (
-                <React.Fragment key={index}>
-                  <input type="radio" id={`review-rate-${5 - index}`} name="rating" value={5 - index} onChange={handleChanges} checked={newComment.rating == 5 - index} />
-                  <label htmlFor={`review-rate-${5 - index}`}>
-                    <span><i className={newComment.rating >= 5 - index ? "fa fa-star" : "far fa-star"}></i></span>
-                  </label>
-                </React.Fragment>
-              ))} */}
+        
 
 {[...Array(5)].map((_, index) => (
   <React.Fragment key={index}>
@@ -796,7 +772,7 @@ console.log(comments);
                     <div key={comment.id} className="nk-comment">
                       <div className="nk-comment-meta">
                         <img
-                          src={comment.userPhoto || "default-avatar.png"}
+                          src={comment.userPhoto}
                           alt={comment.userName}
                           className="rounded-circle"
                           width="35"
@@ -842,66 +818,8 @@ console.log(comments);
                                   <>
                                    {!ab.support === "Xbox Series" ?(
                     <>
-            <h3 class="nk-decorated-h-2">
-              <span>
-                <span class="text-main-1">Configurations</span> 
-              </span>
-            </h3>
-            <div class="nk-gap"></div>
-        
-            <div class="specs-container listing-slider">
-                    {item.config &&
-                      item.config.map((v, index) => (
-                        
-                        <>
-                          <div class="minimal" key={index}>
-                            <h3>
-                              minimale<span class="asterix">*</span>
-                            </h3>{" "}
-                            <div class="specs">
-                              <li>
-                                <strong>OS:</strong> {v.OSmin}
-                              </li>
-                              <li>
-                                <strong>Processor:</strong> {v.PROCmin}
-                              </li>
-                              <li>
-                                <strong>Memory:</strong> {v.MEMmin}
-                              </li>
-                              <li>
-                                <strong>Graphics:</strong> {v.GRAPHmin}
-                              </li>
-                              <li>
-                                <strong>Storage:</strong> {v.HDD}
-                              </li>
-                            </div>
-                          </div>
-                          <div class="recommended">
-                            <h3>
-                              recommandée<span class="asterix">*</span>
-                            </h3>{" "}
-                            <div class="specs">
-                              <li>
-                                <strong>OS:</strong> {v.OSmax}
-                              </li>
-                              <li>
-                                <strong>Processor:</strong> {v.PROCmax}
-                              </li>
-                              <li>
-                                <strong>Memory:</strong> {v.MEMmax}
-                              </li>
-                              <li>
-                                <strong>Graphics:</strong>
-                                {v.GRAPHmax}
-                              </li>
-                              <li>
-                                <strong>Storage:</strong> {v.HDD}
-                              </li>
-                            </div>
-                          </div>
-                        </>
-                      ))}
-                  </div>
+  <Config/>
+
                   </>
   ) : (
     <div className="div"></div>
@@ -910,46 +828,7 @@ console.log(comments);
                                 ))}
 
                   <div class="nk-gap-3"></div>
-            <h3 class="nk-decorated-h-2">
-              <span>
-                <span class="text-main-1">L'actualité </span> du jeu
-              </span>
-            </h3>
-            {item.news &&
-                    item.news.map((v, index) => (
-                      <div
-                        class="nk-blog-post nk-blog-post-border-bottom"
-                        key={v.id}
-                      >
-                        <div class="row vertical-gap">
-                          <div class="col-lg-3 col-md-5">
-                            <a class="nk-post-img">
-                              <img src={v.imageUrl} alt={v.title} />
-
-                              <span class="nk-post-categories">
-                                {/* <span class="bg-main-1">{new.genre}</span> */}
-                              </span>
-                            </a>
-                          </div>
-                          <div class="col-lg-9 col-md-7">
-                            <h2 class="nk-post-title h4">
-                              <a>{v.title}</a>
-                            </h2>
-                            <div class="nk-post-date mt-10 mb-10">
-                              <span class="fa fa-calendar"></span> {formatDate(v.date)}
-                              <span class="fa fa-comments"></span>{" "}
-                              <a href="#">0 commentaires</a>
-                            </div>
-                            <div class="nk-post-text">
-                              <p>{v.new.slice(0, 200) + "..."}</p>
-                              <a class="nk-btn nk-btn-rounded nk-btn-color-dark-3 nk-btn-hover-color-main-1">
-                                Détails
-                              </a>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                  <Actu/>
             <div class="nk-gap"></div>
             <h3 class="nk-decorated-h-2">
               <span>
@@ -1005,40 +884,7 @@ console.log(comments);
                   {/* </Slider> */}
                 </div>
 
-              {/* {gameData.map((i, id) => (
-              <div
-                class="col-md-6"
-                key={id}
-                style={{
-                  display: item.genre !== i.genre ? "none" : "block",
-                }}
-              >
-                {item.genre === i.genre ? (
-                     
-                <div class="nk-product-cat"  key={id}>
-                  <a class="nk-product-image" href="store-product.html">
-                    <img
-                      src={i.imageUrl} alt={i.title}
-                    />
-                  </a>
-                  <div class="nk-product-cont">
-                    <h3 class="nk-product-title h5">
-                      <a href="store-product.html">{i.title}</a>
-                    </h3>
-                    <div class="nk-gap-1"></div>
-                    <div class="nk-product-rating" data-rating="3">
-                      {" "}
-                      <i class="fa fa-star"></i> <i class="fa fa-star"></i>{" "}
-                      <i class="fa fa-star"></i> <i class="far fa-star"></i>{" "}
-                      <i class="far fa-star"></i>
-                    </div>
-                    <div class="nk-gap-1"></div>
-                    <div class="nk-product-price">{i.price}</div>
-                  </div>
-                </div>
-                ) : null}
-              </div>
-             ))} */}
+                <Similar/>
             </div>
           </div>
         </div>

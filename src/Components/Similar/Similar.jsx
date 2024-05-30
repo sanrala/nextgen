@@ -1,10 +1,24 @@
 import React, { useState, useRef, useEffect } from "react";
-import gameData from "../games.json";
-import { Link } from "react-router-dom";
-
+import gameData from "./../../games.json";
+import { Link,useParams } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
 function Similar() {
+  const [item, setItem] = useState(null);
+
+  const { id, title } = useParams();
+  useEffect(() => {
+    // Récupérer l'ID depuis l'URL
+
+    // Recherchez l'élément correspondant dans le fichier JSON
+    const selectedItem = gameData.find((item) => item.id === parseInt(id));
+
+    // Mettre à jour l'état avec les données de l'élément sélectionné
+    setItem(selectedItem);
+  }, [id]);
   return (
     <div>
+     
            <h3 class="nk-decorated-h-2">
               <span>
                 <span class="text-main-1">Jeux</span> Similaires
@@ -12,7 +26,7 @@ function Similar() {
             </h3>
 
             <div class="nk-gap"></div>
-            {gameData ? (
+            {item ? (
               <div className="slider-container">
                 {/* <Slider {...settings}> */}
 
@@ -66,13 +80,13 @@ function Similar() {
                   </div>
                 ))}
               </div>
-            ) : (
-              // Code à exécuter lorsque item est null
-              <Box sx={{ display: "flex" }}>
-                <CircularProgress />
-              </Box>
-            )}
-
+ 
+) : (
+  // Code à exécuter lorsque item est null
+  <Box sx={{ display: "flex" }}>
+    <CircularProgress />
+  </Box>
+)}
     </div>
   )
 }

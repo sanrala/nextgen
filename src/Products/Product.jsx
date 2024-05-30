@@ -8,7 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import CircularProgress from "@mui/material/CircularProgress";
-import HoverVideoPlayer from "react-hover-video-player";
+
 import PhotoSwipeLightbox from "photoswipe/lightbox";
 import "photoswipe/dist/photoswipe.css";
 import Footer from "./../Components/Footer/Footer";
@@ -32,8 +32,10 @@ import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied
 import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
 import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
 import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
-
-
+import Actu from "./../Components/Actu/Actu"
+import VideoHover from "./../Components/VideoHover/VideoHover"
+import Similar from "./../Components/Similar/Similar"
+import Config from "./../Components/Config/Config"
 import {
   collection,
   addDoc,
@@ -302,31 +304,8 @@ function Product(props) {
               <div class="row vertical-gap">
                 <div class="col-md-6">
                   <div class="nk-popup-gallery">
-                    <div class="nk-gallery-item-box">
-                      <a
-                        href="assets/images/product-6.jpg"
-                        class="nk-gallery-item"
-                        data-size="1200x554"
-                      >
-                        {/* <div class="nk-gallery-item-overlay">
-                          <span class="ion-eye"></span>
-                        </div> */}
-                        <HoverVideoPlayer
-                          className="tot"
-                          videoSrc={item.videoHover}
-                          style={{
-                            // Make the image expand to cover the video's dimensions
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                          }}
-                          pausedOverlay={
-                            <img src={item.imageUrl} alt={item.title} />
-                          }
-                        />
-                      </a>
-                    </div>
-
+                  
+<VideoHover/>
                     <div class="nk-gap-1"></div>
                     <div class="row vertical-gap sm-gap">
                       {item.screen &&
@@ -839,27 +818,12 @@ function Product(props) {
                   <div className="nk-gap-2"></div>
                   <div className="nk-comments">
                     <h3>Commentaires</h3>
-                    {/* <div className="average-rating-container">
-            <div
-              className={`average-rating ${getRatingColor(averageRating)} ${averageRating >= 4 || averageRating < 2 ? 'flash' : ''}`}
-              style={{ "--rating-percent": `${(averageRating / 5) * 100}%` }}
-            >
-              {averageRating.toFixed(1)}
-            </div>
-          </div> */}
-                    {/* <div className="average-rating-container">
-  <div
-    className={`average-rating ${getRatingColor(averageRating)} ${averageRating >= 4 || averageRating < 2 ? 'flash' : ''}`}
-    style={{ "--rating-percent": `${(averageRating / 5) * 100}%` }}
-  >
-    {getRatingIcon(averageRating)}
-  </div>
-</div> */}
+  
                     {comments.map((comment) => (
                       <div key={comment.id} className="nk-comment">
                         <div className="nk-comment-meta">
                           <img
-                            src={comment.userPhoto || "default-avatar.png"}
+                            src={comment.userPhoto}
                             alt={comment.userName}
                             className="rounded-circle"
                             width="35"
@@ -894,133 +858,6 @@ function Product(props) {
                     ))}
                   </div>
 
-                  {/* 
-                  {user ? (
-
-                    <div class="nk-reply">
-                      <div class="nk-rating">
-
-                        <input
-                          type="radio"
-                          id="review-rate-5"
-                          name="review-rate"
-                          value="5"
-                        />
-                        <label for="review-rate-5">
-                          <span>
-                            <i class="far fa-star"></i>
-                          </span>
-                          <span>
-                            <i class="fa fa-star"></i>
-                          </span>
-                        </label>
-
-                        <input
-                          type="radio"
-                          id="review-rate-4"
-                          name="review-rate"
-                          value="4"
-                        />
-                        <label for="review-rate-4">
-                          <span>
-                            <i class="far fa-star"></i>
-                          </span>
-                          <span>
-                            <i class="fa fa-star"></i>
-                          </span>
-                        </label>
-
-                        <input
-                          type="radio"
-                          id="review-rate-3"
-                          name="review-rate"
-                          value="3"
-                        />
-                        <label for="review-rate-3">
-                          <span>
-                            <i class="far fa-star"></i>
-                          </span>
-                          <span>
-                            <i class="fa fa-star"></i>
-                          </span>
-                        </label>
-
-                        <input
-                          type="radio"
-                          id="review-rate-2"
-                          name="review-rate"
-                          value="2"
-                        />
-                        <label for="review-rate-2">
-                          <span>
-                            <i class="far fa-star"></i>
-                          </span>
-                          <span>
-                            <i class="fa fa-star"></i>
-                          </span>
-                        </label>
-
-                        <input
-                          type="radio"
-                          id="review-rate-1"
-                          name="review-rate"
-                          value="1"
-                        />
-                        <label for="review-rate-1">
-                          <span>
-                            <i class="far fa-star"></i>
-                          </span>
-                          <span>
-                            <i class="fa fa-star"></i>
-                          </span>
-                        </label>
-                      </div>
-                      <div class="nk-gap-1"></div>
-                      <form action="#" class="nk-form">
-                        <div class="d-flex flex-column row vertical-gap sm-gap">
-                          <div class="d-flex col-sm-2">
-                            <div className="avatar_product">
-                              <Avatar
-                                src={userN.photoURL}
-                                className="me-2"
-                                style={{ cursor: 'pointer' }}
-                              /> {userN.displayName}
-                            </div>
-                          </div>
-                          <div class="col-sm-6">
-                            <input
-                              type="text"
-                              class="form-control required"
-                              name="title"
-                              placeholder="Titre *"
-
-                            />
-                          </div>
-                        </div>
-                        <div class="nk-gap-1"></div>
-                        <textarea
-                          class="form-control required"
-                          name="message"
-                          rows="5"
-                          placeholder="Ton message *"
-                          aria-required="true"
-                        ></textarea>
-                        <div class="nk-gap-1"></div>
-
-
-                        <button class="nk-btn nk-btn-rounded nk-btn-color-dark-3 float-right">
-                          Envoyer
-                        </button>
-
-                      </form>
-                    </div>
-                  ) : (
-                    // Si l'utilisateur n'est pas connecté, affichez un lien de connexion
-                    <Link to="/Login">
-                      <button className="fa fa-user">Se connecter</button>
-                    </Link>
-                  )} */}
-
                   {/* <!-- END: Reply --> */}
 
                   <div class="clearfix"></div>
@@ -1031,193 +868,23 @@ function Product(props) {
               </div>
             </div>
             {/* <div class="nk-gap-3"></div> */}
-            <h3 class="nk-decorated-h-2">
-              <span>
-                <span class="text-main-1">Configurations</span>
-              </span>
-            </h3>
-            <div class="nk-gap"></div>
-            <div class="specs-container listing-slider">
-              {item.config &&
-                item.config.map((v, index) => (
-                  <>
-                    <div class="minimal" key={index}>
-                      <h3>
-                        minimale<span class="asterix">*</span>
-                      </h3>{" "}
-                      <div class="specs">
-                        <li>
-                          <strong>OS:</strong> {v.OSmin}
-                        </li>
-                        <li>
-                          <strong>Processor:</strong> {v.PROCmin}
-                        </li>
-                        <li>
-                          <strong>Memory:</strong> {v.MEMmin}
-                        </li>
-                        <li>
-                          <strong>Graphics:</strong> {v.GRAPHmin}
-                        </li>
-                        <li>
-                          <strong>Storage:</strong> {v.HDD}
-                        </li>
-                      </div>
-                    </div>
-                    <div class="recommended">
-                      <h3>
-                        recommandée<span class="asterix">*</span>
-                      </h3>{" "}
-                      <div class="specs">
-                        <li>
-                          <strong>OS:</strong> {v.OSmax}
-                        </li>
-                        <li>
-                          <strong>Processor:</strong> {v.PROCmax}
-                        </li>
-                        <li>
-                          <strong>Memory:</strong> {v.MEMmax}
-                        </li>
-                        <li>
-                          <strong>Graphics:</strong>
-                          {v.GRAPHmax}
-                        </li>
-                        <li>
-                          <strong>Storage:</strong> {v.HDD}
-                        </li>
-                      </div>
-                    </div>
-                  </>
-                ))}
-            </div>
+
+
+<Config/>
+
+ 
 
             <div class="nk-gap-3"></div>
-            <h3 class="nk-decorated-h-2">
-              <span>
-                <span class="text-main-1">L'actualité </span> du jeu
-              </span>
-            </h3>
-            {item.news &&
-              item.news.map((v, index) => (
-                <div class="nk-blog-post nk-blog-post-border-bottom" key={v.id}>
-                  <div class="row vertical-gap">
-                    <div class="col-lg-3 col-md-5">
-                      <Link
-                        key={v.news_id}
-                        {...v}
-                        to={{
-                          pathname: `/news/${v.id}/${v.news_id}/`,
-                        }}
-                        class="nk-post-img"
-                      >
-                        <img src={v.imageUrl} alt={v.title} />
 
-                        <span class="nk-post-categories">
-                          {/* <span class="bg-main-1">{new.genre}</span> */}
-                        </span>
-                      </Link>
-                    </div>
-                    <div class="col-lg-9 col-md-7">
-                      <h2 class="nk-post-title h4">
-                        <Link
-                          key={v.news_id}
-                          {...v}
-                          to={{
-                            pathname: `/news/${v.id}/${v.news_id}/`,
-                          }}
-                        >
-                          {v.title}
-                        </Link>
-                      </h2>
-                      <div class="nk-post-date mt-10 mb-10">
-                        <span class="fa fa-calendar"></span>{" "}
-                        {formatDate(v.date)}
-                        <span class="fa fa-comments"></span>{" "}
-                        <a href="#">0 commentaires</a>
-                      </div>
-                      <div class="nk-post-text">
-                        <p>{v.new.slice(0, 200) + "..."}</p>
-                        <a class="nk-btn nk-btn-rounded nk-btn-color-dark-3 nk-btn-hover-color-main-1">
-                          Détails
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+<Actu/>
+          
             <div class="nk-gap"></div>
             <div class="nk-gap-3"></div>
 
 
+<Similar/>
 
-
-            <h3 class="nk-decorated-h-2">
-              <span>
-                <span class="text-main-1">Jeux</span> Similaires
-              </span>
-            </h3>
-
-            <div class="nk-gap"></div>
-            {gameData ? (
-              <div className="slider-container">
-                {/* <Slider {...settings}> */}
-
-                {gameData.map((i, id) => (
-                  <div
-                    className="nk-blog-poste"
-                    key={id}
-                    style={{
-                      display: item.genre !== i.genre ? "none" : "block",
-                    }}
-                  >
-                    {item.genre === i.genre ? (
-                      <div
-                        key={id}
-                        // style={{ width: '40%' }}
-                      >
-                        <Link
-                          key={i.id}
-                          {...i}
-                          to={{
-                            pathname: `/PC/${i.id}/${i.title}`,
-                            state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
-                          }}
-                          onClick={() => {
-                            window.scrollTo(0, 0);
-                          }}
-                          class="nk-post-img"
-                        >
-                          <img src={i.imageUrl} alt={i.title} />
-                          <span className="nk-post-comments-count">
-                            {i.promo}
-                          </span>
-                        </Link>
-                        <div className="nk-gap"></div>
-                        <h2 className="nk-post-title h4 d-flex justify-content-between">
-                          <Link
-                            key={i.id}
-                            {...i}
-                            to={{
-                              pathname: `/PC/${i.id}/${i.title}`,
-                              state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
-                            }}
-                            class="nk-post-img"
-                          >
-                            {i.title}{" "}
-                          </Link>
-                          <span>{i.price}</span>
-                        </h2>
-                      </div>
-                    ) : null}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              // Code à exécuter lorsque item est null
-              <Box sx={{ display: "flex" }}>
-                <CircularProgress />
-              </Box>
-            )}
-
+    
 
 
 

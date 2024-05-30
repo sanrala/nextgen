@@ -33,7 +33,10 @@ import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied
 import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAltOutlined';
 import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
-
+import Config from "./../Components/Config/Config"
+import Actu from "./../Components/Actu/Actu"
+import VideoHover from "./../Components/VideoHover/VideoHover"
+import Similar from "./../Components/Similar/Similar"
 const StyledRating = styled(Rating)(({ theme }) => ({
   '& .MuiRating-iconEmpty .MuiSvgIcon-root': {
     color: theme.palette.action.disabled,
@@ -280,30 +283,7 @@ console.log(comments);
               <div class="row vertical-gap">
                 <div class="col-md-6">
                   <div class="nk-popup-gallery">
-                    <div class="nk-gallery-item-box">
-                      <a
-                        href="assets/images/product-6.jpg"
-                        class="nk-gallery-item"
-                        data-size="1200x554"
-                      >
-                        {/* <div class="nk-gallery-item-overlay">
-                          <span class="ion-eye"></span>
-                        </div> */}
-                        <HoverVideoPlayer
-                          className="tot"
-                          videoSrc={item.videoHover}
-                          style={{
-                            // Make the image expand to cover the video's dimensions
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                          }}
-                          pausedOverlay={
-                            <img src={item.imageUrl} alt={item.title} />
-                          }
-                        />
-                      </a>
-                    </div>
+                  <VideoHover/>
 
                     <div class="nk-gap-1"></div>
                     <div class="row vertical-gap sm-gap">
@@ -751,27 +731,12 @@ console.log(comments);
                 <div className="nk-gap-2"></div>
                 <div className="nk-comments">
                   <h3>Commentaires</h3>
-                  {/* <div className="average-rating-container">
-            <div
-              className={`average-rating ${getRatingColor(averageRating)} ${averageRating >= 4 || averageRating < 2 ? 'flash' : ''}`}
-              style={{ "--rating-percent": `${(averageRating / 5) * 100}%` }}
-            >
-              {averageRating.toFixed(1)}
-            </div>
-          </div> */}
-                  {/* <div className="average-rating-container">
-  <div
-    className={`average-rating ${getRatingColor(averageRating)} ${averageRating >= 4 || averageRating < 2 ? 'flash' : ''}`}
-    style={{ "--rating-percent": `${(averageRating / 5) * 100}%` }}
-  >
-    {getRatingIcon(averageRating)}
-  </div>
-</div> */}
+    
                   {comments.map((comment) => (
                     <div key={comment.id} className="nk-comment">
                       <div className="nk-comment-meta">
                         <img
-                          src={comment.userPhoto || "default-avatar.png"}
+                          src={comment.userPhoto}
                           alt={comment.userName}
                           className="rounded-circle"
                           width="35"
@@ -813,180 +778,14 @@ console.log(comments);
               </div>
             </div>
             {/* <div class="nk-gap-3"></div> */}
-            <h3 class="nk-decorated-h-2">
-              <span>
-                <span class="text-main-1">Configurations</span>
-              </span>
-            </h3>
-            <div class="nk-gap"></div>
-            <div class="specs-container listing-slider">
-              {item.config &&
-                item.config.map((v, index) => (
-                  <>
-                    <div class="minimal" key={index}>
-                      <h3>
-                        minimale<span class="asterix">*</span>
-                      </h3>{" "}
-                      <div class="specs">
-                        <li>
-                          <strong>OS:</strong> {v.OSmin}
-                        </li>
-                        <li>
-                          <strong>Processor:</strong> {v.PROCmin}
-                        </li>
-                        <li>
-                          <strong>Memory:</strong> {v.MEMmin}
-                        </li>
-                        <li>
-                          <strong>Graphics:</strong> {v.GRAPHmin}
-                        </li>
-                        <li>
-                          <strong>Storage:</strong> {v.HDD}
-                        </li>
-                      </div>
-                    </div>
-                    <div class="recommended">
-                      <h3>
-                        recommandée<span class="asterix">*</span>
-                      </h3>{" "}
-                      <div class="specs">
-                        <li>
-                          <strong>OS:</strong> {v.OSmax}
-                        </li>
-                        <li>
-                          <strong>Processor:</strong> {v.PROCmax}
-                        </li>
-                        <li>
-                          <strong>Memory:</strong> {v.MEMmax}
-                        </li>
-                        <li>
-                          <strong>Graphics:</strong>
-                          {v.GRAPHmax}
-                        </li>
-                        <li>
-                          <strong>Storage:</strong> {v.HDD}
-                        </li>
-                      </div>
-                    </div>
-                  </>
-                ))}
-            </div>
+            <Config/>
+
 
             <div class="nk-gap-3"></div>
-            <h3 class="nk-decorated-h-2">
-              <span>
-                <span class="text-main-1">L'actualité </span> du jeu
-              </span>
-            </h3>
-            {item.news &&
-              item.news.map((v, index) => (
-                <div class="nk-blog-post nk-blog-post-border-bottom" key={v.id}>
-                  <div class="row vertical-gap">
-                    <div class="col-lg-3 col-md-5">
-                      <Link
-
-                        key={v.news_id}
-                        {...v}
-
-                        to={{
-                          pathname: `/news/${v.id}/${v.news_id}/`,
-
-                        }} class="nk-post-img">
-                        <img src={v.imageUrl} alt={v.title} />
-
-                        <span class="nk-post-categories">
-                          {/* <span class="bg-main-1">{new.genre}</span> */}
-                        </span>
-                      </Link>
-                    </div>
-                    <div class="col-lg-9 col-md-7">
-                      <h2 class="nk-post-title h4">
-                        <Link
-
-                          key={v.news_id}
-                          {...v}
-                          to={{
-                            pathname: `/news/${v.id}/${v.news_id}/`,
-
-                          }}>{v.title}</Link>
-                      </h2>
-                      <div class="nk-post-date mt-10 mb-10">
-                        <span class="fa fa-calendar"></span> {formatDate(v.date)}
-                        <span class="fa fa-comments"></span>{" "}
-                        <a href="#">0 commentaires</a>
-                      </div>
-                      <div class="nk-post-text">
-                        <p>{v.new.slice(0, 200) + "..."}</p>
-                        <a class="nk-btn nk-btn-rounded nk-btn-color-dark-3 nk-btn-hover-color-main-1">
-                          Détails
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+            <Actu/>
             <div class="nk-gap"></div>
             <div class="nk-gap-3"></div>
-            <h3 class="nk-decorated-h-2">
-              <span>
-                <span class="text-main-1">Jeux</span> Similaires
-              </span>
-            </h3>
-
-            <div class="nk-gap"></div>
-            <div className="slider-container">
-              {/* <Slider {...settings}> */}
-              {gameData.map((i, id) => (
-                <div
-                  className="nk-blog-poste"
-                  key={id}
-                  style={{
-                    display: item.genre !== i.genre ? "none" : "block",
-                  }}
-
-                >
-                  {item.genre === i.genre ? (
-                    <div
-                      key={id}
-                    // style={{ width: '40%' }}
-                    >
-                      <Link
-
-                        key={i.id}
-                        {...i}
-
-                        to={{
-                          pathname: `/PC-Steam/${i.id}/${i.title}`,
-                          state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
-                        }}
-                        onClick={() => {
-                          window.scrollTo(0, 0)
-                        }}
-                        class="nk-post-img">
-                        <img src={i.imageUrl} alt={i.title} />
-                        <span className="nk-post-comments-count">
-                          {i.promo}
-                        </span>
-                      </Link>
-                      <div className="nk-gap"></div>
-                      <h2 className="nk-post-title h4 d-flex justify-content-between">
-                        <Link
-
-                          key={i.id}
-                          {...i}
-                          to={{
-                            pathname: `/PC-Steam/${i.id}/${i.title}`,
-                            state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
-                          }}
-                          class="nk-post-img">{i.title}  </Link>
-                        <span>{i.price}</span>
-                      </h2>
-                    </div>
-                  ) : null}
-                </div>
-              ))}
-              {/* </Slider> */}
-            </div>
+            <Similar/>
           </div>
         </div>
       ) : (
