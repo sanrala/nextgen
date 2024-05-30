@@ -4,6 +4,7 @@ import { Link,useParams } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import HoverVideoPlayer from "react-hover-video-player";
+import av from "./../../assets/images/blackops6.gif"
 function VideoHover() {
     const [item, setItem] = useState(null);
 

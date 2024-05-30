@@ -99,8 +99,8 @@ function Plateformes() {
         setAge(event.target.value);
       };
   return (
-    <div>
-
+  
+<>
 {item ? (
             <div class="col-md-6">
                   <div class="subinfos">
@@ -295,7 +295,7 @@ function Plateformes() {
                       <CircularProgress />
                     </Box>
                   )}
-    </div>
+</>
   )
 }
 

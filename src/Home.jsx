@@ -91,7 +91,7 @@ function Home() {
    
             <div className="cover-container">
               <TwitchEmbedVideo
-                channel="JLTomy"
+                channel="lepaq"
                 allowfullscreen={true} // Ajouter l'attribut allowfullscreen
                 controls={false} // Désactiver les contrôles de jeu mature
                 withChat={false}

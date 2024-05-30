@@ -2547,7 +2547,7 @@
         "date": "",
         "title": "Call of Duty Black Ops: Gulf War",
         "resume": "",
-        "imageUrl": "https://www.presse-citron.net/app/uploads/2024/05/COD-UNREDACTED-TOUT-680x453.jpg",
+        "imageUrl": "https://media1.tenor.com/m/4Acpxd3R4aoAAAAd/black-ops-6-call-of-duty.gif",
         "genres": "FPS, Action",
         "genre": "FPS",
         "video": null,
@@ -2668,6 +2668,18 @@
                "new2" : "Insider Gaming a pu vérifier auprès de plusieurs sources que l'image est légitime et que Black Ops 6 arrivera sur les consoles de génération précédente. Quant à savoir pourquoi l'image ne présente pas de version Xbox One, il est entendu que la version Series S|X est une version multigénération, ce qui signifie qu'elle fonctionnera également sur Xbox One.",
                 "new": "Des informations concernant Black Ops 6 ont fait surface en ligne, notamment concernant l'état de précommande du jeu sur GameStop. Dans une image partagée en ligne, il semble que GameStop se prépare à accepter les précommandes de Black Ops 6 sur les consoles PlayStation 4, PlayStation 5 et Xbox Series X.",
             "new3": "Quant à savoir si le jeu arrivera sur Nintendo Switch (puisque Call of Duty arrivera désormais sur les plateformes Nintendo pendant 10 ans dans le cadre de l'accord Activision/Microsoft), Insider Gaming comprend que cela commencera avec la Nintendo Switch 2, qui devrait probablement être lancé l’année prochaine. La nouvelle sera probablement confirmée lors de la vitrine Call of Duty le 9 juin."
+            }
+            ,
+           
+            {
+                "news_id": 9,
+                "id": 20,
+                "title": "Call of Duty: Black Ops 6 se montre via un court teaser",
+                "imageUrl": "https://gaming-cdn.com/images/news/articles/6605/cover/1000x563/call-of-duty-black-ops-6-se-montre-via-un-court-teaser-et-officialise-son-arrivee-dans-le-game-pass-cover6655e51328040.jpg",
+                "video": "V08UPqchVgQ",
+                "date": "2024-05-30",   
+              "new": "Comme promis, Activision et Treyarch ont levé le voile sur Call of Duty: Black Ops 6 par l'intermédiaire d'un bref teaser. La vidéo dure moins d'une minute et ne présente aucun extrait de gameplay. Après sa diffusion, Xbox a confirmé que le jeu sortira directement dans le Game Pass console et PC. Bien entendu, la date de lancement n'a pas encore été donnée.  Black Ops 6 sera présenté le 9 juin prochain à 19 h, heure française, juste après le Xbox Games Showcase."
+            
             }
             ],
         "about": [
