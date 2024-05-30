@@ -687,31 +687,31 @@ console.log(comments);
                 </React.Fragment>
               ))} */}
 
-                          {[...Array(5)].map((_, index) => (
-                            <React.Fragment key={index}>
-                              <input
-                                type="radio"
-                                id={`review-rate-${5 - index}`}
-                                name="rating"
-                                value={5 - index}
-                                onChange={handleRatingChange}
-                                checked={newComment.rating === 5 - index}
-                                style={{ display: "none" }}
-                              />
-                              <label
-                                htmlFor={`review-rate-${5 - index}`}
-                                style={{ cursor: "pointer" }}
-                              >
-                                <span>
-                                  {newComment.rating >= 5 - index ? (
-                                    <StarIcon />
-                                  ) : (
-                                    <StarBorderIcon />
-                                  )}
-                                </span>
-                              </label>
-                            </React.Fragment>
-                          ))}
+{[...Array(5)].map((_, index) => (
+  <React.Fragment key={index}>
+    <input
+      type="radio"
+      id={`review-rate-${index + 1}`}
+      name="rating"
+      value={index + 1}
+      onChange={handleRatingChange}
+      checked={newComment.rating === index + 1}
+      style={{ display: "none" }}
+    />
+    <label
+      htmlFor={`review-rate-${index + 1}`}
+      style={{ cursor: "pointer" }}
+    >
+      <span>
+        {newComment.rating >= index + 1 ? (
+          <StarIcon />
+        ) : (
+          <StarBorderIcon />
+        )}
+      </span>
+    </label>
+  </React.Fragment>
+))}
                         </div>
                         <div className="col-sm-6">
                           <input

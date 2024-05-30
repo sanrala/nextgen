@@ -32,7 +32,7 @@ import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied
 import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
 import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
 import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
-import "./Product.css";
+
 
 import {
   collection,
@@ -775,31 +775,31 @@ function Product(props) {
                 </React.Fragment>
               ))} */}
 
-                            {[...Array(5)].map((_, index) => (
-                              <React.Fragment key={index}>
-                                <input
-                                  type="radio"
-                                  id={`review-rate-${5 - index}`}
-                                  name="rating"
-                                  value={5 - index}
-                                  onChange={handleRatingChange}
-                                  checked={newComment.rating === 5 - index}
-                                  style={{ display: "none" }}
-                                />
-                                <label
-                                  htmlFor={`review-rate-${5 - index}`}
-                                  style={{ cursor: "pointer" }}
-                                >
-                                  <span>
-                                    {newComment.rating >= 5 - index ? (
-                                      <StarIcon />
-                                    ) : (
-                                      <StarBorderIcon />
-                                    )}
-                                  </span>
-                                </label>
-                              </React.Fragment>
-                            ))}
+{[...Array(5)].map((_, index) => (
+  <React.Fragment key={index}>
+    <input
+      type="radio"
+      id={`review-rate-${index + 1}`}
+      name="rating"
+      value={index + 1}
+      onChange={handleRatingChange}
+      checked={newComment.rating === index + 1}
+      style={{ display: "none" }}
+    />
+    <label
+      htmlFor={`review-rate-${index + 1}`}
+      style={{ cursor: "pointer" }}
+    >
+      <span>
+        {newComment.rating >= index + 1 ? (
+          <StarIcon />
+        ) : (
+          <StarBorderIcon />
+        )}
+      </span>
+    </label>
+  </React.Fragment>
+))}
                           </div>
                           <div className="col-sm-6">
                             <input
@@ -1146,6 +1146,10 @@ function Product(props) {
               ))}
             <div class="nk-gap"></div>
             <div class="nk-gap-3"></div>
+
+
+
+
             <h3 class="nk-decorated-h-2">
               <span>
                 <span class="text-main-1">Jeux</span> Similaires
@@ -1213,6 +1217,10 @@ function Product(props) {
                 <CircularProgress />
               </Box>
             )}
+
+
+
+
           </div>
         </div>
       ) : (

@@ -3722,5 +3722,143 @@
                 "buySteam": ""
             }
         ]
+    },
+    {
+        "id": 29,
+        "exclu": false,
+        "popular": true,
+        "precommande": false,
+        "DLC": false,
+        "DLCtext": "",
+        "dateSortie": "2024-05-08",
+        "date": "",
+        "title": "V Rising",
+        "resume": "Réveille le vampire qui est en toi. Chasse le sang dans les colonies voisines pour retrouver tes forces et fuis le soleil brûlant pour survivre. Bâtis ton château et prospère dans un monde ouvert en constante évolution plein de mystère. Gagne des alliés en ligne et conquiers la terre des vivants.",
+        "imageUrl": "https://tecnogaming.com/wp-content/uploads/2021/09/V-Rising.jpg",
+        "genres": " Action, Aventure",
+        "genre": "Aventure",
+        "video": "aB_2ZRn9F_k",
+        "videoHover": "https://res.cloudinary.com/dzhhs7sfk/video/upload/v1717068147/V_Rising_-_Legacy_of_Castlevania_Gameplay_Trailer_rfjgab.mp4",
+        "critique": "",
+        "critiqueTitle": "",
+        "gifs": [
+            {
+                "id": 1,
+                "img": " https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1604030/extras/OpenWorld01_1.gif?t=1716820827",
+                "title": "Un monde ouvert gothique",
+                "texte": "Explore un vaste monde rempli d’horreurs mythiques et de dangers. Parcours les forêts luxuriantes, la campagne et les cavernes sombres pour découvrir des ressources précieuses, rencontre des amis et des ennemis en cours de route. Traverse le monde avec des camarades vampires ou chasse en solo pour piller des villages, attaquer des bandits et plonger dans les domaines des bêtes surnaturelles."
+            },
+            {
+                "id": 2,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1604030/extras/FearTheLightRuleTheNight_1.gif?t=1716820827",
+                "texte": "Reste dans l’ombre pendant la journée, ou la lumière du soleil te transformera en cendres. Erre dans la nuit et attaque tes victimes dans l’obscurité. En tant que vampire, tu dois étancher ta soif de sang tout en planifiant tes stratégies en fonction du jour et de la nuit.",
+                "title": "Craignez la lumière - Dominez la nuit"
+            },
+            {
+                "id": 3,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1604030/extras/RaiseYourCastle_1.gif?t=1716820827",
+                "texte": "Rassemble des ressources et découvre d’anciennes techniques pour acquérir des pouvoirs obscurs. Utilise tes connaissances nouvellement acquises pour construire un château où tu pourras stocker ton butin et faire croître ton armée de ténèbres. Personnalise ton domaine, exhibe ton style vampirique et assure-toi de fabriquer des cercueils pour tes serviteurs et tes amis. Renforce ton château pour protéger ton trésor de vampires rivaux.",
+                "title": "Bâtis votre château"
+            },
+            {
+                "id": 4,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1604030/extras/CompeteOrCooperate_1.gif?t=1716820827",
+                "texte": "Voyage seul ou explore le monde avec des amis. Combattre côte à côte avec d’autres vampires te donnera un avantage dans le combat pour conquérir les plus grandes menaces de Vardoran. Attaque les châteaux des autres joueurs ou joue au diplomate dans un jeu de sang, de pouvoir et de trahison. Rivalise ou coopére - le choix t'appartiens.",
+                "title": "Rivaliser ou coopérer"
+            },
+            {
+                "id": 5,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1604030/extras/MasterYourVampire_1.gif?t=1716820827",
+                "texte": "Apprends et maîtrise un arsenal d’armes mortelles et de capacités impies. Dans V Rising, tu vises avec adresse et esquive des projectiles en utilisant des contrôles ZQSD précis et la visée au curseur - pas de clic pour se déplacer. Adapte ton vampire à ton style de jeu en combinant des armes avec une variété de sorts gagnés en vainquant de puissants ennemis. Maîtrise tes talents et déchaîne tes cruels pouvoirs.",
+                "title": "Maîtrise ton vampire"
+            }
+            
+        ],
+        "screen": [
+            {
+                "id": 1,
+                "img": "https://gaming-cdn.com/images/products/11030/screenshot/v-rising-pc-jeu-steam-wallpaper-1.jpg?v=1715247025"
+            },
+            {
+                "id": 2,
+                "img": "https://gaming-cdn.com/images/products/11030/screenshot/v-rising-pc-jeu-steam-wallpaper-2.jpg?v=1715247025"
+            },
+            {
+                "id": 3,
+                "img": "https://gaming-cdn.com/images/products/11030/screenshot/v-rising-pc-jeu-steam-wallpaper-3.jpg?v=1715247025"
+            },
+            {
+                "id": 4,
+                "img": "https://gaming-cdn.com/images/products/11030/screenshot/v-rising-pc-jeu-steam-wallpaper-4.jpg?v=1715247025"
+            },
+            {
+                "id": 5,
+                "img": "https://gaming-cdn.com/images/products/11030/screenshot/v-rising-pc-jeu-steam-wallpaper-5.jpg?v=1715247025"
+            }
+        ],
+        "price": "",
+        "priceOrigin": "35€ ",
+        "promo": "-29%",
+        "stock": false,
+        "buySteam": "",
+        "config": [
+            {
+                "id": 1,
+                "OSmin": " Windows 10 64 bit",
+                "OSmax": " Windows 10 64 bit",
+                "PROCmin": " Intel Core i5-6600, 3.3 GHz or AMD Ryzen 5 1500X, 3.5 GHz",
+                "PROCmax": " Intel Core i5-11600K, 3.9 GHz or AMD Ryzen 5 5600X, 3.7 GHz",
+                "MEMmin": "12 GB de mémoire",
+                "MEMmax": "12 GB de mémoire ",
+                "GRAPHmin": " NVIDIA GeForce GTX 750 Ti (Maxwell ou plus récent), 2 GB ou AMD Radeon R7 360, 2 GB",
+                "GRAPHmax": "NVIDIA GeForce GTX 1070, 8 GB or AMD Radeon RX 590, 8 GB",
+                "DirectXmin": "Version 11",
+                "DirectXmax": "Version 11",
+                "HDD": "7 GB"
+            }
+        ],
+        "news": [
+            {
+                "news_id": 1,
+                "id": 29,
+                "title": "Un peu de gameplay pour V Rising sur PS5",
+                "imageUrl": "https://gaming-cdn.com/images/news/articles/5967/cover/1000x563/un-peu-de-gameplay-pour-v-rising-sur-ps5-cover66213834e4552.jpg",
+                "video": "FjhWYTWzQOA",
+                "date": "2024-04-18",
+                "new": "En accès anticipé sur Steam depuis mai 2022, V Rising sortira dans le courant de cette année 2024 sur PS5. Le Diablo-like nous proposera d'incarner un vampire, puis de construire et d'entretenir notre château. Le tout en affrontant de nombreux monstres dispersés aux quatre coins d'un vaste monde ouvert. En attendant la venue de V Rising sur PlayStation 5, Sony a partagé un nouveau trailer de gameplay qui met en avant les combats et les décors du titre. Hélas, nous ne connaissons pas encore la date de sortie précise sur la machine du constructeur japonais."
+              
+            },
+            {
+                "news_id": 2,
+                "id": 29,
+                "title": "V Rising cartonne sur Steam, avec plus de 125 000 joueurs simultanés",
+                "imageUrl": "https://gaming-cdn.com/images/news/articles/6310/cover/1000x563/v-rising-cartonne-sur-steam-avec-plus-de-125-000-joueurs-simultanes-cover663fd6bdd4dc0.jpg",
+                "video": null,
+                "date": "2024-05-11",
+                "new": "Arrivé en accès anticipé en mai 2022, V Rising aura mis deux bonnes années avant d'avoir droit à sa version 1.0. Une attente qui en valait la peine puisque le titre de Stunlock Studios est en train de conquérir un large public. D'après SteamDB, le jeu a récemment atteint un pic de 125 355 utilisateurs simultanés au cours des dernières 24 heures. Cependant, le record de 150 645 joueurs établi durant les premiers jours d'accès anticipé n'a pas encore été battu. V Rising comptabilise des évaluations « très positives » sur Steam. Le jeu est aussi attendu sur PS5 plus tard cette année."
+              
+            }
+        ],
+       
+        "about": [
+            {
+                "id": 1,
+                "dev": "Stunlock Studios",
+                "editeur": "Stunlock Studios",
+                "sortie": "2024-05-08"
+            }
+        ],
+        "plateformes": [
+            {
+                "id": 1,
+                "support": "Steam",
+                "price": "24.89€",
+                "priceOrigin": "35€",
+                "promo": "-29%",
+                "Stock": true,
+                "buy": "https://www.instant-gaming.com/fr/11030-acheter-v-rising-pc-jeu-steam/?igr=gamer-707207",
+                "buySteam": "https://store.steampowered.com/app/1604030/V_Rising/"
+            }
+        ]
     }
 ]
