@@ -315,6 +315,11 @@ function Product(props) {
 
                   </div>
                 </div>
+
+
+
+
+                
                 <div class="col-md-6">
                   <div class="subinfos">
                     <a href="" class="platform steam">
