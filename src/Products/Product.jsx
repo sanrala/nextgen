@@ -247,7 +247,7 @@ function Product(props) {
     } else if (rating >= 4.1 && rating <= 4.7) {
         return <span style={{ color: "green" }}>Très positives</span>;
     } else if (rating >= 4.8 && rating <= 5) {
-        return <span style={{ color: "blue" }}>Divin</span>;
+        return <span style={{ color: "#478eff" }}>Divin</span>;
     } else {
         return "Aucune note";
     }
@@ -633,7 +633,7 @@ function Product(props) {
                     }
                     onClick={() => handleTabChange("comment")}
                   >
-                    Commentaires (3)
+                    Commentaires ({comments.length})
                   </a>
                 </li>
               </ul>
