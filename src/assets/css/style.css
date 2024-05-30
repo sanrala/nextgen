@@ -11644,3 +11644,12 @@ max-width: 616px;
     display: flex;
     align-items: center;
   }
+
+  .nk-product-meta a {
+    color: #fff;
+  }
+
+
+  .nk-product-meta strong {
+    color: #6b6b6b;
+}
