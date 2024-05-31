@@ -81,8 +81,13 @@ function BlocArticle(props) {
             <div className="nk-blog-post nk-blog-post-border-bottom" key={v.id}>
               <div className="row vertical-gap">
                 <div className="col-lg-3 col-md-5">
+                {v.plateformes &&
+                          v.plateformes.map((ab, index) => (
+                            <>
+                              {ab.support === "Steam" && (
+                                
                   <Link
-                    to={`/news/${v.id}/${v.news_id}/`}
+                    to={`/PC/${v.id}/${v.news_id}/`}
                     className="nk-post-img"
                   >
                     <img src={v.imageUrl} alt={v.title} />
@@ -90,7 +95,37 @@ function BlocArticle(props) {
                       <span className="bg-main-1">NEWS</span>
                     </span>
                   </Link>
+                  
+                    )}
+                                  {ab.support === "Rockstar" && (
+                  <Link
+                    to={`/PC_Rockstar/${v.id}/${v.news_id}/`}
+                    className="nk-post-img"
+                  >
+                    <img src={v.imageUrl} alt={v.title} />
+                    <span className="nk-post-categories">
+                      <span className="bg-main-1">NEWS</span>
+                    </span>
+                  </Link>
+                    )}
+                                 {ab.support === "Battle.net" && (
+                  <Link
+                    to={`/Battlenet/${v.id}/${v.news_id}/`}
+                    className="nk-post-img"
+                  >
+                    <img src={v.imageUrl} alt={v.title} />
+                    <span className="nk-post-categories">
+                      <span className="bg-main-1">NEWS</span>
+                    </span>
+                  </Link>
+                    )}
+                      </>
+                    ))}
                 </div>
+                {v.plateformes &&
+                          v.plateformes.map((ab, index) => (
+                            <>
+                              {ab.support === "Steam" && (
                 <div className="col-lg-9 col-md-7">
                   <h2 className="nk-post-title h4">
                     <Link to={`/PC/${v.id}/${v.news_id}/`}>{v.title}</Link>
@@ -110,6 +145,51 @@ function BlocArticle(props) {
                     </Link>
                   </div>
                 </div>
+                 )}
+                    {ab.support === "Rockstar" && (
+                <div className="col-lg-9 col-md-7">
+                  <h2 className="nk-post-title h4">
+                    <Link to={`/PC_Rockstar/${v.id}/${v.news_id}/`}>{v.title}</Link>
+                  </h2>
+                  <div className="nk-post-date mt-10 mb-10">
+                    <span className="fa fa-calendar"></span> {formatDate(v.dateSortie)}
+                    <span className="fa fa-comments"></span>
+                    <a href="#">0 commentaires</a>
+                  </div>
+                  <div className="nk-post-text">
+                    <p>{v.resume.slice(0, 200) + "..."}</p>
+                    <Link
+                      to={`/PC/${v.id}/${v.news_id}/`}
+                      className="nk-btn nk-btn-rounded nk-btn-color-dark-3 nk-btn-hover-color-main-1"
+                    >
+                      Détails
+                    </Link>
+                  </div>
+                </div>
+                 )}
+                    {ab.support === "Battle.net" && (
+                <div className="col-lg-9 col-md-7">
+                  <h2 className="nk-post-title h4">
+                    <Link to={`/Battlenet/${v.id}/${v.news_id}/`}>{v.title}</Link>
+                  </h2>
+                  <div className="nk-post-date mt-10 mb-10">
+                    <span className="fa fa-calendar"></span> {formatDate(v.dateSortie)}
+                    <span className="fa fa-comments"></span>
+                    <a href="#">0 commentaires</a>
+                  </div>
+                  <div className="nk-post-text">
+                    <p>{v.resume.slice(0, 200) + "..."}</p>
+                    <Link
+                      to={`/PC/${v.id}/${v.news_id}/`}
+                      className="nk-btn nk-btn-rounded nk-btn-color-dark-3 nk-btn-hover-color-main-1"
+                    >
+                      Détails
+                    </Link>
+                  </div>
+                </div>
+                 )}
+                 </>
+               ))}
               </div>
             </div>
           );

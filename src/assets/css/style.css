@@ -222,6 +222,52 @@ a:hover {
     background-position: center;
     transform: translateZ(0); /* This will trigger hardware acceleration for smoother scrolling */
   }
+  @media (max-width: 1200px) {
+    .banner-img h3 {
+        font-size: 26px;
+    }
+}
+
+@media (max-width: 992px) {
+    .banner-img h3 {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 768px) {
+    .banner-img h3 {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 576px) {
+    .banner-img h3 {
+        font-size: 16px;
+    }
+}
+
+.parallax-holder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none; /* Permettre les clics à travers */
+}
+
+.parallax-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+    transform: translateZ(0); /* This will trigger hardware acceleration for smoother scrolling */
+}
 .nk-page-background-bottom {
     top: auto;
     bottom: 0;

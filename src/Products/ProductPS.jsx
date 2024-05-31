@@ -38,10 +38,7 @@ import Config from "../Components/Config/Config";
 import Actu from "./../Components/Actu/Actu"
 import VideoHover from "./../Components/VideoHover/VideoHover"
 import Similar from "../Components/Similar/Similar";
-import Screen from "./../Components/Screen/Screen";
-import Plateformes from "./../Components/Plateformes/PlateformesPS";
-import Descriptions from "./../Components/Descriptions/Descriptions"
-import Comment from "./../Components/Comment/Comment";
+import Screen from "./../Components/Screen/Screen"
 const StyledRating = styled(Rating)(({ theme }) => ({
   '& .MuiRating-iconEmpty .MuiSvgIcon-root': {
     color: theme.palette.action.disabled,
@@ -301,7 +298,189 @@ console.log(comments);
                     <Screen/>
                   </div>
                 </div>
-                <Plateformes/>
+                <div class="col-md-6">
+                  <div class="subinfos">
+                    <a href="" class="platform steam">
+                      <div class="single platform-ps">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          height="32"
+                          width="36"
+                          viewBox="0 0 576 512"
+                        >
+                          <path
+                            fill="#fbfaff"
+                            d="M570.9 372.3c-11.3 14.2-38.8 24.3-38.8 24.3L327 470.2v-54.3l150.9-53.8c17.1-6.1 19.8-14.8 5.8-19.4-13.9-4.6-39.1-3.3-56.2 2.9L327 381.1v-56.4c23.2-7.8 47.1-13.6 75.7-16.8 40.9-4.5 90.9 .6 130.2 15.5 44.2 14 49.2 34.7 38 48.9zm-224.4-92.5v-139c0-16.3-3-31.3-18.3-35.6-11.7-3.8-19 7.1-19 23.4v347.9l-93.8-29.8V32c39.9 7.4 98 24.9 129.2 35.4C424.1 94.7 451 128.7 451 205.2c0 74.5-46 102.8-104.5 74.6zM43.2 410.2c-45.4-12.8-53-39.5-32.3-54.8 19.1-14.2 51.7-24.9 51.7-24.9l134.5-47.8v54.5l-96.8 34.6c-17.1 6.1-19.7 14.8-5.8 19.4 13.9 4.6 39.1 3.3 56.2-2.9l46.4-16.9v48.8c-51.6 9.3-101.4 7.3-153.9-10z"
+                          />
+                        </svg>
+                      </div>
+                      <span style={{ width: "85px" }}>Playstation 5</span>
+                      <div class="spacer"></div>
+                    </a>{" "}
+                    <div class="preorder">
+                      <h2 class="nk-productpro-title h3pro">{item.title} </h2>
+                    </div>
+                  </div>
+
+                  <Box sx={{ minWidth: 300 }}>
+                    <FormControl fullWidth>
+                      <InputLabel
+                        className="text-white"
+                        id="demo-simple-select-label"
+                      >
+                        Plateforme
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={age}
+                        label="Age"
+                        onChange={handleChange}
+                      >
+                        {item.plateformes &&
+                          item.plateformes.map((ab, index) => (
+                            <>
+                              {ab.support === "Xbox Series" && (
+                                <Link
+                                  key={item.id}
+                                  to={{
+                                    pathname: `/Xbox/${item.id}/${item.title}`,
+                                    state: { itemData: item },
+                                  }}
+                                >
+                                  <MenuItem className="text-white" value={10}>
+                                    {ab.support}
+                                  </MenuItem>
+                                </Link>
+                              )}
+
+                              {ab.support === "Playstation 5" && (
+                                <Link
+                                  key={item.id}
+                                  to={{
+                                    pathname: `/Playstation/${item.id}/${item.title}`,
+                                    state: { itemData: item },
+                                  }}
+                                >
+                                  <MenuItem className="text-white" value={10}>
+                                    {ab.support}
+                                  </MenuItem>
+                                </Link>
+                              )}
+                              {ab.support === "Steam" && (
+                                <Link
+                                  key={item.id}
+                                  to={{
+                                    pathname: `/PC/${item.id}/${item.title}`,
+                                    state: { itemData: item },
+                                  }}
+                                >
+                                  <MenuItem className="text-white" value={10}>
+                                    {ab.support}
+                                  </MenuItem>
+                                </Link>
+                              )}
+                              {ab.support === "Rockstar" && (
+                                <Link
+                                  key={item.id}
+                                  to={{
+                                    pathname: `/PC_Rockstar/${item.id}/${item.title}`,
+                                    state: { itemData: item },
+                                  }}
+                                >
+                                  <MenuItem className="text-white" value={10}>
+                                    {ab.support}
+                                  </MenuItem>
+                                </Link>
+                              )}
+                            </>
+                          ))}
+                      </Select>
+                    </FormControl>
+                  </Box>
+
+                  <div class="nk-product-description">
+                    <ReadMore text={item.resume} />
+                  </div>
+
+                  {/* <div class="nk-gap-2"></div> */}
+                  {item.plateformes &&
+                    item.plateformes.map((ab, index) => (
+                      <>
+                        <div class="info">
+                          {ab.support === "Playstation 5" && (
+                            <>
+                              <div className="priceOrigin text-white">
+                                {ab.priceOrigin}
+                              </div>{" "}
+                              <div className="priceSlidePromo ">{ab.promo}</div>{" "}
+                              <div class="price text-white">{ab.price}</div>
+                            </>
+                          )}
+                        </div>
+                        {ab.support === "Playstation 5" && (
+                          <>
+                            {ab.Stock === false ? (
+                              <>
+                                <a class="nk-btn nk-btn-rounded nk-btn-color-main-1">
+                                  Hors Stock
+                                </a>
+                              </>
+                            ) : (
+                              <>
+                                <a
+                                  href={ab.buy}
+                                  class="nk-btn nk-btn-rounded nk-btn-color-main-1"
+                                >
+                                  Instant Gaming
+                                </a>
+                              </>
+                            )}
+                          </>
+                        )}
+                      </>
+                    ))}
+                  <div class="nk-gap-1"></div>
+
+                  <div class="nk-product-meta">
+                    <strong>Note</strong>:{" "}
+                    <a
+                      className={`average-rating ${getRatingColor(
+                        averageRating
+                      )} ${
+                        averageRating >= 4 || averageRating < 2 ? "flash" : ""
+                      }`}
+                      style={{
+                        "--rating-percent": `${(averageRating / 5) * 100}%`,
+                      }}
+                    >
+                      {getRatingDescription(averageRating)}{" "}
+                      {getRatingIcon(averageRating)}
+                    </a>
+                  </div>
+
+                  <div>
+                    <strong>Categories </strong>: <a href="#"> {item.genres}</a>
+                  </div>
+                  {item.about &&
+                    item.about.map((ab, index) => (
+                      <>
+                        <div>
+                          <strong>Date de sortie </strong>:{" "}
+                          <a href="#"> {formatDate(ab.sortie)}</a>
+                        </div>
+                        <div>
+                          <strong>Développeur </strong>:{" "}
+                          <a href="#"> {ab.dev}</a>
+                        </div>
+                        <div>
+                          <strong>Editeur</strong>:{" "}
+                          <a href="#"> {ab.editeur}</a>
+                        </div>
+                      </>
+                    ))}
+                  <div></div>
+                </div>
               </div>
             </div>
           </div>
@@ -368,26 +547,243 @@ console.log(comments);
             </ul>
           </div>
           <div class="nk-gap-2"></div>
-           <Comment/>
-           {item.plateformes &&
-                                item.plateformes.map((ab, index) => (
-                                  <>
-                                   {!ab.support === "Playstation 5" ?(
-                    <>
-  <Config/>
+          <div class="nk-tabs">
+            <ul class="nav nav-tabs" role="tablist">
+              <li class="nav-item">
+                <a
+                  className={
+                    activeTab === "description" ? "active nav-link" : "nav-link"
+                  }
+                  onClick={() => handleTabChange("description")}
+                >
+                  Description
+                </a>
+              </li>
+              <li class="nav-item">
+                <a
+                  className={
+                    activeTab === "comment" ? "active nav-link" : "nav-link"
+                  }
+                  onClick={() => handleTabChange("comment")}
+                >
+                  Commentaires ({comments.length})
+                </a>
+              </li>
+            </ul>
 
-                  </>
-  ) : (
-    <div className="div"></div>
-  )}
-     </>
-                                ))}
+            <div class="tab-content">
+              {/* <!-- START: Tab Description --> */}
+
+              <div
+                role="tabpanel"
+                className={
+                  activeTab === "description"
+                    ? "tab-pane fade show active"
+                    : "tab-pane fade"
+                }
+                class="tab-pane fade show active"
+                id="tab-description"
+              >
+                <div class="nk-gap"></div>
+
+                <div class="nk-gap"></div>
+                {!item.gifs ? null : (
+                  <div className="text-center">
+                    {item.gifs &&
+                      item.gifs.map((gif, index) => (
+                        <div key={index}>
+                          <h3 className="h4">{gif.title}</h3>
+                          <img className="img-fluid " src={gif.img} alt="" />
+                          <div class="nk-gap-2"></div>
+                          <p>{gif.texte}</p>
+                        </div>
+                      ))}
+                  </div>
+                )}
+                {/* <p></p> */}
+              </div>
+              <div class="separator product-panel"></div>
+                  {/* <YouTube class="nk-plain-video" videoId={item.video} opts={opts} /> */}
+                  <ul class="nk-breadcrumbs">
+                    <li>
+                      <span>Media</span>
+                    </li>
+                  </ul>
+                  <div class="separator product-panel"></div>
+                  <div className="video-container">
+                    <iframe
+                      title="YouTube Video"
+                      src={`https://www.youtube.com/embed/${item.video}`} // Utilisation de la variable videoId pour dynamiquement spécifier l'URL de la vidéo
+                      frameBorder="0"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                  <div class="nk-gap-2"></div>
+              {/* <!-- END: Tab Description --> */}
+
+              {/* <!-- START: Tab Reviews --> */}
+
+              <div
+                role="tabpanel"
+                className={
+                  activeTab === "comment"
+                    ? "tab-pane fade show active"
+                    : "tab-pane fade"
+                }
+                class="tab-pane fade"
+                id="tab-reviews"
+              >
+                <div class="nk-gap-2"></div>
+                {/* <!-- START: Reply --> */}
+                <h3 class="h4">Ajouter un commentaire</h3>
+
+                {user ? (
+                  <div className="nk-reply">
+      
+                    <div className="nk-gap-1"></div>
+                    <form onSubmit={handleSubmit} className="nk-form">
+                      <div className="d-flex flex-column row vertical-gap sm-gap">
+                        <div className="d-flex col-sm-2">
+                          <div className="avatar_product">
+                            <Avatar
+                              src={userN.photoURL}
+                              className="me-2"
+                              style={{ cursor: "pointer" }}
+                            />{" "}
+                            {user.displayName}
+                          </div>
+                        </div>
+                        <div className="rating">
+                
+
+{[...Array(5)].map((_, index) => (
+  <React.Fragment key={index}>
+    <input
+      type="radio"
+      id={`review-rate-${index + 1}`}
+      name="rating"
+      value={index + 1}
+      onChange={handleRatingChange}
+      checked={newComment.rating === index + 1}
+      style={{ display: "none" }}
+    />
+    <label
+      htmlFor={`review-rate-${index + 1}`}
+      style={{ cursor: "pointer" }}
+    >
+      <span>
+        {newComment.rating >= index + 1 ? (
+          <StarIcon />
+        ) : (
+          <StarBorderIcon />
+        )}
+      </span>
+    </label>
+  </React.Fragment>
+))}
+                        </div>
+                        <div className="col-sm-6">
+                          <input
+                            type="text"
+                            className="form-control required"
+                            name="title"
+                            placeholder="Titre *"
+                            value={newComment.title}
+                            onChange={handleChanges}
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div className="nk-gap-1"></div>
+                      <textarea
+                        className="form-control required"
+                        name="message"
+                        rows="5"
+                        placeholder="Ton message *"
+                        value={newComment.message}
+                        onChange={handleChanges}
+                        required
+                      ></textarea>
+                      <div className="nk-gap-1"></div>
+                      <button className="nk-btn nk-btn-rounded nk-btn-color-dark-3 float-right">
+                        Envoyer
+                      </button>
+                    </form>
+                  </div>
+                ) : (
+                  <Link to="/Login">
+                    <button className="fa fa-user">Se connecter</button>
+                  </Link>
+                )}
+
+                <div className="clearfix"></div>
+                <div className="nk-gap-2"></div>
+                <div className="nk-comments">
+                  <h3>Commentaires</h3>
+ 
+                  {comments.map((comment) => (
+                    <div key={comment.id} className="nk-comment">
+                      <div className="nk-comment-meta">
+                        <img
+                          src={comment.userPhoto }
+                          alt={comment.userName}
+                          className="rounded-circle"
+                          width="35"
+                        />{" "}
+                        par <a href="#">{comment.userName}</a>{" "}
+                        {comment.createdAt
+                          ? `le ${new Date(
+                              comment.createdAt.seconds * 1000
+                            ).toLocaleDateString("fr-FR")}`
+                          : ""}
+                        <div
+                          className="nk-review-rating"
+                          data-rating={comment.rating}
+                        >
+                          {" "}
+                          {[...Array(5)].map((_, index) => (
+                            <i
+                              key={index}
+                              className={
+                                comment.rating > index
+                                  ? "fa fa-star"
+                                  : "far fa-star"
+                              }
+                            ></i>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="nk-comment-text">
+                        <p>{comment.message}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* <!-- END: Tab Reviews --> */}
+              </div>
+            </div>
+
+            <div class="nk-gap-1"></div>
+            {item.plateformes &&
+              item.plateformes.map((ab, index) => (
+                <>
+                  {!ab.support === "Playstation 5" ? (
+                    <>
+                 <Config/>
+
+                    </>
+                  ) : (
+                    <div className="div"></div>
+                  )}
+                </>
+              ))}
             <div class="nk-gap-3"></div>
-            <Actu />
+            <Actu/>
             <div class="nk-gap"></div>
             <div class="nk-gap-3"></div>
-            <Similar />
-        
+            <Similar/>
+          </div>
         </div>
       ) : (
         // Code à exécuter lorsque item est null

@@ -19,6 +19,8 @@ import Sorties from "./Components/Sorties/Sorties";
 import TwitchEmbedVideo from "react-twitch-embed-video";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Parallax } from "react-parallax";
+import { EmbedEverything } from 'twitch-embed'; // Importer EmbedEverything depuis la bibliothèque twitch-embed
+
 function Home() {
   const [randomImage, setRandomImage] = useState(null);
   const [randomImages, setRandomImages] = useState(null);
@@ -97,6 +99,16 @@ function Home() {
     };
   }, []);
 
+
+
+
+
+
+
+
+
+
+  
   return (
     <div>
       {randomImage ? (
@@ -157,15 +169,22 @@ function Home() {
 
             <div className="cover-container">
               <TwitchEmbedVideo
-                channel="lepaq"
+                channel="Cryptelo_"
                 allowfullscreen={true} // Ajouter l'attribut allowfullscreen
                 controls={false} // Désactiver les contrôles de jeu mature
-                withChat={false}
+                withChat="false"
                 apiKey="wrr5jchxkl0nvgbnx14nvt7mt4wbx5"
                 width="100%"
                 height="100%"
               />
-             
+     <iframe
+                src="https://player.twitch.tv/?channel=Cryptelo_&parent=yourwebsite.com&autoplay=false"
+                height="100%"
+                width="100%"
+                frameBorder="0"
+                scrolling="no"
+                allowFullScreen="true"
+              ></iframe>
             </div>
             <div class="separator product-panel"></div>
          
