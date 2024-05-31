@@ -602,7 +602,23 @@ console.log(comments);
                 )}
                 {/* <p></p> */}
               </div>
-
+              <div class="separator product-panel"></div>
+                  {/* <YouTube class="nk-plain-video" videoId={item.video} opts={opts} /> */}
+                  <ul class="nk-breadcrumbs">
+                    <li>
+                      <span>Media</span>
+                    </li>
+                  </ul>
+                  <div class="separator product-panel"></div>
+                  <div className="video-container">
+                    <iframe
+                      title="YouTube Video"
+                      src={`https://www.youtube.com/embed/${item.video}`} // Utilisation de la variable videoId pour dynamiquement spécifier l'URL de la vidéo
+                      frameBorder="0"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                  <div class="nk-gap-2"></div>
               {/* <!-- END: Tab Description --> */}
 
               {/* <!-- START: Tab Reviews --> */}
