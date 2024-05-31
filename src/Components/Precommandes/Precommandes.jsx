@@ -160,6 +160,10 @@ function Precommandes() {
 
                   <div class="nk-gap"></div>
                   <span class="nk-post-title h4">
+                  {item.plateformes &&
+                    item.plateformes.map((v, index) => (
+                      <>
+                        {v.support === "Steam" && (
                     <Link
                       key={item.id}
                       {...item}
@@ -170,6 +174,37 @@ function Precommandes() {
                     >
                       {item.title.slice(0, 17) + "..."}
                     </Link>
+                         )
+                        }
+                           {v.support === "Rockstar" && (
+                    <Link
+                      key={item.id}
+                      {...item}
+                      to={{
+                        pathname: `/PC_Rockstar/${item.id}/${item.title}`,
+                        state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
+                      }}
+                    >
+                      {item.title.slice(0, 17) + "..."}
+                    </Link>
+                         )
+                        }
+                           {v.support === "Battle.net" && (
+                    <Link
+                      key={item.id}
+                      {...item}
+                      to={{
+                        pathname: `/Battlenet/${item.id}/${item.title}`,
+                        state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
+                      }}
+                    >
+                      {item.title.slice(0, 17) + "..."}
+                    </Link>
+                         )
+                        }
+                      </>
+                    ))}
+
                   </span>
                   {/* <div class="nk-post-text">
                      
