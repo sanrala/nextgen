@@ -763,6 +763,7 @@ function Product(props) {
                             ))}
                           </div>
                         </div>
+                        <p>{comment.title}</p>
                         <div className="nk-comment-text">
                           <p>{comment.message}</p>
                         </div>
