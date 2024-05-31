@@ -18,7 +18,7 @@ import Box from "@mui/material/Box";
 import Sorties from "./Components/Sorties/Sorties";
 import TwitchEmbedVideo from "react-twitch-embed-video";
 import CircularProgress from "@mui/material/CircularProgress";
-
+import { Parallax } from "react-parallax";
 function Home() {
   const [randomImage, setRandomImage] = useState(null);
   const [randomImages, setRandomImages] = useState(null);
@@ -80,9 +80,27 @@ function Home() {
     checkLiveStatus(); // Vérifier le statut en direct au chargement initial
   }, []);
 
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const parallaxFrame = document.querySelector('.parallax-frame');
+      if (parallaxFrame) {
+        const scrolled = window.pageYOffset;
+        parallaxFrame.style.transform = `translateY(${scrolled * 0.5}px)`;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
     <div>
       {randomImage ? (
+        
         <div
           className="App"
           style={{
@@ -156,27 +174,26 @@ function Home() {
             </div>
         
             <section
-              class="banner-img"
-              style={{ backgroundImage: `url(${randomImages.imageUrl})` }}
-            >
-              <div className="container">
-              <div class="nk-image-slider-content">
-                    <h3 class="title__price">
-                    {randomImages.title}
-                    </h3>
-                    <p class="text-white">
-                        <span className="priceSlidePromo">
-                          {randomImages.promo}
-                        </span>{" "}
-                        <span class="price">{randomImages.price}</span>
-                      </p>
-               
-              </div>
-              </div>
-              <div class="parallax-holder">
-                <div class="parallax-frame" />
-              </div>
-            </section>
+      className="banner-img"
+      style={{ backgroundImage: `url(${randomImages.imageUrl})` }}
+    >
+      <div className="container">
+        <div className="nk-image-slider-content">
+          <h3 className="title__price">
+            {randomImages.title}
+          </h3>
+          <p className="text-white">
+            <span className="priceSlidePromo">
+              {randomImages.promo}
+            </span>{" "}
+            <span className="price">{randomImages.price}</span>
+          </p>
+        </div>
+      </div>
+      <div className="parallax-holder">
+        <div className="parallax-frame" />
+      </div>
+    </section>
           
             <div class="separator product-panel"></div>
 
