@@ -6,6 +6,7 @@ import Populaires from "./BlogArticle/PopularArticle";
 import Preco from "./BlogArticle/Preco"; 
 import Sorties from "./BlogArticle/SortiesArticle"; 
 import ProductRockstar from "./Products/ProductRockstar";
+import ProductBlizzard from "./Products/ProductBlizzard";
 import Products from "./Products/Product";
 import Login from "./Components/Login/Login";
 import Register from "./Components/Login/Register";
@@ -29,6 +30,7 @@ function App() {
 <Route path="/Xbox/:id/:title" element={<ProductXBOX />}/>
 <Route path="/Playstation/:id/:title" element={<ProductPS />}/>
 <Route path="/PC_Rockstar/:id/:title" element={<ProductRockstar />}/>
+<Route path="/Battlenet/:id/:support" element={<ProductBlizzard />}/>
 <Route path="/news/:id/:news_id" element={<Article />} />
 <Route path="/actualités" element={<BlocArticle />} />
 <Route path="/Populaires" element={<Populaires />} />

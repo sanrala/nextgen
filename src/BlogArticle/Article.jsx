@@ -79,6 +79,19 @@ function BlocArticle() {
                  >{article.title}</Link>
                 )
                   }
+                    {v.support === "Battle.net" && ( 
+                  <Link
+                    
+                  key={article.id}
+                  {...article}
+                  
+                  to={{
+                    pathname: `/Battlenet/${article.id}/${article.title}`,
+                    state: { itemData: article }, // Passer les données de l'élément à la page BlocArticle
+                  }}
+                 >{article.title}</Link>
+                )
+                  }
                    </>
                   ))}
 
@@ -157,19 +170,7 @@ function BlocArticle() {
 
                                       </>
                                     ))}
-                                  {/* </div> */}
-                                  {/* <div class="nk-post-categories"> */}
-
-
-                                  {/* {article.about &&
-                            article.about.map((ab, index) => (
-                              <div className="cat__rep" key={index}>
-                                <div className="ss_cat_rep"> {ab.dev}</div>
-                                <div className="ss_cat_rep"> {ab.editeur}</div>
-                          
-                                <div className="ss_cat_rep"> {article.genres}</div>
-                              </div>
-                            ))} */}
+                             
 
                                 </div>
                               </div>

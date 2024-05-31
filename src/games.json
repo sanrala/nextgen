@@ -3872,5 +3872,136 @@
                 "buySteam": "https://store.steampowered.com/app/1604030/V_Rising/"
             }
         ]
+    },
+    {
+        "id": 30,
+        "exclu": false,
+        "popular": false,
+        "precommande": true,
+        "DLC": true,
+        "DLCtext": "Cette extension requiert le jeu de base World of Warcraft: New Player Edition",
+        "dateSortie": "2024-11-01",
+        "date": "",
+        "title": "World of Warcraft: The War Within",
+        "resume": "DANS CE PREMIER CHAPITRE DE LA SAGA DE L’ÂME-MONDE DÉFENDEZ AZEROTH CONTRE LES TÉNÈBRES DES PROFONDEURS. Explorez des mondes souterrains inédits, regorgeant de merveilles cachées et de dangers, et enfoncez-vous jusqu’aux sombres profondeurs de l’empire nérubien, où la sinistre messagère du Vide rassemble des forces arachnides pour réduire Azeroth à néant. EXPLOREZ LES PROFONDEURS D’AZEROTH. Sous la surface d’Azeroth se trouve un vaste et dangereux monde, attendant d’être exploré.",
+        "imageUrl": "https://images4.alphacoders.com/134/thumb-1920-1340777.jpeg",
+        "genres": "MMORPG",
+        "genre": "MMORPG",
+        "video": "6N3kjHebBKA",
+        "videoHover": "",
+        "critique": "",
+        "critiqueTitle": "",
+        "gifs": [
+            {
+                "id": 1,
+                "img": " ",
+                "title": "Défendez Azeroth contre les Ténèbres des Profondeurs",
+                "texte": "Explorez des mondes souterrains inédits, regorgeant de merveilles cachées et de dangers, et enfoncez-vous jusqu’aux sombres profondeurs de l’empire nérubien, où la sinistre messagère du Vide rassemble des forces arachnides pour réduire Azeroth à néant."
+            },
+            {
+                "id": 2,
+                "img": "",
+                "texte": "Sous la surface d’Azeroth se trouve un vaste et dangereux monde, attendant d’être exploré.",
+                "title": "Explorez les Profondeurs d’Azeroth"
+            },
+            {
+                "id": 3,
+                "img": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/bltd0507e57be514a8f/65442bb502f5a23c7444f64c/IsleOfDorn.webp",
+                "texte": "Illuminée par un imposant cristal en son centre, cette zone souterraine abrite les Arathi, qui se battent incessamment contre les Nérubiens.",
+                "title": "Île de Dorn"
+            },
+            {
+                "id": 4,
+                "img": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/blt281d73c8970a411e/653c204282016a6e467e8ae8/RingingDeeps.webp",
+                "texte": "Cette gigantesque caverne abrite les Parle-machines, des Terrestres qui entretiennent les gigantesques machines titanesques de jadis.",
+                "title": "Abîmes Retentissants"
+            },
+            {
+                "id": 5,
+                "img": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/blt4d0b56ef56f45ce1/653c20155ce67823d7b23821/Hallowfall.webp",
+                "texte": "Illuminée par un imposant cristal en son centre, cette zone souterraine abrite les Arathi, qui se battent incessamment contre les Nérubiens.",
+                "title": "Sainte-Chute"
+            },
+            {
+                "id": 6,
+                "img": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/bltb3404d7db4e07f94/653c1ff8c9cf4e63a616326b/Azj-Kahet.webp",
+                "texte": "L’apogée de la société nérubienne, où Xal’atath, messagère du Vide, a rassemblé et transformé les forces nérubiennes pour créer une armée invincible.",
+                "title": "AZJ-KAHET"
+            }
+            
+        ],
+        "screen": [
+            {
+                "id": 1,
+                "img": "https://main.judgehype.com/images/froala/2023/11/1699049700_837161.jpg"
+            },
+            {
+                "id": 2,
+                "img": "https://main.judgehype.com/images/froala/2023/11/1699049704_837161.jpg"
+            },
+            {
+                "id": 3,
+                "img": "https://main.judgehype.com/images/froala/2023/11/1699049712_837161.jpg"
+            },
+            {
+                "id": 4,
+                "img": "https://main.judgehype.com/images/froala/2023/11/1699049719_837161.jpg"
+            },
+            {
+                "id": 5,
+                "img": "https://main.judgehype.com/images/froala/2023/11/1699049729_837161.jpg"
+            }
+        ],
+        "price": "49.99",
+        "priceOrigin": "",
+        "promo": "",
+        "stock": false,
+        "buySteam": "https://eu.shop.battle.net/fr-fr/product/world-of-warcraft-the-war-within",
+        "config": [
+            {
+                "id": 1,
+                "OSmin": "Windows® 7 64-bit (Service Pack 1)",
+                "OSmax": " Windows® 10 64-bit",
+                "PROCmin": "Processeur 4 coeurs, 3.0GHz Intel® Core™ Haswell de 4e génération AMD Ryzen™ Zen",
+                "PROCmax": "Processeur 6 coeurs, 3.5GHz Intel® Core™ Coffee Lake de 8e génération AMD Ryzen™ Zen 2",
+                "MEMmin": "8 GB de mémoire",
+                "MEMmax": "8 GB de mémoire ",
+                "GRAPHmin": "NVIDIA® GeForce® GTX 900 series AMD™ GCN 4e génération Intel® Iris® Xe Graphics Shader Model 5 ou plus",
+                "GRAPHmax": "Carte graphique 8Go compatible DirectX® 12 NVIDIA® GeForce® RTX AMD RDNA™ 2 Intel® Arc™ 7 Graphics Shader Model 5 ou plus",
+                "DirectXmin": "Version 12",
+                "DirectXmax": "Version 12",
+                "HDD": "128 GB"
+            }
+        ],
+        "news": [
+            {
+                "news_id": 1,
+                "id": 30,
+                "title": "LA BÊTA DE THE WAR WITHIN COMMENCE LE 5 JUIN !",
+                "imageUrl": "https://bnetcmsus-a.akamaihd.net/cms/blog_header/ji/JILLC8RB2PO71717003896215.png",
+                "video": "DSvLkzRt9fc",
+                "date": "2024-05-31",
+                "new": "La bêta de World of Warcraft®: The War Within™ commence le 5 juin ! Pendant toute la durée du test, nous allons inviter des vétérans de la communauté, des journalistes, des responsables de sites de fans, ainsi que l’entourage proche des équipes Blizzard à tester l’extension à venir et à nous donner leur avis. Les joueurs et joueuses ayant acheté l’Epic Edition de The War Within ou mis leur jeu à niveau bénéficieront également d’un accès immédiat à la bêta et d’un accès anticipé à l’extension d’une durée minimum de trois jours. Les joueurs et joueuses sélectionné(e)s pour participer* recevront un e-mail les invitant à télécharger le client de jeu directement depuis l’application de bureau Battle.net. Comme toujours, veuillez rester vigilant(e)s quant aux tentatives d’hameçonnage. Si vous avez un doute sur la légitimité de votre invitation, veuillez vous connecter à votre compte Battle.net pour vérifier que vous disposez bien d’une licence pour la bêta de The War Within (dans la gestion de vos comptes de jeu)."
+              
+            }
+        ],
+       
+        "about": [
+            {
+                "id": 1,
+                "dev": "Blizzard Entertainment",
+                "editeur": "Blizzard Entertainment",
+                "sortie": "2024-11-01"
+            }
+        ],
+        "plateformes": [
+            {
+                "id": 1,
+                "support": "Battle.net",
+                "price": "49.99",
+                "priceOrigin": "",
+                "promo": ""
+            }
+        ]
     }
 ]
