@@ -11,8 +11,9 @@ import Popular from "./Components/Popular/Popular";
 import BestGenre from "./Components/BestGenre/BestGenre";
 import Footer from "./Components/Footer/Footer";
 import gameData from "./exclu.json";
+import gameDatas from "./exclus.json";
 import game from "./games.json";
-import { Link } from "react-router-dom";
+import { Link , useParams} from "react-router-dom";
 import Box from "@mui/material/Box";
 import Sorties from "./Components/Sorties/Sorties";
 import TwitchEmbedVideo from "react-twitch-embed-video";
@@ -20,6 +21,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 function Home() {
   const [randomImage, setRandomImage] = useState(null);
+  const [randomImages, setRandomImages] = useState(null);
 
   useEffect(() => {
     // Définir une fonction pour récupérer une image aléatoire
@@ -35,6 +37,27 @@ function Home() {
     // Mettre à jour l'image toutes les 2 heures
     const interval = setInterval(() => {
       getRandomImage();
+    }, 2 * 60 * 60 * 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Définir une fonction pour récupérer une image aléatoire
+    const getRandomImages = () => {
+      const randomNumber = Math.floor(Math.random() * gameDatas.length);
+      const randomImageData = gameDatas[randomNumber];
+      setRandomImages(randomImageData);
+    };
+
+    // Appeler la fonction pour obtenir une image aléatoire au chargement initial
+    getRandomImages();
+
+    // Mettre à jour l'image toutes les 2 heures
+    const interval = setInterval(() => {
+      getRandomImages();
     }, 2 * 60 * 60 * 1000);
 
     return () => {
@@ -82,13 +105,38 @@ function Home() {
 
               <Sorties />
               <div class="separator product-panel"></div>
+              </div>
+
            
+<section
+      class="banner-img"
+      style={{ backgroundImage: `url(${bg})` }}
+    >
+      <div class="container d-flex justify-content-center">
+        <div class="row">
+          <div class="col-xs-12">
+            <h3>
+              <i class="fa fa-quote-left" aria-hidden="true"></i>{" "}
+              Découvrez les offres sensationnelles de NextGen Gaming,
+              directement depuis Instant Gaming ! Des prix incroyables
+              vous attendent pour une expérience de jeu inégalée.
+              <i class="fa fa-quote-right" aria-hidden="true"></i>
+            </h3>
+          </div>
+        </div>
+      </div>
+      <div class="parallax-holder">
+        <div class="parallax-frame" />
+      </div>
+    </section>
+    <div class="separator product-panel"></div>
+    <div class="container">
               <h3 class="nk-decorated-h-2">
           <span>
             <span class="text-main-1">TWITCH</span>
           </span>
         </h3>
-   
+
             <div className="cover-container">
               <TwitchEmbedVideo
                 channel="JLTomy"
@@ -106,28 +154,30 @@ function Home() {
               <Popular />
               <div class="separator product-panel"></div>
             </div>
-
+        
             <section
               class="banner-img"
-              style={{ backgroundImage: `url(${bg})` }}
+              style={{ backgroundImage: `url(${randomImages.imageUrl})` }}
             >
-              <div class="container d-flex justify-content-center">
-                <div class="row">
-                  <div class="col-xs-12">
-                    <h3>
-                      <i class="fa fa-quote-left" aria-hidden="true"></i>{" "}
-                      Découvrez les offres sensationnelles de NextGen Gaming,
-                      directement depuis Instant Gaming ! Des prix incroyables
-                      vous attendent pour une expérience de jeu inégalée.
-                      <i class="fa fa-quote-right" aria-hidden="true"></i>
+              <div className="container">
+              <div class="nk-image-slider-content">
+                    <h3 class="title__price">
+                    {randomImages.title}
                     </h3>
-                  </div>
-                </div>
+                    <p class="text-white">
+                        <span className="priceSlidePromo">
+                          {randomImages.promo}
+                        </span>{" "}
+                        <span class="price">{randomImages.price}</span>
+                      </p>
+               
+              </div>
               </div>
               <div class="parallax-holder">
                 <div class="parallax-frame" />
               </div>
             </section>
+          
             <div class="separator product-panel"></div>
 
             <div class="container">
