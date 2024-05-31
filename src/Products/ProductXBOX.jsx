@@ -624,27 +624,7 @@ console.log(comments);
                   <h3 class="h4">Ajouter un commentaire</h3> 
                   {user ? (
                   <div className="nk-reply">
-                    {/* <div className="nk-rating">
-              
-            {[...Array(5)].map((_, index) => (
-                <React.Fragment key={index}>
-                  <input
-                    type="radio"
-                    id={`review-rate-${5 - index}`}
-                    name="rating"
-                    value={5 - index}
-                    onChange={handleRatingChange}
-                    checked={newComment.rating === 5 - index}
-                    style={{ display: "none" }}
-                  />
-                  <label htmlFor={`review-rate-${5 - index}`} style={{ cursor: 'pointer' }}>
-                    <span>
-                      {newComment.rating >= 5 - index ? <StarIcon /> : <StarBorderIcon />}
-                    </span>
-                  </label>
-                </React.Fragment>
-              ))}
-            </div> */}
+
                     <div className="nk-gap-1"></div>
                     <form onSubmit={handleSubmit} className="nk-form">
                       <div className="d-flex flex-column row vertical-gap sm-gap">
@@ -725,22 +705,7 @@ console.log(comments);
                 <div className="nk-gap-2"></div>
                 <div className="nk-comments">
                   <h3>Commentaires</h3>
-                  {/* <div className="average-rating-container">
-            <div
-              className={`average-rating ${getRatingColor(averageRating)} ${averageRating >= 4 || averageRating < 2 ? 'flash' : ''}`}
-              style={{ "--rating-percent": `${(averageRating / 5) * 100}%` }}
-            >
-              {averageRating.toFixed(1)}
-            </div>
-          </div> */}
-                  {/* <div className="average-rating-container">
-  <div
-    className={`average-rating ${getRatingColor(averageRating)} ${averageRating >= 4 || averageRating < 2 ? 'flash' : ''}`}
-    style={{ "--rating-percent": `${(averageRating / 5) * 100}%` }}
-  >
-    {getRatingIcon(averageRating)}
-  </div>
-</div> */}
+      
                   {comments.map((comment) => (
                     <div key={comment.id} className="nk-comment">
                       <div className="nk-comment-meta">
