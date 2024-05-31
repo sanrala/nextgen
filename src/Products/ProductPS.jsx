@@ -566,7 +566,7 @@ console.log(comments);
                   }
                   onClick={() => handleTabChange("comment")}
                 >
-                  Commentaires (3)
+                  Commentaires ({comments.length})
                 </a>
               </li>
             </ul>

@@ -549,7 +549,7 @@ console.log(comments);
                     className={activeTab === 'comment' ? 'active nav-link' : 'nav-link'}
                     onClick={() => handleTabChange('comment')}
                   >
-                    Commentaires (3)
+                    Commentaires ({comments.length})
                   </a>
                 </li>
               </ul>
