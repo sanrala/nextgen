@@ -77,7 +77,7 @@ function Precommandes() {
                                 objectFit: 'cover',
                               }}
                               pausedOverlay={
-                                <img src={item.imageUrl} alt={item.title} />
+                                <img src={item.imageUrl} alt={item.title} className="img-fluid"/>
                               }
 
                             />

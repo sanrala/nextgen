@@ -49,7 +49,7 @@ function Actu() {
                         }}
                         class="nk-post-img"
                       >
-                        <img src={v.imageUrl} alt={v.title} />
+                        <img src={v.imageUrl} alt={v.title} className="img-fluid" />
 
                         <span class="nk-post-categories">
                           {/* <span class="bg-main-1">{new.genre}</span> */}

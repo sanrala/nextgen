@@ -120,7 +120,7 @@ function BlocArticle(props) {
               <div class="nk-post-text mt-0">
                 <div className="panel   ">
                   <div class="nk-post-imgBloc">
-                    <img src={item.imageUrl} alt={item.title} />
+                    <img src={item.imageUrl} alt={item.title} className="img-fluid" />
                    
                    
                     <div className="priceBloc d-flex flex-start flex-column justify-content-center ">

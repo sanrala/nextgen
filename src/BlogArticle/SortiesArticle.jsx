@@ -124,7 +124,7 @@ function BlocArticle(props) {
                     to={`/PC/${v.id}/${v.news_id}/`}
                     className="nk-post-img"
                   >
-                    <img src={v.imageUrl} alt={v.title} />
+                    <img src={v.imageUrl} alt={v.title} className="img-fluid" />
                     <span className="nk-post-categories">
                       <span className="bg-main-1">NEWS</span>
                     </span>
@@ -182,7 +182,7 @@ function BlocArticle(props) {
                             to={`/PC/${v.id}/${v.news_id}/`}
                             className="nk-post-img"
                           >
-                            <img src={v.imageUrl} alt={v.title} />
+                            <img src={v.imageUrl} alt={v.title} className="img-fluid" />
                             <span className="nk-post-categories">
                               <span className="bg-main-1">NEWS</span>
                             </span>
@@ -253,6 +253,7 @@ function BlocArticle(props) {
                           <img
                             src={item.imageUrl}
                             alt={item.title}
+                            className="img-fluid"
                           />
                         </Link>
                         <h3 class="nk-post-title">

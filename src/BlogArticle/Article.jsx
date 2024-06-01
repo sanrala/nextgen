@@ -130,7 +130,7 @@ function BlocArticle() {
                         <div class="nk-post-text mt-0">
                           <div className="panel   ">
                             <div class="nk-post-imgBloc">
-                              <img src={article.imageUrl} alt={article.title} />
+                              <img src={article.imageUrl} alt={article.title} className="img-fluid"/>
 
 
                               <div className="priceBloc d-flex flex-start flex-column justify-content-center ">
@@ -197,7 +197,7 @@ function BlocArticle() {
 
                               <div class="nk-post-categories d-flex align-items-center">
 
-                                <img src={item.imageUrl} alt={item.title} />
+                                <img src={item.imageUrl} alt={item.title} className="img-fluid" />
                                 
                               </div>
                             </div>
@@ -282,7 +282,7 @@ function BlocArticle() {
                     window.scrollTo(0, 0)
                   }}
                   class="nk-post-img">
-                        <img src={i.imageUrl} alt={i.title} />
+                        <img src={i.imageUrl} alt={i.title} className="img-fluid" />
                         <span className="nk-post-comments-count">
                           {i.promo}
                         </span>

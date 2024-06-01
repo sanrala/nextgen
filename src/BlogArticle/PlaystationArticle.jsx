@@ -118,7 +118,7 @@ function BlocArticle(props) {
                 <div class="nk-post-text mt-0">
                   <div className="panel   ">
                     <div class="nk-post-imgBloc">
-                      <img src={item.imageUrl} alt={item.title} />
+                      <img src={item.imageUrl} alt={item.title} className="img-fluid" />
                       <div className="priceBloc d-flex flex-start flex-column justify-content-center ">
                         <h1 class="nk-post-title h4">{item.title}</h1>
                         <div class="subinfos">
@@ -467,7 +467,7 @@ function BlocArticle(props) {
                         <div class="row vertical-gap">
                           <div class="col-lg-3 col-md-5">
                             <a class="nk-post-img">
-                              <img src={v.imageUrl} alt={v.title} />
+                              <img src={v.imageUrl} alt={v.title} className="img-fluid" />
 
                               <span class="nk-post-categories">
                                 {/* <span class="bg-main-1">{new.genre}</span> */}
@@ -634,7 +634,7 @@ function BlocArticle(props) {
                           // style={{ width: '40%' }}
                         >
                           <a href="blog-article.html" className="nk-post-img">
-                            <img src={i.imageUrl} alt={i.title} />
+                            <img src={i.imageUrl} alt={i.title} className="img-fluid" />
                             <span className="nk-post-comments-count">
                               {i.promo}
                             </span>

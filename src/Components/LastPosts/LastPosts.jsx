@@ -71,7 +71,7 @@ function LastPosts() {
                     to={`/PC/${item.id}/${item.news_id}/`}
                     className="nk-post-img"
                   >
-                              <img src={item.imageUrl} alt="Image du jeu" />
+                              <img src={item.imageUrl} alt="Image du jeu" className="img-fluid" />
                             </Link>
                           </div>
                         ) : (
