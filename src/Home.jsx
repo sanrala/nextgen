@@ -100,15 +100,6 @@ function Home() {
   }, []);
 
 
-
-
-
-
-
-
-
-
-  
   return (
     <div>
       {randomImage ? (
@@ -160,7 +151,7 @@ function Home() {
       </div>
     </section>
     <div class="separator product-panel"></div>
-    <div class="container">
+    {/* <div class="container">
               <h3 class="nk-decorated-h-2">
           <span>
             <span class="text-main-1">TWITCH</span>
@@ -169,7 +160,7 @@ function Home() {
 
             <div className="cover-container">
               <TwitchEmbedVideo
-                channel="Cryptelo_"
+                channel="tonton"
                 allowfullscreen={true} // Ajouter l'attribut allowfullscreen
                 controls={false} // Désactiver les contrôles de jeu mature
                 withChat="false"
@@ -190,7 +181,7 @@ function Home() {
          
               <Popular />
               <div class="separator product-panel"></div>
-            </div>
+            </div> */}
         
             <section
       className="banner-img"
