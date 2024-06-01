@@ -44,10 +44,6 @@ import {
   where,
   onSnapshot,
   serverTimestamp,
-  updateDoc,
-  setDoc,
-  doc,
-  getDoc
 } from "firebase/firestore";
 
 const StyledRating = styled(Rating)(({ theme }) => ({
@@ -162,37 +158,6 @@ function Product(props) {
     return () => unsubscribe();
   }, [id]);
   console.log(comments);
-
-  useEffect(() => {
-    // Mettre à jour la note globale dans Firestore
-    const updateAverageRating = async () => {
-      const totalRating = comments.reduce(
-        (acc, comment) => acc + parseInt(comment.rating),
-        0
-      );
-      const averageRating = totalRating / comments.length || 0;
-
-      if (id) {
-        const gameRef = doc(db, "games", id);
-        const gameSnapshot = await getDoc(gameRef);
-
-        if (gameSnapshot.exists()) {
-          await updateDoc(gameRef, {
-            averageRating: averageRating,
-          });
-        } else {
-          await setDoc(gameRef, {
-            gameId: id,
-            averageRating: averageRating,
-          });
-        }
-      }
-    };
-
-    updateAverageRating();
-  }, [comments, id]);
-
-
   const handleChanges = (event) => {
     const { name, value } = event.target;
     setNewComment((prevComment) => ({
@@ -663,10 +628,30 @@ function Product(props) {
                     </div>
                   )}
                   {/* <p></p> */}
-
-                  
                 </div>
 
+
+
+                <div class="separator product-panel"></div>
+                  {/* <YouTube class="nk-plain-video" videoId={item.video} opts={opts} /> */}
+                  <ul class="nk-breadcrumbs">
+                    <li>
+                      <span>Media</span>
+                    </li>
+                  </ul>
+                  <div class="separator product-panel"></div>
+                  <div className="video-container">
+                    <iframe
+                      title="YouTube Video"
+                      src={`https://www.youtube.com/embed/${item.video}`} // Utilisation de la variable videoId pour dynamiquement spécifier l'URL de la vidéo
+                      frameBorder="0"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                  <div class="nk-gap-2"></div>
+                {/* <!-- END: Tab Description --> */}
+
+                {/* <!-- START: Tab Reviews --> */}
 
                 <div
                   role="tabpanel"
@@ -811,22 +796,7 @@ function Product(props) {
                 </div>           
               </div>
             </div>
-                {/* <YouTube class="nk-plain-video" videoId={item.video} opts={opts} /> */}
-                <ul class="nk-breadcrumbs">
-                    <li>
-                      <span>Media</span>
-                    </li>
-                  </ul>
-                  <div class="separator product-panel"></div>
-                  <div className="video-container">
-                    <iframe
-                      title="YouTube Video"
-                      src={`https://www.youtube.com/embed/${item.video}`} // Utilisation de la variable videoId pour dynamiquement spécifier l'URL de la vidéo
-                      frameBorder="0"
-                      allowFullScreen
-                    ></iframe>
-                  </div>
-                  <div class="nk-gap-3"></div>
+          
             <Config />
             <div class="nk-gap-3"></div>
             <Actu />

@@ -151,14 +151,14 @@ function Home() {
       </div>
     </section>
     <div class="separator product-panel"></div>
-    {/* <div class="container">
-              <h3 class="nk-decorated-h-2">
+    <div class="container">
+              {/* <h3 class="nk-decorated-h-2">
           <span>
             <span class="text-main-1">TWITCH</span>
           </span>
-        </h3>
+        </h3> */}
 
-            <div className="cover-container">
+            {/* <div className="cover-container">
               <TwitchEmbedVideo
                 channel="tonton"
                 allowfullscreen={true} // Ajouter l'attribut allowfullscreen
@@ -176,12 +176,12 @@ function Home() {
                 scrolling="no"
                 allowFullScreen="true"
               ></iframe>
-            </div>
+            </div> */}
             <div class="separator product-panel"></div>
          
               <Popular />
               <div class="separator product-panel"></div>
-            </div> */}
+            </div>
         
             <section
       className="banner-img"
