@@ -932,7 +932,7 @@
         "date": "",
         "title": "Apex Legends",
         "resume": "Dominez vos adversaires dans Apex Legends, un jeu de tir gratuit* où des personnages légendaires aux capacités surpuissantes combattent ensemble aux confins de la Frontière pour la gloire et la fortune. Maîtrisez une équipe de Légendes en croissance constante, avec une grande profondeur tactique et une kyrielle d'innovations qui enrichissent votre expérience de Battle Royale au sein d'un monde sauvage où tout peut arriver. Bienvenue dans la nouvelle évolution des jeux de tir de héros.",
-        "imageUrl": "https://res.cloudinary.com/drirhxu6q/image/upload/v1715108008/v7bqjgnbpamz64yi6lsg.jpg",
+        "imageUrl": "https://images6.alphacoders.com/992/992033.jpg",
         "genres": "PvP en ligne,FPS, Action, Aventure",
         "genre": "FPS",
         "video": "TQXlZyrQmsc",
@@ -4000,7 +4000,587 @@
                 "support": "Battle.net",
                 "price": "49.99",
                 "priceOrigin": "",
-                "promo": ""
+                "promo": "",
+                "Stock": false,
+                "buy": "https://www.instant-gaming.com/fr/5954-acheter-senua-s-saga-hellblade-ii-pc-jeu-steam/?igr=gamer-707207",
+                "buySteam": ""
+            }
+        ]
+    },
+    {
+        "id": 31,
+        "exclu": false,
+        "popular": false,
+        "precommande": true,
+        "DLC": false,
+        "DLCtext": "",
+        "dateSortie": "2024-09-12",
+        "date": "",
+        "title": "Test Drive Unlimited Solar Crown",
+        "resume": "Test Drive Unlimited Solar Crown pour PC est un jeu de course de supercar avec des attractions supplémentaires. Ce jeu est le vingt-et-unième de la série Test Drive qui est en production depuis les grands jours de la conception des jeux vidéo : 1987.",
+        "imageUrl": "https://gagadget.com/media/post_big/test-drive-unlimited-solar-crown-art-HD-scaled.jpg",
+        "genres": "Course",
+        "genre": "Course",
+        "video": "G1p2lyLPYQs",
+        "videoHover": "",
+        "critique": "",
+        "critiqueTitle": "",
+        "gifs": [
+            {
+                "id": 1,
+                "img": " ",
+                "title": "A propos du jeu",
+                "texte": "L'emplacement du jeu est une reconstitution à l'échelle 1:1 de l'île de Hong Kong, avec des bâtiments, des points de repère et des ports rendus dans les moindres détails. Ce souci du détail s'applique également aux nombreux véhicules doux inclus dans le jeu (voir ci-dessous pour en savoir plus). Vous endossez le personnage d'un pilote, homme ou femme - le choix vous appartient, et rejoignez les ultra-riches et légèrement sinistres en jouant avec beaucoup d'argent, des voitures cool et peut-être même des vies... Le jeu est un monde ouvert, pas linéaire, vous pouvez donc choisir la façon dont vous voulez progresser et souvent, cela vaut la peine de simplement prendre plaisir à montrer votre intelligence de la rue ou votre sérieux intellect en jouant le système. La conduite est authentique et très amusante. Vous pouvez profiter de l'expérience de conduite tout en écoutant la radio, en veillant à utiliser les clignotants et en profitant généralement d'une expérience de conduite fluide et réaliste. Vous pouvez même ouvrir votre fenêtre pour laisser entrer la brise et, bien sûr, repousser les limites de vitesse de votre nouvelle acquisition. "
+            },
+            {
+                "id": 2,
+                "img": "",
+                "texte": "Ce jeu, comme nous l'avons mentionné plus haut, est plus une simulation réaliste qu'un jeu de course fantastique. Contrairement à Test Drive 2, son prédécesseur immédiat, qui était davantage basé sur la fantaisie. Hong Kong roule à gauche, vous devrez donc vous habituer à une perspective différente de la route. Les routes à conduite à gauche totalisent environ 550 km, ce qui vous donne beaucoup d'espace pour vous entraîner et rouler vite. Tout comme les autres jeux de la série permettaient de jouer, les casinos reviennent dans ce jeu, vous permettant de jouer votre voiture - ou peut-être d'en gagner une encore meilleure en récupérant le porte-clés de quelqu'un qui l'a négligemment jeté dans le pot. Les graphismes sont astucieux et lisses, l'action est rapide et l'ensemble du jeu est complété par une bande sonore entraînante qui vous fera battre la chamade avant même que vous ne preniez le volant de la supercar de votre choix.",
+                "title": "Plus en détail"
+            }
+            
+        ],
+        "screen": [
+            {
+                "id": 1,
+                "img": "https://gaming-cdn.com/images/products/7257/screenshot/test-drive-unlimited-solar-crown-pc-jeu-steam-wallpaper-1.jpg?v=1717160880"
+            },
+            {
+                "id": 2,
+                "img": "https://gaming-cdn.com/images/products/7257/screenshot/test-drive-unlimited-solar-crown-pc-jeu-steam-wallpaper-2.jpg?v=1717160880"
+            },
+            {
+                "id": 3,
+                "img": "https://gaming-cdn.com/images/products/7257/screenshot/test-drive-unlimited-solar-crown-pc-jeu-steam-wallpaper-3.jpg?v=1717160880"
+            },
+            {
+                "id": 4,
+                "img": "https://gaming-cdn.com/images/products/7257/screenshot/test-drive-unlimited-solar-crown-pc-jeu-steam-wallpaper-4.jpg?v=1717160880"
+            },
+            {
+                "id": 5,
+                "img": "https://gaming-cdn.com/images/products/7257/screenshot/test-drive-unlimited-solar-crown-pc-jeu-steam-wallpaper-5.jpg?v=1717160880"
+            }
+        ],
+        "price": "27.89€",
+        "priceOrigin": "",
+        "promo": "",
+        "stock": false,
+        "buySteam": "https://store.steampowered.com/app/1249970/Test_Drive_Unlimited_Solar_Crown/?l=french",
+        "config": [
+            {
+                "id": 1,
+                "OSmin": "",
+                "OSmax": " ",
+                "PROCmin": "",
+                "PROCmax": "",
+                "MEMmin": "",
+                "MEMmax": "",
+                "GRAPHmin": "",
+                "GRAPHmax": "",
+                "DirectXmin": "",
+                "DirectXmax": "",
+                "HDD": ""
+            }
+        ],
+        "news": [
+            {
+                "news_id": 1,
+                "id": 31,
+                "title": "Test Drive Unlimited Solar Crown sortira le 12 septembre prochain",
+                "imageUrl": "https://gaming-cdn.com/images/news/articles/6639/cover/1000x563/test-drive-unlimited-solar-crown-sortira-le-12-septembre-prochain-cover66584ad14de16.jpg",
+                "video": "whwba2H7nNc",
+                "date": "2024-05-30",
+                "new": "Après de nombreux reports, nous connaissons enfin la date de lancement précise de Test Drive Unlimited Solar Crown. Annoncé en 2020, le jeu de course débarquera à la rentrée sur PS5, Xbox Series et PC. Ce sera plus exactement le 12 septembre prochain sur ces supports. Rappelons que les versions PS4 et Xbox One ont été annulées. Les joueurs Switch demeurent dans l'incertitude quant à l'arrivée ou nom du titre sur la machine hybride de Nintendo."
+              
+            }
+        ],
+       
+        "about": [
+            {
+                "id": 1,
+                "dev": "KT Racing",
+                "editeur": "Nacon",
+                "sortie": "2024-09-12"
+            }
+        ],
+        "plateformes": [
+            {
+                "id": 1,
+                "support": "Steam",
+                "price": "27.89€",
+                "priceOrigin": "50€",
+                "promo": "-44% ",
+                "Stock": true,
+                "buy": "https://www.instant-gaming.com/fr/7257-acheter-test-drive-unlimited-solar-crown-pc-jeu-steam/?igr=gamer-707207",
+                "buySteam": "https://store.steampowered.com/app/1249970/Test_Drive_Unlimited_Solar_Crown/?l=french"
+            }
+        ]
+    },
+    {
+        "id": 32,
+        "exclu": false,
+        "popular": false,
+        "precommande": true,
+        "DLC": true,
+        "DLCtext": "",
+        "dateSortie": "2024-06-03",
+        "date": "",
+        "title": "The Elder Scrolls Online Upgrade: Gold Road",
+        "resume": "Partez à l'aventure, et découvrez l'univers unique et la narration inégalée de The Elder Scrolls. Explorez Tamriel, un immense continent où vos décisions déterminent votre destin. Que ce soit en solo ou avec des amis, le titre vous propose de voyager, d'accomplir des quêtes, de fabriquer des objets et d'interpréter un rôle dans un monde où vous pouvez personnaliser vos capacités et votre équipement pour les adapter à votre style de jeu. Aucun abonnement n'est requis : achetez une fois, et jouez quand vous voulez.",
+        "imageUrl": "https://image.api.playstation.com/vulcan/ap/rnd/202401/1717/a0fcc8df0db69e4be5295d1118dbb459c5fe07598393fe59.jpg",
+        "genres": "MMORPG",
+        "genre": "MMORPG",
+        "video": "ZIb2dKIw",
+        "videoHover": "",
+        "critique": "",
+        "critiqueTitle": "",
+        "gifs": [
+            {
+                "id": 1,
+                "img": " ",
+                "title": "QUELLE ÉDITION CHOISIR ?",
+                "texte": "La Collection Deluxe The Elder Scrolls Online: Gold Road et la Collection Deluxe The Elder Scrolls Online: Gold Road comprennent le jeu de base, Gold Road et tous les chapitres précédents. Si vous pré-achetez la Collection Deluxe: Gold Road, vous recevrez également les objets en jeu Deluxe lors du lancement de Gold Road. Après avoir pré-acheté l'une des Collections, vous aurez immédiatement accès au jeu et aux chapitres précédents. La Mise à niveau The Elder Scrolls Online: Gold Road et la Mise à niveau Deluxe The Elder Scrolls Online: Gold Road comprennent uniquement Gold Road, ainsi que les objets en jeu Deluxe pour la Mise à niveau Deluxe: Gold Road. Si vous pré-achetez l'une des Mises à niveau, vous pourrez accéder à Gold Road dès son lancement."
+            },
+            {
+                "id": 2,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2662630/extras/ESO-GoldRoad_PrePurch_wMount_Steam_MainCapsuleImage_616x353-01.jpg?t=1716493414",
+                "texte": " ",
+                "title": "OFFRE DE PRÉCOMMANDE"
+            },
+            {
+                "id": 3,
+                "img": "",
+                "texte": "Pré-achetez Gold Road pour avoir instantanément accès à la monture Loup des ruines de pierres de Welkynd en plus des récompenses bonus disponibles au lancement. ",
+                "title": "PRÉ-ACHAT"
+            },
+            {
+                "id": 4,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2662630/extras/ESO-GoldRoad-DeluxePack_Steam_MainCapsuleImage_616x353-01.jpg?t=1716493414",
+                "texte": " ",
+                "title": "ÉDITION NUMÉRIQUE DE LUXE"
+            },
+            {
+                "id": 5,
+                "img": "",
+                "texte": "Si vous pré-achetez la Mise à niveau Deluxe The Elder Scrolls Online: Gold Road ou la Collection Deluxe The Elder Scrolls Online: Gold Road, vous recevrez les objets en jeu Deluxe lors du lancement de Gold Road.",
+                "title": "DELUXE"
+            }
+            
+        ],
+        "screen": [
+            {
+                "id": 1,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2662630/ss_bad98deb46508dcd2b8e7796bea11f03842c9913.600x338.jpg?t=1716493414"
+            },
+            {
+                "id": 2,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2662630/ss_cb6f8447abee1772368485f29566538b82324be7.600x338.jpg?t=1716493414"
+            },
+            {
+                "id": 3,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2662630/ss_1cc4afdbbe4288970ed8e41a40e20fcf9734c2f4.600x338.jpg?t=1716493414"
+            },
+            {
+                "id": 4,
+                "img": "https://gaming-cdn.com/images/products/16910/screenshot/the-elder-scrolls-online-upgrade-gold-road-pc-mac-jeu-wallpaper-2.jpg?v=1716885994"
+            },
+            {
+                "id": 5,
+                "img": "https://gaming-cdn.com/images/products/16910/screenshot/the-elder-scrolls-online-upgrade-gold-road-pc-mac-jeu-wallpaper-1.jpg?v=1716885994"
+            }
+        ],
+        "price": "29.99€",
+        "priceOrigin": "",
+        "promo": "",
+        "stock": false,
+        "buySteam": "https://store.steampowered.com/app/2662630/The_Elder_Scrolls_Online_Gold_Road/",
+        "config": [
+            {
+                "id": 1,
+                "OSmin": "Windows 10 64-bit",
+                "OSmax": " Windows 10 64-bit",
+                "PROCmin": "Intel Core i5 2300 or AMD FX4350",
+                "PROCmax": "Intel Core i5 2300 or AMD FX4350",
+                "MEMmin": "4 GB RAM",
+                "MEMmax": "8 GB RAM",
+                "GRAPHmin": "Direct X 11.0 compliant video card with 1GB RAM (NVIDIA GeForce 560 or AMD Radeon 6870)",
+                "GRAPHmax": "Direct X 11.0 compliant video card with 4GB of RAM (NVIDIA GeForce GTX 970 or AMD Radeon RX 570) or higher",
+                "DirectXmin": "Version 11",
+                "DirectXmax": "Version 11",
+                "HDD": "105 GB"
+            }
+        ],
+        "news": [
+            {
+                "news_id": 1,
+                "id": 32,
+                "title": "The Elder Scrolls Online : l'extension Gold Road Sortira le 3 Juin",
+                "imageUrl": "https://gaming-cdn.com/images/news/articles/5820/cover/1000x563/the-elder-scrolls-online-retour-sur-dix-annees-de-regne-cover6616a1cbb56bc.jpg",
+                "video": null,
+                "date": "2024-04-25",
+                "new": "The Elder Scrolls Online recevra une nouvelle extension courant juin, soufflant par la même occasion ses dix bougies. Le chapitre Gold Road retournera en Weald Occidental, à Cyrodiil, sur les traces d'une princesse daedrique oubliée. The Elder Scrolls Online : Gold Road sera disponible le 3 juin sur PC avant de rallier PS4, PS5, Xbox One et Xbox Series le 18 juin."
+              
+            }
+        ],
+       
+        "about": [
+            {
+                "id": 1,
+                "dev": "Zenimax Online Studios",
+                "editeur": "Bethesda Softworks",
+                "sortie": "2024-06-03"
+            }
+        ],
+        "plateformes": [
+            {
+                "id": 1,
+                "support": "Steam",
+                "price": "29.99€",
+                "priceOrigin": "40€",
+                "promo": "-25%",
+                "Stock": true,
+                "buy": "https://www.instant-gaming.com/fr/15725-acheter-the-elder-scrolls-online-upgrade-gold-road-pc-mac-jeu-steam/?igr=gamer-707207",
+                "buySteam": "https://store.steampowered.com/app/2662630/The_Elder_Scrolls_Online_Gold_Road/"
+            },
+            {
+                "id": 2,
+                "support": "Xbox Series",
+                "price": "31.49€",
+                "priceOrigin": "40€",
+                "promo": "-21%",
+                "Stock": true,
+                "buy": "https://www.instant-gaming.com/fr/16916-acheter-the-elder-scrolls-online-upgrade-gold-road-xbox-one-xbox-series-x-s-xbox-one-xbox-series-x-s-jeu-microsoft-store/",
+                "buySteam": ""
+            }
+        ]
+    },
+    {
+        "id": 33,
+        "exclu": false,
+        "popular": false,
+        "precommande": true,
+        "DLC": false,
+        "DLCtext": "",
+        "dateSortie": "2024-06-14",
+        "date": "",
+        "title": "Monster Hunter Stories",
+        "resume": "Monster Hunter Stories vous invite à plonger dans le monde de Monster Hunter, que ce JDR développe de manière originale et passionnante. Vous ne chassez plus les monstres, vous les élevez ! Dans cette histoire qui met à l'honneur les Riders, vivez et formez des liens pour la vie avec des monstres.",
+        "imageUrl": "https://image.api.playstation.com/vulcan/ap/rnd/202403/0105/16d98710de55321d07ea38dc9cc7bb56e823d79ea4f53577.jpg",
+        "genres": "RPG",
+        "genre": "RPG",
+        "video": "tLGxuIPcfcE",
+        "videoHover": "",
+        "critique": "",
+        "critiqueTitle": "",
+        "gifs": [
+            {
+                "id": 1,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2356560/extras/bonus_dlc_EN.png?t=1716857683 ",
+                "title": "OFFRE DE PRÉCOMMANDE",
+                "texte": "Bonus en édition limitée  Précommandez pour obtenir les costumes « Roi » et « Reine » de Navirou !  Les clients qui ont effectué un achat avant 3h59 (UTC) le vendredi 14 juin 2024 sont éligibles."
+            },
+            {
+                "id": 2,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2356560/extras/top.jpg?t=1716857683",
+                "texte": "Remarque : des packs incluant ce produit et Monster Hunter Stories 2 ~Wings Of Ruin~ seront disponibles à l'achat à des prix exceptionnels à une date ultérieure.  Monster Hunter Stories vous invite à plonger dans le monde de Monster Hunter, que ce JDR développe de manière originale et passionnante. Vous ne chassez plus les monstres, vous les élevez ! Dans cette histoire qui met à l'honneur les Riders, vivez et formez des liens pour la vie avec des monstres. Le premier opus de la série Monster Hunter Stories revient, entièrement doublé en japonais et en anglais. Le jeu propose des fonctionnalités supplémentaires, comme le mode du musée qui permet d'écouter des morceaux de musique et d'admirer des illustrations. Vous vous enfoncerez ainsi toujours plus avant dans le monde de Monster Hunter Stories.",
+                "title": "À PROPOS DE CE JEU"
+            },
+            {
+                "id": 3,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2356560/extras/story1.jpg?t=1716857683",
+                "texte": "Vous incarnez un héros né dans un village de Riders, ces gens qui vivent de l'élevage de monstres. Au fil du temps, vous allez surmonter maintes épreuves, puis quitter votre village pour partir à l'aventure. Malgré le choc des cultures, vous apprendrez à vivre et à coopérer avec les chasseurs, jusqu'à un jour réussir à rapprocher ces deux communautés si différentes. La situation vire au drame lorsqu'une calamité connue sous le nom du fléau noir apparaît et menace le monde entier et des existences paisibles et tenues pour acquises... Riders et Hunters seront mis à rude épreuve face à ce péril. La clé de la survie du monde réside dans la gemme de l'amitié et son pouvoir caché, comme dans la « légende de Redan » qui détaille le secret des origines des Riders ! Tout au long de ce voyage épique, vous découvrirez le vrai sens de l'amitié qui se renforcera de pair avec les liens que vous tisserez ! Une histoire d'amitié et de triomphe vous attend – plongez dans le monde de Monster Hunter Stories ! ",
+                "title": "L'histoire :"
+            },
+            {
+                "id": 4,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2356560/extras/tamago.gif?t=1716857683",
+                "texte": "Utilisez les capacités de vos compagnons pour faciliter vos explorations, faites éclore les œufs que vous trouvez, et transformez toujours plus de monstres en Monsties ! Retrouvez des créatures populaires de la série Monster Hunter, tels le Zinogre, le Nargacuga et le Lagiacrus.",
+                "title": "Domptez des monstres de la série pour en faire vos Monsties !"
+            },
+            {
+                "id": 5,
+                "img": "",
+                "texte": "Créez un groupe puissant avec vos Monsties et partez au combat avec d'autres joueurs !",
+                "title": "Le jeu en ligne"
+            },
+            {
+                "id": 6,
+                "img": "",
+                "texte": "L'histoire sera encore plus captivante avec les voix des acteurs japonais ou anglais.",
+                "title": "Le jeu est entièrement doublé en japonais et anglais !"
+            },
+            {
+                "id": 7,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2356560/extras/museum.jpg?t=1716857683",
+                "texte": "Vous trouverez plus de 200 illustrations conceptuelles, dont des images dévoilées ici pour la première fois, ainsi que de nombreux morceaux de musique. Certains d'entre eux font ainsi leurs débuts en son Surround !",
+                "title": "Le musée propose de nombreux contenus bonus"
+            },
+            {
+                "id": 8,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2356560/extras/monster.jpg?t=1716857683",
+                "texte": "Gage d'expérience ultime, vous retrouverez tous les monstres introduits au fil des différentes mises à jour du titre d'origine, comme le Kushala Daora, le Teostra et le Rajang, ainsi que du contenu supplémentaire de fin de jeu ou des possibilités étendues de modification du personnage !",
+                "title": "Toutes les mises à jour sont incluses !"
+            }
+            
+        ],
+        "screen": [
+            {
+                "id": 1,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2356560/ss_f03a9114ae3a5d412b3e7111a8ccb63adcfb545e.600x338.jpg?t=1716857683"
+            },
+            {
+                "id": 2,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2356560/ss_0acfa85fbe60efbef5bf229ee224a4a0360c690e.600x338.jpg?t=1716857683"
+            },
+            {
+                "id": 3,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2356560/ss_3af62100177b7e7f7d485b987ecc44db982adee2.600x338.jpg?t=1716857683"
+            },
+            {
+                "id": 4,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2356560/ss_424cb969ced12acf9929f3ce872cba5454ef527e.600x338.jpg?t=1716857683"
+            },
+            {
+                "id": 5,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2356560/ss_4c3af6e690e50dd9511d84af2392464cbc127358.600x338.jpg?t=1716857683"
+            }
+        ],
+        "price": "21.99€",
+        "priceOrigin": "",
+        "promo": "",
+        "stock": false,
+        "buySteam": "https://store.steampowered.com/app/2356560/Monster_Hunter_Stories/",
+        "config": [
+            {
+                "id": 1,
+                "OSmin": "WINDOWS 10,11 (64-BIT Required)",
+                "OSmax": " WINDOWS 10,11 (64-BIT Required)",
+                "PROCmin": "Intel Core i5-3470 3.20 GHz or AMD FX-6300",
+                "PROCmax": "Intel Core i5-4460 3.20 GHz or AMD FX-8300",
+                "MEMmin": "4 GB RAM",
+                "MEMmax": "8 GB RAM",
+                "GRAPHmin": "NVIDIAGeForce GTX 960 or AMD Radeon RX 560",
+                "GRAPHmax": "NVIDIAGeForce GTX 960 or AMD Radeon RX 560",
+                "DirectXmin": "Version 11",
+                "DirectXmax": "Version 11",
+                "HDD": "20 GB"
+            }
+        ],
+        "news": [
+            {
+                "news_id": 1,
+                "id": 33,
+                "title": "La remasterisation de Monster Hunter Stories sortira le 14 juin",
+                "imageUrl": "https://gaming-cdn.com/images/news/articles/5294/cover/1000x563/la-remasterisation-de-monster-hunter-stories-sortira-le-14-juin-aux-cotes-de-la-version-ps4-du-second-opus-cover65ef93cf86f26.jpg",
+                "video": null,
+                "date": "2024-03-25",
+                "new": "Le premier Monster Hunter Stories reviendra le 14 juin prochain sur PS4, Nintendo Switch et PC (via Steam), en dématérialisé. C'est Capcom qui a confirmé la date pour cette remasterisation annoncée le 25 février dernier. Notons que Monster Hunter Stories 2: Wings of Ruin débarquera sur PS4 ce même 14 juin et qu'une Deluxe Edition verra le jour. Elle renfermera des tenues, armures et autres stickers. Un bundle regroupant les deux jeux, intitulé Monster Hunter Stories Collection, sera proposé à la vente sur ces trois supports. Enfin, la version Switch de la compilation profitera d'une sortie physique en Occident."
+              
+            }
+        ],
+       
+        "about": [
+            {
+                "id": 1,
+                "dev": "Capcom, CAPCOM Co., Ltd",
+                "editeur": "Capcom, CAPCOM Co., Ltd",
+                "sortie": "2024-06-14"
+            }
+        ],
+        "plateformes": [
+            {
+                "id": 1,
+                "support": "Steam",
+                "price": "21.99€",
+                "priceOrigin": "30€",
+                "promo": "-27%",
+                "Stock": true,
+                "buy": "https://www.instant-gaming.com/fr/15994-acheter-monster-hunter-stories-pc-jeu-steam-europe/?igr=gamer-707207",
+                "buySteam": "https://store.steampowered.com/app/2356560/Monster_Hunter_Stories/"
+            }
+        ]
+    },
+    {
+        "id": 34,
+        "exclu": false,
+        "popular": false,
+        "precommande": true,
+        "DLC": false,
+        "DLCtext": "",
+        "dateSortie": "2024-06-14",
+        "date": "",
+        "title": "Shin Megami Tensei V: Vengeance",
+        "resume": "Transformez-vous en demi-dieu et battez-vous dans un Tokyo dévasté par une guerre entre des êtres célestes. Faites-vous de nouveaux alliés, rejoignez des batailles intenses au tour par tour, recrutez des centaines de démons et dictez le destin de l'univers.",
+        "imageUrl": "https://www.nintendo.com/eu/media/images/10_share_images/games_15/nintendo_switch_4/2x1_NSwitch_ShinMegamiTenseiVVengeance_image1600w.jpg",
+        "genres": "RPG",
+        "genre": "RPG",
+        "video": "KDiRwSeXbZM",
+        "videoHover": "",
+        "critique": "",
+        "critiqueTitle": "",
+        "gifs": [
+            {
+                "id": 1,
+                "img": "",
+                "title": "Bonus de précommande : 2 Ensembles de trésors sacrés",
+                "texte": "Deux Ensembles de trésors sacrés qui vous aideront à explorer Da'at. Incluent deux objets utilisables à l'infini : la « Grenade à incandescence », qui inflige de légers dégâts aux ennemis, et la « Perle de Haraedo », qui soigne les PV de tous les alliés."
+            },
+            {
+                "id": 2,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1875830/extras/SMTVV_SteamStorePg_Headers-FR-text1.png?t=1716976478",
+                "texte": "Découvrez deux histoires complètes dans Shin Megami Tensei V: Vengeance, toutes deux remplies de choix cornéliens qui vous forceront à défier vos idéologies. Alors que l'Ordre et le Chaos s'ébranlent autour de vous, tracez un chemin personnel qui décidera du destin de l'humanité.",
+                "title": ""
+            },
+            {
+                "id": 3,
+                "img": " ",
+                "texte": "une histoire de vengeance tragique des déchus centrée sur de nouveaux personnages et un groupe de démons énigmatiques nommés Qadištu exécutant leur sombre plan en parallèle de la guerre entre l'Ordre et ceux qui s'y opposent.",
+                "title": "« Déesse vengeresse »"
+            },
+            {
+                "id": 4,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1875830/extras/Gif_1.gif?t=1716976478",
+                "texte": "un conflit éternel entre les anges et les démons au sein duquel le protagoniste se bat pour changer le destin du monde.",
+                "title": "« Déesse créatrice »"
+            },
+            {
+                "id": 5,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1875830/extras/SMTVV_SteamStorePg_Headers-FR-text2.png?t=1716976478",
+                "texte": "Battez-vous dans un Tokyo dévasté, réduit à l'état de décombres et rempli de démons mythiques. Explorez de vastes zones ouvertes et fouillez de nouveaux lieux pour trouver des objets salvateurs ou rencontrer des centaines de démons. Certains sont bien connus, d'autres nouveaux ; certains vous affronteront, d'autres deviendront vos alliés.",
+                "title": ""
+            },
+            {
+                "id": 6,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1875830/extras/Gif_2.gif?t=1716976478",
+                "texte": " ",
+                "title": " "
+            },
+            {
+                "id": 7,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1875830/extras/SMTVV_SteamStorePg_Headers-FR-text3.png?t=1716976478",
+                "texte": "L'atmosphère sombre et les démons aussi grandioses que monstrueux sont de retour, sublimés par cette évolution aux graphismes magnifiques dignes des consoles modernes. Grandement étendu par des zones, démons et morceaux de musique inédits, Shin Megami Tensei V: Vengeance est plus accessible, propose un système de combat amélioré, de nouvelles expériences démoniaques et toujours plus d'exploration.",
+                "title": " "
+            },
+            {
+                "id": 8,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1875830/extras/Gif_3.gif?t=1716976478",
+                "texte": " ",
+                "title": " "
+            },
+            {
+                "id": 9,
+                "img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1875830/extras/SMTVV_SteamStorePg_Headers-FR-text4.png?t=1716976478",
+                "texte": "Découvrez la version définitive de Shin Megami Tensei V, acclamé par la critique et désormais grandement étendu avec une toute nouvelle histoire révélant de nouveaux lieux, démons et choix impactant le destin de l'existence tout entière. ",
+                "title": " "
+            }
+            
+        ],
+        "screen": [
+            {
+                "id": 1,
+                "img": "https://gaming-cdn.com/images/products/9678/screenshot/shin-megami-tensei-v-vengeance-pc-jeu-steam-europe-wallpaper-1.jpg?v=1717081948"
+            },
+            {
+                "id": 2,
+                "img": "https://gaming-cdn.com/images/products/9678/screenshot/shin-megami-tensei-v-vengeance-pc-jeu-steam-europe-wallpaper-2.jpg?v=1717081948"
+            },
+            {
+                "id": 3,
+                "img": "https://gaming-cdn.com/images/products/9678/screenshot/shin-megami-tensei-v-vengeance-pc-jeu-steam-europe-wallpaper-3.jpg?v=1717081948"
+            },
+            {
+                "id": 4,
+                "img": "https://gaming-cdn.com/images/products/9678/screenshot/shin-megami-tensei-v-vengeance-pc-jeu-steam-europe-wallpaper-4.jpg?v=1717081948"
+            },
+            {
+                "id": 5,
+                "img": "https://gaming-cdn.com/images/products/9678/screenshot/shin-megami-tensei-v-vengeance-pc-jeu-steam-europe-wallpaper-5.jpg?v=1717081948"
+            }
+        ],
+        "price": "46.99€",
+        "priceOrigin": "",
+        "promo": "",
+        "stock": false,
+        "buySteam": "https://store.steampowered.com/app/1875830/Shin_Megami_Tensei_V_Vengeance/",
+        "config": [
+            {
+                "id": 1,
+                "OSmin": "WINDOWS 10,11 (64-BIT Required)",
+                "OSmax": " WINDOWS 10,11 (64-BIT Required)",
+                "PROCmin": "Intel Core i5-2400 or AMD FX-6350",
+                "PROCmax": "Intel Core i5-3470 or AMD Ryzen 5 1400",
+                "MEMmin": "6 GB RAM",
+                "MEMmax": "8 GB RAM",
+                "GRAPHmin": "Intel Core i5-3470 or AMD Ryzen 5 1400",
+                "GRAPHmax": "NVIDIA GeForce GTX 960, 4 GB or AMD Radeon R9 380, 4 GB",
+                "DirectXmin": "Version 12",
+                "DirectXmax": "Version 12",
+                "HDD": "30 GB"
+            }
+        ],
+        "news": [
+            {
+                "news_id": 1,
+                "id": 34,
+                "title": "Shin Megami Tensei V: Vengeance a droit à un nouveau trailer",
+                "imageUrl": "https://gaming-cdn.com/images/news/articles/6156/cover/1000x563/shin-megami-tensei-v-vengeance-a-droit-a-un-nouveau-trailer-cover66312bd723038.jpg",
+                "video": "4tiHggWkGRc",
+                "date": "2024-05-02",
+                "new": "Le 14 juin prochain, le déjà très bon Shin Megami Tensei V reviendra sur tous les supports dans une édition plus complète intitulée « Vengeance ». Une sortie très attendue puisque le jeu n'était jusqu'à maintenant disponible que sur Switch.  Atlus profite donc de ces derniers jours de communication pour nous présenter une nouvelle vidéo. Elle permet de découvrir le Tokyo post-apocalyptique du RPG et revient également sur le système de combat. Shin Megami Tensei V: Vengeance se voudra plus accessible et complet que le jeu de base."
+              
+            }
+        ],
+       
+        "about": [
+            {
+                "id": 1,
+                "dev": "ATLUS",
+                "editeur": "SEGA, ATLUS",
+                "sortie": "2024-06-14"
+            }
+        ],
+        "plateformes": [
+            {
+                "id": 1,
+                "support": "Steam",
+                "price": "46.99€",
+                "priceOrigin": "60€",
+                "promo": "-22%",
+                "Stock": true,
+                "buy": "https://www.instant-gaming.com/fr/9678-acheter-shin-megami-tensei-v-vengeance-pc-jeu-steam-europe/?igr=gamer-707207",
+                "buySteam": "https://store.steampowered.com/app/1875830/Shin_Megami_Tensei_V_Vengeance/"
+            },
+            {
+                "id": 2,
+                "support": "Xbox Series",
+                "price": "47.49€",
+                "priceOrigin": "60€",
+                "promo": "-21%",
+                "Stock": true,
+                "buy": "https://www.instant-gaming.com/fr/16940-acheter-shin-megami-tensei-v-vengeance-pc-xbox-one-xbox-series-x-s-xbox-one-xbox-series-x-s-pc-jeu-microsoft-store-europe/?igr=gamer-707207",
+                "buySteam": ""
+            },
+            {
+                "id": 3,
+                "support": "Playstation 5",
+                "price": "47.49€",
+                "priceOrigin": "60€",
+                "promo": "-21%",
+                "Stock": true,
+                "buy": "https://www.instant-gaming.com/fr/16183-acheter-shin-megami-tensei-v-vengeance-ps5-playstation-5-jeu-playstation-store/?igr=gamer-707207",
+                "buySteam": ""
+            }
+            ,
+            {
+                "id": 4,
+                "support": "Switch",
+                "price": "",
+                "priceOrigin": "",
+                "promo": "",
+                "Stock": false,
+                "buy": "https://www.instant-gaming.com/fr/15987-acheter-shin-megami-tensei-v-vengeance-switch-switch-jeu-nintendo-eshop-europe/?igr=gamer-707207",
+                "buySteam": ""
             }
         ]
     }

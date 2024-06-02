@@ -29,8 +29,8 @@ function LastPosts() {
 
   useEffect(() => {
     const q = query(
-      collection(db, "comments"),
-      orderBy("rating", "desc"),
+      collection(db, "games"),
+      orderBy("averageRating", "desc"),
       limit(6)
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -108,7 +108,10 @@ function LastPosts() {
       return "Aucune note";
     }
   }
-
+  // Fonction pour nettoyer le titre
+  const cleanTitle = (title) => {
+    return title.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+  };
   return (
 
 
@@ -142,7 +145,7 @@ function LastPosts() {
                           <div key={item.id}>
                             
                             <Link
-                    to={`/PC/${item.id}/${item.news_id}/`}
+                    to={`/PC/${item.id}/${cleanTitle(item.title)}/`}
                     className="nk-post-img"
                   >
                               <img src={item.imageUrl} alt="Image du jeu" className="img-fluid" />
@@ -160,6 +163,7 @@ function LastPosts() {
                   </h2>
                   {item.price}
                           </div>
+   
                           </div>
                         ) : (
                           <div className="div"></div>

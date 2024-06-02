@@ -234,6 +234,10 @@ console.log(comments);
         return "Aucune note";
     }
 }
+  // Fonction pour nettoyer le titre
+  const cleanTitle = (title) => {
+    return title.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+  };
   return (
     <div>
 
@@ -328,7 +332,7 @@ console.log(comments);
                                 <Link
                                   key={item.id}
                                   to={{
-                                    pathname: `/Xbox/${item.id}/${item.title}`,
+                                    pathname: `/Xbox/${item.id}/${cleanTitle(item.title)}`,
                                     state: { itemData: item },
                                   }}
                                 >
@@ -342,7 +346,7 @@ console.log(comments);
                                 <Link
                                   key={item.id}
                                   to={{
-                                    pathname: `/Playstation/${item.id}/${item.title}`,
+                                    pathname: `/Playstation/${item.id}/${cleanTitle(item.title)}`,
                                     state: { itemData: item },
                                   }}
                                 >
@@ -355,7 +359,7 @@ console.log(comments);
                                 <Link
                                   key={item.id}
                                   to={{
-                                    pathname: `/PC-Steam/${item.id}/${item.title}`,
+                                    pathname: `/PC-Steam/${item.id}/${cleanTitle(item.title)}`,
                                     state: { itemData: item },
                                   }}
                                 >
@@ -368,7 +372,7 @@ console.log(comments);
                                 <Link
                                   key={item.id}
                                   to={{
-                                    pathname: `/PC_Rockstar/${item.id}/${item.title}`,
+                                    pathname: `/PC_Rockstar/${item.id}/${cleanTitle(item.title)}`,
                                     state: { itemData: item },
                                   }}
                                 >

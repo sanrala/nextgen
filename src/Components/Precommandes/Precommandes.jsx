@@ -30,6 +30,10 @@ function Precommandes() {
 
   // Filtrer les jeux en précommande et prendre les 6 premiers
   const preco = games.filter(item => item.precommande === true).slice(0, 6);
+  // Fonction pour nettoyer le titre
+const cleanTitle = (title) => {
+  return title.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+};
   return (
     <div>
       <div class="nk-gap-2"></div>
@@ -62,7 +66,7 @@ function Precommandes() {
                             key={item.id}
                             {...item}
                             to={{
-                              pathname: `/PC/${item.id}/${item.support}`,
+                              pathname: `/PC/${item.id}/${cleanTitle(item.title)}`,
                               state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
                             }}
                             class="nk-post-img"
@@ -94,7 +98,7 @@ function Precommandes() {
                        key={item.id}
                        {...item}
                        to={{
-                         pathname: `/PC_Rockstar/${item.id}/${item.support}`,
+                         pathname: `/PC_Rockstar/${item.id}/${cleanTitle(item.title)}`,
                          state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
                        }}
                        class="nk-post-img"
@@ -127,7 +131,7 @@ function Precommandes() {
                            key={item.id}
                            {...item}
                            to={{
-                             pathname: `/Battlenet/${item.id}/${item.support}`,
+                             pathname: `/Battlenet/${item.id}/${cleanTitle(item.title)}`,
                              state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
                            }}
                            class="nk-post-img"

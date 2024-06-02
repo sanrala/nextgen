@@ -290,6 +290,12 @@ function Product(props) {
       return "Aucune note";
     }
   }
+
+
+    // Fonction pour nettoyer le titre
+const cleanTitle = (title) => {
+  return title.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+};
   return (
     <div>
       <Header />
@@ -401,7 +407,7 @@ function Product(props) {
                                 <Link
                                   key={item.id}
                                   to={{
-                                    pathname: `/Xbox/${item.id}/${item.title}`,
+                                    pathname: `/Xbox/${item.id}/${cleanTitle(item.title)}`,
                                     state: { itemData: item },
                                   }}
                                 >
@@ -415,7 +421,7 @@ function Product(props) {
                                 <Link
                                   key={item.id}
                                   to={{
-                                    pathname: `/Playstation/${item.id}/${item.title}`,
+                                    pathname: `/Playstation/${item.id}/${cleanTitle(item.title)}`,
                                     state: { itemData: item },
                                   }}
                                 >
@@ -428,7 +434,7 @@ function Product(props) {
                                 <Link
                                   key={item.id}
                                   to={{
-                                    pathname: `/PC/${item.id}/${item.title}`,
+                                    pathname: `/PC/${item.id}/${cleanTitle(item.title)}`,
                                     state: { itemData: item },
                                   }}
                                 >
@@ -441,7 +447,7 @@ function Product(props) {
                                 <Link
                                   key={item.id}
                                   to={{
-                                    pathname: `/PC_Rockstar/${item.id}/${item.title}`,
+                                    pathname: `/PC_Rockstar/${item.id}/${cleanTitle(item.title)}`,
                                     state: { itemData: item },
                                   }}
                                 >

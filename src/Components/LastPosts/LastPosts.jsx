@@ -84,12 +84,7 @@ function LastPosts() {
                     <a href="#">{comment.title}</a>
                   </h2>
                   <div class="nk-post-by">
-                    <Avatar
-                      src={comment.userPhoto}
-                      alt={comment.userName}
-                      className="rounded-circle"
-                      width="35"
-                    />{" "}
+                
                     par <a href="#">{comment.userName}</a>{" "}
                     {comment.createdAt
                       ? `le ${new Date(
