@@ -31,9 +31,9 @@ function Precommandes() {
   // Filtrer les jeux en précommande et prendre les 6 premiers
   const preco = games.filter(item => item.precommande === true).slice(0, 6);
   // Fonction pour nettoyer le titre
-const cleanTitle = (title) => {
-  return title.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
-};
+  const cleanTitle = (title) => {
+    return title.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+  };
   return (
     <div>
       <div class="nk-gap-2"></div>
@@ -81,7 +81,7 @@ const cleanTitle = (title) => {
                                 objectFit: 'cover',
                               }}
                               pausedOverlay={
-                                <img src={item.imageUrl} alt={item.title} className="img-fluid"/>
+                                <img src={item.imageUrl} alt={item.title} className="img-fluid" />
                               }
 
                             />
@@ -94,69 +94,102 @@ const cleanTitle = (title) => {
                           </Link>
                         )}
                         {v.support === "Rockstar" && (
-                       <Link
-                       key={item.id}
-                       {...item}
-                       to={{
-                         pathname: `/PC_Rockstar/${item.id}/${cleanTitle(item.title)}`,
-                         state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
-                       }}
-                       class="nk-post-img"
-                     >
-                       <HoverVideoPlayer
-                         className="tot"
-                         videoSrc={item.videoHover}
-                         style={{
-                           // Make the image expand to cover the video's dimensions
-                           width: '100%',
-                           height: '100%',
-                           objectFit: 'cover',
-                         }}
-                         pausedOverlay={
-                           <img src={item.imageUrl} alt={item.title} />
-                         }
+                          <Link
+                            key={item.id}
+                            {...item}
+                            to={{
+                              pathname: `/PC_Rockstar/${item.id}/${cleanTitle(item.title)}`,
+                              state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
+                            }}
+                            class="nk-post-img"
+                          >
+                            <HoverVideoPlayer
+                              className="tot"
+                              videoSrc={item.videoHover}
+                              style={{
+                                // Make the image expand to cover the video's dimensions
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover',
+                              }}
+                              pausedOverlay={
+                                <img src={item.imageUrl} alt={item.title} />
+                              }
 
-                       />
-                       {/* <img src={item.imageUrl} alt={item.title} /> */}
-                       <span class="nk-post-comments-count">{item.promo}</span>
+                            />
+                            {/* <img src={item.imageUrl} alt={item.title} /> */}
+                            <span class="nk-post-comments-count">{item.promo}</span>
 
-                       <span class="nk-post-categories">
-                         <span class="bg-main-5">{item.genre}</span>
-                       </span>
-                     </Link>
+                            <span class="nk-post-categories">
+                              <span class="bg-main-5">{item.genre}</span>
+                            </span>
+                          </Link>
                         )
                         }
                         {v.support === "Battle.net" && (
-                           <Link
-                           key={item.id}
-                           {...item}
-                           to={{
-                             pathname: `/Battlenet/${item.id}/${cleanTitle(item.title)}`,
-                             state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
-                           }}
-                           class="nk-post-img"
-                         >
-                           <HoverVideoPlayer
-                             className="tot"
-                             videoSrc={item.videoHover}
-                             style={{
-                               // Make the image expand to cover the video's dimensions
-                               width: '100%',
-                               height: '100%',
-                               objectFit: 'cover',
-                             }}
-                             pausedOverlay={
-                               <img src={item.imageUrl} alt={item.title} />
-                             }
+                          <Link
+                            key={item.id}
+                            {...item}
+                            to={{
+                              pathname: `/Battlenet/${item.id}/${cleanTitle(item.title)}`,
+                              state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
+                            }}
+                            class="nk-post-img"
+                          >
+                            <HoverVideoPlayer
+                              className="tot"
+                              videoSrc={item.videoHover}
+                              style={{
+                                // Make the image expand to cover the video's dimensions
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover',
+                              }}
+                              pausedOverlay={
+                                <img src={item.imageUrl} alt={item.title} />
+                              }
 
-                           />
-                           {/* <img src={item.imageUrl} alt={item.title} /> */}
-                           <span class="nk-post-comments-count">{item.promo}</span>
+                            />
+                            {/* <img src={item.imageUrl} alt={item.title} /> */}
+                            <span class="nk-post-comments-count">{item.promo}</span>
 
-                           <span class="nk-post-categories">
-                             <span class="bg-main-5">{item.genre}</span>
-                           </span>
-                         </Link>
+                            <span class="nk-post-categories">
+                              <span class="bg-main-5">{item.genre}</span>
+                            </span>
+                          </Link>
+                        )
+                        }
+                          {v.support === "Ubisoft" && (
+                          <Link
+                            key={item.id}
+                            {...item}
+                            to={{
+                              pathname: `/Ubisoft/${item.id}/${cleanTitle(item.title)}`,
+                              state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
+                            }}
+                            class="nk-post-img"
+                          >
+                            <HoverVideoPlayer
+                              className="tot"
+                              videoSrc={item.videoHover}
+                              style={{
+                                // Make the image expand to cover the video's dimensions
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover',
+                              }}
+                              pausedOverlay={
+                                <img src={item.imageUrl} alt={item.title} />
+                              }
+
+                            />
+                            {/* <img src={item.imageUrl} alt={item.title} /> */}
+                            <span class="nk-post-comments-count">{item.promo}</span>
+
+                            <span class="nk-post-categories">
+                              <span class="bg-main-5">{item.genre}</span>
+                            </span>
+                          </Link>
                         )
                         }
                       </>
@@ -164,50 +197,64 @@ const cleanTitle = (title) => {
 
                   <div class="nk-gap"></div>
                   <span class="nk-post-title h4">
-                  {item.plateformes &&
-                    item.plateformes.map((v, index) => (
-                      <>
-                        {v.support === "Steam" && (
-                    <Link
-                      key={item.id}
-                      {...item}
-                      to={{
-                        pathname: `/PC/${item.id}/${item.title}`,
-                        state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
-                      }}
-                    >
-                      {item.title.slice(0, 17) + "..."}
-                    </Link>
-                         )
+                    {item.plateformes &&
+                      item.plateformes.map((v, index) => (
+                        <>
+                          {v.support === "Steam" && (
+                            <Link
+                              key={item.id}
+                              {...item}
+                              to={{
+                                pathname: `/PC/${item.id}/${item.title}`,
+                                state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
+                              }}
+                            >
+                              {item.title.slice(0, 17) + "..."}
+                            </Link>
+                          )
+                          }
+                          {v.support === "Rockstar" && (
+                            <Link
+                              key={item.id}
+                              {...item}
+                              to={{
+                                pathname: `/PC_Rockstar/${item.id}/${item.title}`,
+                                state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
+                              }}
+                            >
+                              {item.title.slice(0, 17) + "..."}
+                            </Link>
+                          )
+                          }
+                          {v.support === "Battle.net" && (
+                            <Link
+                              key={item.id}
+                              {...item}
+                              to={{
+                                pathname: `/Battlenet/${item.id}/${item.title}`,
+                                state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
+                              }}
+                            >
+                              {item.title.slice(0, 17) + "..."}
+                            </Link>
+                          )
+                          }
+                             {v.support === "Ubisoft" && (
+                          <Link
+                            key={item.id}
+                            {...item}
+                            to={{
+                              pathname: `/Ubisoft/${item.id}/${cleanTitle(item.title)}`,
+                              state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
+                            }}
+                            class="nk-post-img"
+                          >
+                         {item.title.slice(0, 17) + "..."}
+                          </Link>
+                        )
                         }
-                           {v.support === "Rockstar" && (
-                    <Link
-                      key={item.id}
-                      {...item}
-                      to={{
-                        pathname: `/PC_Rockstar/${item.id}/${item.title}`,
-                        state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
-                      }}
-                    >
-                      {item.title.slice(0, 17) + "..."}
-                    </Link>
-                         )
-                        }
-                           {v.support === "Battle.net" && (
-                    <Link
-                      key={item.id}
-                      {...item}
-                      to={{
-                        pathname: `/Battlenet/${item.id}/${item.title}`,
-                        state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
-                      }}
-                    >
-                      {item.title.slice(0, 17) + "..."}
-                    </Link>
-                         )
-                        }
-                      </>
-                    ))}
+                        </>
+                      ))}
 
                   </span>
                   {/* <div class="nk-post-text">

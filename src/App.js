@@ -7,6 +7,7 @@ import Preco from "./BlogArticle/Preco";
 import Sorties from "./BlogArticle/SortiesArticle"; 
 import ProductRockstar from "./Products/ProductRockstar";
 import ProductBlizzard from "./Products/ProductBlizzard";
+import Ubisoft from "./Products/ProductUbisoft";
 import Products from "./Products/Product";
 import Login from "./Components/Login/Login";
 import Register from "./Components/Login/Register";
@@ -27,6 +28,7 @@ function App() {
 <Route path="/Login" element={<Login />}/>
 <Route path="/Register" element={<Register />}/>
 <Route path="/PC/:id/:title" element={<Products />}/>
+<Route path="/Ubisoft/:id/:title" element={<Ubisoft />}/>
 <Route path="/Xbox/:id/:title" element={<ProductXBOX />}/>
 <Route path="/Playstation/:id/:title" element={<ProductPS />}/>
 <Route path="/PC_Rockstar/:id/:title" element={<ProductRockstar />}/>

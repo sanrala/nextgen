@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import gameData from "./../../games.json";
-import {Link, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   collection,
   addDoc,
@@ -120,17 +120,17 @@ function LastPosts() {
 
     <div class="row vertical-gap">
       <div class="col-lg-12">
-      <Link
-        to={{
-          pathname: `/Populaires/`,
-        }}
-      >
-        <h3 class="nk-decorated-h-2">
-          <span>
-            <span class="text-main-1">Jeux</span> Populaires
-          </span>
-        </h3>
-      </Link>
+        <Link
+          to={{
+            pathname: `/Populaires/`,
+          }}
+        >
+          <h3 class="nk-decorated-h-2">
+            <span>
+              <span class="text-main-1">Jeux</span> Populaires
+            </span>
+          </h3>
+        </Link>
         <div class="nk-gap"></div>
         <div class="nk-blog-grid">
           <div class="row">
@@ -138,41 +138,41 @@ function LastPosts() {
               <div class="col-md-6 col-lg-4" key={comment.id}>
                 <div class="nk-blog-post">
                   <div class="nk-gap"></div>
-           
-                    {gameData.map((item) => (
-                      <>
-                        {item.id == comment.gameId ? (
-                          <div key={item.id}>
-                            
-                            <Link
-                    to={`/PC/${item.id}/${cleanTitle(item.title)}/`}
-                    className="nk-post-img"
-                  >
-                              <img src={item.imageUrl} alt="Image du jeu" className="img-fluid" />
-                              <span class="nk-post-comments-count">{item.promo}</span>
 
-<span class="nk-post-categories">
-  <span class="bg-main-5">{item.genre}</span>
-</span>
-                            
-                            </Link>
-                            <div class="nk-gap"></div>
-                  <div className="title_price d-flex justify-content-between align-items-baseline">
-                    <h2 class="nk-post-title h4">
-                    <a href="#">{item.title}</a>
-                  </h2>
-                  {item.price}
+                  {gameData.map((item) => (
+                    <>
+                      {item.id == comment.gameId ? (
+                        <div key={item.id}>
+
+                          <Link
+                            to={`/PC/${item.id}/${cleanTitle(item.title)}/`}
+                            className="nk-post-img"
+                          >
+                            <img src={item.imageUrl} alt="Image du jeu" className="img-fluid" />
+                            <span class="nk-post-comments-count">{item.promo}</span>
+
+                            <span class="nk-post-categories">
+                              <span class="bg-main-5">{item.genre}</span>
+                            </span>
+
+                          </Link>
+                          <div class="nk-gap"></div>
+                          <div className="title_price d-flex justify-content-between align-items-baseline">
+                            <h2 class="nk-post-title h4">
+                              <a href="#">{item.title}</a>
+                            </h2>
+                            {item.price}
                           </div>
-   
-                          </div>
-                        ) : (
-                          <div className="div"></div>
-                        )}
-                      </>
-                    ))}
-               
-             
-               
+
+                        </div>
+                      ) : (
+                        <div className="div"></div>
+                      )}
+                    </>
+                  ))}
+
+
+
                   <div class="nk-gap"></div>
                   {/* <div class="nk-post-text">
                   <a

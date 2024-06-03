@@ -4584,4 +4584,167 @@
             }
         ]
     }
+    ,
+    {
+        "id": 35,
+        "exclu": false,
+        "popular": false,
+        "attendu":true,
+        "precommande": true,
+        "DLC": false,
+        "DLCtext": "",
+        "dateSortie": "2024-11-15",
+        "date": "",
+        "title": "Assassin's Creed Shadows",
+        "resume": "Plongez dans une épopée d'action-aventure historique au cœur du Japon féodal ! Incarnez une shinobi meurtrière et un puissant samouraï légendaire tout en explorant un magnifique monde ouvert plongé dans le chaos. Alternez facilement entre deux alliés inattendus et découvrez le destin qui les unit. Maîtrisez des styles de jeu complémentaires, créez votre ligue de shinobi, personnalisez votre repaire et entrez dans une nouvelle ère pour le Japon.",
+        "imageUrl": "https://www.gameinformer.com/sites/default/files/styles/body_default/public/2024/05/15/63cba359/assassins_creed_key_art_1.jpg",
+        "genres": "Action, Aventure",
+        "genre": "Aventure",
+        "video": "vovkzbtYBC8",
+        "videoHover": "",
+        "critique": "",
+        "critiqueTitle": "",
+        "gifs": [
+            {
+                "id": 1,
+                "img": "",
+                "title": "UN NOUVEAU CREDO SE LÈVE",
+                "texte": "Incarnez Naoe, une Assassin shinobi de la province d'Iga, et Yasuke, le puissant et légendaire samouraï d'origine africaine. Dans le contexte mouvementé de la fin de l'époque Sengoku, ces deux alliés inattendus découvriront le destin qui les unit alors que le Japon entre dans une nouvelle ère."
+            },
+            {
+                "id": 2,
+                "img": " https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/606sg8my0oVOraNRWsVKmh/a151114ff536447096b3a3d755a3e7cb/1_2_AC_RED_Vista_Autumn.png",
+                "texte": "Découvrez le monde ouvert captivant du Japon féodal, des villes fortifiées spectaculaires aux ports animés en passant par les paisibles sanctuaires et les paysages champêtres. Bravez des conditions météorologiques imprévisibles, des changements de saisons et des environnements réactifs.",
+                "title": "EXPLOREZ LE JAPON FÉODAL"
+            },
+            {
+                "id": 3,
+                "img": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/3gE4S7VcwHFq112WGkzIY7/c9c9f7bded9d23efd873705eb8f01341/3_AC_RED_Naoe_Knife_At_Night.jpg ",
+                "texte": "Avec Naoe, la shinobi rusée, agile et furtive, utilisez les bruits, la lumière et les ombres pour éviter de vous faire repérer par les ennemis sur le qui-vive. Détournez l'attention des gardes à l'aide de vos kunai, shuriken et bombes fumigènes, infiltrez les bases ennemies grâce à votre grappin et votre grande agilité, puis assassinez vos cibles avec votre lame secrète.",
+                "title": "DEVENEZ UNE ASSASSIN SHINOBI"
+            },
+            {
+                "id": 4,
+                "img": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/6W2OCCNrYYIUIEsIB8iaqU/0fb849adca1845dc0735b54d6356ed0b/2_2_AC_RED_Yasuke_Destruction.png",
+                "texte": "Avec Yasuke, le samouraï charismatique, frappez vos adversaires avec puissance et précision brutale. Utilisez ses compétences de combat pour attaquer, bloquer, parer et vaincre vos ennemis. Libérez le Japon de ses oppresseurs en maîtrisant le vaste arsenal d'armes à votre disposition, dont le katana, le kanabō, les arcs, la naginata et bien d'autres.",
+                "title": "INCARNEZ UN SAMOURAÏ LÉGENDAIRE"
+            },
+            {
+                "id": 5,
+                "img": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/43vqkOMOkH4o38hqrEy2Ss/15db882834006c527779624cdd4b5f1c/4_AC_RED_Information.jpg",
+                "texte": "Parcourez le monde et explorez votre environnement pour recueillir des informations importantes. Créez votre réseau d'espions qui surveilleront, écouteront et traqueront votre prochaine cible ou mission à travers divers lieux. Au fil de votre aventure, recrutez de nouveaux alliés aux compétences et aptitudes uniques pour vous aider à accomplir vos missions.",
+                "title": "L'INFORMATION EST UNE ARME"
+            },
+            {
+                "id": 6,
+                "img": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/7p0f3GDAqgZsQzpthf7OCk/ff6c2db751fb897a9584b3c197782eca/AC_RED_PREORDER_BONUS_QUEST_WEBSITE_960x540.jpg",
+                "texte": "Précommandez n'importe quelle édition dès aujourd'hui pour obtenir la quête bonus Laissé pour compte à la sortie du jeu. Aidez un chien loyal à venger son défunt maître. ",
+                "title": "PRÉCOMMANDEZ LE JEU DÈS AUJOURD'HUI POUR OBTENIR UNE QUÊTE BONUS "
+            },
+            {
+                "id": 7,
+                "img": "https://staticctf.ubisoft.com/J3yJr34U2pZ2Ieem48Dwy9uqj5PNUQTn/7C2mTt6rqzjfh9JCqEPGiL/de27cce78a874c43b4543f873f6a009f/AC_RED_COLLECTOR_WEBSITE_960x540_03.jpg",
+                "texte": "Profitez de notre offre la plus prestigieuse pour Assassin's Creed Shadows avec l'édition Collector, désormais disponible en précommande en quantité limitée. Jouez 3 jours avant la sortie, obtenez l'édition Ultimate du jeu avec tout son contenu numérique et profitez d'objets physiques uniques, comme la statuette de Naoe et Yasuke.",
+                "title": "DÉCOUVREZ L'ÉDITION COLLECTOR D'ASSASSIN'S CREED SHADOWS"
+            }
+            
+        ],
+        "screen": [
+            {
+                "id": 1,
+                "img": "https://gaming-cdn.com/images/products/12831/screenshot/assassin-s-creed-shadows-pc-jeu-ubisoft-connect-wallpaper-1.jpg?v=1715796290"
+            },
+            {
+                "id": 2,
+                "img": "https://gaming-cdn.com/images/products/12831/screenshot/assassin-s-creed-shadows-pc-jeu-ubisoft-connect-wallpaper-2.jpg?v=1715796290"
+            },
+            {
+                "id": 3,
+                "img": "https://gaming-cdn.com/images/products/12831/screenshot/assassin-s-creed-shadows-pc-jeu-ubisoft-connect-wallpaper-3.jpg?v=1715796290"
+            },
+            {
+                "id": 4,
+                "img": "https://gaming-cdn.com/images/products/12831/screenshot/assassin-s-creed-shadows-pc-jeu-ubisoft-connect-wallpaper-4.jpg?v=1715796290"
+            },
+            {
+                "id": 5,
+                "img": "https://gaming-cdn.com/images/products/12831/screenshot/assassin-s-creed-shadows-pc-jeu-ubisoft-connect-wallpaper-5.jpg?v=1715796290"
+            }
+        ],
+        "price": "",
+        "priceOrigin": "69.99€",
+        "promo": "",
+        "stock": false,
+        "buySteam": "",
+        "buyUbisoft": "https://store.ubisoft.com/fr/assassins-creed-shadows/660e5a03fbff4e2940488bcd.html?_gl=1*3aurgp*_ga*MzEyMjU5MzgwLjE3MTc0MDk2OTA.*_ga_C4N5020N2R*MTcxNzQwOTY4OS4xLjEuMTcxNzQxMTM3OS42MC4wLjA.",
+        "config": [
+            {
+                "id": 1,
+                "OSmin": " ",
+                "OSmax": "  ",
+                "PROCmin": " ",
+                "PROCmax": " ",
+                "MEMmin": " ",
+                "MEMmax": " ",
+                "GRAPHmin": " ",
+                "GRAPHmax": " ",
+                "DirectXmin": " ",
+                "DirectXmax": " ",
+                "HDD": " "
+            }
+        ],
+        "news": [
+            {
+                "news_id": 1,
+                "id": 35,
+                "title": "Assassin's Creed Shadows se montre enfin dans un long trailer ainsi que sa date de sortie !",
+                "imageUrl": "https://www.gamereactor.fr/media/43/assassinscreedshadows_4254383b.jpg",
+                "video": "Nszrx939ZVA",
+                "date": "2024-05-15",
+                "new": "Enfin. Après des années d'attente, Ubisoft s'est enfin décidé à dévoiler officiellement le prochain épisode majeur de la saga Assassin's Creed : celui-ci porte le nom de Shadows et nous fera voyager en plein Japon féodal. Cette officialisation vient donc, enfin, confirmer tout ce qui se disait officieusement depuis maintenant un bon moment, qui s'avérait être un véritable secret de polichinelle. Assassin's Creed Shadow compte bien marquer les esprits et comme première étape, Ubisoft a donc concocté une longue et spectaculaire bande-annonce   la date de sortie, fixée au 15 novembre 2024 sur PC, PlayStation 5 et Xbox Series, la série abandonnant désormais la génération PS4 et Xbox One. Plusieurs éditions sont d'ailleurs prévues : la standard à 69,99 euros, l'Édition Gold à 109,99 euros et l'Édition Ultimate à 129,99 euros."
+              
+            },
+            {
+                "news_id": 2,
+                "id": 35,
+                "title": "Assassin's Creed Shadows : La vraie histoire de Yasuke, la figure japonaise emblématique qui a inspiré Ubisoft !",
+                "imageUrl": "https://gamebrott.com/wp-content/uploads/2024/05/Wikipedia-Yasuke-Assassins-Creed-Shadows-jpg-750x375.webp",
+                "video": null,
+                "date": "2024-06-03",
+                "new": "Les sources et les informations sur Yasuke sont très nombreuses et souvent contradictoires, rendant difficile l'écriture d'une histoire unique et définitive. Les recherches ci-dessous reposent sur un croisement de multiples documents. A ce jour, certaines personnes débattent encore du statut de samouraï de Yasuke, affirmant qu'il n'a été qu'un simple porteur d'armes.  Le nom de naissance de l'homme qui nous intéresse ici n'est pas connu, toutefois, le nom japonais qui lui a été donné est Yasuke. Il demeure une énigme entourée de légendes. Les principales sources historiques qui le mentionnent incluent, l'Histoire ecclésiastique des îles et royaumes du Japon par François Solier, les écrits du missionnaire jésuite Luís Fróis et les mémoires de Oda Nobunaga, un important daimyo de la période Sengoku au Japon. Ces documents fragmentaires laissent entrevoir la figure remarquable qu'il était, le premier samouraï noir qui aurait servi sous Oda Nobunaga, à une époque tumultueuse de l'histoire japonaise."
+              
+            }
+        ],
+       
+        "about": [
+            {
+                "id": 1,
+                "dev": "Ubisoft Montreal",
+                "editeur": "Ubisoft",
+                "sortie": "2024-11-15"
+            }
+        ],
+        "plateformes": [
+            {
+                "id": 1,
+                "support": "Ubisoft",
+                "price": "",
+                "priceOrigin": "",
+                "promo": "",
+                "Stock": true,
+                "buy": "https://www.instant-gaming.com/fr/12831-acheter-assassin-s-creed-shadows-pc-jeu-ubisoft-connect/?igr=gamer-707207",
+                "buyUbisoft": "https://store.ubisoft.com/fr/assassins-creed-shadows/660e5a03fbff4e2940488bcd.html?_gl=1*3aurgp*_ga*MzEyMjU5MzgwLjE3MTc0MDk2OTA.*_ga_C4N5020N2R*MTcxNzQwOTY4OS4xLjEuMTcxNzQxMTM3OS42MC4wLjA."
+            },
+            {
+                "id": 2,
+                "support": "Xbox Series",
+                "price": "47.49€",
+                "priceOrigin": "60€",
+                "promo": "-21%",
+                "Stock": true,
+                "buy": "https://www.instant-gaming.com/fr/16829-acheter-assassin-s-creed-shadows-xbox-series-x-s-xbox-series-x-s-jeu-microsoft-store/?igr=gamer-707207",
+                "buyUbisoft": "https://store.ubisoft.com/fr/assassins-creed-shadows/660e5a03fbff4e2940488bcd.html?_gl=1*3aurgp*_ga*MzEyMjU5MzgwLjE3MTc0MDk2OTA.*_ga_C4N5020N2R*MTcxNzQwOTY4OS4xLjEuMTcxNzQxMTM3OS42MC4wLjA."
+            }
+        ]
+    }
 ]

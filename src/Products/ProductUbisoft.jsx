@@ -11,18 +11,18 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 import PhotoSwipeLightbox from "photoswipe/lightbox";
 import "photoswipe/dist/photoswipe.css";
-import Footer from "./../Components/Footer/Footer";
+import Footer from "../Components/Footer/Footer";
 import { Gallery, Item } from "react-photoswipe-gallery";
 import "photoswipe/style.css";
-import ReadMore from "./../Components/ReadMore/ReadMore";
-import Header from "./../Components/Header/Header";
+import ReadMore from "../Components/ReadMore/ReadMore";
+import Header from "../Components/Header/Header";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import ava from "./../assets/images/avatar-3.jpg";
 import { Avatar } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser, logout } from "./../features/userSlice";
-import { db, auth, googleProvider } from "./../Firebase";
+import { selectUser, logout } from "../features/userSlice";
+import { db, auth, googleProvider } from "../Firebase";
 
 import PropTypes from "prop-types";
 import { styled } from "@mui/material/styles";
@@ -32,11 +32,11 @@ import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied
 import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
 import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
 import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
-import Actu from "./../Components/Actu/Actu"
-import VideoHover from "./../Components/VideoHover/VideoHover"
-import Similar from "./../Components/Similar/Similar"
-import Config from "./../Components/Config/Config"
-import Screen from "./../Components/Screen/Screen"
+import Actu from "../Components/Actu/Actu"
+import VideoHover from "../Components/VideoHover/VideoHover"
+import Similar from "../Components/Similar/Similar"
+import Config from "../Components/Config/Config"
+import Screen from "../Components/Screen/Screen"
 import {
   collection,
   addDoc,
@@ -292,10 +292,10 @@ function Product(props) {
   }
 
 
-    // Fonction pour nettoyer le titre
-const cleanTitle = (title) => {
-  return title.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
-};
+  // Fonction pour nettoyer le titre
+  const cleanTitle = (title) => {
+    return title.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+  };
   return (
     <div>
       <Header />
@@ -360,24 +360,16 @@ const cleanTitle = (title) => {
 
 
 
-                
+
                 <div class="col-md-6">
                   <div class="subinfos">
                     <a href="" class="platform steam">
                       <div class="single platform-steam">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          height="30"
-                          width="27.5"
-                          viewBox="0 0 448 512"
-                        >
-                          <path
-                            fill="#fff"
-                            d="M395.5 177.5c0 33.8-27.5 61-61 61-33.8 0-61-27.3-61-61s27.3-61 61-61c33.5 0 61 27.2 61 61zm52.5 .2c0 63-51 113.8-113.7 113.8L225 371.3c-4 43-40.5 76.8-84.5 76.8-40.5 0-74.7-28.8-83-67L0 358V250.7L97.2 290c15.1-9.2 32.2-13.3 52-11.5l71-101.7c.5-62.3 51.5-112.8 114-112.8C397 64 448 115 448 177.7zM203 363c0-34.7-27.8-62.5-62.5-62.5-4.5 0-9 .5-13.5 1.5l26 10.5c25.5 10.2 38 39 27.7 64.5-10.2 25.5-39.2 38-64.7 27.5-10.2-4-20.5-8.3-30.7-12.2 10.5 19.7 31.2 33.2 55.2 33.2 34.7 0 62.5-27.8 62.5-62.5zm207.5-185.3c0-42-34.3-76.2-76.2-76.2-42.3 0-76.5 34.2-76.5 76.2 0 42.2 34.3 76.2 76.5 76.2 41.9 .1 76.2-33.9 76.2-76.2z"
-                          />
+                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0,0,256,256">
+                          <g fill="#f9f9f9" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" ><g transform="scale(5.33333,5.33333)"><path d="M24,4c-7.16,0 -11.107,2.237 -14.025,4.425c-3.201,2.401 -5.662,6.511 -5.765,6.685l1.817,1.079c-1.083,1.92 -2.027,4.535 -2.027,7.811c0,1.53 0.189,3.014 0.516,4.447c0.015,0.078 0.019,0.158 0.035,0.235l0.024,-0.005c2.002,8.31 9.191,14.602 17.944,15.248c0.483,0.048 0.967,0.075 1.45,0.075v-0.002c0.011,0 0.021,0.002 0.031,0.002c11.028,0 20,-8.972 20,-20c0,-11.028 -8.972,-20 -20,-20zM22.992,34c-3.305,-0.005 -5.992,-2.694 -5.992,-6c0,-3.309 2.691,-6 6,-6c1.757,0 3.119,0.697 4.162,2.132c0.567,0.78 1.648,3.356 -0.136,5.876l1.62,1.147c-1.288,1.897 -3.511,2.784 -5.468,2.835c-0.063,0.002 -0.123,0.01 -0.186,0.01zM30.993,22.768c-2.273,-3.438 -5.929,-5.726 -9.973,-5.726c-6.628,0 -12.02,5.374 -12.02,11.979c0,0.454 0.033,0.891 0.068,1.327l-0.733,0.255c-0.374,-0.885 -0.661,-1.814 -0.882,-2.768c-0.635,-3.372 0.245,-7.033 2.339,-9.612c2.243,-2.763 5.751,-4.223 10.144,-4.223c6.019,0 10.481,4.133 11.711,8.54zM24,41c-0.41,0 -0.811,-0.033 -1.214,-0.062c-5.427,-0.528 -10.786,-4.664 -10.786,-11.917c0,-3.844 2.444,-7.122 5.862,-8.4c-2.331,1.628 -3.862,4.326 -3.862,7.379c0,4.958 4.03,8.991 8.985,8.999v0.001c0.003,0 0.005,0 0.008,0c0.003,0 0.005,0 0.008,0c0.291,0 0.588,-0.019 0.887,-0.046c6.203,-0.466 11.112,-5.671 11.112,-12.016c0,-6.592 -6.187,-13.938 -15.064,-13.938c-5.038,0 -8.415,1.624 -10.624,3.462l-0.6,-0.55c0.847,-1.06 1.91,-2.223 3.062,-3.087c2.65,-1.987 5.964,-3.825 12.226,-3.825c9.374,0 17,7.626 17,17c0,9.374 -7.626,17 -17,17z"></path></g></g>
                         </svg>
                       </div>
-                      Steam
+                      Ubisoft
                       <div class="spacer"></div>
                     </a>{" "}
                     <div class="preorder">
@@ -456,22 +448,6 @@ const cleanTitle = (title) => {
                                   </MenuItem>
                                 </Link>
                               )}
-                                {ab.support === "Ubisoft" && (
-                          <Link
-                            key={item.id}
-                            {...item}
-                            to={{
-                              pathname: `/Ubisoft/${item.id}/${cleanTitle(item.title)}`,
-                              state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
-                            }}
-                            class="nk-post-img"
-                          >
-                         <MenuItem className="text-white" value={10}>
-                                    {ab.support}
-                                  </MenuItem>
-                          </Link>
-                        )
-                        }
                             </>
                           ))}
                       </Select>
@@ -509,54 +485,54 @@ const cleanTitle = (title) => {
                               </>
                             ) : (
                               <>
-                                     <div >
-                                <a
-                                target="_blank"
-                                  href={ab.buy}
-                                  class="nk-btn nk-btn-rounded nk-btn-color-main-1"
-                                >
-                                  Instant Gaming
-                                </a>
+                                <div >
+                                  <a
+                                    target="_blank"
+                                    href={ab.buy}
+                                    class="nk-btn nk-btn-rounded nk-btn-color-main-1"
+                                  >
+                                    Instant Gaming
+                                  </a>
                                 </div>
                                 <div className="mt-8">
-                                <a
-                                target="_blank"
-                                  href={ab.buySteam}
-                                  class="nk-btn nk-btn-rounded nk-btn-color-main-1"
-                                >
-                                  Steam
-                                </a>
+                                  <a
+                                    target="_blank"
+                                    href={ab.buySteam}
+                                    class="nk-btn nk-btn-rounded nk-btn-color-main-1"
+                                  >
+                                    Steam
+                                  </a>
                                 </div>
                               </>
-                              
+
                             )}
                           </>
                         )}
-{ab.support === "Ubisoft"  && (
-                         
-                         <>
-                         <div className="mt-8">
-                           <a
-                           target="_blank"
-                             href={ab.buy}
-                             class="nk-btn nk-btn-rounded nk-btn-color-main-1"
-                           >
-                             Instant Gaming
-                           </a>
-                           </div>
-                           <div className="mt-8">
-                           <a
-                           target="_blank"
-                             href={ab.buyUbisoft}
-                             class="nk-btn nk-btn-rounded nk-btn-color-main-1"
-                           >
-                             Ubisoft Connect
-                           </a>
-                           </div>
-               
-                 </>
-               )}
-                        
+                        {ab.support === "Ubisoft" && (
+
+                          <>
+                            <div className="mt-8">
+                              <a
+                                target="_blank"
+                                href={ab.buy}
+                                class="nk-btn nk-btn-rounded nk-btn-color-main-1"
+                              >
+                                Instant Gaming
+                              </a>
+                            </div>
+                            <div className="mt-8">
+                              <a
+                                target="_blank"
+                                href={ab.buyUbisoft}
+                                class="nk-btn nk-btn-rounded nk-btn-color-main-1"
+                              >
+                                Ubisoft Connect
+                              </a>
+                            </div>
+
+                          </>
+                        )}
+
                       </>
                     ))}
                   <div class="nk-gap-1"></div>
@@ -724,7 +700,7 @@ const cleanTitle = (title) => {
                   )}
                   {/* <p></p> */}
 
-                  
+
                 </div>
 
 
@@ -744,7 +720,7 @@ const cleanTitle = (title) => {
 
                   {user ? (
                     <div className="nk-reply">
-     
+
                       <div className="nk-gap-1"></div>
                       <form onSubmit={handleSubmit} className="nk-form">
                         <div className="d-flex flex-column row vertical-gap sm-gap">
@@ -759,7 +735,7 @@ const cleanTitle = (title) => {
                             </div>
                           </div>
                           <div className="rating">
-    
+
                             {[...Array(5)].map((_, index) => (
                               <React.Fragment key={index}>
                                 <input
@@ -868,25 +844,25 @@ const cleanTitle = (title) => {
 
                   <div class="clearfix"></div>
                   <div class="nk-gap-2"></div>
-                </div>           
+                </div>
               </div>
             </div>
-                {/* <YouTube class="nk-plain-video" videoId={item.video} opts={opts} /> */}
-                <ul class="nk-breadcrumbs">
-                    <li>
-                      <span>Media</span>
-                    </li>
-                  </ul>
-                  <div class="separator product-panel"></div>
-                  <div className="video-container">
-                    <iframe
-                      title="YouTube Video"
-                      src={`https://www.youtube.com/embed/${item.video}`} // Utilisation de la variable videoId pour dynamiquement spécifier l'URL de la vidéo
-                      frameBorder="0"
-                      allowFullScreen
-                    ></iframe>
-                  </div>
-                  <div class="nk-gap-3"></div>
+            {/* <YouTube class="nk-plain-video" videoId={item.video} opts={opts} /> */}
+            <ul class="nk-breadcrumbs">
+              <li>
+                <span>Media</span>
+              </li>
+            </ul>
+            <div class="separator product-panel"></div>
+            <div className="video-container">
+              <iframe
+                title="YouTube Video"
+                src={`https://www.youtube.com/embed/${item.video}`} // Utilisation de la variable videoId pour dynamiquement spécifier l'URL de la vidéo
+                frameBorder="0"
+                allowFullScreen
+              ></iframe>
+            </div>
+            <div class="nk-gap-3"></div>
             <Config />
             <div class="nk-gap-3"></div>
             <Actu />
