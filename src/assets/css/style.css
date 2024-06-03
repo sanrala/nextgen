@@ -4269,6 +4269,7 @@ img.rounded {
     text-align: center;
 }
 
+
 .nk-footer-social {
     text-align: center;
 }
@@ -11727,4 +11728,8 @@ max-width: 616px;
 .css-r8u8y9 {
 
     background-color: #171e22;
+}
+.instant-logo {
+    width: 100px;
+    height: auto;
 }

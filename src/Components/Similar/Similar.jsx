@@ -43,7 +43,7 @@ function Similar() {
                         key={id}
                         // style={{ width: '40%' }}
                       >
-                        <Link
+   <Link
                           key={i.id}
                           {...i}
                           to={{
@@ -60,6 +60,125 @@ function Similar() {
                             {i.promo}
                           </span>
                         </Link>
+                           {/* {i.plateformes &&
+                    i.plateformes.map((v, index) => (
+                      <>
+                            {v.support === "Steam" && (
+                        <Link
+                          key={v.id}
+                          {...v}
+                          to={{
+                            pathname: `/PC/${v.id}/${v.title}`,
+                            state: { itemData: v }, // Passer les données de l'élément à la page BlocArticle
+                          }}
+                          onClick={() => {
+                            window.scrollTo(0, 0);
+                          }}
+                          class="nk-post-img"
+                        >
+                          <img src={i.imageUrl} alt={i.title} />
+                          <span className="nk-post-comments-count">
+                            {i.promo}
+                          </span>
+                        </Link>
+                           )}
+                           {v.support === "Ubisoft" && (
+                        <Link
+                          key={i.id}
+                          {...i}
+                          to={{
+                            pathname: `/Ubisoft/${i.id}/${i.title}`,
+                            state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
+                          }}
+                          onClick={() => {
+                            window.scrollTo(0, 0);
+                          }}
+                          class="nk-post-img"
+                        >
+                          <img src={i.imageUrl} alt={i.title} />
+                          <span className="nk-post-comments-count">
+                            {i.promo}
+                          </span>
+                        </Link>
+                           )}
+                             {v.support === "Playstation 5" && (
+                        <Link
+                          key={i.id}
+                          {...i}
+                          to={{
+                            pathname: `/Playstation/${i.id}/${i.title}`,
+                            state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
+                          }}
+                          onClick={() => {
+                            window.scrollTo(0, 0);
+                          }}
+                          class="nk-post-img"
+                        >
+                          <img src={i.imageUrl} alt={i.title} />
+                          <span className="nk-post-comments-count">
+                            {i.promo}
+                          </span>
+                        </Link>
+                           )}
+                                {v.support === "Xbox Series" && (
+                        <Link
+                          key={i.id}
+                          {...i}
+                          to={{
+                            pathname: `/Xbox/${i.id}/${i.title}`,
+                            state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
+                          }}
+                          onClick={() => {
+                            window.scrollTo(0, 0);
+                          }}
+                          class="nk-post-img"
+                        >
+                          <img src={i.imageUrl} alt={i.title} />
+                          <span className="nk-post-comments-count">
+                            {i.promo}
+                          </span>
+                        </Link>
+                           )}
+                               {v.support === "Rockstar" && (
+                        <Link
+                          key={i.id}
+                          {...i}
+                          to={{
+                            pathname: `/PC_Rockstar/${i.id}/${i.title}`,
+                            state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
+                          }}
+                          onClick={() => {
+                            window.scrollTo(0, 0);
+                          }}
+                          class="nk-post-img"
+                        >
+                          <img src={i.imageUrl} alt={i.title} />
+                          <span className="nk-post-comments-count">
+                            {i.promo}
+                          </span>
+                        </Link>
+                           )}
+                               {v.support === "Battle.net" && (
+                        <Link
+                          key={i.id}
+                          {...i}
+                          to={{
+                            pathname: `/Battlenet/${i.id}/${i.title}`,
+                            state: { itemData: i }, // Passer les données de l'élément à la page BlocArticle
+                          }}
+                          onClick={() => {
+                            window.scrollTo(0, 0);
+                          }}
+                          class="nk-post-img"
+                        >
+                          <img src={i.imageUrl} alt={i.title} />
+                          <span className="nk-post-comments-count">
+                            {i.promo}
+                          </span>
+                        </Link>
+                           )}
+                           </>
+                             ))} */}
                         <div className="nk-gap"></div>
                         <h2 className="nk-post-title h4 d-flex justify-content-between">
                           <Link
@@ -75,6 +194,8 @@ function Similar() {
                           </Link>
                           <span>{i.price}</span>
                         </h2>
+                        
+                    
                       </div>
                     ) : null}
                   </div>
