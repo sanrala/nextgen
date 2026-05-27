@@ -1,7 +1,8 @@
 
-import React, { useState, useMemo, useEffect } from "react";
+// import React, { useState, useMemo, useEffect } from "react";
 import Header from "./../Components/Header/Header";
-import { Link, useParams, useLocation } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
+// import { Link, useParams, useLocation } from "react-router-dom";
 import Footer from "./../Components/Footer/Footer";
 import gameData from "./../games.json";
 import Box from "@mui/material/Box";
@@ -44,7 +45,7 @@ function BlocArticle() {
               <span class="fa fa-angle-right"></span>
             </li>
             <li>
-              <a href="">Actualité</a>
+              <Link to="/...">Actualité</Link>
             </li>
             <li>
               <span class="fa fa-angle-right"></span>
@@ -122,7 +123,7 @@ function BlocArticle() {
               /> */}
               {article.news && article.news.map((item, id) => (
                 <>
-                  {item.news_id != news_id ? (
+                  {item.news_id !== news_id ? (
                     null) :
                     (
                       <div class="nk-blog-post nk-blog-post-single">
