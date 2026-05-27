@@ -81,11 +81,11 @@ function LastPosts() {
                     ))}
                   </div>
                   <h2 class="nk-post-title h4">
-                    <a href="#">{comment.title}</a>
+                    <Link to="/...">{comment.title}</Link>
                   </h2>
                   <div class="nk-post-by">
                 
-                    par <a href="#">{comment.userName}</a>{" "}
+                    par <Link to="/...">{comment.userName}</Link>{" "}
                     {comment.createdAt
                       ? `le ${new Date(
                           comment.createdAt.seconds * 1000

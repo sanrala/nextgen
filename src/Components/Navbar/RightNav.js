@@ -228,9 +228,9 @@ const RightNav = ({ open }) => {
             )}
           </li>
           <li>
-                                <a href="#" onClick={handleSearchToggle}>
+                                <Link to="#" onClick={handleSearchToggle}>
                                     <span className="fa fa-search"></span>
-                                </a>
+                                </Link>
                                 <div className="search-container">
                                     <input 
                                         type="text"

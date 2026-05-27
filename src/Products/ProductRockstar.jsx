@@ -263,7 +263,7 @@ console.log(comments);
             </li>
 
             <li>
-              <a href="store.html">{item.genre}</a>
+              <Link to="store.html">{item.genre}</Link>
             </li>
 
             <li>
@@ -271,7 +271,7 @@ console.log(comments);
             </li>
 
             <li>
-              <a href="">PC</a>
+              <Link to="">PC</Link>
             </li>
 
             <li>
@@ -297,7 +297,7 @@ console.log(comments);
                 </div>
                 <div class="col-md-6">
                   <div class="subinfos">
-                    <a href="" class="platform steam">
+                    <Link to="" class="platform steam">
                       <div class="single platform">
                         <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 64 64">
                           <path fill="url(#VVci68TESUPE9SF_mOydEa_Y9ACIcuVAdi9_gr1)" d="M62.98,58.41C62.77,60.49,60.9,62,58.81,62H4c-2.34,0-4.22-2.03-3.98-4.41	C0.23,55.51,2.1,54,4.19,54H5c1.11,0,2-0.9,2-2c0-0.55-0.22-1.05-0.58-1.41C6.06,50.22,5.56,50,5,50c-1.65,0-3-1.35-3-3s1.35-3,3-3	h17V32H5c-2.34,0-4.22-2.03-3.98-4.41C1.23,25.51,3.1,24,5.19,24H8.5c1.93,0,3.5-1.57,3.5-3.5S10.43,17,8.5,17h-2	c-2.4,0-4.36-1.87-4.49-4.24C2,12.67,2,12.59,2,12.5c0-1.24,0.5-2.37,1.32-3.18C4.13,8.5,5.26,8,6.5,8h13.23	c0-0.01,0.01-0.01,0.01-0.02C20.46,7.86,21,7.25,21,6.5C21,5.67,20.33,5,19.5,5h-4c-1.47,0-2.64-1.26-2.49-2.76	C13.14,0.94,14.34,0,15.64,0H48.5c1.47,0,2.64,1.26,2.49,2.76C50.86,4.06,49.66,5,48.36,5H45.5C44.67,5,44,5.67,44,6.5	S44.67,8,45.5,8h14c1.47,0,2.64,1.26,2.49,2.76c-0.13,1.3-1.33,2.24-2.63,2.24H59c-1.1,0-2,0.9-2,2s0.9,2,2,2h0.81	c2.09,0,3.96,1.51,4.17,3.59C64.22,22.97,62.33,25,60,25H42v7h17c1.65,0,3,1.35,3,3s-1.35,3-3,3h-9c-1.38,0-2.5,1.12-2.5,2.5	S48.62,43,50,43h10.5c1.92,0,3.5,1.58,3.5,3.5S62.42,50,60.5,50H59c-1.1,0-2,0.9-2,2s0.9,2,2,2C61.33,54,63.22,56.03,62.98,58.41z"></path><linearGradient id="VVci68TESUPE9SF_mOydEb_Y9ACIcuVAdi9_gr2" x1="32" x2="32" y1="-440" y2="-364.17" gradientTransform="matrix(1 0 0 -1 0 -384)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#feaa53"></stop><stop offset=".612" stop-color="#ffcd49"></stop><stop offset="1" stop-color="#ffde44"></stop></linearGradient><path fill="url(#VVci68TESUPE9SF_mOydEb_Y9ACIcuVAdi9_gr2)" d="M55,20v26c0,5.5-4.5,10-10,10H19c-5.5,0-10-4.5-10-10V20c0-5.5,4.5-10,10-10h26	C50.5,10,55,14.5,55,20z"></path><polygon fill="#212121" points="36.101,41.144 38.643,43.108 38.181,39.758 40.722,38.025 37.949,38.025 37.372,34.791 35.523,38.025 32.52,38.025 34.253,39.874 32.866,42.993"></polygon><linearGradient id="VVci68TESUPE9SF_mOydEc_Y9ACIcuVAdi9_gr3" x1="32" x2="32" y1="18.362" y2="44.251" gradientUnits="userSpaceOnUse"><stop offset=".122" stop-color="#5e6d7b"></stop><stop offset=".191" stop-color="#5d6b79"></stop><stop offset="1" stop-color="#515c69"></stop></linearGradient><path fill="url(#VVci68TESUPE9SF_mOydEc_Y9ACIcuVAdi9_gr3)" d="M48,35.715h-8.087l-1.271-7.509l-4.505,7.509h-0.185l-0.97-1.617	c-0.115-0.116-0.347-0.809-0.115-3.235c0.115-1.617-0.116-2.657-0.578-3.35c1.617-0.924,2.426-2.31,2.657-4.39	c0.116-1.733-0.231-3.119-1.155-4.043c-1.271-1.617-3.581-1.848-5.314-1.848h-8.549l-0.231,0.924l-3.35,15.827L16,35.368h6.238	l0.231-0.924l1.04-4.968h2.195c0.578,0,0.809,0.231,0.809,0.231c0.231,0.231,0.462,1.04,0.231,3.235	c-0.116,1.271,0.115,2.079,0.231,2.195l0.289,0.578l4.217,4.621l-3.812,8.433l8.318-4.852l5.892,4.505l-1.155-7.509L48,35.715z M23.162,25.664l1.04-4.274c0,0,3.581,0,3.928,0c1.155,0,2.195,0.578,1.848,2.195c-0.347,1.502-1.617,2.079-2.773,2.079	C25.82,25.664,23.162,25.664,23.162,25.664z"></path><path fill="#fff" d="M29.863,36.87h4.968l3.235-5.43l0.924,5.43h5.43l-4.968,3.466l0.809,5.43l-4.274-3.235l-5.661,3.35	l2.657-5.776L29.863,36.87z"></path>
@@ -305,7 +305,7 @@ console.log(comments);
                       </div>
                       Rockstar
                       <div class="spacer"></div>
-                    </a>{" "}
+                    </Link>{" "}
                     <div class="preorder">
                       <h2 class="nk-productpro-title h3pro">{item.title} </h2>
                     </div>
@@ -413,18 +413,18 @@ console.log(comments);
                           <>
                             {ab.Stock === false ? (
                               <>
-                                <a class="nk-btn nk-btn-rounded nk-btn-color-main-1">
+                                <Link class="nk-btn nk-btn-rounded nk-btn-color-main-1">
                                   Hors Stock
-                                </a>
+                                </Link>
                               </>
                             ) : (
                               <>
-                                <a
+                                <Link
                                   href={ab.buy}
                                   class="nk-btn nk-btn-rounded nk-btn-color-main-1"
                                 >
                                   Instant Gaming
-                                </a>
+                                </Link>
                               </>
                             )}
                           </>
@@ -435,7 +435,7 @@ console.log(comments);
 
                   <div class="nk-product-meta">
                   <strong>Note</strong>:{" "}
-                    <a
+                    <Link
                       className={`average-rating ${getRatingColor(
                         averageRating
                       )} ${
@@ -447,25 +447,25 @@ console.log(comments);
                     >
                       {getRatingDescription(averageRating)}{" "}
                       {getRatingIcon(averageRating)}
-                    </a>
+                    </Link>
                     <div>
                       <strong>Categories </strong>:{" "}
-                      <a href="#"> {item.genres}</a>
+                      <Link to="/..."> {item.genres}</Link>
                     </div>
                     {item.about &&
                       item.about.map((ab, index) => (
                         <>
                           <div>
                             <strong>Date de sortie </strong>:{" "}
-                            <a href="#"> {formatDate(ab.sortie)}</a>
+                            <Link to="/..."> {formatDate(ab.sortie)}</Link>
                           </div>
                           <div>
                             <strong>Développeur </strong>:{" "}
-                            <a href="#"> {ab.dev}</a>
+                            <Link to="/..."> {ab.dev}</Link>
                           </div>
                           <div>
                             <strong>Editeur</strong>:{" "}
-                            <a href="#"> {ab.editeur}</a>
+                            <Link to="/..."> {ab.editeur}</Link>
                           </div>
                         </>
                       ))}
@@ -541,21 +541,21 @@ console.log(comments);
               <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item"
                 >
-                  <a
+                  <Link
                     className={activeTab === 'description' ? 'active nav-link' : 'nav-link'}
                     onClick={() => handleTabChange('description')}
                   >
                     Description
-                  </a>
+                  </Link>
                 </li>
                 <li class="nav-item"
                 >
-                  <a
+                  <Link
                     className={activeTab === 'comment' ? 'active nav-link' : 'nav-link'}
                     onClick={() => handleTabChange('comment')}
                   >
                     Commentaires ({comments.length})
-                  </a>
+                  </Link>
                 </li>
               </ul>
 
@@ -708,7 +708,7 @@ console.log(comments);
                           className="rounded-circle"
                           width="35"
                         />{" "}
-                        par <a href="#">{comment.userName}</a>{" "}
+                        par <Link to="/...">{comment.userName}</Link>{" "}
                         {comment.createdAt
                           ? `le ${new Date(
                               comment.createdAt.seconds * 1000

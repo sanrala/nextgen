@@ -72,13 +72,13 @@ function Actu() {
                         <span class="fa fa-calendar"></span>{" "}
                         {formatDate(v.date)}
                         <span class="fa fa-comments"></span>{" "}
-                        <a href="#">0 commentaires</a>
+                        <Link to="/...">0 commentaires</Link>
                       </div>
                       <div class="nk-post-text">
                         <p>{v.new.slice(0, 200) + "..."}</p>
-                        <a class="nk-btn nk-btn-rounded nk-btn-color-dark-3 nk-btn-hover-color-main-1">
+                         <Link  class="nk-btn nk-btn-rounded nk-btn-color-dark-3 nk-btn-hover-color-main-1">
                           Détails
-                        </a>
+                        </Link>
                       </div>
                     </div>
                   </div>

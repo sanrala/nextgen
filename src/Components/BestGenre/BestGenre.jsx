@@ -59,66 +59,66 @@ function BestGenre() {
                 --> */}
         <ul class="nav nav-tabs nav-tabs-fill" role="tablist">
         <li class="nav-item">
-            <a
+             <Link 
               class="nav-link active"
               role="tab"
               data-toggle="tab"
               onClick={() => changeGenre('All')}
             >
               All
-            </a>
+            </Link>
           </li>
           <li class="nav-item">
-            <a
+             <Link 
               class="nav-link"
               role="tab"
               data-toggle="tab"
               onClick={() => changeGenre("Action")}
             >
               Action
-            </a>
+            </Link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" role="tab" data-toggle="tab"
+             <Link  class="nav-link" role="tab" data-toggle="tab"
               onClick={() => changeGenre('MMORPG')}>
               MMORPG
-            </a>
+            </Link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" role="tab" data-toggle="tab"
+             <Link  class="nav-link" role="tab" data-toggle="tab"
               onClick={() => changeGenre('Stratégie')}>
               strategie
-            </a>
+            </Link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" role="tab" data-toggle="tab"
+             <Link  class="nav-link" role="tab" data-toggle="tab"
               onClick={() => changeGenre('Aventure')}>
               Aventure
-            </a>
+            </Link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" role="tab" data-toggle="tab"
+             <Link  class="nav-link" role="tab" data-toggle="tab"
               onClick={() => changeGenre('Course')}>
               Course
-            </a>
+            </Link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" role="tab" data-toggle="tab"
+             <Link  class="nav-link" role="tab" data-toggle="tab"
               onClick={() => changeGenre('RPG')}>
               RPG
-            </a>
+            </Link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" role="tab" data-toggle="tab"
+             <Link  class="nav-link" role="tab" data-toggle="tab"
               onClick={() => changeGenre('Simulation')}>
               Simulation
-            </a>
+            </Link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" role="tab" data-toggle="tab"
+             <Link  class="nav-link" role="tab" data-toggle="tab"
               onClick={() => changeGenre('Combat')}>
               Combat
-            </a>
+            </Link>
           </li>
         </ul>
         <div class="tab-content">
@@ -128,21 +128,21 @@ function BestGenre() {
 
             {/* {filteredData.map((item) => (
               <div class="nk-blog-post nk-blog-post-border-bottom">
-                <a href="blog-article.html" class="nk-post-img">
+                <Link to="blog-article.html" class="nk-post-img">
                   <img src={item.imageUrl} alt={item.title} />
 
                   <span class="nk-post-categories">
                     <span class="bg-main-1">Action</span>
                   </span>
-                </a>
+                </Link>
                 <div class="nk-gap-1"></div>
                 <h2 class="nk-post-title h4">
-                  <a href="blog-article.html">{item.title}</a>
+                  <Link to="blog-article.html">{item.title}</Link>
                 </h2>
                 <div class="nk-post-date mt-10 mb-10">
                   <span class="fa fa-calendar"></span> Sep 5, 2018
                   <span class="fa fa-comments"></span>{" "}
-                  <a href="#">7 comments</a>
+                  <Link to="/...">7 comments</Link>
                 </div>
                 <div class="nk-post-text">
                   <p>{item.text}</p>
@@ -198,7 +198,7 @@ function BestGenre() {
                   <div class="nk-post-date mt-10 mb-10">
                     <span class="fa fa-calendar"></span> {formatDate(v.dateSortie)}
                     <span class="fa fa-comments"></span>{" "}
-                    <a href="#">0 commentaires</a>
+                    <Link to="/...">0 commentaires</Link>
                   </div>
                   <div class="nk-post-text">
                     <p>

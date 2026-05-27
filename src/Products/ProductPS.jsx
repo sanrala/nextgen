@@ -270,7 +270,7 @@ console.log(comments);
             </li>
 
             <li>
-              <a href="store.html">{item.genre}</a>
+              <Link to="store.html">{item.genre}</Link>
             </li>
 
             <li>
@@ -278,7 +278,7 @@ console.log(comments);
             </li>
 
             <li>
-              <a href="">PC</a>
+              <Link to="">PC</Link>
             </li>
 
             <li>
@@ -304,7 +304,7 @@ console.log(comments);
                 </div>
                 <div class="col-md-6">
                   <div class="subinfos">
-                    <a href="" class="platform steam">
+                    <Link to="" class="platform steam">
                       <div class="single platform-ps">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -320,7 +320,7 @@ console.log(comments);
                       </div>
                       <span style={{ width: "85px" }}>Playstation 5</span>
                       <div class="spacer"></div>
-                    </a>{" "}
+                    </Link>{" "}
                     <div class="preorder">
                       <h2 class="nk-productpro-title h3pro">{item.title} </h2>
                     </div>
@@ -426,18 +426,18 @@ console.log(comments);
                           <>
                             {ab.Stock === false ? (
                               <>
-                                <a class="nk-btn nk-btn-rounded nk-btn-color-main-1">
+                                <Link class="nk-btn nk-btn-rounded nk-btn-color-main-1">
                                   Hors Stock
-                                </a>
+                                </Link>
                               </>
                             ) : (
                               <>
-                                <a
+                                <Link
                                   href={ab.buy}
                                   class="nk-btn nk-btn-rounded nk-btn-color-main-1"
                                 >
                                   Instant Gaming
-                                </a>
+                                </Link>
                               </>
                             )}
                           </>
@@ -448,7 +448,7 @@ console.log(comments);
 
                   <div class="nk-product-meta">
                     <strong>Note</strong>:{" "}
-                    <a
+                    <Link
                       className={`average-rating ${getRatingColor(
                         averageRating
                       )} ${
@@ -460,26 +460,26 @@ console.log(comments);
                     >
                       {getRatingDescription(averageRating)}{" "}
                       {getRatingIcon(averageRating)}
-                    </a>
+                    </Link>
                   </div>
 
                   <div>
-                    <strong>Categories </strong>: <a href="#"> {item.genres}</a>
+                    <strong>Categories </strong>: <Link to="/..."> {item.genres}</Link>
                   </div>
                   {item.about &&
                     item.about.map((ab, index) => (
                       <>
                         <div>
                           <strong>Date de sortie </strong>:{" "}
-                          <a href="#"> {formatDate(ab.sortie)}</a>
+                          <Link to="/..."> {formatDate(ab.sortie)}</Link>
                         </div>
                         <div>
                           <strong>Développeur </strong>:{" "}
-                          <a href="#"> {ab.dev}</a>
+                          <Link to="/..."> {ab.dev}</Link>
                         </div>
                         <div>
                           <strong>Editeur</strong>:{" "}
-                          <a href="#"> {ab.editeur}</a>
+                          <Link to="/..."> {ab.editeur}</Link>
                         </div>
                       </>
                     ))}
@@ -554,24 +554,24 @@ console.log(comments);
           <div class="nk-tabs">
             <ul class="nav nav-tabs" role="tablist">
               <li class="nav-item">
-                <a
+                 <Link 
                   className={
                     activeTab === "description" ? "active nav-link" : "nav-link"
                   }
                   onClick={() => handleTabChange("description")}
                 >
                   Description
-                </a>
+                </Link>
               </li>
               <li class="nav-item">
-                <a
+                 <Link 
                   className={
                     activeTab === "comment" ? "active nav-link" : "nav-link"
                   }
                   onClick={() => handleTabChange("comment")}
                 >
                   Commentaires ({comments.length})
-                </a>
+                </Link>
               </li>
             </ul>
 
@@ -649,7 +649,7 @@ console.log(comments);
                       <div className="d-flex flex-column row vertical-gap sm-gap">
                         <div className="d-flex col-sm-2">
                           <div className="avatar_product">
-                            <Avatar
+                             <Link vatar
                               src={userN.photoURL}
                               className="me-2"
                               style={{ cursor: "pointer" }}
@@ -734,7 +734,7 @@ console.log(comments);
                           className="rounded-circle"
                           width="35"
                         />{" "}
-                        par <a href="#">{comment.userName}</a>{" "}
+                        par <Link to="/...">{comment.userName}</Link>{" "}
                         {comment.createdAt
                           ? `le ${new Date(
                               comment.createdAt.seconds * 1000
@@ -783,7 +783,7 @@ console.log(comments);
                 </>
               ))}
             <div class="nk-gap-3"></div>
-            <Actu/>
+             <Link ctu/>
             <div class="nk-gap"></div>
             <div class="nk-gap-3"></div>
             <Similar/>

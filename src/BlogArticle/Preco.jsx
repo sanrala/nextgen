@@ -84,7 +84,7 @@ function BlocArticle(props) {
           </li>
 
           <li>
-            <a href="#">{item.title}</a>
+            <Link to="/...">{item.title}</Link>
           </li>
 
           <li>
@@ -126,7 +126,7 @@ function BlocArticle(props) {
                     <div className="priceBloc d-flex flex-start flex-column justify-content-center ">
                       <h1 class="nk-post-title h4">{item.title}</h1>
                       <div class="subinfos">
-                        <a
+                         <Link 
                           href="https://www.instant-gaming.com/fr/pc/steam/"
                           class="platform steam"
                         >
@@ -145,7 +145,7 @@ function BlocArticle(props) {
                           </div>
                           Steam
                           <div class="spacer"></div>
-                        </a>{" "}
+                        </Link>{" "}
                         <div class="preorder">
                           Date de sortie 16 mai 2024{" "}
                         </div>
@@ -241,21 +241,21 @@ function BlocArticle(props) {
                         <>
                        {ab.stock === false ? ( 
                         <>
-                      <a
+                       <Link 
                        
                         class="nk-btn nk-btn-rounded nk-btn-color-white nk-btn-hover-color-main-1"
                       >
                        Hors Stock
-                      </a>
+                      </Link>
                       </>
                        ) :(
                         <>
-                        <a
+                         <Link 
                          href={item.buy}
                           class="nk-btn nk-btn-rounded nk-btn-color-white nk-btn-hover-color-main-1"
                         >
                          Instant Gaming
-                        </a>
+                        </Link>
                         </>
                        
                      )}
@@ -470,28 +470,28 @@ function BlocArticle(props) {
                     >
                       <div class="row vertical-gap">
                         <div class="col-lg-3 col-md-5">
-                          <a class="nk-post-img">
+                           <Link  class="nk-post-img">
                             <img src={v.imageUrl} alt={v.title} />
 
                             <span class="nk-post-categories">
                               {/* <span class="bg-main-1">{new.genre}</span> */}
                             </span>
-                          </a>
+                          </Link>
                         </div>
                         <div class="col-lg-9 col-md-7">
                           <h2 class="nk-post-title h4">
-                            <a>{v.title}</a>
+                             <Link >{v.title}</Link>
                           </h2>
                           <div class="nk-post-date mt-10 mb-10">
                             <span class="fa fa-calendar"></span> {v.date}
                             <span class="fa fa-comments"></span>{" "}
-                            <a href="#">0 commentaires</a>
+                            <Link to="/...">0 commentaires</Link>
                           </div>
                           <div class="nk-post-text">
                             <p>{v.new.slice(0, 200) + "..."}</p>
-                            <a class="nk-btn nk-btn-rounded nk-btn-color-dark-3 nk-btn-hover-color-main-1">
+                             <Link  class="nk-btn nk-btn-rounded nk-btn-color-dark-3 nk-btn-hover-color-main-1">
                               Détails
-                            </a>
+                            </Link>
                           </div>
                         </div>
                       </div>
@@ -591,7 +591,7 @@ function BlocArticle(props) {
                             key={id}
                             // style={{ width: '40%' }}
                           >
-                            <a
+                             <Link 
                               href="blog-article.html"
                               className="nk-post-img"
                             >
@@ -608,10 +608,10 @@ function BlocArticle(props) {
                               <span className="nk-post-comments-count">
                                 {i.promo}
                               </span>
-                            </a>
+                            </Link>
                             <div className="nk-gap"></div>
                             <h2 className="nk-post-title h4 d-flex justify-content-between">
-                              <a href="blog-article.html">{i.title}</a>
+                              <Link to="blog-article.html">{i.title}</Link>
                               <span>{i.price}</span>
                             </h2>
                           </div>
@@ -637,15 +637,15 @@ function BlocArticle(props) {
                         key={id}
                         // style={{ width: '40%' }}
                       >
-                        <a href="blog-article.html" className="nk-post-img">
+                        <Link to="blog-article.html" className="nk-post-img">
                           <img src={i.imageUrl} alt={i.title} />
                           <span className="nk-post-comments-count">
                             {i.promo}
                           </span>
-                        </a>
+                        </Link>
                         <div className="nk-gap"></div>
                         <h2 className="nk-post-title h4 d-flex justify-content-between">
-                          <a href="blog-article.html">{i.title}</a>
+                          <Link to="blog-article.html">{i.title}</Link>
                           <span>{i.price}</span>
                         </h2>
                       </div>
@@ -675,13 +675,13 @@ function BlocArticle(props) {
                       class="rounded-circle"
                       width="35"
                     />{" "}
-                    par <a href="#">pseudo</a> date du jour
-                    <a
+                    par <Link to="/...">pseudo</Link> date du jour
+                     <Link 
                       href="#"
                       class="nk-btn nk-btn-rounded nk-btn-color-dark-3 float-right"
                     >
                       répondre
-                    </a>
+                    </Link>
                   </div>
                   <div class="nk-comment-text">
                     <p>ksdjfmsflsdfslkdjfskdjfsjfsmjfmsjfm</p>

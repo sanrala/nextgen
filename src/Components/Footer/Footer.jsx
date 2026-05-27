@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from "react-router-dom";
 import logo from "./../../assets/images/logoGames/logo.png";
 import instantgaming from "./../../assets/images/logoGames/instantgaming.png";
 import "./Footer.css";
@@ -16,23 +17,23 @@ function Footer() {
 		
 			{/* <ul class="main-menu footer-menu">
 			
-				<li><a href="">News</a></li>
-				<li><a href="">Tendances</a></li>
-				<li><a href="">Précommandes</a></li>
-				<li><a href="">Prochaines Sorties</a></li>
-                <li><a href="">Nous Contacter</a></li>
+				<li><Link to="">News</Link></li>
+				<li><Link to="">Tendances</Link></li>
+				<li><Link to="">Précommandes</Link></li>
+				<li><Link to="">Prochaines Sorties</Link></li>
+                <li><Link to="">Nous Contacter</Link></li>
 			</ul> */}
 			<div class="footer-social d-flex justify-content-center">
-				<a href="#"><i class="fa fa-instagram"></i></a>
-				<a href="#"><i class="fa fa-facebook"></i></a>
-				<a href="#"><i class="fa fa-twitter"></i></a>
+				<Link to="/..."><i class="fa fa-instagram"></i></Link>
+				<Link to="/..."><i class="fa fa-facebook"></i></Link>
+				<Link to="/..."><i class="fa fa-twitter"></i></Link>
 
 			</div>
-            <a href="#" class="footer-logo img-fluid d-flex">
+            <Link to="#" class="footer-logo img-fluid d-flex">
 				{/* <img className='logoFoot' src={logo} alt=""/> */}
                 <img  src={instantgaming} alt=""/>
-			</a>
-			<div class="copyright"><a href="">NextGen</a> 2024 @ All rights reserved</div>
+			</Link>
+			<div class="copyright"><Link to="">NextGen</Link> 2024 @ All rights reserved</div>
 		</div>
 	</footer>
     </div>

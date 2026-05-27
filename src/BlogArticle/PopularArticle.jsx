@@ -133,7 +133,7 @@ function BlocArticle(props) {
                   <div className="nk-post-date mt-10 mb-10">
                     <span className="fa fa-calendar"></span> {formatDate(v.dateSortie)}
                     <span className="fa fa-comments"></span>
-                    <a href="#">0 commentaires</a>
+                    <Link to="/...">0 commentaires</Link>
                   </div>
                   <div className="nk-post-text">
                     <p>{v.resume.slice(0, 200) + "..."}</p>
@@ -154,7 +154,7 @@ function BlocArticle(props) {
                   <div className="nk-post-date mt-10 mb-10">
                     <span className="fa fa-calendar"></span> {formatDate(v.dateSortie)}
                     <span className="fa fa-comments"></span>
-                    <a href="#">0 commentaires</a>
+                    <Link to="/...">0 commentaires</Link>
                   </div>
                   <div className="nk-post-text">
                     <p>{v.resume.slice(0, 200) + "..."}</p>
@@ -175,7 +175,7 @@ function BlocArticle(props) {
                   <div className="nk-post-date mt-10 mb-10">
                     <span className="fa fa-calendar"></span> {formatDate(v.dateSortie)}
                     <span className="fa fa-comments"></span>
-                    <a href="#">0 commentaires</a>
+                    <Link to="/...">0 commentaires</Link>
                   </div>
                   <div className="nk-post-text">
                     <p>{v.resume.slice(0, 200) + "..."}</p>
@@ -238,7 +238,7 @@ function BlocArticle(props) {
                           <div className="nk-post-date mt-10 mb-10">
                             <span className="fa fa-calendar"></span> {formatDate(v.date)}
                             <span className="fa fa-comments"></span>
-                            <a href="#">0 commentaires</a>
+                            <Link to="/...">0 commentaires</Link>
                           </div>
                           <div className="nk-post-text">
                             <p>{v.new.slice(0, 200) + "..."}</p>
