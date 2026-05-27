@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 // import { useSelector } from "react-redux";
 // import { selectUser } from "./../../features/userSlice";
 
-const API_URL = "http://82.67.215.5:3001/api/topsellers-recent";
+const API_URL = "https://api.sm-artweb.fr/api/topsellers-recent";
 
 function LastPosts() {
   // const user = useSelector(selectUser);
