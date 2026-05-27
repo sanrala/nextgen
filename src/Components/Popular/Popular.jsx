@@ -1,199 +1,122 @@
 import React, { useState, useEffect } from "react";
-import gameData from "./../../games.json";
-import {Link, useParams } from "react-router-dom";
-import {
-  collection,
-  addDoc,
-  query,
-  onSnapshot,
-  serverTimestamp,
-  orderBy,
-  limit,
-} from "firebase/firestore";
-import { db } from "./../../Firebase";
-import { Avatar } from "@mui/material";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUser } from "./../../features/userSlice";
-import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
-import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
-import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
-import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
-import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
+
+const API_URL = "http://82.67.215.5:3001/api/topsellers-recent";
+
 function LastPosts() {
   const user = useSelector(selectUser);
-  const [comments, setComments] = useState([]);
-  const [item, setItem] = useState(null);
-
-  const { id, title } = useParams();
-  const [articles, setArticles] = useState([]);
+  const [igGames, setIgGames] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const q = query(
-      collection(db, "games"),
-      orderBy("averageRating", "desc"),
-      limit(6)
-    );
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const commentsArray = [];
-      querySnapshot.forEach((doc) => {
-        commentsArray.push({ ...doc.data(), id: doc.id });
-      });
-      setComments(commentsArray);
-    });
+    const fetchGames = async () => {
+      try {
+        const response = await fetch(API_URL, {
+          headers: { "User-Agent": "IG-ExportCatalog-Fetcher" },
+        });
+        const data = await response.json();
 
-    return () => unsubscribe();
+        const topsellers = data
+          .filter((game) => game.topseller === 1 && game.stock === 1)
+          .slice(0, 6);
+
+        setIgGames(data);
+      } catch (error) {
+        console.error("Erreur fetch Popular :", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchGames();
   }, []);
-  useEffect(() => {
-    // Recherchez l'élément correspondant dans le fichier JSON
-    const selectedItem = gameData.find((item) => item.id === parseInt(id));
 
-    // Mettre à jour l'état avec les données de l'élément sélectionné
-    setItem(selectedItem);
-  }, [id]);
+  const cleanTitle = (title) =>
+    title.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
 
-
-  const calculateAverageRating = () => {
-    const totalRating = comments.reduce(
-      (acc, comment) => acc + parseInt(comment.rating),
-      0
-    );
-    return totalRating / comments.length || 0;
+  const getPromo = (retail, price) => {
+    const r = parseFloat(retail);
+    const p = parseFloat(price);
+    if (!r || !p || r <= p) return null;
+    return `-${Math.round(((r - p) / r) * 100)}%`;
   };
 
-  const averageRating = calculateAverageRating();
-  const getRatingColor = (rating) => {
-    if (rating >= 4) return "green";
-    if (rating >= 2) return "orange";
-    if (rating > 0) return "red";
-    return "gray";
-  };
-
-  function getRatingIcon(rating) {
-    if (rating >= 0.1 && rating <= 1) {
-      return <SentimentVeryDissatisfiedIcon color="error" />;
-    } else if (rating > 1 && rating <= 2) {
-      return <SentimentDissatisfiedIcon color="error" />;
-    } else if (rating > 2 && rating <= 3) {
-      return <SentimentSatisfiedIcon color="warning" />;
-    } else if (rating > 3 && rating <= 4) {
-      return <SentimentSatisfiedAltIcon color="success" />;
-    } else if (rating > 4 && rating <= 5) {
-      return <SentimentVerySatisfiedIcon color="success" />;
-    } else {
-      return null;
-    }
-  }
-
-
-  function getRatingDescription(rating) {
-    if (rating === null || rating === undefined) {
-      return "Aucune note";
-    }
-
-    if (rating === 0) {
-      return <span style={{ color: "red" }}>Aucune note</span>;
-    } else if (rating >= 0.1 && rating <= 1) {
-      return <span style={{ color: "red" }}>Négative</span>;
-    } else if (rating >= 1.1 && rating <= 2.5) {
-      return <span style={{ color: "orange" }}>Très moyen</span>;
-    } else if (rating >= 2.6 && rating <= 3.5) {
-      return <span style={{ color: "orange" }}>Moyen</span>;
-    } else if (rating >= 3.6 && rating <= 4) {
-      return <span style={{ color: "green" }}>Positives</span>;
-    } else if (rating >= 4.1 && rating <= 4.7) {
-      return <span style={{ color: "green" }}>Très positives</span>;
-    } else if (rating >= 4.8 && rating <= 5) {
-      return <span style={{ color: "#478eff" }}>Divin</span>;
-    } else {
-      return "Aucune note";
-    }
-  }
-  // Fonction pour nettoyer le titre
-  const cleanTitle = (title) => {
-    return title.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
-  };
   return (
+    <div className="row vertical-gap">
+      <div className="col-lg-12">
+        <Link to="/Populaires/">
+          <h3 className="nk-decorated-h-2">
+            <span>
+              <span className="text-main-1">Tendances</span> Récentes
+            </span>
+          </h3>
+        </Link>
 
+        <div className="nk-gap"></div>
+        <div className="nk-blog-grid">
+          <div className="row">
 
-
-
-
-    <div class="row vertical-gap">
-      <div class="col-lg-12">
-      <Link
-        to={{
-          pathname: `/Populaires/`,
-        }}
-      >
-        <h3 class="nk-decorated-h-2">
-          <span>
-            <span class="text-main-1">Jeux</span> Populaires
-          </span>
-        </h3>
-      </Link>
-        <div class="nk-gap"></div>
-        <div class="nk-blog-grid">
-          <div class="row">
-            {comments.map((comment) => (
-              <div class="col-md-6 col-lg-4" key={comment.id}>
-                <div class="nk-blog-post">
-                  <div class="nk-gap"></div>
-           
-                    {gameData.map((item) => (
-                      <>
-                        {item.id == comment.gameId ? (
-                          <div key={item.id}>
-                            
-                            <Link
-                    to={`/PC/${item.id}/${cleanTitle(item.title)}/`}
-                    className="nk-post-img"
-                  >
-                              <img src={item.imageUrl} alt="Image du jeu" className="img-fluid" />
-                              <span class="nk-post-comments-count">{item.promo}</span>
-
-<span class="nk-post-categories">
-  <span class="bg-main-5">{item.genre}</span>
-</span>
-                            
-                            </Link>
-                            <div class="nk-gap"></div>
-                  <div className="title_price d-flex justify-content-between align-items-baseline">
-                    <h2 class="nk-post-title h4">
-                    <a href="#">{item.title}</a>
-                  </h2>
-                  {item.price}
-                          </div>
-   
-                          </div>
-                        ) : (
-                          <div className="div"></div>
-                        )}
-                      </>
-                    ))}
-               
-             
-               
-                  <div class="nk-gap"></div>
-                  {/* <div class="nk-post-text">
-                  <a
-                        className={`average-rating ${getRatingColor(
-                          averageRating
-                        )} ${averageRating >= 4 || averageRating < 2 ? "flash" : ""
-                          }`}
-                        style={{
-                          "--rating-percent": `${(averageRating / 5) * 100}%`,
-                        }}
-                      >
-                        {getRatingDescription(averageRating)}{" "}
-                        {getRatingIcon(averageRating)}
-                       
-                      </a>
-                  </div> */}
-
-                  <div class="nk-gap"></div>
-                </div>
+            {loading && (
+              <div className="col-12 text-center">
+                <p>Chargement des tendances...</p>
               </div>
-            ))}
+            )}
+
+            {!loading && igGames.length === 0 && (
+              <div className="col-12 text-center">
+                <p style={{ color: "#aaa" }}>Aucun jeu trouvé.</p>
+              </div>
+            )}
+
+            {!loading && igGames.map((game) => {
+              const promo = getPromo(game.retail, game.price);
+              const price = parseFloat(game.price);
+              return (
+                <div className="col-md-6 col-lg-4" key={game.id}>
+                  <div className="nk-blog-post">
+                    <div className="nk-gap"></div>
+
+                    <Link
+                      to={`/PC/${game.id}/${cleanTitle(game.name)}`}
+                      className="nk-post-img"
+                    >
+                      <img src={game.img} alt={game.name} className="img-fluid" />
+                      {promo && (
+                        <span className="nk-post-comments-count">{promo}</span>
+                      )}
+                      <span className="nk-post-categories">
+                        <span className="bg-main-5">{game.type}</span>
+                      </span>
+                    </Link>
+
+                    <div className="nk-gap"></div>
+                    <div className="title_price d-flex justify-content-between align-items-baseline">
+                      <h2 className="nk-post-title h4">
+                        <Link to={`/PC/${game.id}/${cleanTitle(game.name)}`}>
+                          {game.name}
+                        </Link>
+                      </h2>
+                      <div className="d-flex align-items-center" style={{ gap: "6px" }}>
+                        {promo && <span className="priceSlidePromo">{promo}</span>}
+                        <span className="price">
+                          {price ? `${price.toFixed(2)}€` : "N/A"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {game.region && (
+                      <p style={{ color: "#aaa", fontSize: "0.8rem", margin: "4px 0 0" }}>
+                        🌍 {game.region}
+                      </p>
+                    )}
+
+                    <div className="nk-gap"></div>
+                  </div>
+                </div>
+              );
+            })}
+
           </div>
         </div>
       </div>

@@ -1,285 +1,122 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import data from "./../../games.json";
-import HoverVideoPlayer from "react-hover-video-player";
-import Ho from "./../../assets/video/Homeworld3.mp4"
+
 function Precommandes() {
   const [games, setGames] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const today = new Date();
-    const updatedGames = data.map(game => {
-      const releaseDate = new Date(game.dateSortie);
-      if (releaseDate <= today) {
-        return { ...game, precommande: false };
+    const fetchPrecommandes = async () => {
+      try {
+        // ✅ ON UTILISE DIRECT TON BACKEND
+        const response = await fetch("http://82.67.215.5:3001/api/precommandes");
+        const data = await response.json();
+
+        setGames(data.slice(0, 6)); // limite à 6
+      } catch (err) {
+        console.error("Erreur fetch précommandes :", err);
+        setGames([]);
+      } finally {
+        setLoading(false);
       }
-      return game;
-    });
+    };
 
-    // Trier les jeux par date de sortie du plus proche au plus loin
-    const sortedGames = updatedGames.sort((a, b) => new Date(a.dateSortie) - new Date(b.dateSortie));
-
-    setGames(sortedGames);
+    fetchPrecommandes();
   }, []);
 
-  function formatDate(dateString) {
-    const date = new Date(dateString);
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    return date.toLocaleDateString('fr-FR', options);
-  }
+  const cleanTitle = (title) =>
+    title.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
 
-  // Filtrer les jeux en précommande et prendre les 6 premiers
-  const preco = games.filter(item => item.precommande === true).slice(0, 6);
-  // Fonction pour nettoyer le titre
-  const cleanTitle = (title) => {
-    return title.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+  const getPromo = (retail, price) => {
+    const r = parseFloat(retail);
+    const p = parseFloat(price);
+    if (!r || !p || r <= p) return null;
+    return `-${Math.round(((r - p) / r) * 100)}%`;
   };
+
   return (
     <div>
-      <div class="nk-gap-2"></div>
-      <Link
-        to={{
-          pathname: `/PrecoFull/`,
-        }}
-      >
-        <h3 class="nk-decorated-h-2">
+      <div className="nk-gap-2"></div>
+
+      <Link to={{ pathname: `/PrecoFull/` }}>
+        <h3 className="nk-decorated-h-2">
           <span>
-            <span class="text-main-1">Jeux</span> en précommandes
+            <span className="text-main-1">Jeux</span> en précommandes
           </span>
         </h3>
       </Link>
-      <div class="nk-gap"></div>
-      <div class="nk-blog-grid">
-        <div class="row">
-          {preco.map((item) => (
-            <>
-              {/* {item.precommande === true && ( */}
-              <div class="col-md-6 col-lg-4" key={item.id}>
-                {/* <!-- START: Post --> */}
 
-                <div class="nk-blog-post" key={item.id}>
-                  {item.plateformes &&
-                    item.plateformes.map((v, index) => (
-                      <>
-                        {v.support === "Steam" && (
-                          <Link
-                            key={item.id}
-                            {...item}
-                            to={{
-                              pathname: `/PC/${item.id}/${cleanTitle(item.title)}`,
-                              state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
-                            }}
-                            class="nk-post-img"
-                          >
-                            <HoverVideoPlayer
-                              className="tot"
-                              videoSrc={item.videoHover}
-                              style={{
-                                // Make the image expand to cover the video's dimensions
-                                width: '100%',
-                                height: '100%',
-                                objectFit: 'cover',
-                              }}
-                              pausedOverlay={
-                                <img src={item.imageUrl} alt={item.title} className="img-fluid" />
-                              }
+      <div className="nk-gap"></div>
 
-                            />
-                            {/* <img src={item.imageUrl} alt={item.title} /> */}
-                            <span class="nk-post-comments-count">{item.promo}</span>
+      {loading && <p>Chargement...</p>}
 
-                            <span class="nk-post-categories">
-                              <span class="bg-main-5">{item.genre}</span>
-                            </span>
-                          </Link>
-                        )}
-                        {v.support === "Rockstar" && (
-                          <Link
-                            key={item.id}
-                            {...item}
-                            to={{
-                              pathname: `/PC_Rockstar/${item.id}/${cleanTitle(item.title)}`,
-                              state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
-                            }}
-                            class="nk-post-img"
-                          >
-                            <HoverVideoPlayer
-                              className="tot"
-                              videoSrc={item.videoHover}
-                              style={{
-                                // Make the image expand to cover the video's dimensions
-                                width: '100%',
-                                height: '100%',
-                                objectFit: 'cover',
-                              }}
-                              pausedOverlay={
-                                <img src={item.imageUrl} alt={item.title} />
-                              }
+      {!loading && games.length === 0 && (
+        <p style={{ color: "#aaa" }}>Aucune précommande disponible.</p>
+      )}
 
-                            />
-                            {/* <img src={item.imageUrl} alt={item.title} /> */}
-                            <span class="nk-post-comments-count">{item.promo}</span>
+      {!loading && (
+        <div className="nk-blog-grid">
+          <div className="row">
+            {games.map((game) => {
+              const promo = getPromo(game.retail, game.price);
+              const price = parseFloat(game.price);
 
-                            <span class="nk-post-categories">
-                              <span class="bg-main-5">{item.genre}</span>
-                            </span>
-                          </Link>
-                        )
-                        }
-                        {v.support === "Battle.net" && (
-                          <Link
-                            key={item.id}
-                            {...item}
-                            to={{
-                              pathname: `/Battlenet/${item.id}/${cleanTitle(item.title)}`,
-                              state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
-                            }}
-                            class="nk-post-img"
-                          >
-                            <HoverVideoPlayer
-                              className="tot"
-                              videoSrc={item.videoHover}
-                              style={{
-                                // Make the image expand to cover the video's dimensions
-                                width: '100%',
-                                height: '100%',
-                                objectFit: 'cover',
-                              }}
-                              pausedOverlay={
-                                <img src={item.imageUrl} alt={item.title} />
-                              }
+              return (
+                <div className="col-md-6 col-lg-4" key={game.id}>
+                  <div className="nk-blog-post">
 
-                            />
-                            {/* <img src={item.imageUrl} alt={item.title} /> */}
-                            <span class="nk-post-comments-count">{item.promo}</span>
+                    <Link
+                      to={`/PC/${game.id}/${cleanTitle(game.name)}`}
+                      className="nk-post-img"
+                    >
+                      <img
+                        src={game.img}
+                        alt={game.name}
+                        className="img-fluid"
+                        style={{ width: "100%", objectFit: "cover" }}
+                      />
 
-                            <span class="nk-post-categories">
-                              <span class="bg-main-5">{item.genre}</span>
-                            </span>
-                          </Link>
-                        )
-                        }
-                          {v.support === "Ubisoft" && (
-                          <Link
-                            key={item.id}
-                            {...item}
-                            to={{
-                              pathname: `/Ubisoft/${item.id}/${cleanTitle(item.title)}`,
-                              state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
-                            }}
-                            class="nk-post-img"
-                          >
-                            <HoverVideoPlayer
-                              className="tot"
-                              videoSrc={item.videoHover}
-                              style={{
-                                // Make the image expand to cover the video's dimensions
-                                width: '100%',
-                                height: '100%',
-                                objectFit: 'cover',
-                              }}
-                              pausedOverlay={
-                                <img src={item.imageUrl} alt={item.title} />
-                              }
+                      {promo && (
+                        <span className="nk-post-comments-count">{promo}</span>
+                      )}
 
-                            />
-                            {/* <img src={item.imageUrl} alt={item.title} /> */}
-                            <span class="nk-post-comments-count">{item.promo}</span>
+                      <span className="nk-post-categories">
+                        <span className="bg-main-5">{game.type}</span>
+                      </span>
+                    </Link>
 
-                            <span class="nk-post-categories">
-                              <span class="bg-main-5">{item.genre}</span>
-                            </span>
-                          </Link>
-                        )
-                        }
-                      </>
-                    ))}
+                    <div className="nk-gap"></div>
 
-                  <div class="nk-gap"></div>
-                  <span class="nk-post-title h4">
-                    {item.plateformes &&
-                      item.plateformes.map((v, index) => (
-                        <>
-                          {v.support === "Steam" && (
-                            <Link
-                              key={item.id}
-                              {...item}
-                              to={{
-                                pathname: `/PC/${item.id}/${item.title}`,
-                                state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
-                              }}
-                            >
-                              {item.title.slice(0, 17) + "..."}
-                            </Link>
-                          )
-                          }
-                          {v.support === "Rockstar" && (
-                            <Link
-                              key={item.id}
-                              {...item}
-                              to={{
-                                pathname: `/PC_Rockstar/${item.id}/${item.title}`,
-                                state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
-                              }}
-                            >
-                              {item.title.slice(0, 17) + "..."}
-                            </Link>
-                          )
-                          }
-                          {v.support === "Battle.net" && (
-                            <Link
-                              key={item.id}
-                              {...item}
-                              to={{
-                                pathname: `/Battlenet/${item.id}/${item.title}`,
-                                state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
-                              }}
-                            >
-                              {item.title.slice(0, 17) + "..."}
-                            </Link>
-                          )
-                          }
-                             {v.support === "Ubisoft" && (
-                          <Link
-                            key={item.id}
-                            {...item}
-                            to={{
-                              pathname: `/Ubisoft/${item.id}/${cleanTitle(item.title)}`,
-                              state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
-                            }}
-                            class="nk-post-img"
-                          >
-                         {item.title.slice(0, 17) + "..."}
-                          </Link>
-                        )
-                        }
-                        </>
-                      ))}
+                    <span className="nk-post-title h4">
+                      <Link to={`/PC/${game.id}/${cleanTitle(game.name)}`}>
+                        {game.name.length > 17
+                          ? game.name.slice(0, 17) + "..."
+                          : game.name}
+                      </Link>
+                    </span>
 
-                  </span>
-                  {/* <div class="nk-post-text">
-                     
-                      <p>{item.resume.slice(0, 190) + "..."}</p>
-                    </div> */}
-                  <div class="nk-gap"></div>
-                  <div className="d-flex justify-content-between text-white">
-                    <div className="div">
-                      <span class="preco ">PRECO </span>{" "}
-                      <span class="preco__date">{formatDate(item.dateSortie)}</span>
-                      {/* <div class="nk-post-date float-right"> */}
+                    <div className="nk-gap"></div>
+
+                    <div className="d-flex justify-content-between text-white">
+                      <div>
+                        <span className="preco">PRECO</span>{" "}
+                        <span className="preco__date">
+                          {game.releaseDate
+                            ? `📅 ${game.releaseDate}`
+                            : `🌍 ${game.region}`}
+                        </span>
+                      </div>
+
+                      <span>{price ? `${price.toFixed(2)}€` : "N/A"}</span>
                     </div>
-                    {item.price}
-                    {/* </div> */}
+
                   </div>
                 </div>
-
-                {/* <!-- END: Post --> */}
-              </div>
-              {/* )} */}
-            </>
-          ))}
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
