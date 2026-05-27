@@ -71,9 +71,7 @@ function Home() {
   // const [videos, setVideos] = useState([]);
   // console.log(videos);
   useEffect(() => {
-    const fetchVideos = async () => {
-      // Code pour récupérer les vidéos enregistrées
-    };
+  
 
     const checkLiveStatus = async () => {
       // Code pour vérifier si la chaîne est en direct

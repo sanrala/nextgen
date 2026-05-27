@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import gameData from "../../games.json";
-import {Link, useParams } from "react-router-dom";
+import {Link } from "react-router-dom";
 import {
   collection,
   // addDoc,
@@ -12,7 +12,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../Firebase";
 // import { Avatar } from "@mui/material";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 // import { selectUser } from "../../features/userSlice";
 
 function LastPosts() {

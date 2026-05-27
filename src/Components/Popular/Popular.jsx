@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { selectUser } from "./../../features/userSlice";
+// import { useSelector } from "react-redux";
+// import { selectUser } from "./../../features/userSlice";
 
 const API_URL = "http://82.67.215.5:3001/api/topsellers-recent";
 

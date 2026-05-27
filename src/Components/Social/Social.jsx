@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { selectUser, logout } from "./../../features/userSlice";
+import {  useSelector } from "react-redux";
+import { selectUser} from "./../../features/userSlice";
 // import { auth, googleProvider } from './../../Firebase';
 import { Avatar } from "@mui/material";
 import Menu from '@mui/material/Menu';
@@ -9,7 +9,7 @@ import MenuItem from '@mui/material/MenuItem';
 import gamesData from "../../games.json"
 
 function Social() {
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
     const user = useSelector(selectUser);
     // menu deroulant
     const [anchorEl, setAnchorEl] = useState(null);
@@ -79,13 +79,13 @@ const handleSearchChange = (event) => {
             <div class="nk-contacts-top">
                 <div class="container">
                     <div class="nk-contacts-left">
-                        <ul class="nk-social-links">
+                        {/* <ul class="nk-social-links">
 
-                            <li><a class="nk-social-steam" href="#"><i class="fa-brands fa-steam"></i></a></li>
-                            <li><a class="nk-social-facebook" href="#"><span class="fab fa-facebook"></span></a></li>
-                            <li><a class="nk-social-twitter" href="#" target="_blank"><span class="fab fa-twitter"></span></a></li>
+                            <li><button class="nk-social-steam" ><i class="fa-brands fa-steam"></i><button></li>
+                            <li><button class="nk-social-facebook" ><span class="fab fa-facebook"></span><button></li>
+                            <li><button class="nk-social-twitter"  target="_blank"><span class="fab fa-twitter"></span><button></li>
 
-                        </ul>
+                        </ul> */}
                     </div>
                     <div class="nk-contacts-right">
                         <ul class="nk-contacts-icons">
