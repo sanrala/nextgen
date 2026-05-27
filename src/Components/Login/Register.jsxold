@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Login.css';
 import logo from './../../assets/images/logoGames/logo.png';
 import LoginBG from "./../../assets/images/login.jpg"
-import { auth, googleProvider } from './../../Firebase';
+import { auth, googleProvider } from '../../Firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { useNavigate  } from 'react-router-dom';
 import { Link } from "react-router-dom";

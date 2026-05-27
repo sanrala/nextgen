@@ -9,8 +9,8 @@ import Home from "./Home";
 // import ProductBlizzard from "./Products/ProductBlizzard";
 // import Ubisoft from "./Products/ProductUbisoft";
 // import Products from "./Products/Product";
-import Login from "./Components/Login/Login";
-import Register from "./Components/Login/Register";
+// import Login from "./Components/Login/Login";
+// import Register from "./Components/Login/Register.jsxold";
 // import ProductPS from "./Products/ProductPS";
 // import ProductXBOX from "./Products/ProductXBOX";
 import {Routes, Route} from "react-router-dom"
@@ -25,8 +25,8 @@ function App() {
 
 <Route path="/" element={<Home />}/>
 
-<Route path="/Login" element={<Login />}/>
-<Route path="/Register" element={<Register />}/>
+{/* <Route path="/Login" element={<Login />}/>
+<Route path="/Register" element={<Register />}/> */}
 {/* <Route path="/PC/:id/:title" element={<Products />}/> */}
 {/* <Route path="/Ubisoft/:id/:title" element={<Ubisoft />}/> */}
 {/* <Route path="/Xbox/:id/:title" element={<ProductXBOX />}/> */}

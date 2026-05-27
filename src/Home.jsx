@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./assets/css/style.css";
 import Header from "./Components/Header/Header";
-import ImgSlider from "./Components/ImgSlider/ImgSlider";
+import ImgSlider from "./Components/ImgSlider/ImgSlider.jsxold";
 import StartCatego from "./Components/StartCatego/StartCatego";
 // import BoxNews from "./Components/BoxNews/BoxNews";
 import LastPosts from "./Components/LastPosts/LastPosts.jsxold";

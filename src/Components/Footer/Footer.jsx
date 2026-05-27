@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from "react-router-dom";
-import logo from "./../../assets/images/logoGames/logo.png";
+// import logo from "./../../assets/images/logoGames/logo.png";
 import instantgaming from "./../../assets/images/logoGames/instantgaming.png";
 import "./Footer.css";
 function Footer() {
