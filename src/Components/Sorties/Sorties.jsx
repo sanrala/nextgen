@@ -1,73 +1,81 @@
-import React, { useState, useEffect } from 'react'
-import game from "./../../games.json";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+
 function Sorties() {
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
-   // Obtenez la date actuelle
-   const today = new Date();
-  const sortedImages = game
-  .filter(game => new Date(game.dateSortie) <= today) // Ne conserver que les images avec des dates passées ou aujourd'hui
-  .sort((a, b) => new Date(b.dateSortie) - new Date(a.dateSortie)) // Trier par date de sortie
-  .slice(0, 6); // Prendre les 6 premières images
+  const [games, setGames] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   useEffect(() => {
-      const interval = setInterval(() => {
-          setCurrentImageIndex((prevIndex) => (prevIndex + 1) % sortedImages.length);
-      }, 10000); // Changer d'image toutes les 3 secondes
+    const fetchGames = async () => {
+      try {
+        const res = await fetch("https://api.sm-artweb.fr/api/latest-releases");
+        const data = await res.json();
+        setGames(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
-      return () => clearInterval(interval);
-  }, [sortedImages.length]);
+    fetchGames();
+  }, []);
 
-  const handleImageClick = (index) => {
-      setCurrentImageIndex(index);
-  };
+  useEffect(() => {
+    if (games.length === 0) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % games.length);
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [games]);
+
+  const current = games[currentIndex];
+
+  if (!current) return null;
+
   return (
     <div>
-       <Link
-                  to={{
-                    pathname: `/Sorties/`,
-                  }}
-                >
-            <h3 class="nk-decorated-h-2">
+      <Link to="/Sorties/">
+        <h3 className="nk-decorated-h-2">
           <span>
-            <span class="text-main-1">Les dernières</span> sorties
+            <span className="text-main-1">Les dernières</span> sorties
           </span>
         </h3>
-        </Link>
+      </Link>
 
-      <div class="nk-gap"></div>
-          <div className="carousel">
+      <div className="nk-gap"></div>
 
-            <div className="main-image" style={{ backgroundImage: `url(${sortedImages[currentImageIndex].imageUrl})` }}>
-            <div className="price-tag">{sortedImages[currentImageIndex].price}</div>
-              
-            <div className="image-overlay">
-            <Link
-                      key={sortedImages[currentImageIndex].id}
-                      {...sortedImages[currentImageIndex]}
-                      to={{
-                        pathname: `/PC/${sortedImages[currentImageIndex].id}/${sortedImages[currentImageIndex].title}`,
-                        state: { itemData: sortedImages[currentImageIndex] }, // Passer les données de l'élément à la page BlocArticle
-                      }}>
-                    <h2>{sortedImages[currentImageIndex].title}</h2>
-                    </Link>
-                 
-                </div>
-            </div>
-            <div className="thumbnail-background">
-                <div className="thumbnail-container">
-                    {sortedImages.map((image, index) => (
-                        <div 
-                            key={index} 
-                            className={`thumbnail ${index === currentImageIndex ? 'selected' : ''}`}
-                            onClick={() => handleImageClick(index)}
-                            style={{ backgroundImage: `url(${image.imageUrl})` }}
-                        />
-                    ))}
-                </div>
-            </div>
+      <div className="carousel">
+        <div
+          className="main-image"
+          style={{ backgroundImage: `url(${current.img})` }}
+        >
+          <div className="price-tag">{current.price}€</div>
+
+          <div className="image-overlay">
+            <Link to={`/PC/${current.id}`}>
+              <h2>{current.name}</h2>
+            </Link>
+
+            <p>📅 {current.releaseDate}</p>
+          </div>
         </div>
+
+        <div className="thumbnail-background">
+          <div className="thumbnail-container">
+            {games.map((g, i) => (
+              <div
+                key={g.id}
+                className={`thumbnail ${i === currentIndex ? "selected" : ""}`}
+                onClick={() => setCurrentIndex(i)}
+                style={{ backgroundImage: `url(${g.img})` }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
-  )
+  );
 }
 
-export default Sorties
+export default Sorties;
