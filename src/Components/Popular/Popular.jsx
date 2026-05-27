@@ -90,19 +90,21 @@ function LastPosts() {
             {!loading && igGames.map((game) => {
               const promo = getPromo(game.retail, game.price);
               const price = parseFloat(game.price);
-             {promo && (
-  <span className="nk-post-comments-count">{promo}</span>
-)}
+   
               return (
                 <div className="col-md-6 col-lg-4" key={game.id}>
                   <div className="nk-blog-post">
 
-                    <Link
-                      to={`/PC/${game.id}/${cleanTitle(game.name)}`}
-                      className="nk-post-img"
-                    >
-                      <img src={game.img} alt={game.name} />
-                    </Link>
+                  <Link
+  to={`/PC/${game.id}/${cleanTitle(game.name)}`}
+  className="nk-post-img"
+>
+  <img src={game.img} alt={game.name} />
+
+  {promo && (
+    <span className="nk-post-comments-count">{promo}</span>
+  )}
+</Link>
 
                     <div className="nk-gap"></div>
 
