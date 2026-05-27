@@ -5,9 +5,9 @@ import Burger from "./Burger"
 function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+  // const toggleMenu = () => {
+  //   setIsOpen(!isOpen);
+  // };
   return (
     <div>
       <nav class="nk-navbar nk-navbar-top nk-navbar-sticky nk-navbar-autohide">

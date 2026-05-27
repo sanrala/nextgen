@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "./assets/css/style.css";
 import Header from "./Components/Header/Header";
-import ImgSlider from "./Components/ImgSlider/ImgSlider.jsxold";
+import ImgSlider from "./Components/ImgSlider/ImgSlider.jsx";
 import StartCatego from "./Components/StartCatego/StartCatego";
 // import BoxNews from "./Components/BoxNews/BoxNews";
-import LastPosts from "./Components/LastPosts/LastPosts.jsxold";
+import LastPosts from "./Components/LastPosts/LastPosts.jsx";
 import bg from "./assets/images/bg-fixed-1.jpg";
 import Precommandes from "./Components/Precommandes/Precommandes";
 import Popular from "./Components/Popular/Popular";
