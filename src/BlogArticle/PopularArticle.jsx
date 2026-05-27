@@ -1,15 +1,15 @@
-import { ListItem } from "@mui/material";
-import React, { useState, useRef, useEffect } from "react";
-import { useParams } from "react-router-dom";
+// import { ListItem } from "@mui/material";
+import React, { useState,  useEffect } from "react";
+// import { useParams } from "react-router-dom";
 import Header from "./../Components/Header/Header";
 
 import Footer from "./../Components/Footer/Footer";
 import gameData from "./../games.json";
 
 import { Link } from "react-router-dom";
-import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
-import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
-import CircularProgress from "@mui/material/CircularProgress";
+// import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
+// import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
+// import CircularProgress from "@mui/material/CircularProgress";
 
 function BlocArticle(props) {
   function formatDate(dateString) {

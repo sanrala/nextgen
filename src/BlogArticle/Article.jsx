@@ -2,8 +2,8 @@ import Header from "./../Components/Header/Header";
 import { useParams, Link } from "react-router-dom";
 import Footer from "./../Components/Footer/Footer";
 import gameData from "./../games.json";
-import Box from "@mui/material/Box";
-import CircularProgress from '@mui/material/CircularProgress';
+// import Box from "@mui/material/Box";
+// import CircularProgress from '@mui/material/CircularProgress';
 
 function BlocArticle() {
 
