@@ -90,7 +90,9 @@ function LastPosts() {
             {!loading && igGames.map((game) => {
               const promo = getPromo(game.retail, game.price);
               const price = parseFloat(game.price);
-
+             {promo && (
+  <span className="nk-post-comments-count">{promo}</span>
+)}
               return (
                 <div className="col-md-6 col-lg-4" key={game.id}>
                   <div className="nk-blog-post">
