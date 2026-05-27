@@ -1,5 +1,5 @@
 // import { ListItem } from "@mui/material";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState,  useEffect } from "react";
 // import { useParams } from "react-router-dom";
 import Header from "../Components/Header/Header";
 
@@ -12,16 +12,16 @@ import { Link } from "react-router-dom";
 // import CircularProgress from "@mui/material/CircularProgress";
 
 function BlocArticle(props) {
-  function formatDate(dateString) {
-    const date = new Date(dateString);
-    const options = {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-    return date.toLocaleDateString("fr-FR", options);
-  }
+  // function formatDate(dateString) {
+  //   const date = new Date(dateString);
+  //   const options = {
+  //     weekday: "long",
+  //     year: "numeric",
+  //     month: "long",
+  //     day: "numeric",
+  //   };
+  //   return date.toLocaleDateString("fr-FR", options);
+  // }
   const [games, setGames] = useState([]);
 
   useEffect(() => {
@@ -54,11 +54,11 @@ function BlocArticle(props) {
   const toggleAccordion = () => {
     setIsAccordionOpen(!isAccordionOpen);
   };
-  const [articles, setArticles] = useState([]);
+  // const [articles, setArticles] = useState([]);
 
   const popularGames = gameData.filter((item) => item.popular === true);
   useEffect(() => {
-    setArticles(gameData.articles); // Charger les données du fichier JSON
+    // setArticles(gameData.articles); // Charger les données du fichier JSON
   }, []);
   return (
     <div>
