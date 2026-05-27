@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-// import { useSelector } from "react-redux";
-// import { selectUser } from "./../../features/userSlice";
 
 const API_URL = "https://api.sm-artweb.fr/api/topsellers-recent";
 
 function LastPosts() {
-  // const user = useSelector(selectUser);
   const [igGames, setIgGames] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -18,17 +15,48 @@ function LastPosts() {
         });
         const data = await response.json();
 
-        // const topsellers = data
-        //   .filter((game) => game.topseller === 1 && game.stock === 1)
-        //   .slice(0, 6);
+        // 🔥 1. SUPPRIME DOUBLONS
+        const uniqueGames = Object.values(
+          data.reduce((acc, game) => {
+            const key = game.name
+              .toLowerCase()
+              .replace(/deluxe|ultimate|gold|premium|standard/gi, "")
+              .replace(/\s+/g, " ")
+              .trim()
+              .split(" ")
+              .slice(0, 3)
+              .join(" ");
 
-        setIgGames(data);
+            if (!acc[key]) {
+              acc[key] = game;
+            } else {
+              const currentPrice = parseFloat(acc[key].price);
+              const newPrice = parseFloat(game.price);
+
+              if (newPrice < currentPrice) {
+                acc[key] = game;
+              }
+            }
+
+            return acc;
+          }, {})
+        );
+
+        // 🔥 2. TRI PAR DATE (plus récent d'abord)
+        const sorted = uniqueGames.sort((a, b) => {
+          const dateA = new Date(a.releaseDate || 0);
+          const dateB = new Date(b.releaseDate || 0);
+          return dateB - dateA;
+        });
+
+        setIgGames(sorted.slice(0, 6));
       } catch (error) {
         console.error("Erreur fetch Popular :", error);
       } finally {
         setLoading(false);
       }
     };
+
     fetchGames();
   }, []);
 
@@ -57,61 +85,39 @@ function LastPosts() {
         <div className="nk-blog-grid">
           <div className="row">
 
-            {loading && (
-              <div className="col-12 text-center">
-                <p>Chargement des tendances...</p>
-              </div>
-            )}
-
-            {!loading && igGames.length === 0 && (
-              <div className="col-12 text-center">
-                <p style={{ color: "#aaa" }}>Aucun jeu trouvé.</p>
-              </div>
-            )}
+            {loading && <p>Chargement...</p>}
 
             {!loading && igGames.map((game) => {
               const promo = getPromo(game.retail, game.price);
               const price = parseFloat(game.price);
+
               return (
                 <div className="col-md-6 col-lg-4" key={game.id}>
                   <div className="nk-blog-post">
-                    <div className="nk-gap"></div>
 
                     <Link
                       to={`/PC/${game.id}/${cleanTitle(game.name)}`}
                       className="nk-post-img"
                     >
-                      <img src={game.img} alt={game.name} className="img-fluid" />
-                      {promo && (
-                        <span className="nk-post-comments-count">{promo}</span>
-                      )}
-                      <span className="nk-post-categories">
-                        <span className="bg-main-5">{game.type}</span>
-                      </span>
+                      <img src={game.img} alt={game.name} />
                     </Link>
 
                     <div className="nk-gap"></div>
-                    <div className="title_price d-flex justify-content-between align-items-baseline">
-                      <h2 className="nk-post-title h4">
-                        <Link to={`/PC/${game.id}/${cleanTitle(game.name)}`}>
-                          {game.name}
-                        </Link>
-                      </h2>
-                      <div className="d-flex align-items-center" style={{ gap: "6px" }}>
-                        {promo && <span className="priceSlidePromo">{promo}</span>}
-                        <span className="price">
-                          {price ? `${price.toFixed(2)}€` : "N/A"}
-                        </span>
-                      </div>
-                    </div>
 
-                    {game.region && (
-                      <p style={{ color: "#aaa", fontSize: "0.8rem", margin: "4px 0 0" }}>
-                        🌍 {game.region}
-                      </p>
-                    )}
+                    <h2 className="nk-post-title h4">
+                      {game.name}
+                    </h2>
 
                     <div className="nk-gap"></div>
+
+                    <div>
+                      {game.releaseDate
+                        ? `📅 ${game.releaseDate}`
+                        : `🌍 ${game.region}`}
+                    </div>
+
+                    <span>{price ? `${price.toFixed(2)}€` : "N/A"}</span>
+
                   </div>
                 </div>
               );
