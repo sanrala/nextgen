@@ -3,7 +3,7 @@ import "./assets/css/style.css";
 import Header from "./Components/Header/Header";
 import ImgSlider from "./Components/ImgSlider/ImgSlider";
 import StartCatego from "./Components/StartCatego/StartCatego";
-import BoxNews from "./Components/BoxNews/BoxNews";
+// import BoxNews from "./Components/BoxNews/BoxNews";
 import LastPosts from "./Components/LastPosts/LastPosts.jsxold";
 import bg from "./assets/images/bg-fixed-1.jpg";
 import Precommandes from "./Components/Precommandes/Precommandes";
@@ -121,7 +121,7 @@ function Home() {
               {/* <StartCatego /> */}
               <div class="separator product-panel"></div>
 
-              <BoxNews />
+              {/* <BoxNews /> */}
               <div class="separator product-panel"></div>
 
               <Sorties />
