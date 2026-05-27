@@ -6,7 +6,7 @@ import { selectUser } from "./../../features/userSlice";
 const API_URL = "http://82.67.215.5:3001/api/topsellers-recent";
 
 function LastPosts() {
-  const user = useSelector(selectUser);
+  // const user = useSelector(selectUser);
   const [igGames, setIgGames] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -18,9 +18,9 @@ function LastPosts() {
         });
         const data = await response.json();
 
-        const topsellers = data
-          .filter((game) => game.topseller === 1 && game.stock === 1)
-          .slice(0, 6);
+        // const topsellers = data
+        //   .filter((game) => game.topseller === 1 && game.stock === 1)
+        //   .slice(0, 6);
 
         setIgGames(data);
       } catch (error) {

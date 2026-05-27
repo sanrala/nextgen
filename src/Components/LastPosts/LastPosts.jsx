@@ -3,25 +3,25 @@ import gameData from "../../games.json";
 import {Link, useParams } from "react-router-dom";
 import {
   collection,
-  addDoc,
+  // addDoc,
   query,
   onSnapshot,
-  serverTimestamp,
+  // serverTimestamp,
   orderBy,
   limit,
 } from "firebase/firestore";
 import { db } from "../../Firebase";
-import { Avatar } from "@mui/material";
+// import { Avatar } from "@mui/material";
 import { useSelector } from "react-redux";
-import { selectUser } from "../../features/userSlice";
+// import { selectUser } from "../../features/userSlice";
 
 function LastPosts() {
-  const user = useSelector(selectUser);
+  // const user = useSelector(selectUser);
   const [comments, setComments] = useState([]);
-  const [item, setItem] = useState(null);
+  // const [item, setItem] = useState(null);
 
-  const { id, title } = useParams();
-  const [articles, setArticles] = useState([]);
+  // const { id, title } = useParams();
+  // const [articles, setArticles] = useState([]);
 
   useEffect(() => {
     const q = query(
@@ -39,13 +39,7 @@ function LastPosts() {
 
     return () => unsubscribe();
   }, []);
-  useEffect(() => {
-    // Recherchez l'élément correspondant dans le fichier JSON
-    const selectedItem = gameData.find((item) => item.id === parseInt(id));
 
-    // Mettre à jour l'état avec les données de l'élément sélectionné
-    setItem(selectedItem);
-  }, [id]);
 
   return (
     <div class="row vertical-gap">
@@ -65,13 +59,13 @@ function LastPosts() {
                   <div className="nk-blog-post">
                     {gameData.map((item) => (
                       <>
-                        {item.id == comment.gameId ? (
+                        {item.id === comment.gameId ? (
                           <div key={item.id}>
                             <Link
                     to={`/PC/${item.id}/${item.news_id}/`}
                     className="nk-post-img"
                   >
-                              <img src={item.imageUrl} alt="Image du jeu" className="img-fluid" />
+                              <img src={item.imageUrl} alt="jeu" className="img-fluid" />
                             </Link>
                           </div>
                         ) : (
@@ -81,11 +75,12 @@ function LastPosts() {
                     ))}
                   </div>
                   <h2 class="nk-post-title h4">
-                    <Link to="/...">{comment.title}</Link>
+                    {/* <Link to="/...">{comment.title}</Link> */}
                   </h2>
                   <div class="nk-post-by">
                 
-                    par <Link to="/...">{comment.userName}</Link>{" "}
+                    par 
+                    {/* <Link to="/...">{comment.userName}</Link>{" "} */}
                     {comment.createdAt
                       ? `le ${new Date(
                           comment.createdAt.seconds * 1000

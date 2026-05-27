@@ -3,7 +3,7 @@ import logo from "./../../assets/images/logoGames/logo.png";
 import { Link } from "react-router-dom";
 import Burger from "./Burger"
 function NavBar() {
-  const [isOpen, setIsOpen] = useState(false);
+  // const [isOpen, setIsOpen] = useState(false);
 
   // const toggleMenu = () => {
   //   setIsOpen(!isOpen);

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import HoverVideoPlayer from "react-hover-video-player";
+// import HoverVideoPlayer from "react-hover-video-player";
 import Col from "react-bootstrap/Col";
-import Nav from "react-bootstrap/Nav";
+// import Nav from "react-bootstrap/Nav";
 import Row from "react-bootstrap/Row";
 import Tab from "react-bootstrap/Tab";
-import SellIcon from "@mui/icons-material/Sell";
+// import SellIcon from "@mui/icons-material/Sell";
 
 import gameData from "../../exclu.json";
 

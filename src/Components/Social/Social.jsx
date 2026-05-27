@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser, logout } from "./../../features/userSlice";
-import { auth, googleProvider } from './../../Firebase';
+// import { auth, googleProvider } from './../../Firebase';
 import { Avatar } from "@mui/material";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -22,31 +22,31 @@ function Social() {
       setAnchorEl(null);
     };
     // fin menu deroulant
-    const handleSignOut = () => {
-      console.log('Déconnexion en cours...');
-      auth.signOut()
-        .then(() => {
-          console.log('Déconnexion réussie');
-          dispatch(logout());
-        })
-        .catch((error) => {
-          console.error('Erreur lors de la déconnexion:', error);
-        });
-    };
+    // const handleSignOut = () => {
+    //   console.log('Déconnexion en cours...');
+    //   auth.signOut()
+    //     .then(() => {
+    //       console.log('Déconnexion réussie');
+    //       dispatch(logout());
+    //     })
+    //     .catch((error) => {
+    //       console.error('Erreur lors de la déconnexion:', error);
+    //     });
+    // };
 
-    const userN = auth.currentUser;
-    if (userN !== null) {
+    // const userN = auth.currentUser;
+    // if (userN !== null) {
       // The user object has basic properties such as display name, email, etc.
-      const displayName = userN.displayName;
-      const email = userN.email;
-      const photoURL = userN.photoURL;
-      const emailVerified = userN.emailVerified;
+      // const displayName = userN.displayName;
+      // const email = userN.email;
+      // const photoURL = userN.photoURL;
+      // const emailVerified = userN.emailVerified;
   
       // The user's ID, unique to the Firebase project. Do NOT use
       // this value to authenticate with your backend server, if
       // you have one. Use User.getToken() instead.
-      const uid = userN.uid;
-    }
+      // const uid = userN.uid;
+    // }
 
 
 // État de recherche
@@ -90,9 +90,9 @@ const handleSearchChange = (event) => {
                     <div class="nk-contacts-right">
                         <ul class="nk-contacts-icons">
                         <li>
-                                <a href="#" onClick={handleSearchToggle}>
+                                <button onClick={handleSearchToggle}>
                                     <span className="fa fa-search"></span>
-                                </a>
+                                </button>
                                 <div className="search-container">
                                     <input 
                                         type="text"
@@ -125,7 +125,7 @@ const handleSearchChange = (event) => {
                             {user ? (
         <>
           <Avatar 
-            src={userN.photoURL} 
+            // src={userN.photoURL} 
             onClick={handleMenuOpen}
             style={{ cursor: 'pointer' }} 
           />
@@ -144,10 +144,10 @@ const handleSearchChange = (event) => {
               </Link>
             </MenuItem>
             <MenuItem onClick={handleMenuClose}>
-              <Link onClick={() => { handleSignOut()}}>
-              <span className="fa fa-sign-out"></span> Déconnexion
+              {/* <Link onClick={() => { handleSignOut()}}> */}
+              {/* <span className="fa fa-sign-out"></span> Déconnexion
               
-              </Link>
+              </Link> */}
             </MenuItem>
           </Menu>
         </>

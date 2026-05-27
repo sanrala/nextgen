@@ -2,24 +2,24 @@ import React, { useState, useEffect } from "react";
 import "./assets/css/style.css";
 import Header from "./Components/Header/Header";
 import ImgSlider from "./Components/ImgSlider/ImgSlider.jsx";
-import StartCatego from "./Components/StartCatego/StartCatego";
+// import StartCatego from "./Components/StartCatego/StartCatego";
 // import BoxNews from "./Components/BoxNews/BoxNews";
 import LastPosts from "./Components/LastPosts/LastPosts.jsx";
 import bg from "./assets/images/bg-fixed-1.jpg";
 import Precommandes from "./Components/Precommandes/Precommandes";
 import Popular from "./Components/Popular/Popular";
-import BestGenre from "./Components/BestGenre/BestGenre.jsxold";
+// import BestGenre from "./Components/BestGenre/BestGenre.jsxold";
 import Footer from "./Components/Footer/Footer";
 import gameData from "./exclu.json";
 import gameDatas from "./exclus.json";
-import game from "./games.json";
-import { Link , useParams} from "react-router-dom";
+// import game from "./games.json";
+// import { Link , useParams} from "react-router-dom";
 import Box from "@mui/material/Box";
 import Sorties from "./Components/Sorties/Sorties";
-import TwitchEmbedVideo from "react-twitch-embed-video";
+// import TwitchEmbedVideo from "react-twitch-embed-video";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Parallax } from "react-parallax";
-import { EmbedEverything } from 'twitch-embed'; // Importer EmbedEverything depuis la bibliothèque twitch-embed
+// import { Parallax } from "react-parallax";
+// import { EmbedEverything } from 'twitch-embed'; // Importer EmbedEverything depuis la bibliothèque twitch-embed
 
 function Home() {
   const [randomImage, setRandomImage] = useState(null);
@@ -67,9 +67,9 @@ function Home() {
     };
   }, []);
 
-  const [liveChannel, setLiveChannel] = useState(false);
-  const [videos, setVideos] = useState([]);
-  console.log(videos);
+  // const [liveChannel, setLiveChannel] = useState(false);
+  // const [videos, setVideos] = useState([]);
+  // console.log(videos);
   useEffect(() => {
     const fetchVideos = async () => {
       // Code pour récupérer les vidéos enregistrées

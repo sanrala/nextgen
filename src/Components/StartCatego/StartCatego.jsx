@@ -15,8 +15,8 @@ function StartCatego() {
                     <img src={iconmouse} alt=""/>
                 </div>
                 <div class="nk-feature-cont">
-                    <h3 class="nk-feature-title"><a href="#">PC</a></h3>
-                    <h4 class="nk-feature-title text-main-1"><a href="#">View Games</a></h4>
+                    <h3 class="nk-feature-title"><button>PC</button></h3>
+                    <h4 class="nk-feature-title text-main-1"><button>View Games</button></h4>
                 </div>
             </div>
         </div>
@@ -26,8 +26,8 @@ function StartCatego() {
                     <img src={icongamepad} alt=""/>
                 </div>
                 <div class="nk-feature-cont">
-                    <h3 class="nk-feature-title"><a href="#">PS5</a></h3>
-                    <h4 class="nk-feature-title text-main-1"><a href="#">View Games</a></h4>
+                    <h3 class="nk-feature-title"><button>PS5</button></h3>
+                    <h4 class="nk-feature-title text-main-1"><button>View Games</button></h4>
                 </div>
             </div>
         </div>
@@ -37,8 +37,8 @@ function StartCatego() {
                     <img src={icongamepad2} alt=""/>
                 </div>
                 <div class="nk-feature-cont">
-                    <h3 class="nk-feature-title"><a href="#">Xbox Series</a></h3>
-                    <h4 class="nk-feature-title text-main-1"><a href="#">View Games</a></h4>
+                    <h3 class="nk-feature-title"><button>Xbox Series</button></h3>
+                    <h4 class="nk-feature-title text-main-1"><button>View Games</button></h4>
                 </div>
             </div>
         </div>
