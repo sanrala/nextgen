@@ -1,10 +1,10 @@
 // import { ListItem } from "@mui/material";
 import React, { useState,  useEffect } from "react";
 // import { useParams } from "react-router-dom";
-import Header from "./../Components/Header/Header";
+import Header from "../Components/Header/Header";
 
-import Footer from "./../Components/Footer/Footer";
-import gameData from "./../games.json";
+import Footer from "../Components/Footer/Footer";
+import gameData from "../games.json";
 
 import { Link } from "react-router-dom";
 // import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
@@ -23,7 +23,25 @@ function BlocArticle(props) {
     return date.toLocaleDateString("fr-FR", options);
   }
 
-  
+  // Tableau pour regrouper toutes les nouvelles
+  var allNews = [];
+
+  // Regrouper toutes les nouvelles dans un seul tableau
+  gameData.forEach(function (obj) {
+    if (obj.news) {
+      allNews = allNews.concat(obj.news);
+    }
+  });
+
+  // Fonction pour trier les nouvelles par date croissante
+  function sortByDateAscending(a, b) {
+    return new Date(b.date) - new Date(a.date);
+  }
+
+  // Trier toutes les nouvelles par date croissante
+  allNews.sort(sortByDateAscending);
+  // Sélectionner les 6 plus récentes nouvelles
+  var sixLatestNews = allNews;
 
   // const [articles, setArticles] = useState([]);
 
@@ -60,34 +78,76 @@ function BlocArticle(props) {
             <span class="fa fa-angle-right"></span>
           </li>
 
+          <li>
+            <Link to="/...">Actualités</Link>
+          </li>
 
           <li>
-            <span>Les jeux les plus populaires</span>
+            <span class="fa fa-angle-right"></span>
+          </li>
+
+          <li>
+            <span>Toutes les actualités du jeu vidéo</span>
           </li>
         </ul>
       </div>
+      <div class="nk-gap-1"></div>
+      {/* // <!-- END: Breadcrumbs --> */}
 
+      <div class="nk-gap-2"></div>
 
       <div class="container">
-    
+        <div className="gallery-container">
+          <div className="ima large-image-container ">
+            <Link
+              to={{
+                pathname: `/news/${sixLatestNews[0].id}/${sixLatestNews[0].news_id}/`,
+              }}
+              className="nk-post-img"
+            >
+              <img
+                src={sixLatestNews[0].imageUrl}
+                alt={sixLatestNews[0].title}
+                className="large-image"
+              />
+              <span className="nk-post-categories">
+                <span className="bg-main-1">NEWS</span>
+              </span>
+            </Link>
+            <div className="image-title-large">{sixLatestNews[0].title}</div>
+          </div>
+          <div className="large-image-container">
+            <Link
+              to={{
+                pathname: `/news/${sixLatestNews[1].id}/${sixLatestNews[1].news_id}/`,
+              }}
+              className="nk-post-img"
+            >
+              <img
+                src={sixLatestNews[1].imageUrl}
+                alt={sixLatestNews[1].title}
+                className="large-image"
+              />
+              <span className="nk-post-categories">
+                <span className="bg-main-1">NEWS</span>
+              </span>
+            </Link>
+            <div className="image-title-large">{sixLatestNews[1].title}</div>
+          </div>
+        </div>
         <div class="row vertical-gap">
           <div class="col-lg-8">
             <div class="separator product-panel"></div>
             <div class="separator product-panel"></div>
-            {popularGames.reverse().map((v, index) => {
+            {sixLatestNews.slice(2).map((v, index) => {
         // Afficher les dix premiers articles normalement
         if (index < 10) {
           return (
             <div className="nk-blog-post nk-blog-post-border-bottom" key={v.id}>
               <div className="row vertical-gap">
                 <div className="col-lg-3 col-md-5">
-                {v.plateformes &&
-                          v.plateformes.map((ab, index) => (
-                            <>
-                              {ab.support === "Steam" && (
-                                
                   <Link
-                    to={`/PC/${v.id}/${v.news_id}/`}
+                    to={`/news/${v.id}/${v.news_id}/`}
                     className="nk-post-img"
                   >
                     <img src={v.imageUrl} alt={v.title} className="img-fluid" />
@@ -95,48 +155,18 @@ function BlocArticle(props) {
                       <span className="bg-main-1">NEWS</span>
                     </span>
                   </Link>
-                  
-                    )}
-                                  {ab.support === "Rockstar" && (
-                  <Link
-                    to={`/PC_Rockstar/${v.id}/${v.news_id}/`}
-                    className="nk-post-img"
-                  >
-                    <img src={v.imageUrl} alt={v.title} />
-                    <span className="nk-post-categories">
-                      <span className="bg-main-1">NEWS</span>
-                    </span>
-                  </Link>
-                    )}
-                                 {ab.support === "Battle.net" && (
-                  <Link
-                    to={`/Battlenet/${v.id}/${v.news_id}/`}
-                    className="nk-post-img"
-                  >
-                    <img src={v.imageUrl} alt={v.title} className="img-fluid" />
-                    <span className="nk-post-categories">
-                      <span className="bg-main-1">NEWS</span>
-                    </span>
-                  </Link>
-                    )}
-                      </>
-                    ))}
                 </div>
-                {v.plateformes &&
-                          v.plateformes.map((ab, index) => (
-                            <>
-                              {ab.support === "Steam" && (
                 <div className="col-lg-9 col-md-7">
                   <h2 className="nk-post-title h4">
-                    <Link to={`/PC/${v.id}/${v.news_id}/`}>{v.title}</Link>
+                    <Link to={`/news/${v.id}/${v.news_id}/`}>{v.title}</Link>
                   </h2>
                   <div className="nk-post-date mt-10 mb-10">
-                    <span className="fa fa-calendar"></span> {formatDate(v.dateSortie)}
+                    <span className="fa fa-calendar"></span> {formatDate(v.date)}
                     <span className="fa fa-comments"></span>
                     <Link to="/...">0 commentaires</Link>
                   </div>
                   <div className="nk-post-text">
-                    <p>{v.resume.slice(0, 200) + "..."}</p>
+                    <p>{v.new.slice(0, 200) + "..."}</p>
                     <Link
                       to={`/PC/${v.id}/${v.news_id}/`}
                       className="nk-btn nk-btn-rounded nk-btn-color-dark-3 nk-btn-hover-color-main-1"
@@ -145,51 +175,6 @@ function BlocArticle(props) {
                     </Link>
                   </div>
                 </div>
-                 )}
-                    {ab.support === "Rockstar" && (
-                <div className="col-lg-9 col-md-7">
-                  <h2 className="nk-post-title h4">
-                    <Link to={`/PC_Rockstar/${v.id}/${v.news_id}/`}>{v.title}</Link>
-                  </h2>
-                  <div className="nk-post-date mt-10 mb-10">
-                    <span className="fa fa-calendar"></span> {formatDate(v.dateSortie)}
-                    <span className="fa fa-comments"></span>
-                    <Link to="/...">0 commentaires</Link>
-                  </div>
-                  <div className="nk-post-text">
-                    <p>{v.resume.slice(0, 200) + "..."}</p>
-                    <Link
-                      to={`/PC/${v.id}/${v.news_id}/`}
-                      className="nk-btn nk-btn-rounded nk-btn-color-dark-3 nk-btn-hover-color-main-1"
-                    >
-                      Détails
-                    </Link>
-                  </div>
-                </div>
-                 )}
-                    {ab.support === "Battle.net" && (
-                <div className="col-lg-9 col-md-7">
-                  <h2 className="nk-post-title h4">
-                    <Link to={`/Battlenet/${v.id}/${v.news_id}/`}>{v.title}</Link>
-                  </h2>
-                  <div className="nk-post-date mt-10 mb-10">
-                    <span className="fa fa-calendar"></span> {formatDate(v.dateSortie)}
-                    <span className="fa fa-comments"></span>
-                    <Link to="/...">0 commentaires</Link>
-                  </div>
-                  <div className="nk-post-text">
-                    <p>{v.resume.slice(0, 200) + "..."}</p>
-                    <Link
-                      to={`/PC/${v.id}/${v.news_id}/`}
-                      className="nk-btn nk-btn-rounded nk-btn-color-dark-3 nk-btn-hover-color-main-1"
-                    >
-                      Détails
-                    </Link>
-                  </div>
-                </div>
-                 )}
-                 </>
-               ))}
               </div>
             </div>
           );
@@ -212,7 +197,7 @@ function BlocArticle(props) {
               </div>
               {isAccordionOpen && (
                 <div>
-                  {popularGames.slice(12).map((v) => (
+                  {sixLatestNews.slice(12).map((v) => (
                     <div
                       className="nk-blog-post nk-blog-post-border-bottom"
                       key={v.id}
@@ -220,7 +205,7 @@ function BlocArticle(props) {
                       <div className="row vertical-gap">
                         <div className="col-lg-3 col-md-5">
                           <Link
-                            to={`/news/${v.id}/${v.news_id}/`}
+                            to={`/PC/${v.id}/${v.news_id}/`}
                             className="nk-post-img"
                           >
                             <img src={v.imageUrl} alt={v.title} className="img-fluid" />
@@ -231,7 +216,7 @@ function BlocArticle(props) {
                         </div>
                         <div className="col-lg-9 col-md-7">
                           <h2 className="nk-post-title h4">
-                            <Link to={`/news/${v.id}/${v.news_id}/`}>
+                            <Link to={`/PC/${v.id}/${v.news_id}/`}>
                               {v.title}
                             </Link>
                           </h2>
@@ -243,7 +228,7 @@ function BlocArticle(props) {
                           <div className="nk-post-text">
                             <p>{v.new.slice(0, 200) + "..."}</p>
                             <Link
-                              to={`/news/${v.id}/${v.news_id}/`}
+                              to={`/PC/${v.id}/${v.news_id}/`}
                               className="nk-btn nk-btn-rounded nk-btn-color-dark-3 nk-btn-hover-color-main-1"
                             >
                               Détails
@@ -315,7 +300,7 @@ function BlocArticle(props) {
                 </div>
               </div>
 
-              {/* <div class="nk-widget nk-widget-highlighted">
+              <div class="nk-widget nk-widget-highlighted">
                 <h4 class="nk-widget-title">
                   <span>
                     <span class="text-main-1">les</span> Populaires
@@ -331,7 +316,7 @@ function BlocArticle(props) {
                           key={item.id}
                           {...item}
                           to={{
-                            pathname: `/PC-Steam/${item.id}/${item.title}`,
+                            pathname: `/PC/${item.id}/${item.title}`,
                             state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
                           }}
                           class="nk-post-image"
@@ -339,6 +324,7 @@ function BlocArticle(props) {
                           <img
                             src={item.imageUrl}
                             alt={item.title}
+                            className="img-fluid"
                           />
                         </Link>
                         <h3 class="nk-post-title">
@@ -346,7 +332,7 @@ function BlocArticle(props) {
                             key={item.id}
                             {...item}
                             to={{
-                              pathname: `/PC-Steam/${item.id}/${item.title}`,
+                              pathname: `/PC/${item.id}/${item.title}`,
                               state: { itemData: item }, // Passer les données de l'élément à la page BlocArticle
                             }}
                           >
@@ -358,7 +344,7 @@ function BlocArticle(props) {
                       </div>
                     ))}
                 </div>
-              </div> */}
+              </div>
             </aside>
           </div>
         </div>

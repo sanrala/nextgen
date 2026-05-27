@@ -32,7 +32,7 @@ import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied
 import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
 import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
 import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
-import Actu from "../Components/Actu/Actu"
+import Actu from "../Components/Actu/Actu.jsxold"
 import VideoHover from "../Components/VideoHover/VideoHover"
 import Similar from "../Components/Similar/Similar"
 import Config from "../Components/Config/Config"
