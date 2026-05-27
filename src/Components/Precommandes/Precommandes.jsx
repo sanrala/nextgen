@@ -9,9 +9,9 @@ function Precommandes() {
     const fetchPrecommandes = async () => {
       try {
         // ✅ ON UTILISE DIRECT TON BACKEND
-        const response = await fetch("http://82.67.215.5:3001/api/precommandes");
+        const response = await fetch("https://api.sm-artweb.fr/api/precommandes");
         const data = await response.json();
-
+// t
         setGames(data.slice(0, 6)); // limite à 6
       } catch (err) {
         console.error("Erreur fetch précommandes :", err);
