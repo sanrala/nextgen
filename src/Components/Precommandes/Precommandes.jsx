@@ -11,8 +11,34 @@ function Precommandes() {
         // ✅ ON UTILISE DIRECT TON BACKEND
         const response = await fetch("https://api.sm-artweb.fr/api/precommandes");
         const data = await response.json();
-// t
-        setGames(data.slice(0, 6)); // limite à 6
+        const uniqueGames = Object.values(
+  data.reduce((acc, game) => {
+    // clé basée sur début du nom (évite éditions)
+    const key = game.name
+      .toLowerCase()
+      .replace(/deluxe|ultimate|gold|premium|standard/gi, "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .split(" ")
+      .slice(0, 3)
+      .join(" ");
+
+    if (!acc[key]) {
+      acc[key] = game;
+    } else {
+      // garde le moins cher
+      const currentPrice = parseFloat(acc[key].price);
+      const newPrice = parseFloat(game.price);
+
+      if (newPrice < currentPrice) {
+        acc[key] = game;
+      }
+    }
+
+    return acc;
+  }, {})
+);
+      setGames(uniqueGames.slice(0, 6));
       } catch (err) {
         console.error("Erreur fetch précommandes :", err);
         setGames([]);
