@@ -43,11 +43,11 @@ function BlocArticle(props) {
   // Sélectionner les 6 plus récentes nouvelles
   var sixLatestNews = allNews;
 
-  const [articles, setArticles] = useState([]);
+  // const [articles, setArticles] = useState([]);
 
   const popularGames = gameData.filter((item) => item.popular === true);
   useEffect(() => {
-    setArticles(gameData.articles); // Charger les données du fichier JSON
+    // setArticles(gameData.articles); // Charger les données du fichier JSON
   }, []);
   const preco = gameData.filter(item => item.precommande === true);
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
