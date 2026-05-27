@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import gameData from "./../../games.json";
+import gameData from "../../games.json";
 import {Link, useParams } from "react-router-dom";
 import {
   collection,
@@ -10,10 +10,10 @@ import {
   orderBy,
   limit,
 } from "firebase/firestore";
-import { db } from "./../../Firebase";
+import { db } from "../../Firebase";
 import { Avatar } from "@mui/material";
 import { useSelector } from "react-redux";
-import { selectUser } from "./../../features/userSlice";
+import { selectUser } from "../../features/userSlice";
 
 function LastPosts() {
   const user = useSelector(selectUser);

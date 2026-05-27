@@ -11,16 +11,16 @@ import CircularProgress from "@mui/material/CircularProgress";
 import HoverVideoPlayer from "react-hover-video-player";
 import PhotoSwipeLightbox from 'photoswipe/lightbox';
 import 'photoswipe/dist/photoswipe.css'
-import ReadMore from "./../Components/ReadMore/ReadMore"
+import ReadMore from "../Components/ReadMore/ReadMore"
 import { Gallery, Item } from 'react-photoswipe-gallery'
 import 'photoswipe/style.css';
-import Footer from "./../Components/Footer/Footer";
-import Header from "./../Components/Header/Header";
+import Footer from "../Components/Footer/Footer";
+import Header from "../Components/Header/Header";
 
 import { Avatar } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser, logout } from "./../features/userSlice";
-import { db, auth, googleProvider } from './../Firebase';
+import { selectUser, logout } from "../features/userSlice";
+import { db, auth, googleProvider } from '../Firebase';
 import { collection, addDoc, query, where, onSnapshot, serverTimestamp  } from "firebase/firestore";
 
 import StarIcon from '@mui/icons-material/Star';
@@ -33,11 +33,11 @@ import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied
 import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAltOutlined';
 import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
-import Config from "./../Components/Config/Config"
+import Config from "../Components/Config/Config"
 import Actu from "../Components/Actu/Actu.jsxold"
-import VideoHover from "./../Components/VideoHover/VideoHover"
-import Similar from "./../Components/Similar/Similar"
-import Screen from "./../Components/Screen/Screen"
+import VideoHover from "../Components/VideoHover/VideoHover"
+import Similar from "../Components/Similar/Similar"
+import Screen from "../Components/Screen/Screen"
 const StyledRating = styled(Rating)(({ theme }) => ({
   '& .MuiRating-iconEmpty .MuiSvgIcon-root': {
     color: theme.palette.action.disabled,

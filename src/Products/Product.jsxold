@@ -11,18 +11,18 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 import PhotoSwipeLightbox from "photoswipe/lightbox";
 import "photoswipe/dist/photoswipe.css";
-import Footer from "./../Components/Footer/Footer";
+import Footer from "../Components/Footer/Footer";
 import { Gallery, Item } from "react-photoswipe-gallery";
 import "photoswipe/style.css";
-import ReadMore from "./../Components/ReadMore/ReadMore";
-import Header from "./../Components/Header/Header";
+import ReadMore from "../Components/ReadMore/ReadMore";
+import Header from "../Components/Header/Header";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import ava from "./../assets/images/avatar-3.jpg";
 import { Avatar } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser, logout } from "./../features/userSlice";
-import { db, auth, googleProvider } from "./../Firebase";
+import { selectUser, logout } from "../features/userSlice";
+import { db, auth, googleProvider } from "../Firebase";
 
 import PropTypes from "prop-types";
 import { styled } from "@mui/material/styles";
@@ -33,10 +33,10 @@ import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
 import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
 import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
 import Actu from "../Components/Actu/Actu.jsxold"
-import VideoHover from "./../Components/VideoHover/VideoHover"
-import Similar from "./../Components/Similar/Similar"
-import Config from "./../Components/Config/Config"
-import Screen from "./../Components/Screen/Screen"
+import VideoHover from "../Components/VideoHover/VideoHover"
+import Similar from "../Components/Similar/Similar"
+import Config from "../Components/Config/Config"
+import Screen from "../Components/Screen/Screen"
 import {
   collection,
   addDoc,
