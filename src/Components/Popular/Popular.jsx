@@ -43,11 +43,16 @@ function Popular() {
         );
 
         // 🔥 2. TRI PAR DATE (plus récent d'abord)
-        const sorted = uniqueGames.sort((a, b) => {
-          const dateA = new Date(a.releaseDate || 0);
-          const dateB = new Date(b.releaseDate || 0);
-          return dateB - dateA;
-        });
+     const sorted = uniqueGames.sort((a, b) => {
+  const getYear = (d) => {
+    if (!d || typeof d !== "string") return 0;
+
+    const match = d.match(/\d{4}/);
+    return match ? parseInt(match[0]) : 0;
+  };
+
+  return getYear(b.releaseDate) - getYear(a.releaseDate);
+});
 
         setIgGames(sorted.slice(0, 6));
       } catch (error) {
