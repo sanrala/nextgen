@@ -11733,3 +11733,17 @@ max-width: 616px;
     width: 100px;
     height: auto;
 }
+.bann-img {
+  position: relative;
+  left: 50%;
+  right: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  margin-right: -50vw;
+ 
+}
+
+.ig-banner-home {
+  width: 100%;
+ height: 80vh;
+}
