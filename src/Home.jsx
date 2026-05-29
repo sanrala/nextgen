@@ -116,7 +116,26 @@ useEffect(() => {
     document.body.removeChild(script);
   };
 }, []);
+const [bgImage, setBgImage] = useState(null);
 
+useEffect(() => {
+  const fetchBg = async () => {
+    try {
+      const res = await fetch("https://api.sm-artweb.fr/api/topsellers-recent");
+      const data = await res.json();
+
+      if (!data || data.length === 0) return;
+
+      const game = data[0]; // 👉 le plus populaire
+
+      setBgImage(game.img); // 👉 cover IG
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  fetchBg();
+}, []);
   return (
     <div>
       {randomImage ? (
@@ -124,7 +143,9 @@ useEffect(() => {
         <div
           className="App"
           style={{
-            backgroundImage: `url(${randomImage.imageUrl})`,
+          backgroundImage: bgImage
+  ? `url(${bgImage})`
+  : `url(${randomImage.imageUrl})`,
             backgroundRepeat: "no-repeat",
             backgroundSize: "contain",
           }}

@@ -7,34 +7,47 @@ import Row from "react-bootstrap/Row";
 import Tab from "react-bootstrap/Tab";
 // import SellIcon from "@mui/icons-material/Sell";
 
-import gameData from "../../exclu.json";
+// import gameData from "../../exclu.json";
 
 function ImgSlider() {
   const [randomImage, setRandomImage] = useState(null);
 
 
 
-  useEffect(() => {
-    // Définir une fonction pour récupérer une image aléatoire
-    const getRandomImage = () => {
-      const randomNumber = Math.floor(Math.random() * gameData.length);
-      const randomImageData = gameData[randomNumber];
-      setRandomImage(randomImageData);
-    };
+useEffect(() => {
+  const fetchGame = async () => {
+    try {
+      const res = await fetch("https://api.sm-artweb.fr/api/topsellers-recent");
+      const data = await res.json();
 
-    // Appeler la fonction pour obtenir une image aléatoire au chargement initial
-    getRandomImage();
+      if (!data || data.length === 0) return;
 
-    // Mettre à jour l'image toutes les 2 heures
-    const interval = setInterval(() => {
-      getRandomImage();
-    }, 2 * 60 * 60 * 1000);
+      const game = data[0];
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
-  console.log(gameData);
+      // 🔥 ON GARDE EXACTEMENT LA STRUCTURE DE TON JSON
+      setRandomImage({
+        id: game.id,
+        title: game.name, // ✔ utilisé dans ton JSX
+        imageUrl: game.img, // ✔ utilisé dans ton background
+        price: `${parseFloat(game.price).toFixed(2)}€`,
+        promo:
+          game.retail && game.price
+            ? `-${Math.round(
+                ((parseFloat(game.retail) - parseFloat(game.price)) /
+                  parseFloat(game.retail)) *
+                  100
+              )}%`
+            : "",
+        buy: game.url,
+      });
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  fetchGame();
+}, []);
 
   return (
     <div>

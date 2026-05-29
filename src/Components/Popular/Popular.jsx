@@ -14,7 +14,11 @@ function Popular() {
           headers: { "User-Agent": "IG-ExportCatalog-Fetcher" },
         });
         const data = await response.json();
-
+if (!data || data.length === 0) {
+  setIgGames([]);
+  setLoading(false); // 🔥 IMPORTANT
+  return;
+}
         // 🔥 1. SUPPRIME DOUBLONS
         const uniqueGames = Object.values(
           data.reduce((acc, game) => {
