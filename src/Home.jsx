@@ -11,7 +11,7 @@ import Popular from "./Components/Popular/Popular";
 // import BestGenre from "./Components/BestGenre/BestGenre.jsxold";
 import Footer from "./Components/Footer/Footer";
 import gameData from "./exclu.json";
-import gameDatas from "./exclus.json";
+// import gameDatas from "./exclus.json";
 // import game from "./games.json";
 // import { Link , useParams} from "react-router-dom";
 import Box from "@mui/material/Box";
@@ -24,7 +24,7 @@ import Banner from "./Components/Banner/Banner.jsx"
 
 function Home() {
   const [randomImage, setRandomImage] = useState(null);
-  const [randomImages, setRandomImages] = useState(null);
+  // const [randomImages, setRandomImages] = useState(null);
 
   useEffect(() => {
     // Définir une fonction pour récupérer une image aléatoire
@@ -47,26 +47,26 @@ function Home() {
     };
   }, []);
 
-  useEffect(() => {
-    // Définir une fonction pour récupérer une image aléatoire
-    const getRandomImages = () => {
-      const randomNumber = Math.floor(Math.random() * gameDatas.length);
-      const randomImageData = gameDatas[randomNumber];
-      setRandomImages(randomImageData);
-    };
+  // useEffect(() => {
+  //   // Définir une fonction pour récupérer une image aléatoire
+  //   const getRandomImages = () => {
+  //     const randomNumber = Math.floor(Math.random() * gameDatas.length);
+  //     const randomImageData = gameDatas[randomNumber];
+  //     setRandomImages(randomImageData);
+  //   };
 
-    // Appeler la fonction pour obtenir une image aléatoire au chargement initial
-    getRandomImages();
+  //   // Appeler la fonction pour obtenir une image aléatoire au chargement initial
+  //   getRandomImages();
 
-    // Mettre à jour l'image toutes les 2 heures
-    const interval = setInterval(() => {
-      getRandomImages();
-    }, 2 * 60 * 60 * 1000);
+  //   // Mettre à jour l'image toutes les 2 heures
+  //   const interval = setInterval(() => {
+  //     getRandomImages();
+  //   }, 2 * 60 * 60 * 1000);
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // }, []);
 
   // const [liveChannel, setLiveChannel] = useState(false);
   // const [videos, setVideos] = useState([]);
