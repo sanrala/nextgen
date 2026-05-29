@@ -63,7 +63,7 @@
 
 .f-brand-logo { display: block; margin-bottom: 18px; }
 .f-brand-logo img {
-  height: 60px; width: auto;
+  height: 100px; width: auto;
   filter: drop-shadow(0 0 14px rgba(204, 24, 24, 0.45));
 }
 
@@ -292,7 +292,7 @@
 
 .f-brand-logo { display: block; margin-bottom: 18px; }
 .f-brand-logo img {
-  height: 60px; width: auto;
+  height:100px; width: auto;
   filter: drop-shadow(0 0 14px rgba(204, 24, 24, 0.45));
 }
 
