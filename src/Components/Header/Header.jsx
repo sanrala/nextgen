@@ -10,8 +10,7 @@ function Header() {
     Additional Classes:
         .nk-header-opaque
 --> */}
-<header class="nk-header" style={{ position: 'relative' }}>
-
+<header className="nk-header" style={{ position: 'relative', background: 'transparent' }}>
     
     
 {/* <!-- START: Top Contacts --> */}

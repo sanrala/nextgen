@@ -11,10 +11,44 @@ import gamesData from "../../games.json";
 
 const Ul = styled.ul`
   list-style: none;
-  display: none;
-  flex-flow: row nowrap;
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+
+  li {
+    padding: 0 4px;
+  }
+
+  a {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.3s ease;
+    display: block;
+  }
+
+  a:hover {
+    color: #ffffff;
+    background: rgba(231, 76, 60, 0.15);
+    border-color: rgba(231, 76, 60, 0.4);
+  }
+
+  /* Cacher bouton fermer et recherche sur desktop */
+  .close-btn,
+  .search-section {
+    display: none;
+  }
 
   @media (max-width: 1279px) {
     flex-flow: column nowrap;
@@ -23,18 +57,15 @@ const Ul = styled.ul`
     transform: ${({ open }) => (open ? "translateX(0)" : "translateX(100%)")};
     top: 0;
     right: 0;
-    height: auto;
-    min-height: unset;
+    height: 100vh;
     width: 260px;
     padding: 1rem 0 1.5rem 0;
     transition: transform 0.3s ease-in-out;
-    display: flex;
     background: linear-gradient(135deg, rgba(10, 10, 15, 0.97) 0%, rgba(20, 20, 30, 0.95) 100%);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
     border-left: 1px solid rgba(231, 76, 60, 0.3);
     box-shadow: -10px 0 60px rgba(0, 0, 0, 0.8);
-    border-radius: 0 0 0 16px;
     z-index: 999;
     overflow-y: auto;
 
@@ -49,16 +80,11 @@ const Ul = styled.ul`
 
     a {
       display: block;
-      font-size: 0.75rem;
-      font-weight: 800;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.85);
-      text-decoration: none;
       padding: 12px 24px;
       border-radius: 12px;
+      background: transparent;
       border: 1px solid transparent;
-      transition: all 0.3s ease;
+      backdrop-filter: none;
       position: relative;
     }
 
@@ -80,37 +106,37 @@ const Ul = styled.ul`
     }
 
     a:hover {
-      color: #ffffff;
+      padding-left: 30px;
       background: rgba(231, 76, 60, 0.08);
       border-color: rgba(231, 76, 60, 0.2);
-      padding-left: 30px;
+    }
+
+    /* Afficher bouton fermer et recherche sur mobile */
+    .close-btn,
+    .search-section {
+      display: flex;
     }
   }
 `;
 
 const CloseButton = styled.button`
-  display: none;
+  align-self: flex-end;
+  margin: 0 16px 8px auto;
+  background: rgba(231, 76, 60, 0.15);
+  border: 1px solid rgba(231, 76, 60, 0.4);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  align-items: center;
+  justify-content: center;
 
-  @media (max-width: 1279px) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    align-self: flex-end;
-    margin: 0 16px 8px auto;
-    background: rgba(231, 76, 60, 0.15);
-    border: 1px solid rgba(231, 76, 60, 0.4);
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    &:hover {
-      background: rgba(231, 76, 60, 0.4);
-      border-color: #e74c3c;
-    }
+  &:hover {
+    background: rgba(231, 76, 60, 0.4);
+    border-color: #e74c3c;
   }
 `;
 
@@ -170,6 +196,7 @@ const SearchResults = styled.div`
     padding: 8px 12px !important;
     border-radius: 0 !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: none !important;
   }
 `;
 
@@ -207,8 +234,8 @@ const RightNav = ({ open, setOpen }) => {
     <div className="burgerNav">
       <Ul open={open}>
 
-        {/* Bouton fermer */}
-        <CloseButton onClick={() => setOpen(false)}>✕</CloseButton>
+        {/* Bouton fermer — mobile uniquement */}
+        <CloseButton className="close-btn" onClick={() => setOpen(false)}>✕</CloseButton>
 
         <li><Link to="/actualites" onClick={() => setOpen(false)}>Actualités</Link></li>
         <li><Link to="/Sorties" onClick={() => setOpen(false)}>Nouveautés</Link></li>
@@ -234,7 +261,8 @@ const RightNav = ({ open, setOpen }) => {
           )}
         </li>
 
-        <li>
+        {/* Recherche — mobile uniquement */}
+        <li className="search-section">
           <SearchButton onClick={handleSearchToggle}>🔍</SearchButton>
           {searchOpen && (
             <>

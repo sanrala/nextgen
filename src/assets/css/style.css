@@ -11792,11 +11792,11 @@ max-width: 616px;
 /* Panneau principal */
 [class*="Ul"] ,
 div.burgerNav > ul {
-  background: linear-gradient(135deg, rgba(10, 10, 15, 0.97) 0%, rgba(20, 20, 30, 0.95) 100%) !important;
-  backdrop-filter: blur(30px) !important;
-  -webkit-backdrop-filter: blur(30px) !important;
+  /* background: linear-gradient(135deg, rgba(10, 10, 15, 0.97) 0%, rgba(20, 20, 30, 0.95) 100%) !important; */
+  /* backdrop-filter: blur(30px) !important; */
+  /* -webkit-backdrop-filter: blur(30px) !important; */
   border-left: 1px solid rgba(231, 76, 60, 0.3) !important;
-  box-shadow: -10px 0 60px rgba(0, 0, 0, 0.8) !important;
+  /* box-shadow: -10px 0 60px rgba(0, 0, 0, 0.8) !important; */
 }
 
 /* Liens du menu */
@@ -11945,4 +11945,33 @@ div.burgerNav > ul {
   flex-direction: column;
   justify-content: center;
   z-index: 999;
+}
+/* Force la transparence sur la navbar */
+.nk-navbar,
+.nk-navbar-top,
+.nk-navbar-sticky,
+.nk-navbar-autohide {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border-bottom: none !important;
+}
+
+/* Au scroll : fond sombre avec flou */
+.nk-navbar-sticky.scrolled {
+  background: rgba(10, 10, 15, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.4) !important;
+}
+
+/* Neutraliser le fond du header et de l'App */
+.nk-header {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.nk-header-opaque {
+  background: transparent !important;
+  background-color: transparent !important;
 }
