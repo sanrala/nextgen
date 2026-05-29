@@ -10,7 +10,14 @@ function Sorties() {
       try {
         const res = await fetch("https://api.sm-artweb.fr/api/latest-releases");
         const data = await res.json();
-        setGames(data);
+
+        const today = new Date();
+
+        const filtered = data
+          .filter(g => g.releaseDate && new Date(g.releaseDate) <= today)
+          .sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate));
+
+        setGames(filtered);
       } catch (err) {
         console.error(err);
       }

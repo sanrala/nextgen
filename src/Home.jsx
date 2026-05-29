@@ -2,243 +2,164 @@ import React, { useState, useEffect } from "react";
 import "./assets/css/style.css";
 import Header from "./Components/Header/Header";
 import ImgSlider from "./Components/ImgSlider/ImgSlider.jsx";
-// import StartCatego from "./Components/StartCatego/StartCatego";
-// import BoxNews from "./Components/BoxNews/BoxNews";
 import LastPosts from "./Components/LastPosts/LastPosts.jsx";
 import bg from "./assets/images/bg-fixed-1.jpg";
 import Precommandes from "./Components/Precommandes/Precommandes";
 import Popular from "./Components/Popular/Popular";
-// import BestGenre from "./Components/BestGenre/BestGenre.jsxold";
 import Footer from "./Components/Footer/Footer";
 import gameData from "./exclu.json";
-// import gameDatas from "./exclus.json";
-// import game from "./games.json";
-// import { Link , useParams} from "react-router-dom";
 import Box from "@mui/material/Box";
 import Sorties from "./Components/Sorties/Sorties";
-// import TwitchEmbedVideo from "react-twitch-embed-video";
 import CircularProgress from "@mui/material/CircularProgress";
-// import { Parallax } from "react-parallax";
-// import { EmbedEverything } from 'twitch-embed'; // Importer EmbedEverything depuis la bibliothèque twitch-embed
-import Banner from "./Components/Banner/Banner.jsx"
+import Banner from "./Components/Banner/Banner.jsx";
 
 function Home() {
   const [randomImage, setRandomImage] = useState(null);
-  // const [randomImages, setRandomImages] = useState(null);
+  const [bgImage, setBgImage] = useState(bg);
+  const [isReady, setIsReady] = useState(false);
+  const [topSeller, setTopSeller] = useState(null);
 
   useEffect(() => {
-    // Définir une fonction pour récupérer une image aléatoire
     const getRandomImage = () => {
       const randomNumber = Math.floor(Math.random() * gameData.length);
-      const randomImageData = gameData[randomNumber];
-      setRandomImage(randomImageData);
+      setRandomImage(gameData[randomNumber]);
     };
 
-    // Appeler la fonction pour obtenir une image aléatoire au chargement initial
     getRandomImage();
 
-    // Mettre à jour l'image toutes les 2 heures
     const interval = setInterval(() => {
       getRandomImage();
     }, 2 * 60 * 60 * 1000);
 
-    return () => {
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, []);
-
-  // useEffect(() => {
-  //   // Définir une fonction pour récupérer une image aléatoire
-  //   const getRandomImages = () => {
-  //     const randomNumber = Math.floor(Math.random() * gameDatas.length);
-  //     const randomImageData = gameDatas[randomNumber];
-  //     setRandomImages(randomImageData);
-  //   };
-
-  //   // Appeler la fonction pour obtenir une image aléatoire au chargement initial
-  //   getRandomImages();
-
-  //   // Mettre à jour l'image toutes les 2 heures
-  //   const interval = setInterval(() => {
-  //     getRandomImages();
-  //   }, 2 * 60 * 60 * 1000);
-
-  //   return () => {
-  //     clearInterval(interval);
-  //   };
-  // }, []);
-
-  // const [liveChannel, setLiveChannel] = useState(false);
-  // const [videos, setVideos] = useState([]);
-  // console.log(videos);
-  useEffect(() => {
-  
-
-    const checkLiveStatus = async () => {
-      // Code pour vérifier si la chaîne est en direct
-    };
-
-    checkLiveStatus(); // Vérifier le statut en direct au chargement initial
-  }, []);
-
 
   useEffect(() => {
     const handleScroll = () => {
-      const parallaxFrame = document.querySelector('.parallax-frame');
+      const parallaxFrame = document.querySelector(".parallax-frame");
       if (parallaxFrame) {
         const scrolled = window.pageYOffset;
         parallaxFrame.style.transform = `translateY(${scrolled * 0.5}px)`;
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-useEffect(() => {
-  // config globale
-  window.igBannerConfig = {
-    lang: "fr",
-    igr: "gamer-707207",
-    banners: ["ig-banner-home"]
-  };
 
-  // charger le script UNE SEULE FOIS
-  const script = document.createElement("script");
-  script.src = "https://www.instant-gaming.com/api/banner/partner/loader.js";
-  script.defer = true;
+  useEffect(() => {
+    window.igBannerConfig = {
+      lang: "fr",
+      igr: "gamer-707207",
+      banners: ["ig-banner-home"],
+    };
 
-  document.body.appendChild(script);
+    const script = document.createElement("script");
+    script.src = "https://www.instant-gaming.com/api/banner/partner/loader.js";
+    script.defer = true;
+    document.body.appendChild(script);
 
-  return () => {
-    document.body.removeChild(script);
-  };
-}, []);
-const [bgImage, setBgImage] = useState(null);
+    return () => document.body.removeChild(script);
+  }, []);
 
-useEffect(() => {
-  const fetchBg = async () => {
-    try {
-      const res = await fetch("https://api.sm-artweb.fr/api/topsellers-recent");
-      const data = await res.json();
+  useEffect(() => {
+    const fetchBg = async () => {
+      try {
+        const res = await fetch("https://api.sm-artweb.fr/api/topsellers-recent");
+        const data = await res.json();
 
-      if (!data || data.length === 0) return;
+        if (!data || data.length === 0) {
+          setIsReady(true);
+          return;
+        }
 
-      const game = data[0]; // 👉 le plus populaire
+        const game = data[0];
+        setTopSeller(game); // 👈 partagé avec ImgSlider
 
-      setBgImage(game.img); // 👉 cover IG
-    } catch (e) {
-      console.error(e);
-    }
-  };
+        const img = new Image();
+        img.src = game.img;
+        img.onload = () => {
+          setBgImage(game.img);
+          setIsReady(true);
+        };
+        img.onerror = () => setIsReady(true);
 
-  fetchBg();
-}, []);
+      } catch (e) {
+        console.error(e);
+        setIsReady(true);
+      }
+    };
+
+    fetchBg();
+  }, []);
+
   return (
     <div>
-      {randomImage ? (
-        
+      {randomImage && isReady ? (
         <div
           className="App"
           style={{
-          backgroundImage: bgImage
-  ? `url(${bgImage})`
-  : `url(${randomImage.imageUrl})`,
+            backgroundImage: `url(${bgImage})`,
             backgroundRepeat: "no-repeat",
             backgroundSize: "contain",
           }}
         >
           <Header />
-          <div class="nk-main">
-            <div class="nk-gap-header"></div>
+          <div className="nk-main">
+            <div className="nk-gap-header"></div>
 
-            <div class="container">
-              <ImgSlider />
-              {/* <StartCatego /> */}
-              <div class="separator product-panel"></div>
-
-              {/* <BoxNews /> */}
-              <div class="separator product-panel"></div>
-
+            <div className="container">
+              <ImgSlider gameData={topSeller} /> {/* 👈 on passe les données */}
+              <div className="separator product-panel"></div>
+              <div className="separator product-panel"></div>
               <Sorties />
-              <div class="separator product-panel"></div>
+              <div className="separator product-panel"></div>
+            </div>
+
+            <section
+              className="banner-img"
+              style={{ backgroundImage: `url(${bg})` }}
+            >
+              <div className="container d-flex justify-content-center">
+                <div className="row">
+                  <div className="col-xs-12">
+                    <h3>
+                      <i className="fa fa-quote-left" aria-hidden="true"></i>{" "}
+                      Découvrez les offres sensationnelles de NextGen Gaming,
+                      directement depuis Instant Gaming ! Des prix incroyables
+                      vous attendent pour une expérience de jeu inégalée.
+                      <i className="fa fa-quote-right" aria-hidden="true"></i>
+                    </h3>
+                  </div>
+                </div>
               </div>
+              <div className="parallax-holder">
+                <div className="parallax-frame" />
+              </div>
+            </section>
 
-           
-<section
-      class="banner-img"
-      style={{ backgroundImage: `url(${bg})` }}
-    >
-      <div class="container d-flex justify-content-center">
-        <div class="row">
-          <div class="col-xs-12">
-            <h3>
-              <i class="fa fa-quote-left" aria-hidden="true"></i>{" "}
-              Découvrez les offres sensationnelles de NextGen Gaming,
-              directement depuis Instant Gaming ! Des prix incroyables
-              vous attendent pour une expérience de jeu inégalée.
-              <i class="fa fa-quote-right" aria-hidden="true"></i>
-            </h3>
-          </div>
-        </div>
-      </div>
-      <div class="parallax-holder">
-        <div class="parallax-frame" />
-      </div>
-    </section>
-    <div class="separator product-panel"></div>
-    <div class="container">
-              {/* <h3 class="nk-decorated-h-2">
-          <span>
-            <span class="text-main-1">TWITCH</span>
-          </span>
-        </h3> */}
+            <div className="separator product-panel"></div>
 
-            {/* <div className="cover-container">
-              <TwitchEmbedVideo
-                channel="tonton"
-                allowfullscreen={true} // Ajouter l'attribut allowfullscreen
-                controls={false} // Désactiver les contrôles de jeu mature
-                withChat="false"
-                apiKey="wrr5jchxkl0nvgbnx14nvt7mt4wbx5"
-                width="100%"
-                height="100%"
-              />
-     <iframe
-                src="https://player.twitch.tv/?channel=Cryptelo_&parent=yourwebsite.com&autoplay=false"
-                height="100%"
-                width="100%"
-                frameBorder="0"
-                scrolling="no"
-                allowFullScreen="true"
-              ></iframe>
-            </div> */}
-            <div class="separator product-panel"></div>
-         
+            <div className="container">
+              <div className="separator product-panel"></div>
               <Popular />
-              <div class="separator product-panel"></div>
+              <div className="separator product-panel"></div>
             </div>
-        
 
- <Banner/>
-            <div class="separator product-panel"></div>
+            <Banner />
+            <div className="separator product-panel"></div>
 
-            <div class="container">
+            <div className="container">
               <Precommandes />
-              <div class="separator product-panel"></div>
+              <div className="separator product-panel"></div>
               <LastPosts />
-              {/* <BestGenre/> */}
-
-              <div class="separator product-panel"></div>
+              <div className="separator product-panel"></div>
             </div>
           </div>
-          <div class="separator product-panel"></div>
+          <div className="separator product-panel"></div>
           <Footer />
         </div>
       ) : (
-        // Code à exécuter lorsque item est null
         <Box sx={{ display: "flex" }}>
           <CircularProgress />
         </Box>
