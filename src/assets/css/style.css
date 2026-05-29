@@ -11764,3 +11764,185 @@ max-width: 616px;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
+/* PAS le logo, uniquement les liens de nav */
+.nk-navbar .nk-nav > li > a,
+.nk-navbar .nk-nav-icons > li > a {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50px;
+  padding: 8px 18px;
+  color: white;
+  transition: background 0.3s ease, border 0.3s ease;
+}
+
+.nk-navbar .nk-nav > li > a:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ===== MENU BURGER OVERLAY ===== */
+.burgerNav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Panneau principal */
+[class*="Ul"] ,
+div.burgerNav > ul {
+  background: linear-gradient(135deg, rgba(10, 10, 15, 0.97) 0%, rgba(20, 20, 30, 0.95) 100%) !important;
+  backdrop-filter: blur(30px) !important;
+  -webkit-backdrop-filter: blur(30px) !important;
+  border-left: 1px solid rgba(231, 76, 60, 0.3) !important;
+  box-shadow: -10px 0 60px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Liens du menu */
+.burgerNav a {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85) !important;
+  text-decoration: none;
+  padding: 14px 24px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ligne décorative gauche au hover */
+.burgerNav a::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0%;
+  background: #e74c3c;
+  border-radius: 0 3px 3px 0;
+  transition: height 0.3s ease;
+}
+
+.burgerNav a:hover::before {
+  height: 60%;
+}
+
+.burgerNav a:hover {
+  color: #ffffff !important;
+  background: rgba(231, 76, 60, 0.08) !important;
+  border-color: rgba(231, 76, 60, 0.2) !important;
+  padding-left: 30px;
+}
+
+/* Items li */
+.burgerNav li {
+  padding: 4px 16px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.burgerNav li:last-child {
+  border-bottom: none;
+}
+
+/* Bouton recherche */
+.burgerNav button {
+  background: rgba(231, 76, 60, 0.15);
+  border: 1px solid rgba(231, 76, 60, 0.4);
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  margin: 8px auto;
+}
+
+.burgerNav button:hover {
+  background: rgba(231, 76, 60, 0.35);
+  border-color: #e74c3c;
+  transform: scale(1.1);
+}
+
+/* Input recherche */
+.burgerNav input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: white;
+  font-size: 0.85rem;
+  margin-top: 8px;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+.burgerNav input:focus {
+  border-color: rgba(231, 76, 60, 0.6);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.burgerNav input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* Résultats de recherche */
+.burgerNav input + div {
+  margin-top: 6px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.burgerNav input + div a {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  padding: 10px 14px;
+  border-radius: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Avatar */
+.burgerNav .MuiAvatar-root {
+  border: 2px solid rgba(231, 76, 60, 0.5);
+  transition: border-color 0.3s ease;
+}
+
+.burgerNav .MuiAvatar-root:hover {
+  border-color: #e74c3c;
+}
+
+/* Cacher la flèche parasite */
+.nk-nav-mobile-btn,
+[data-nav-mobile],
+.nk-nav-next,
+.nk-nav-prev {
+  display: none !important;
+}
+
+/* Forcer recherche DANS le panneau */
+.burgerNav {
+  position: static !important;
+}
+
+.burgerNav > div {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 280px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 999;
+}
