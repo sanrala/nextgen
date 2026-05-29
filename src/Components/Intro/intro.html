@@ -16,13 +16,11 @@ body {
   overflow: hidden;
 }
 
-/* Scanlines */
 body::after {
   content:''; position:fixed; inset:0; pointer-events:none; z-index:200;
   background: repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(0,0,0,.06) 2px, rgba(0,0,0,.06) 3px);
 }
 
-/* ══ INTRO WRAPPER ══ */
 .intro {
   position: fixed;
   inset: 0;
@@ -35,9 +33,11 @@ body::after {
 }
 @keyframes introOut { to { opacity:0; visibility:hidden; } }
 
-/* ══ STAGE : reproduit exactement les proportions du logo final ══ 
-   Logo réel = 380×205px
-   On travaille en 760×410 (x2) pour avoir de la précision
+/*
+  STAGE = exactement les proportions du logo réel (380x205)
+  On scale x2 = 760x410 pour travailler confortablement
+  Tous les éléments sont positionnés pour qu'à la fin
+  ils correspondent exactement au logo.
 */
 .stage {
   position: relative;
@@ -45,121 +45,128 @@ body::after {
   height: 410px;
 }
 
-/* ─── ÉLÉMENT 1 : Cercle rouge ───
-   Dans le logo : le cercle occupe la partie gauche,
-   centré verticalement, ~0 à 37% de la largeur
-   Position finale : left=0, top=50%, transform translateY(-50%)
-   Taille finale : ~280px
-*/
+/* ═══════════════════════════════════════
+   CERCLE ROUGE
+   Dans le logo : centre à ~x=130, y=205 (milieu vertical)
+   Taille : ~260px de diamètre
+═══════════════════════════════════════ */
 .el-cercle {
   position: absolute;
-  width: 280px;
-  height: 280px;
+  width: 260px;
+  height: 260px;
+  /* Position finale : centré verticalement à gauche */
   left: 0px;
-  top: 50%;
-  transform: translateY(-50%) scale(3);
+  top: 75px; /* (410-260)/2 */
   object-fit: contain;
   opacity: 0;
   z-index: 5;
-  filter: drop-shadow(0 0 25px rgba(196,20,20,.85));
+  transform-origin: center center;
   animation:
-    cercleAppear 0.7s cubic-bezier(0.15,0.85,0.3,1) forwards 0.1s,
-    cercleLand   0.65s cubic-bezier(0.4,0,0.2,1)    forwards 0.9s;
+    cercleIn   0.8s cubic-bezier(0.15,0.85,0.3,1) forwards 0.1s,
+    cercleFix  0.5s cubic-bezier(0.4,0,0.2,1)     forwards 1.0s;
 }
-@keyframes cercleAppear {
-  0%   { opacity:0; transform:translateY(-50%) scale(3); }
-  100% { opacity:1; transform:translateY(-50%) scale(1.4); }
+@keyframes cercleIn {
+  0%   { opacity:0; transform: scale(2.8); filter:drop-shadow(0 0 40px rgba(196,20,20,1)); }
+  100% { opacity:1; transform: scale(1);   filter:drop-shadow(0 0 15px rgba(196,20,20,.6)); }
 }
-@keyframes cercleLand {
-  0%   { transform:translateY(-50%) scale(1.4); filter:drop-shadow(0 0 25px rgba(196,20,20,.85)); }
-  100% { transform:translateY(-50%) scale(1);   filter:drop-shadow(0 0 10px rgba(196,20,20,.4)); }
+@keyframes cercleFix {
+  0%   { filter:drop-shadow(0 0 15px rgba(196,20,20,.6)); }
+  100% { filter:drop-shadow(0 0 6px rgba(196,20,20,.3)); }
 }
 
-/* ─── ÉLÉMENT 2 : NEXTGEN ───
-   Position finale : centré verticalement, commence à ~33% de la largeur
-   Le N déborde légèrement sur le cercle
-*/
+/* ═══════════════════════════════════════
+   NEXTGEN
+   Dans le logo : commence à x≈205 (après le cercle),
+   baseline verticale ≈ milieu, légèrement au-dessus centre
+   Le N déborde sur le cercle (left≈180)
+   Hauteur du texte ≈ 120px
+═══════════════════════════════════════ */
 .el-nextgen {
   position: absolute;
-  width: 500px;
-  left: 200px;
-  top: 50%;
-  transform: translateY(-60%) translateX(-60px);
+  width: 530px;
+  height: 130px;
+  left: 175px;   /* N déborde légèrement sur le cercle */
+  top: 120px;    /* centré verticalement */
   object-fit: contain;
+  object-position: left center;
   opacity: 0;
   z-index: 6;
-  filter: drop-shadow(0 0 12px rgba(255,255,255,.2));
-  animation: nextgenIn 0.7s cubic-bezier(0.15,0.85,0.3,1) forwards 1.7s;
+  animation: nextgenIn 0.65s cubic-bezier(0.15,0.85,0.3,1) forwards 1.6s;
 }
 @keyframes nextgenIn {
-  0%   { opacity:0; transform:translateY(-60%) translateX(-60px); filter:drop-shadow(0 0 30px rgba(255,255,255,.5)); }
+  0%   { opacity:0; transform:translateX(-50px); filter:drop-shadow(0 0 25px rgba(255,255,255,.5)); }
   60%  { opacity:1; }
-  100% { opacity:1; transform:translateY(-60%) translateX(0);     filter:drop-shadow(0 0 12px rgba(255,255,255,.2)); }
+  100% { opacity:1; transform:translateX(0);     filter:drop-shadow(0 0 8px rgba(255,255,255,.15)); }
 }
 
-/* ─── ÉLÉMENT 3 : Flèche ───
-   Arrive depuis la droite, se place sous NEXTGEN
-   Position finale : droite du logo, en bas
-*/
+/* ═══════════════════════════════════════
+   FLÈCHE
+   Dans le logo : sous NEXTGEN, côté droit
+   Part de ~x=350 jusqu'à x=760
+   Verticalement : ≈ y=270 (sous le texte)
+═══════════════════════════════════════ */
 .el-fleche {
   position: absolute;
   width: 420px;
-  right: 0px;
-  top: 50%;
-  transform: translateY(10%) translateX(80px);
+  height: 100px;
+  left: 340px;
+  top: 248px;
   object-fit: contain;
+  object-position: left center;
   opacity: 0;
   z-index: 7;
-  filter: drop-shadow(0 0 6px rgba(196,20,20,.5));
-  animation: flecheIn 0.7s cubic-bezier(0.15,0.85,0.3,1) forwards 2.5s;
+  animation: flecheIn 0.7s cubic-bezier(0.15,0.85,0.3,1) forwards 2.4s;
 }
 @keyframes flecheIn {
-  0%   { opacity:0; transform:translateY(10%) translateX(80px); }
+  0%   { opacity:0; transform:translateX(60px); filter:drop-shadow(0 0 15px rgba(196,20,20,.8)); }
   50%  { opacity:1; }
-  100% { opacity:1; transform:translateY(10%) translateX(0); }
+  100% { opacity:1; transform:translateX(0);    filter:drop-shadow(0 0 4px rgba(196,20,20,.3)); }
 }
 
-/* ─── ÉLÉMENT 4 : GAMING ───
-   Monte depuis le bas, sous la flèche
-*/
+/* ═══════════════════════════════════════
+   GAMING
+   Dans le logo : en dessous de la flèche, aligné à droite
+   ≈ x=430, y=315
+═══════════════════════════════════════ */
 .el-gaming {
   position: absolute;
-  width: 280px;
-  right: 10px;
-  top: 50%;
-  transform: translateY(68%) translateX(0);
+  width: 330px;
+  height: 80px;
+  left: 430px;
+  top: 310px;
   object-fit: contain;
+  object-position: left center;
   opacity: 0;
   z-index: 8;
-  filter: drop-shadow(0 0 8px rgba(196,20,20,.5));
-  animation: gamingIn 0.6s cubic-bezier(0.15,0.85,0.3,1) forwards 3.3s;
+  animation: gamingIn 0.55s cubic-bezier(0.15,0.85,0.3,1) forwards 3.2s;
 }
 @keyframes gamingIn {
-  0%   { opacity:0; transform:translateY(85%) translateX(0); }
-  100% { opacity:1; transform:translateY(68%) translateX(0); }
+  0%   { opacity:0; transform:translateY(15px); filter:drop-shadow(0 0 15px rgba(196,20,20,.8)); }
+  100% { opacity:1; transform:translateY(0);    filter:drop-shadow(0 0 6px rgba(196,20,20,.4)); }
 }
 
-/* ─── LOGO FINAL : fade in par-dessus pour le résultat pixel-perfect ─── */
+/* ═══════════════════════════════════════
+   LOGO FINAL — pixel-perfect par-dessus tout
+═══════════════════════════════════════ */
 .el-logo-final {
   position: absolute;
-  width: 720px;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  width: 760px;
+  height: 410px;
+  left: 0; top: 0;
   object-fit: contain;
   opacity: 0;
   z-index: 20;
   animation:
-    logoIn   0.6s ease forwards 4.2s,
-    logoGlow 2s ease-in-out infinite alternate 4.8s;
+    logoIn   0.5s ease forwards 4.2s,
+    logoGlow 2s ease-in-out infinite alternate 4.7s;
 }
 @keyframes logoIn {
-  0%   { opacity:0; transform:translate(-50%,-50%) scale(.97); }
-  100% { opacity:1; transform:translate(-50%,-50%) scale(1); }
+  0%   { opacity:0; }
+  100% { opacity:1; }
 }
 @keyframes logoGlow {
-  0%   { filter:drop-shadow(0 0 6px rgba(196,20,20,.3)); }
-  100% { filter:drop-shadow(0 0 20px rgba(196,20,20,.55)); }
+  0%   { filter:drop-shadow(0 0 5px rgba(196,20,20,.25)); }
+  100% { filter:drop-shadow(0 0 18px rgba(196,20,20,.5)); }
 }
 
 /* ══ PAGE D'ACCUEIL ══ */
@@ -171,34 +178,27 @@ body::after {
 @keyframes pageIn { to { opacity:1; } }
 #homepage img { width:400px; }
 #homepage p {
-  color:#3a3a3a;
+  color:#333;
   font-family:'Courier New',monospace;
   font-size:11px;
   letter-spacing:5px;
   text-transform:uppercase;
-  margin-top:28px;
+  margin-top:24px;
 }
 </style>
 </head>
 <body>
 
-<!-- ══ INTRO ══ -->
 <div class="intro">
   <div class="stage">
-    <!-- 1. Cercle rouge -->
-    <img class="el-cercle"  src="cercle_t.png"  alt="">
-    <!-- 2. NEXTGEN -->
-    <img class="el-nextgen" src="nextgen_t.png" alt="">
-    <!-- 3. Flèche depuis la droite -->
-    <img class="el-fleche"  src="fleche_t.png"  alt="">
-    <!-- 4. GAMING -->
-    <img class="el-gaming"  src="gaming_t.png"  alt="">
-    <!-- 5. Logo final pixel-perfect -->
-    <img class="el-logo-final" src="logo_t.png" alt="NextGen Gaming">
+    <img class="el-cercle"     src="cercle_t.png"  alt="">
+    <img class="el-nextgen"    src="nextgen_t.png" alt="">
+    <img class="el-fleche"     src="fleche_t.png"  alt="">
+    <img class="el-gaming"     src="gaming_t.png"  alt="">
+    <img class="el-logo-final" src="logo_t.png"    alt="NextGen Gaming">
   </div>
 </div>
 
-<!-- ══ PAGE D'ACCUEIL ══ -->
 <div id="homepage">
   <img src="logo_t.png" alt="NextGen Gaming">
   <p>Bienvenue</p>

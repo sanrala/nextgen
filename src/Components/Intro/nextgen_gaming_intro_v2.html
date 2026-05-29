@@ -1,0 +1,132 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0d0d0d;display:flex;align-items:center;justify-content:center;min-height:100vh;overflow:hidden;}
+#stage{position:relative;width:440px;height:200px;}
+
+/* ── SVG logo final ── */
+#logo-svg{position:absolute;inset:0;width:100%;height:100%;}
+
+/* Cercles concentriques */
+.r-track{fill:none;stroke:#1e1e1e;stroke-width:3;}
+.r-arc{fill:none;stroke-linecap:round;}
+
+/* Animation séquentielle des arcs rouges */
+.arc1{stroke:#cc1a1a;stroke-width:5;stroke-dasharray:310;stroke-dashoffset:310;
+  animation:drawArc 1s cubic-bezier(.4,0,.2,1) forwards .1s;
+  filter:drop-shadow(0 0 6px #cc1a1a99);}
+.arc2{stroke:#a81515;stroke-width:3;stroke-dasharray:240;stroke-dashoffset:240;
+  animation:drawArc 0.9s cubic-bezier(.4,0,.2,1) forwards .4s;}
+.arc3{stroke:#8a0f0f;stroke-width:2;stroke-dasharray:180;stroke-dashoffset:180;
+  animation:drawArc 0.8s cubic-bezier(.4,0,.2,1) forwards .65s;}
+.arc4{stroke:#6b0a0a;stroke-width:1.5;stroke-dasharray:130;stroke-dashoffset:130;
+  animation:drawArc 0.7s cubic-bezier(.4,0,.2,1) forwards .85s;}
+
+/* Points décoratifs sur les arcs */
+.dot-glow{fill:#cc1a1a;opacity:0;animation:popDot .3s ease forwards 1.1s;
+  filter:drop-shadow(0 0 5px #cc1a1a);}
+
+@keyframes drawArc{to{stroke-dashoffset:0;}}
+@keyframes popDot{0%{opacity:0;r:0;}70%{r:5;}100%{opacity:1;r:3.5;}}
+
+/* ── Lettres SVG ── */
+.ltr{font-family:'Orbitron',sans-serif;font-weight:900;font-size:68px;fill:#fff;
+  opacity:0;filter:drop-shadow(0 0 12px rgba(255,255,255,.25));}
+.ltr-n1{animation:slideIn .5s cubic-bezier(.2,.8,.3,1) forwards 1.05s;}
+.ltr-e1{animation:slideIn .5s cubic-bezier(.2,.8,.3,1) forwards 1.18s;}
+.ltr-x{animation:slideIn .5s cubic-bezier(.2,.8,.3,1) forwards 1.31s;}
+.ltr-t{animation:slideIn .5s cubic-bezier(.2,.8,.3,1) forwards 1.44s;}
+.ltr-g{animation:slideIn .5s cubic-bezier(.2,.8,.3,1) forwards 1.57s;}
+.ltr-e2{animation:slideIn .5s cubic-bezier(.2,.8,.3,1) forwards 1.70s;}
+.ltr-n2{animation:slideIn .5s cubic-bezier(.2,.8,.3,1) forwards 1.83s;}
+
+@keyframes slideIn{
+  0%{opacity:0;transform:translateX(-35px) scaleX(.5);}
+  60%{opacity:1;}
+  100%{opacity:1;transform:translateX(0) scaleX(1);}
+}
+
+/* ── Flèche (ligne coudée + points) ── */
+.arrow-line{stroke:#cc1a1a;stroke-width:1.5;fill:none;stroke-linecap:round;
+  stroke-dasharray:350;stroke-dashoffset:350;
+  animation:drawLine .8s ease forwards 2.1s;
+  filter:drop-shadow(0 0 3px #cc1a1a88);}
+.arrow-dot{fill:none;stroke:#cc1a1a;stroke-width:2;opacity:0;animation:popDot .3s ease forwards 2.05s;}
+.arrow-dot-r{fill:#cc1a1a;opacity:0;animation:popDot .3s ease forwards 2.9s;
+  filter:drop-shadow(0 0 4px #cc1a1a);}
+
+@keyframes drawLine{to{stroke-dashoffset:0;}}
+
+/* ── GAMING text ── */
+.gaming-lbl{font-family:'Orbitron',sans-serif;font-weight:700;font-size:14px;
+  letter-spacing:5px;fill:#cc1a1a;opacity:0;
+  filter:drop-shadow(0 0 8px rgba(204,26,26,.5));
+  animation:fadeUp .6s ease forwards 3s;}
+
+@keyframes fadeUp{
+  0%{opacity:0;transform:translateY(10px);}
+  100%{opacity:1;transform:translateY(0);}
+}
+
+/* scanlines subtiles */
+#scan{position:fixed;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(to bottom,transparent 0,transparent 3px,rgba(0,0,0,.06) 3px,rgba(0,0,0,.06) 4px);
+  opacity:.4;z-index:5;}
+</style>
+
+<div id="scan"></div>
+<div id="stage">
+<svg id="logo-svg" viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- ══ CERCLE ROUGE (centre : 75,95) ══ -->
+  <!-- Pistes de fond -->
+  <circle class="r-track" cx="75" cy="95" r="72"/>
+  <circle class="r-track" cx="75" cy="95" r="58"/>
+  <circle class="r-track" cx="75" cy="95" r="44"/>
+  <circle class="r-track" cx="75" cy="95" r="30"/>
+
+  <!-- Arcs rouges animés — rotate pour varier la position de départ -->
+  <circle class="r-arc arc1" cx="75" cy="95" r="72"
+    transform="rotate(-100 75 95)"/>
+  <circle class="r-arc arc2" cx="75" cy="95" r="58"
+    transform="rotate(40 75 95)"/>
+  <circle class="r-arc arc3" cx="75" cy="95" r="44"
+    transform="rotate(-60 75 95)"/>
+  <circle class="r-arc arc4" cx="75" cy="95" r="30"
+    transform="rotate(120 75 95)"/>
+
+  <!-- Points lumineux -->
+  <circle class="dot-glow" cx="75" cy="23" r="3.5"/>
+  <circle class="dot-glow" cx="147" cy="95" r="3" style="animation-delay:1.2s"/>
+
+  <!-- ══ LETTRES NEXTGEN (x de départ: 108, baseline: 131) ══ -->
+  <!-- N -->
+  <text class="ltr ltr-n1" x="107" y="131">N</text>
+  <!-- Ξ (E stylisé du logo) -->
+  <text class="ltr ltr-e1" x="156" y="131">Ξ</text>
+  <!-- X -->
+  <text class="ltr ltr-x"  x="200" y="131">X</text>
+  <!-- T -->
+  <text class="ltr ltr-t"  x="249" y="131">T</text>
+  <!-- G -->
+  <text class="ltr ltr-g"  x="293" y="131">G</text>
+  <!-- E -->
+  <text class="ltr ltr-e2" x="343" y="131">E</text>
+  <!-- N -->
+  <text class="ltr ltr-n2" x="390" y="131">N</text>
+
+  <!-- ══ FLÈCHE coudée (style logo) ══ -->
+  <!-- Point cercle gauche -->
+  <circle class="arrow-dot" cx="238" cy="152" r="3"/>
+  <!-- Ligne : part du bas-gauche, remonte à droite -->
+  <polyline class="arrow-line"
+    points="238,152 238,143 418,143 418,134"/>
+  <!-- Point plein droite -->
+  <circle class="arrow-dot-r" cx="418" cy="134" r="3"/>
+
+  <!-- ══ GAMING ══ -->
+  <text class="gaming-lbl" x="258" y="168">GAMING</text>
+
+</svg>
+</div>
