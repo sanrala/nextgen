@@ -11747,3 +11747,20 @@ max-width: 616px;
   width: 100%;
  height: 80vh;
 }
+
+
+/* Navbar transparente par défaut, fond foncé au scroll */
+.nk-navbar-sticky {
+  position: fixed !important;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  background: transparent !important;
+  transition: background 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+.nk-navbar-sticky.scrolled {
+  background: rgba(10, 10, 20, 0.85) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}

@@ -1,5 +1,5 @@
 import React from 'react'
-import Social from '../Social/Social'
+// import Social from '../Social/Social'
 import Navbar from './../Navbar/Navbar'
 
 function Header() {
@@ -10,12 +10,12 @@ function Header() {
     Additional Classes:
         .nk-header-opaque
 --> */}
-<header class="nk-header nk-header-opaque" >
+<header class="nk-header" style={{ position: 'relative' }}>
 
     
     
 {/* <!-- START: Top Contacts --> */}
-<Social/>
+{/* <Social/> */}
 {/* <!-- END: Top Contacts -->
 
     

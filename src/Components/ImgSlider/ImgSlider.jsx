@@ -1,111 +1,97 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-// import HoverVideoPlayer from "react-hover-video-player";
-import Col from "react-bootstrap/Col";
-// import Nav from "react-bootstrap/Nav";
-import Row from "react-bootstrap/Row";
-import Tab from "react-bootstrap/Tab";
-// import SellIcon from "@mui/icons-material/Sell";
 
-// import gameData from "../../exclu.json";
-
-function ImgSlider() {
+function ImgSlider({ gameData }) {
   const [randomImage, setRandomImage] = useState(null);
 
+  useEffect(() => {
+    if (!gameData) return;
 
+    const steamHero = `https://cdn.akamai.steamstatic.com/steam/apps/${gameData.steam_id}/library_hero.jpg`;
 
-useEffect(() => {
-  const fetchGame = async () => {
-    try {
-      const res = await fetch("https://api.sm-artweb.fr/api/topsellers-recent");
-      const data = await res.json();
+    setRandomImage({
+      id: gameData.id,
+      title: gameData.name,
+      imageUrl: steamHero,
+      price: `${parseFloat(gameData.price).toFixed(2)}€`,
+      promo:
+        gameData.retail && gameData.price
+          ? `-${Math.round(
+              ((parseFloat(gameData.retail) - parseFloat(gameData.price)) /
+                parseFloat(gameData.retail)) *
+                100
+            )}%`
+          : "",
+      buy: gameData.url,
+    });
+  }, [gameData]);
 
-      if (!data || data.length === 0) return;
-
-      const game = data[0];
-
-      // 🔥 ON GARDE EXACTEMENT LA STRUCTURE DE TON JSON
-      setRandomImage({
-        id: game.id,
-        title: game.name, // ✔ utilisé dans ton JSX
-        imageUrl: game.img, // ✔ utilisé dans ton background
-        price: `${parseFloat(game.price).toFixed(2)}€`,
-        promo:
-          game.retail && game.price
-            ? `-${Math.round(
-                ((parseFloat(game.retail) - parseFloat(game.price)) /
-                  parseFloat(game.retail)) *
-                  100
-              )}%`
-            : "",
-        buy: game.url,
-      });
-
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  fetchGame();
-}, []);
+  if (!randomImage) return null;
 
   return (
-    <div>
-      {/* <div class="nk-image-slider" data-autoplay="8000"> */}
+    <div
+      style={{
+        backgroundImage: `url(${randomImage.imageUrl})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center top",
+        height: "600px",
+        position: "relative",
+        display: "flex",
+        alignItems: "flex-end",
+        overflow: "hidden",
+        width: "100%",
+      }}
+    >
+      {/* Dégradé gauche */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background:
+            "linear-gradient(to right, rgba(0,0,0,0.9) 20%, transparent 60%)",
+        }}
+      />
 
-      <Tab.Container id="left-tabs-example" defaultActiveKey="first">
-        <Row
-          className="lol d-flex flex-wrap "
-          // style={{ margin: "100px 0 100px 0" }}
+      {/* Dégradé bas */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background:
+            "linear-gradient(to top, rgba(23,30,34,1) 0%, transparent 40%)",
+        }}
+      />
+
+      {/* Contenu */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 1,
+          padding: "40px 60px",
+          maxWidth: "500px",
+        }}
+      >
+        <Link
+          to={`/jeux/${randomImage.id}`}
+          style={{ textDecoration: "none" }}
         >
-          <Col sm={9}>
-            <Tab.Content>
-              <Tab.Pane eventKey="first" className="bg">
-                {randomImage && (
-                  <div key={randomImage.id}>
-                  
-                    {/* <img
-                      class="nk-page-background-top"
-                      src={randomImage.imageUrl}
-                      alt={`Image ${randomImage.id}`}
-                    /> */}
-                 
-                    <div class="nk-image-slider-content">
-                      <Link
-                        key={randomImage.id}
-                        {...randomImage}
-                        to={{
-                          pathname: `/jeux/${randomImage.id}`,
-                          state: { itemData: randomImage }, // Passer les données de l'élément à la page BlocArticle
-                        }}
-                      >
-                        <h1 class="title__price">{randomImage.title}</h1>
-                      </Link>
-                      <p class="text-white">
-                        <span className="priceSlidePromo">
-                          {randomImage.promo}
-                        </span>{" "}
-                        <span class="price">{randomImage.price}</span>
-                      </p>
-                      <a
-                        href={randomImage.buy}
-                        class="nk-btn nk-btn-rounded nk-btn-color-white nk-btn-hover-color-main-1"
-                      >
-                        Instant Gaming
-                      </a>
-                    </div>
-                
-                  </div>
-                )}
+          <h1 className="title__price">{randomImage.title}</h1>
+        </Link>
 
-                {/* </div> */}
-              </Tab.Pane>
-            </Tab.Content>
-          </Col>
-        </Row>
-      </Tab.Container>
+        <p className="text-white" style={{ margin: "10px 0 20px" }}>
+          <span className="priceSlidePromo">{randomImage.promo}</span>{" "}
+          <span className="price">{randomImage.price}</span>
+        </p>
 
-      {/* <!-- END: Image Slider --> */}
+        
+      <a href={randomImage.buy}
+          className="nk-btn nk-btn-rounded nk-btn-color-white nk-btn-hover-color-main-1"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Instant Gaming
+        </a>
+      </div>
     </div>
   );
 }

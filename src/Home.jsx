@@ -15,7 +15,7 @@ import Banner from "./Components/Banner/Banner.jsx";
 
 function Home() {
   const [randomImage, setRandomImage] = useState(null);
-  const [bgImage, setBgImage] = useState(bg);
+  // const [bgImage, setBgImage] = useState(bg);
   const [isReady, setIsReady] = useState(false);
   const [topSeller, setTopSeller] = useState(null);
 
@@ -74,15 +74,20 @@ function Home() {
         }
 
         const game = data[0];
-        setTopSeller(game); // 👈 partagé avec ImgSlider
+        setTopSeller(game);
+
+        const steamBg = `https://cdn.akamai.steamstatic.com/steam/apps/${game.steam_id}/library_hero.jpg`;
 
         const img = new Image();
-        img.src = game.img;
+        img.src = steamBg;
         img.onload = () => {
-          setBgImage(game.img);
+          // setBgImage(steamBg);
           setIsReady(true);
         };
-        img.onerror = () => setIsReady(true);
+        img.onerror = () => {
+          // setBgImage(game.img);
+          setIsReady(true);
+        };
 
       } catch (e) {
         console.error(e);
@@ -96,21 +101,15 @@ function Home() {
   return (
     <div>
       {randomImage && isReady ? (
-        <div
-          className="App"
-          style={{
-            backgroundImage: `url(${bgImage})`,
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "contain",
-          }}
-        >
+        <div className="App">
           <Header />
           <div className="nk-main">
-            <div className="nk-gap-header"></div>
+            {/* <div className="nk-gap-header"></div> */}
+
+            {/* 👇 ImgSlider HORS du container = pleine largeur */}
+            <ImgSlider gameData={topSeller} />
 
             <div className="container">
-              <ImgSlider gameData={topSeller} /> {/* 👈 on passe les données */}
-              <div className="separator product-panel"></div>
               <div className="separator product-panel"></div>
               <Sorties />
               <div className="separator product-panel"></div>
