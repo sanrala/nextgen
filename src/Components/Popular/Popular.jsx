@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const API_URL = "https://api.sm-artweb.fr/api/topsellers-recent";
 
-function LastPosts() {
+function Popular() {
   const [igGames, setIgGames] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -134,4 +134,4 @@ function LastPosts() {
   );
 }
 
-export default LastPosts;
+export default Popular;
