@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import logo from "./../../assets/images/logoGames/logo.png";
 import { Link } from "react-router-dom";
 import Burger from "./Burger";
