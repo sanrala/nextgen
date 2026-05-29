@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NextGen Gaming – Intro</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0d0d0d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Scanlines ambiance */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0, transparent 2px,
+      rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 3px
+    );
+    z-index: 10;
+  }
+
+  /* ── Conteneur principal ── */
+  .logo-stage {
+    position: relative;
+    width: 500px;
+    height: 210px;
+  }
+
+  /* ── Image logo PNG complète (référence invisible) ── */
+  /* Chaque zone est une copie du logo avec un clip-path différent */
+
+  .logo-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+  }
+
+  /* ══════════════════════════════════════════
+     ZONE 1 — Cercle rouge (gauche du logo)
+     Clip : carré couvrant le cercle ~0-38% en largeur
+  ══════════════════════════════════════════ */
+  .layer-circle {
+    clip-path: inset(0 62% 0 0 round 50%);
+    opacity: 0;
+    animation: revealCircle 1.1s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.1s;
+    filter: drop-shadow(0 0 18px rgba(196, 24, 24, 0.7));
+  }
+
+  @keyframes revealCircle {
+    0%   { opacity: 0; clip-path: inset(25% 62% 25% 25% round 50%); filter: drop-shadow(0 0 30px rgba(196,24,24,1)); }
+    40%  { opacity: 1; }
+    100% { opacity: 1; clip-path: inset(0% 62% 0% 0% round 2px); filter: drop-shadow(0 0 10px rgba(196,24,24,0.4)); }
+  }
+
+  /* ══════════════════════════════════════════
+     ZONE 2 — Lettre N (dans le cercle + début texte)
+     Clip : ~17% à 27% en largeur
+  ══════════════════════════════════════════ */
+  .layer-N {
+    clip-path: inset(0% 73% 20% 17%);
+    opacity: 0;
+    animation: revealLetter 0.45s cubic-bezier(0.2, 0.8, 0.3, 1) forwards 0.95s;
+  }
+
+  /* ══════════════════════════════════════════
+     LETTRES Ξ X T G E N — chacune décalée
+  ══════════════════════════════════════════ */
+  .layer-E1 {
+    clip-path: inset(0% 64% 20% 27%);
+    opacity: 0;
+    animation: revealLetter 0.45s cubic-bezier(0.2, 0.8, 0.3, 1) forwards 1.1s;
+  }
+  .layer-X {
+    clip-path: inset(0% 56% 20% 35%);
+    opacity: 0;
+    animation: revealLetter 0.45s cubic-bezier(0.2, 0.8, 0.3, 1) forwards 1.25s;
+  }
+  .layer-T {
+    clip-path: inset(0% 47% 20% 44%);
+    opacity: 0;
+    animation: revealLetter 0.45s cubic-bezier(0.2, 0.8, 0.3, 1) forwards 1.4s;
+  }
+  .layer-G {
+    clip-path: inset(0% 38% 20% 53%);
+    opacity: 0;
+    animation: revealLetter 0.45s cubic-bezier(0.2, 0.8, 0.3, 1) forwards 1.55s;
+  }
+  .layer-E2 {
+    clip-path: inset(0% 27% 20% 64%);
+    opacity: 0;
+    animation: revealLetter 0.45s cubic-bezier(0.2, 0.8, 0.3, 1) forwards 1.7s;
+  }
+  .layer-N2 {
+    clip-path: inset(0% 17% 20% 74%);
+    opacity: 0;
+    animation: revealLetter 0.45s cubic-bezier(0.2, 0.8, 0.3, 1) forwards 1.85s;
+  }
+
+  @keyframes revealLetter {
+    0%   { opacity: 0; transform: translateX(-25px); filter: blur(4px); }
+    60%  { opacity: 1; filter: blur(0); }
+    100% { opacity: 1; transform: translateX(0); filter: blur(0); }
+  }
+
+  /* ══════════════════════════════════════════
+     ZONE 3 — Flèche (ligne diagonale rouge)
+     Clip : bas du logo, zone centrale-droite
+  ══════════════════════════════════════════ */
+  .layer-arrow {
+    clip-path: inset(62% 5% 0% 30%);
+    opacity: 0;
+    animation: revealArrow 0.8s ease forwards 2.1s;
+  }
+
+  @keyframes revealArrow {
+    0%   { opacity: 0; clip-path: inset(62% 95% 0% 30%); }
+    30%  { opacity: 1; }
+    100% { opacity: 1; clip-path: inset(62% 5% 0% 30%); }
+  }
+
+  /* ══════════════════════════════════════════
+     ZONE 4 — GAMING texte
+     Clip : bas-droit du logo
+  ══════════════════════════════════════════ */
+  .layer-gaming {
+    clip-path: inset(58% 5% 5% 52%);
+    opacity: 0;
+    animation: revealGaming 0.6s ease forwards 2.9s;
+    filter: drop-shadow(0 0 8px rgba(196, 24, 24, 0.6));
+  }
+
+  @keyframes revealGaming {
+    0%   { opacity: 0; transform: translateY(12px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ══════════════════════════════════════════
+     LOGO COMPLET — révélé à la fin (recouvre tout)
+     Fade in après que toutes les zones soient visibles
+  ══════════════════════════════════════════ */
+  .layer-full {
+    opacity: 0;
+    animation: revealFull 0.5s ease forwards 3.5s;
+  }
+
+  @keyframes revealFull {
+    0%   { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  /* ── Glow rouge autour du logo au final ── */
+  .logo-stage::after {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at 20% 50%, rgba(196,24,24,0.15) 0%, transparent 60%);
+    pointer-events: none;
+    opacity: 0;
+    animation: glowPulse 1s ease forwards 3.5s;
+  }
+
+  @keyframes glowPulse {
+    0%   { opacity: 0; }
+    50%  { opacity: 1; }
+    100% { opacity: 0.4; }
+  }
+
+  /* ══ FADE OUT général après l'intro ══ */
+  .intro-wrapper {
+    animation: introOut 0.6s ease forwards 5s;
+  }
+
+  @keyframes introOut {
+    to { opacity: 0; visibility: hidden; }
+  }
+
+  /* ══ PAGE D'ACCUEIL (masquée pendant l'intro) ══ */
+  #homepage {
+    opacity: 0;
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0d0d0d;
+    animation: pageIn 0.6s ease forwards 5.2s;
+  }
+
+  @keyframes pageIn {
+    to { opacity: 1; }
+  }
+
+  .homepage-content {
+    text-align: center;
+    color: white;
+    font-family: 'Courier New', monospace;
+  }
+
+  .homepage-content h1 {
+    font-size: 14px;
+    letter-spacing: 4px;
+    color: #555;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ INTRO ANIMATION ══ -->
+<div class="intro-wrapper">
+  <div class="logo-stage">
+
+    <!-- Zone 1 : cercle rouge -->
+    <img class="logo-layer layer-circle" src="logo.png" alt="">
+
+    <!-- Zone 2 : lettres une par une -->
+    <img class="logo-layer layer-N"  src="logo.png" alt="">
+    <img class="logo-layer layer-E1" src="logo.png" alt="">
+    <img class="logo-layer layer-X"  src="logo.png" alt="">
+    <img class="logo-layer layer-T"  src="logo.png" alt="">
+    <img class="logo-layer layer-G"  src="logo.png" alt="">
+    <img class="logo-layer layer-E2" src="logo.png" alt="">
+    <img class="logo-layer layer-N2" src="logo.png" alt="">
+
+    <!-- Zone 3 : flèche -->
+    <img class="logo-layer layer-arrow"  src="logo.png" alt="">
+
+    <!-- Zone 4 : GAMING -->
+    <img class="logo-layer layer-gaming" src="logo.png" alt="">
+
+    <!-- Logo complet final -->
+    <img class="logo-layer layer-full" src="logo.png" alt="NextGen Gaming">
+
+  </div>
+</div>
+
+<!-- ══ PAGE D'ACCUEIL ══ -->
+<div id="homepage">
+  <div class="homepage-content">
+    <img src="logo.png" alt="NextGen Gaming" style="width:300px;opacity:0.9;">
+    <h1 style="margin-top:30px;">Bienvenue</h1>
+  </div>
+</div>
+
+</body>
+</html>

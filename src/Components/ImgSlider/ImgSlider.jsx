@@ -3,11 +3,25 @@ import { Link } from "react-router-dom";
 
 function ImgSlider({ gameData }) {
   const [randomImage, setRandomImage] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [mobileImg, setMobileImg] = useState(null);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     if (!gameData) return;
 
     const steamHero = `https://cdn.akamai.steamstatic.com/steam/apps/${gameData.steam_id}/library_hero.jpg`;
+    const steamPortrait = `https://cdn.akamai.steamstatic.com/steam/apps/${gameData.steam_id}/portrait.png`;
+
+    const img = new Image();
+    img.src = steamPortrait;
+    img.onload = () => setMobileImg(steamPortrait);
+    img.onerror = () => setMobileImg(gameData.img); // 👈 fallback image IG
 
     setRandomImage({
       id: gameData.id,
@@ -26,15 +40,17 @@ function ImgSlider({ gameData }) {
     });
   }, [gameData]);
 
-  if (!randomImage) return null;
+  if (!randomImage || !mobileImg) return null;
+
+  const currentImg = isMobile ? mobileImg : randomImage.imageUrl;
 
   return (
     <div
       style={{
-        backgroundImage: `url(${randomImage.imageUrl})`,
+        backgroundImage: `url(${currentImg})`,
         backgroundSize: "cover",
-        backgroundPosition: "center top",
-        height: "600px",
+        backgroundPosition: isMobile ? "center center" : "center top",
+        height: isMobile ? "500px" : "600px",
         position: "relative",
         display: "flex",
         alignItems: "flex-end",
@@ -42,13 +58,14 @@ function ImgSlider({ gameData }) {
         width: "100%",
       }}
     >
-      {/* Dégradé gauche */}
+      {/* Dégradé principal */}
       <div
         style={{
           position: "absolute",
           inset: 0,
-          background:
-            "linear-gradient(to right, rgba(0,0,0,0.9) 20%, transparent 60%)",
+          background: isMobile
+            ? "linear-gradient(to top, rgba(0,0,0,0.95) 30%, transparent 70%)"
+            : "linear-gradient(to right, rgba(0,0,0,0.9) 20%, transparent 60%)",
         }}
       />
 
@@ -67,8 +84,10 @@ function ImgSlider({ gameData }) {
         style={{
           position: "relative",
           zIndex: 1,
-          padding: "40px 60px",
-          maxWidth: "500px",
+          padding: isMobile ? "30px 20px" : "40px 60px",
+          maxWidth: isMobile ? "100%" : "500px",
+          width: isMobile ? "100%" : "auto",
+          textAlign: isMobile ? "center" : "left",
         }}
       >
         <Link
@@ -83,8 +102,8 @@ function ImgSlider({ gameData }) {
           <span className="price">{randomImage.price}</span>
         </p>
 
-        
-      <a href={randomImage.buy}
+        <a
+          href={randomImage.buy}
           className="nk-btn nk-btn-rounded nk-btn-color-white nk-btn-hover-color-main-1"
           target="_blank"
           rel="noreferrer"
