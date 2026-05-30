@@ -10,6 +10,7 @@ import Footer from "./Components/Footer/Footer";
 import gameData from "./exclu.json";
 import Sorties from "./Components/Sorties/Sorties";
 import Banner from "./Components/Banner/Banner.jsx";
+import BoxNews from "./Components/BoxNews/BoxNews.jsx";
 
 function LogoLoader() {
   return (
@@ -277,6 +278,8 @@ function Home() {
             <ImgSlider gameData={topSeller} />
 
             <div className="container">
+                <div className="separator product-panel"></div>
+  <BoxNews />          {/* ← ajoute ici */}
               <div className="separator product-panel"></div>
               <Sorties />
               <div className="separator product-panel"></div>
