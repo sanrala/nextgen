@@ -94,6 +94,29 @@ function PlatformLogo({ type, size = 16 }) {
   );
 }
 
+// ─── Séparateur ──────────────────────────────────────────────────────────────
+function Separator({ label }) {
+  return (
+    <div style={{
+      display: "flex", alignItems: "center", gap: 16,
+      margin: "32px 0 20px"
+    }}>
+      <div style={{ width: 4, height: 20, background: "#dd163b", borderRadius: 2, flexShrink: 0 }} />
+      <div style={{ width: 24, height: 2, background: "#dd163b", flexShrink: 0 }} />
+      {label && (
+        <span style={{
+          fontFamily: "Montserrat, sans-serif", fontSize: 11,
+          color: "#888", letterSpacing: 3, textTransform: "uppercase",
+          whiteSpace: "nowrap", fontWeight: 700
+        }}>
+          {label}
+        </span>
+      )}
+      <div style={{ flex: 1, height: 1, background: "linear-gradient(to right, #2a2a2a, transparent)" }} />
+    </div>
+  );
+}
+
 function HlsPlayer({ src, type, poster, className }) {
   const videoRef = useRef(null);
   useEffect(() => {
@@ -372,7 +395,7 @@ function GameDetail() {
         </div>
       )}
       <div className="nk-gap-1" />
-      <div className="container" style={{ paddingTop: 80, maxWidth: 1100, margin: "0 auto" }}>
+      <div className="container gd-container">
         <ul className="nk-breadcrumbs">
           <li><Link to="/">Accueil</Link></li>
           <li><span className="fa fa-angle-right" /></li>
@@ -412,6 +435,28 @@ function GameDetail() {
                   ))}
                 </div>
               )}
+
+              {/* Titre + prix dupliqués ici pour mobile (cachés sur desktop) */}
+              <div className="gd-mobile-header">
+                <div className="subinfos" style={{ marginTop: 12 }}>
+                  <span className="platform gd-platform-badge" style={{ background: platformBg }}>
+                    <PlatformLogo type={chosenEntry?.type || igGame?.type || "Steam"} size={16} />
+                    &nbsp;{platformLabel}
+                  </span>
+                  <h2 className="nk-productpro-title h3pro" style={{ marginLeft: 10, marginBottom: 0, fontSize: "1rem" }}>
+                    {gameTitle}
+                  </h2>
+                </div>
+                <div className="info gd-price-block" style={{ marginTop: 8 }}>
+                  {chosenRetail && chosenRetail > (chosenPrice || 0) && (
+                    <div className="priceOrigin text-white">{chosenRetail.toFixed(2)} €</div>
+                  )}
+                  {chosenPromo && <div className="priceSlidePromo">{chosenPromo}</div>}
+                  {chosenPrice && chosenPrice > 0 && (
+                    <div className="price text-white">{chosenPrice.toFixed(2)} €</div>
+                  )}
+                </div>
+              </div>
 
               {/* ── Sélecteurs Plateforme / Édition ── */}
               {allEditions.length > 0 && (
@@ -484,12 +529,27 @@ function GameDetail() {
                   )}
                 </div>
               )}
+
+              {/* Bouton achat — sous les sélecteurs sur mobile */}
+              <div className="gd-buy-btn gd-buy-btn-left">
+                {chosenInStock && chosenUrl ? (
+                  <a href={chosenUrl} target="_blank" rel="noopener noreferrer"
+                    className="nk-btn nk-btn-rounded nk-btn-color-main-1 gd-btn-instock">
+                    🛒 Acheter sur Instant Gaming
+                  </a>
+                ) : (
+                  <button className="nk-btn nk-btn-rounded gd-btn-outofstock" disabled aria-disabled="true">
+                    ⛔ Hors stock — {editionName}
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* ── Colonne droite ── */}
             <div className="col-12 col-md-6">
 
-              {/* Badge plateforme + titre */}
+              {/* Badge plateforme + titre — order 1 sur mobile */}
+              <div className="gd-right-title">
               <div className="subinfos">
                 <span className="platform gd-platform-badge" style={{ background: platformBg }}>
                   <PlatformLogo type={chosenEntry?.type || igGame?.type || "Steam"} size={18} />
@@ -505,8 +565,10 @@ function GameDetail() {
                   <p>{steamData.short_description}</p>
                 </div>
               )}
+              </div>{/* fin gd-right-title */}
 
-              {/* Avis Steam + Metacritic */}
+              {/* Avis Steam + Metacritic — order 3 sur mobile */}
+              <div className="gd-right-scores">
               <div className="gd-scores-row">
                 {steamReview && steamReviewTotal > 0 && (
                   <div className="gd-score-block">
@@ -525,8 +587,10 @@ function GameDetail() {
                   </a>
                 )}
               </div>
+              </div>{/* fin gd-right-scores */}
 
-              {/* Prix de l'édition choisie */}
+              {/* Prix — order 2 sur mobile */}
+              <div className="gd-right-price">
               <div className="info gd-price-block">
                 {chosenRetail && chosenRetail > (chosenPrice || 0) && (
                   <div className="priceOrigin text-white">{chosenRetail.toFixed(2)} €</div>
@@ -537,19 +601,7 @@ function GameDetail() {
                 )}
               </div>
 
-              {/* Bouton achat conditionnel */}
-              <div className="gd-buy-btn">
-                {chosenInStock && chosenUrl ? (
-                  <a href={chosenUrl} target="_blank" rel="noopener noreferrer"
-                    className="nk-btn nk-btn-rounded nk-btn-color-main-1 gd-btn-instock">
-                    🛒 Acheter sur Instant Gaming
-                  </a>
-                ) : (
-                  <button className="nk-btn nk-btn-rounded gd-btn-outofstock" disabled aria-disabled="true">
-                    ⛔ Hors stock — {editionName}
-                  </button>
-                )}
-              </div>
+              </div>{/* fin gd-right-price */}
 
               <div className="nk-gap-1" />
 
@@ -582,7 +634,7 @@ function GameDetail() {
           </div>
         </div>
 
-        <div className="nk-gap-2" />
+        <Separator />
 
         <div className="nk-tabs">
           <ul className="nav nav-tabs" role="tablist">
@@ -600,7 +652,7 @@ function GameDetail() {
           <div className="tab-content">
             {activeTab === "description" && (
               <div className="tab-pane fade show active">
-                <div className="nk-gap" />
+                <Separator label="Description" />
                 {steamData?.detailed_description ? (
                   <div className="steam-desc-content" dangerouslySetInnerHTML={{ __html: steamData.detailed_description }} />
                 ) : <p style={{ color: "#888" }}>Aucune description disponible.</p>}
@@ -608,7 +660,7 @@ function GameDetail() {
             )}
             {activeTab === "config" && (
               <div className="tab-pane fade show active">
-                <div className="nk-gap" />
+                <Separator label="Configuration PC requise" />
                 <div className="row gd-config-row">
                   {pcReqs?.minimum && (
                     <div className="col-12 col-md-6 gd-config-col">
@@ -630,7 +682,7 @@ function GameDetail() {
             )}
             {activeTab === "comment" && (
               <div className="tab-pane fade show active">
-                <div className="nk-gap-2" />
+                <Separator label="Commentaires" />
                 <h3 className="h4">Ajouter un commentaire</h3>
                 {user ? (
                   <div className="nk-reply">
