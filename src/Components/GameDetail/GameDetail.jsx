@@ -98,21 +98,32 @@ function PlatformLogo({ type, size = 16 }) {
 function Separator({ label }) {
   return (
     <div style={{
-      display: "flex", alignItems: "center", gap: 16,
-      margin: "32px 0 20px"
+      display: "flex", alignItems: "center", gap: 18,
+      margin: "52px 0 28px"
     }}>
-      <div style={{ width: 4, height: 20, background: "#dd163b", borderRadius: 2, flexShrink: 0 }} />
-      <div style={{ width: 24, height: 2, background: "#dd163b", flexShrink: 0 }} />
+      {/* Barre verticale rouge */}
+      <div style={{ width: 5, height: 28, background: "#dd163b", borderRadius: 3, flexShrink: 0 }} />
+      {/* Tiret horizontal rouge */}
+      <div style={{ width: 32, height: 3, background: "#dd163b", borderRadius: 2, flexShrink: 0 }} />
       {label && (
         <span style={{
-          fontFamily: "Montserrat, sans-serif", fontSize: 11,
-          color: "#888", letterSpacing: 3, textTransform: "uppercase",
-          whiteSpace: "nowrap", fontWeight: 700
+          fontFamily: "Montserrat, sans-serif",
+          fontSize: 13,
+          color: "#ccc",
+          letterSpacing: 4,
+          textTransform: "uppercase",
+          whiteSpace: "nowrap",
+          fontWeight: 800,
         }}>
           {label}
         </span>
       )}
-      <div style={{ flex: 1, height: 1, background: "linear-gradient(to right, #2a2a2a, transparent)" }} />
+      {/* Ligne dégradée */}
+      <div style={{
+        flex: 1,
+        height: 1,
+        background: "linear-gradient(to right, rgba(221,22,59,0.3), transparent)"
+      }} />
     </div>
   );
 }
