@@ -20805,3 +20805,1621 @@ div.burgerNav > ul {
   filter: grayscale(1);
   opacity: 0.6;
 }
+/* =====================================================
+   GAMEDETAIL — patch CSS
+   À coller à la fin de style.css
+   ===================================================== */
+
+/* ── Hero banner ── */
+.gd-hero {
+  background-size: cover;
+  background-position: center top;
+  height: 10px;
+  position: relative;
+}
+.gd-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,.25) 0%, rgba(23,30,34,1) 100%);
+}
+
+/* ── Media principale (screenshot / vidéo) ── */
+.gd-media-main {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #0d1117;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.gd-media-video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  background: #0d1117;
+  vertical-align: top; /* supprime l'espace inline sous la vidéo */
+}
+
+.gd-media-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  vertical-align: top;
+}
+
+/* ── Colonne gauche : flex column ── */
+.nk-store-product .col-md-6:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Strip miniatures ── */
+.gd-thumbstrip {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: #dd163b #1a1a1a;
+}
+.gd-thumbstrip::-webkit-scrollbar { height: 4px; }
+.gd-thumbstrip::-webkit-scrollbar-track { background: #1a1a1a; }
+.gd-thumbstrip::-webkit-scrollbar-thumb { background: #dd163b; border-radius: 2px; }
+
+.gd-thumb-wrap {
+  position: relative;
+  flex-shrink: 0;
+  cursor: pointer;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  opacity: 0.7;
+  transition: opacity .2s, border-color .2s;
+}
+.gd-thumb-wrap:hover { opacity: 1; }
+.gd-thumb-wrap.gd-thumb-active {
+  border-color: #dd163b;
+  opacity: 1;
+}
+
+.gd-thumb {
+  height: 54px;
+  width: auto;
+  display: block;
+  object-fit: cover;
+}
+
+/* Placeholder si pas de thumbnail vidéo */
+.gd-thumb-video-placeholder {
+  height: 54px;
+  width: 96px;
+  background: #1a2530;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #fff;
+}
+
+/* Badge ▶ par-dessus la miniature vidéo */
+.gd-thumb-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #fff;
+  background: rgba(0,0,0,.45);
+  pointer-events: none;
+  border-radius: 3px;
+}
+.gd-thumb-wrap.gd-thumb-active .gd-thumb-play {
+  background: rgba(221,22,59,.5);
+}
+
+/* ── Prix ── */
+.gd-price-block {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 16px 0 0;
+  padding: 0;
+}
+.gd-price-block .price {
+  font-size: 32px;
+  margin-left: 0;
+}
+
+/* ── Bouton achat ── */
+.gd-buy-btn {
+  margin-top: 16px;
+}
+.gd-buy-btn .nk-btn {
+  font-size: 15px;
+  padding: 10px 24px;
+}
+
+/* ── Description courte ── */
+.gd-short-desc {
+  margin-top: 14px;
+  color: #bbb;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ── Meta infos ── */
+.gd-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: #ccc;
+}
+.gd-meta strong {
+  color: #fff;
+}
+
+/* ─────────────────────────────────────────────────────
+   Description Steam (HTML injecté via dangerouslySetInnerHTML)
+   Le HTML Steam contient des <img>, <video>, <div style="width:...">
+   avec des dimensions hardcodées → on force tout à rester dans le conteneur
+   ───────────────────────────────────────────────────── */
+
+.steam-desc-content {
+  color: #ccc;
+  font-size: 14px;
+  line-height: 1.75;
+  word-break: break-word;
+  overflow: hidden; /* bloque tout débordement du wrapper */
+}
+
+/* Écrase les width/height inline sur TOUS les éléments enfants */
+.steam-desc-content * {
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* Images, vidéos, iframes Steam : responsive + centré */
+.steam-desc-content img,
+.steam-desc-content video,
+.steam-desc-content iframe {
+  display: block !important;
+  width: auto !important;
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 6px;
+  margin: 14px auto;
+}
+
+/* Divs Steam avec style inline (souvent les wrappers de gif/video) */
+.steam-desc-content div {
+  max-width: 100% !important;
+  overflow: hidden;
+}
+
+/* Rétablir inline pour les éléments de texte
+   (sinon display:block sur span/strong casse la mise en page) */
+.steam-desc-content strong,
+.steam-desc-content b,
+.steam-desc-content em,
+.steam-desc-content i,
+.steam-desc-content span,
+.steam-desc-content a {
+  display: inline !important;
+  width: auto !important;
+  max-width: none !important;
+  height: auto !important;
+}
+
+/* Titres dans la description Steam */
+.steam-desc-content h1,
+.steam-desc-content h2 {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  margin: 24px 0 10px;
+  letter-spacing: .04em;
+  display: block !important;
+  max-width: 100% !important;
+  width: auto !important;
+}
+
+.steam-desc-content h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #eee;
+  margin: 18px 0 8px;
+  display: block !important;
+}
+
+/* Listes */
+.steam-desc-content ul,
+.steam-desc-content ol {
+  padding-left: 20px;
+  margin: 10px 0;
+}
+.steam-desc-content li {
+  margin-bottom: 4px;
+  display: list-item !important;
+}
+
+/* Supprime les doubles <br> Steam */
+.steam-desc-content br + br {
+  display: none;
+}
+
+/* ── Vidéo complète dans Description ── */
+.gd-video-full {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 8px;
+  display: block;
+}
+
+/* ── Config PC ── */
+.gd-config-row {
+  gap: 20px 0;
+}
+.gd-config-col {
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 8px;
+  padding: 20px;
+}
+.gd-config-title {
+  font-family: "Montserrat", sans-serif;
+  font-size: .95rem;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  letter-spacing: .04em;
+}
+.gd-config-content {
+  color: #aaa;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.gd-config-content strong { color: #ddd; }
+.gd-config-content ul     { padding-left: 16px; }
+.gd-config-content li     { margin-bottom: 3px; }
+
+/* ── Responsive mobile ── */
+@media (max-width: 767px) {
+  .gd-hero {
+    height: 180px;
+  }
+
+  /* Supprime tout espacement parasite entre les colonnes */
+  .nk-store-product .row.vertical-gap {
+    margin-bottom: 0 !important;
+  }
+
+  .nk-store-product .col-12 {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* La colonne gauche (media) colle directement à la colonne droite */
+  .nk-store-product .col-12:first-child {
+    margin-bottom: 12px !important;
+  }
+
+  .gd-thumb {
+    height: 44px;
+  }
+
+  .subinfos {
+    flex-direction: column;
+    align-items: flex-start;
+    border-radius: 12px;
+    padding: 12px 16px;
+    min-height: auto;
+    gap: 8px;
+  }
+
+  .gd-price-block {
+    align-items: center;
+  }
+  .gd-price-block .price {
+    font-size: 26px;
+  }
+
+  .gd-buy-btn .nk-btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    display: block;
+  }
+
+  .steam-desc-content {
+    font-size: 13px;
+  }
+
+  .gd-config-col {
+    padding: 14px;
+  }
+
+  /* Thumbstrip mobile : miniatures plus petites */
+  .gd-thumbstrip {
+    margin-top: 6px;
+  }
+
+  .gd-editions-list {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+
+  .gd-scores-row {
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .gd-hero { height: 130px; }
+
+  .nk-productpro-title {
+    font-size: 1.1rem !important;
+  }
+
+  .gd-price-block .price {
+    font-size: 22px;
+  }
+
+  .gd-editions-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ── Scores (Avis Steam + Metacritic) ── */
+.gd-scores-row {
+  display: flex;
+  gap: 12px;
+  margin: 14px 0;
+  flex-wrap: wrap;
+}
+
+.gd-score-block {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 8px;
+  padding: 10px 16px;
+  min-width: 130px;
+  cursor: default;
+}
+
+.gd-score-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.gd-score-value {
+  font-size: 14px;
+  font-weight: 700;
+  font-family: "Montserrat", sans-serif;
+}
+
+.gd-score-sub {
+  font-size: 11px;
+  color: #666;
+  margin-top: 2px;
+}
+
+/* Metacritic */
+.gd-metacritic {
+  cursor: pointer;
+  transition: transform .15s, border-color .15s;
+}
+.gd-metacritic:hover {
+  border-color: rgba(255,255,255,.25);
+  transform: translateY(-2px);
+}
+
+.gd-metacritic-score {
+  font-size: 28px;
+  font-weight: 900;
+  font-family: "Montserrat", sans-serif;
+  color: #fff;
+  width: 52px;
+  height: 52px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+/* ── Éditions disponibles ── */
+/* ── Éditions disponibles ── */
+.gd-editions {
+  margin-top: 14px;
+  width: 100%;
+}
+
+.gd-editions-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.gd-editions-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Bouton édition — style pill premium */
+.gd-ed-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  color: #ccc;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none !important;
+  cursor: pointer;
+  transition: border-color .25s, background .25s, transform .15s;
+  overflow: hidden;
+  min-width: 160px;
+}
+
+.gd-ed-btn:hover {
+  border-color: rgba(221,22,59,.6);
+  background: rgba(221,22,59,.08);
+  transform: translateY(-1px);
+  color: #fff;
+  text-decoration: none;
+}
+
+.gd-ed-btn-active {
+  border-color: #dd163b !important;
+  background: rgba(221,22,59,.15) !important;
+  color: #fff !important;
+}
+
+.gd-ed-btn-soldout {
+  opacity: 0.35;
+  pointer-events: none;
+  filter: grayscale(1);
+}
+
+/* Bande colorée à gauche */
+.gd-ed-btn::before {
+  content: "";
+  display: block;
+  width: 3px;
+  align-self: stretch;
+  background: rgba(255,255,255,.15);
+  flex-shrink: 0;
+  transition: background .25s;
+}
+
+.gd-ed-btn:hover::before,
+.gd-ed-btn-active::before {
+  background: #dd163b;
+}
+
+/* Contenu intérieur */
+.gd-ed-btn-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 10px 9px 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.gd-ed-btn-top {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.gd-ed-platform-icon {
+  display: flex;
+  align-items: center;
+  color: #aaa;
+  flex-shrink: 0;
+}
+
+.gd-ed-btn-platform {
+  font-size: 10px;
+  color: #777;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gd-ed-stock-out {
+  font-size: 9px;
+  color: #e74c3c;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.gd-ed-na {
+  color: #555;
+  font-size: 12px;
+}
+
+.gd-ed-btn-promo {
+  font-size: 10px;
+  font-weight: 700;
+  color: #ff5400;
+  background: rgba(255,84,0,.15);
+  border-radius: 4px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+}
+
+.gd-ed-btn-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gd-ed-btn-bottom {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  margin-top: 2px;
+  flex-wrap: wrap;
+}
+
+.gd-ed-retail {
+  font-size: 10px;
+  color: #555;
+  text-decoration: line-through;
+}
+
+.gd-ed-btn-price {
+  font-size: 13px;
+  font-weight: 700;
+  color: #eee;
+  font-family: "Montserrat", sans-serif;
+}
+
+.gd-ed-btn-promo {
+  font-size: 10px;
+  font-weight: 700;
+  color: #ff5400;
+  background: rgba(255,84,0,.15);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+.gd-ed-na {
+  color: #555 !important;
+  font-size: 11px !important;
+}
+
+/* Tags plateforme */
+.gd-ed-tag {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255,255,255,.1);
+  color: #aaa;
+  flex-shrink: 0;
+}
+.gd-ed-tag-steam   { background: rgba(23,130,209,.2); color: #5eb3f0; }
+.gd-ed-tag-ubisoft { background: rgba(0,115,255,.2);  color: #6aa9ff; }
+.gd-ed-tag-xbox    { background: rgba(16,124,16,.2);  color: #5cb85c; }
+.gd-ed-tag-ps      { background: rgba(0,55,145,.2);   color: #5b8dd9; }
+.gd-ed-tag-epic    { background: rgba(255,255,255,.08); color: #ccc; }
+.gd-ed-tag-gog     { background: rgba(148,70,209,.2); color: #c07af5; }
+
+/* Indicateur stock */
+.gd-ed-stock {
+  font-size: 9px;
+  font-weight: 600;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.gd-ed-stock-in  { color: #27ae60; }
+.gd-ed-stock-out { color: #888; }
+
+/* Responsive */
+@media (max-width: 767px) {
+  .gd-editions-list {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .gd-editions-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ── Features Steam (tags) ── */
+.gd-steam-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.gd-feature-tag {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,.15);
+  color: #aaa;
+  background: rgba(255,255,255,.04);
+  white-space: nowrap;
+}
+
+/* ── Responsive ── */
+@media (max-width: 767px) {
+  .gd-scores-row { gap: 8px; }
+  .gd-score-block { min-width: 110px; padding: 8px 12px; }
+  .gd-editions-list { gap: 6px; }
+  .gd-edition-card { min-width: 110px; padding: 8px 10px; }
+  .gd-metacritic-score { width: 44px; height: 44px; font-size: 22px; }
+}
+
+/* ── Badge plateforme dynamique ── */
+.gd-platform-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 20px;
+  padding: 5px 12px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Titre du jeu : évite le débordement */
+.nk-productpro-title.h3pro {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+}
+
+/* subinfos : aligne badge + titre proprement */
+.subinfos {
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+/* ── Bouton achat : en stock ── */
+.gd-btn-instock {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  letter-spacing: .04em;
+}
+
+/* ── Bouton achat : hors stock ── */
+.gd-btn-outofstock {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
+  background: rgba(255,255,255,.05) !important;
+  border-color: rgba(255,255,255,.1) !important;
+  color: #666 !important;
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+
+/* ── Sélecteurs Plateforme / Édition ── */
+.gd-selectors {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gd-selector-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gd-selector-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: #888;
+  font-weight: 600;
+}
+
+.gd-selector-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.gd-selector-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.15);
+  background: rgba(255,255,255,.05);
+  color: #bbb;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color .2s, background .2s, color .2s;
+  white-space: nowrap;
+}
+
+.gd-selector-btn:hover {
+  border-color: rgba(221,22,59,.5);
+  background: rgba(221,22,59,.08);
+  color: #fff;
+}
+
+.gd-selector-active {
+  border-color: #dd163b !important;
+  background: rgba(221,22,59,.18) !important;
+  color: #fff !important;
+  font-weight: 700;
+}
+
+.gd-selector-soldout {
+  opacity: 0.45;
+}
+
+.gd-sel-rupture {
+  font-size: 10px;
+  color: #e74c3c;
+  font-weight: 600;
+  margin-left: 4px;
+}
+/* =====================================================
+   GAMEDETAIL — patch CSS
+   À coller à la fin de style.css
+   ===================================================== */
+
+/* ── Hero banner ── */
+.gd-hero {
+  background-size: cover;
+  background-position: center top;
+  height: 10px;
+  position: relative;
+}
+.gd-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,.25) 0%, rgba(23,30,34,1) 100%);
+}
+
+/* ── Media principale (screenshot / vidéo) ── */
+.gd-media-main {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #0d1117;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.gd-media-video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  background: #0d1117;
+  vertical-align: top; /* supprime l'espace inline sous la vidéo */
+}
+
+.gd-media-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  vertical-align: top;
+}
+
+/* ── Colonne gauche : flex column ── */
+.nk-store-product .col-md-6:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Strip miniatures ── */
+.gd-thumbstrip {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: #dd163b #1a1a1a;
+}
+.gd-thumbstrip::-webkit-scrollbar { height: 4px; }
+.gd-thumbstrip::-webkit-scrollbar-track { background: #1a1a1a; }
+.gd-thumbstrip::-webkit-scrollbar-thumb { background: #dd163b; border-radius: 2px; }
+
+.gd-thumb-wrap {
+  position: relative;
+  flex-shrink: 0;
+  cursor: pointer;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  opacity: 0.7;
+  transition: opacity .2s, border-color .2s;
+}
+.gd-thumb-wrap:hover { opacity: 1; }
+.gd-thumb-wrap.gd-thumb-active {
+  border-color: #dd163b;
+  opacity: 1;
+}
+
+.gd-thumb {
+  height: 54px;
+  width: auto;
+  display: block;
+  object-fit: cover;
+}
+
+/* Placeholder si pas de thumbnail vidéo */
+.gd-thumb-video-placeholder {
+  height: 54px;
+  width: 96px;
+  background: #1a2530;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #fff;
+}
+
+/* Badge ▶ par-dessus la miniature vidéo */
+.gd-thumb-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #fff;
+  background: rgba(0,0,0,.45);
+  pointer-events: none;
+  border-radius: 3px;
+}
+.gd-thumb-wrap.gd-thumb-active .gd-thumb-play {
+  background: rgba(221,22,59,.5);
+}
+
+/* ── Prix ── */
+.gd-price-block {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 16px 0 0;
+  padding: 0;
+}
+.gd-price-block .price {
+  font-size: 32px;
+  margin-left: 0;
+}
+
+/* ── Bouton achat ── */
+.gd-buy-btn {
+  margin-top: 16px;
+}
+.gd-buy-btn .nk-btn {
+  font-size: 15px;
+  padding: 10px 24px;
+}
+
+/* ── Description courte ── */
+.gd-short-desc {
+  margin-top: 14px;
+  color: #bbb;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ── Meta infos ── */
+.gd-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: #ccc;
+}
+.gd-meta strong {
+  color: #fff;
+}
+
+/* ─────────────────────────────────────────────────────
+   Description Steam (HTML injecté via dangerouslySetInnerHTML)
+   Le HTML Steam contient des <img>, <video>, <div style="width:...">
+   avec des dimensions hardcodées → on force tout à rester dans le conteneur
+   ───────────────────────────────────────────────────── */
+
+.steam-desc-content {
+  color: #ccc;
+  font-size: 14px;
+  line-height: 1.75;
+  word-break: break-word;
+  overflow: hidden; /* bloque tout débordement du wrapper */
+}
+
+/* Écrase les width/height inline sur TOUS les éléments enfants */
+.steam-desc-content * {
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* Images, vidéos, iframes Steam : responsive + centré */
+.steam-desc-content img,
+.steam-desc-content video,
+.steam-desc-content iframe {
+  display: block !important;
+  width: auto !important;
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 6px;
+  margin: 14px auto;
+}
+
+/* Divs Steam avec style inline (souvent les wrappers de gif/video) */
+.steam-desc-content div {
+  max-width: 100% !important;
+  overflow: hidden;
+}
+
+/* Rétablir inline pour les éléments de texte
+   (sinon display:block sur span/strong casse la mise en page) */
+.steam-desc-content strong,
+.steam-desc-content b,
+.steam-desc-content em,
+.steam-desc-content i,
+.steam-desc-content span,
+.steam-desc-content a {
+  display: inline !important;
+  width: auto !important;
+  max-width: none !important;
+  height: auto !important;
+}
+
+/* Titres dans la description Steam */
+.steam-desc-content h1,
+.steam-desc-content h2 {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  margin: 24px 0 10px;
+  letter-spacing: .04em;
+  display: block !important;
+  max-width: 100% !important;
+  width: auto !important;
+}
+
+.steam-desc-content h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #eee;
+  margin: 18px 0 8px;
+  display: block !important;
+}
+
+/* Listes */
+.steam-desc-content ul,
+.steam-desc-content ol {
+  padding-left: 20px;
+  margin: 10px 0;
+}
+.steam-desc-content li {
+  margin-bottom: 4px;
+  display: list-item !important;
+}
+
+/* Supprime les doubles <br> Steam */
+.steam-desc-content br + br {
+  display: none;
+}
+
+/* ── Vidéo complète dans Description ── */
+.gd-video-full {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 8px;
+  display: block;
+}
+
+/* ── Config PC ── */
+.gd-config-row {
+  gap: 20px 0;
+}
+.gd-config-col {
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 8px;
+  padding: 20px;
+}
+.gd-config-title {
+  font-family: "Montserrat", sans-serif;
+  font-size: .95rem;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  letter-spacing: .04em;
+}
+.gd-config-content {
+  color: #aaa;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.gd-config-content strong { color: #ddd; }
+.gd-config-content ul     { padding-left: 16px; }
+.gd-config-content li     { margin-bottom: 3px; }
+
+/* ── Responsive mobile ── */
+@media (max-width: 767px) {
+  .gd-hero {
+    height: 180px;
+  }
+
+  /* Supprime tout espacement parasite entre les colonnes */
+  .nk-store-product .row.vertical-gap {
+    margin-bottom: 0 !important;
+  }
+
+  .nk-store-product .col-12 {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* La colonne gauche (media) colle directement à la colonne droite */
+  .nk-store-product .col-12:first-child {
+    margin-bottom: 12px !important;
+  }
+
+  .gd-thumb {
+    height: 44px;
+  }
+
+  .subinfos {
+    flex-direction: column;
+    align-items: flex-start;
+    border-radius: 12px;
+    padding: 12px 16px;
+    min-height: auto;
+    gap: 8px;
+  }
+
+  .gd-price-block {
+    align-items: center;
+  }
+  .gd-price-block .price {
+    font-size: 26px;
+  }
+
+  .gd-buy-btn .nk-btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    display: block;
+  }
+
+  .steam-desc-content {
+    font-size: 13px;
+  }
+
+  .gd-config-col {
+    padding: 14px;
+  }
+
+  /* Thumbstrip mobile : miniatures plus petites */
+  .gd-thumbstrip {
+    margin-top: 6px;
+  }
+
+  .gd-editions-list {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+
+  .gd-scores-row {
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .gd-hero { height: 130px; }
+
+  .nk-productpro-title {
+    font-size: 1.1rem !important;
+  }
+
+  .gd-price-block .price {
+    font-size: 22px;
+  }
+
+  .gd-editions-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ── Scores (Avis Steam + Metacritic) ── */
+.gd-scores-row {
+  display: flex;
+  gap: 12px;
+  margin: 14px 0;
+  flex-wrap: wrap;
+}
+
+.gd-score-block {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 8px;
+  padding: 10px 16px;
+  min-width: 130px;
+  cursor: default;
+}
+
+.gd-score-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.gd-score-value {
+  font-size: 14px;
+  font-weight: 700;
+  font-family: "Montserrat", sans-serif;
+}
+
+.gd-score-sub {
+  font-size: 11px;
+  color: #666;
+  margin-top: 2px;
+}
+
+/* Metacritic */
+.gd-metacritic {
+  cursor: pointer;
+  transition: transform .15s, border-color .15s;
+}
+.gd-metacritic:hover {
+  border-color: rgba(255,255,255,.25);
+  transform: translateY(-2px);
+}
+
+.gd-metacritic-score {
+  font-size: 28px;
+  font-weight: 900;
+  font-family: "Montserrat", sans-serif;
+  color: #fff;
+  width: 52px;
+  height: 52px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+/* ── Éditions disponibles ── */
+/* ── Éditions disponibles ── */
+.gd-editions {
+  margin-top: 14px;
+  width: 100%;
+}
+
+.gd-editions-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.gd-editions-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Bouton édition — style pill premium */
+.gd-ed-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  color: #ccc;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none !important;
+  cursor: pointer;
+  transition: border-color .25s, background .25s, transform .15s;
+  overflow: hidden;
+  min-width: 160px;
+}
+
+.gd-ed-btn:hover {
+  border-color: rgba(221,22,59,.6);
+  background: rgba(221,22,59,.08);
+  transform: translateY(-1px);
+  color: #fff;
+  text-decoration: none;
+}
+
+.gd-ed-btn-active {
+  border-color: #dd163b !important;
+  background: rgba(221,22,59,.15) !important;
+  color: #fff !important;
+}
+
+.gd-ed-btn-soldout {
+  opacity: 0.35;
+  pointer-events: none;
+  filter: grayscale(1);
+}
+
+/* Bande colorée à gauche */
+.gd-ed-btn::before {
+  content: "";
+  display: block;
+  width: 3px;
+  align-self: stretch;
+  background: rgba(255,255,255,.15);
+  flex-shrink: 0;
+  transition: background .25s;
+}
+
+.gd-ed-btn:hover::before,
+.gd-ed-btn-active::before {
+  background: #dd163b;
+}
+
+/* Contenu intérieur */
+.gd-ed-btn-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 10px 9px 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.gd-ed-btn-top {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.gd-ed-platform-icon {
+  display: flex;
+  align-items: center;
+  color: #aaa;
+  flex-shrink: 0;
+}
+
+.gd-ed-btn-platform {
+  font-size: 10px;
+  color: #777;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gd-ed-stock-out {
+  font-size: 9px;
+  color: #e74c3c;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.gd-ed-na {
+  color: #555;
+  font-size: 12px;
+}
+
+.gd-ed-btn-promo {
+  font-size: 10px;
+  font-weight: 700;
+  color: #ff5400;
+  background: rgba(255,84,0,.15);
+  border-radius: 4px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+}
+
+.gd-ed-btn-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gd-ed-btn-bottom {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  margin-top: 2px;
+  flex-wrap: wrap;
+}
+
+.gd-ed-retail {
+  font-size: 10px;
+  color: #555;
+  text-decoration: line-through;
+}
+
+.gd-ed-btn-price {
+  font-size: 13px;
+  font-weight: 700;
+  color: #eee;
+  font-family: "Montserrat", sans-serif;
+}
+
+.gd-ed-btn-promo {
+  font-size: 10px;
+  font-weight: 700;
+  color: #ff5400;
+  background: rgba(255,84,0,.15);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+.gd-ed-na {
+  color: #555 !important;
+  font-size: 11px !important;
+}
+
+/* Tags plateforme */
+.gd-ed-tag {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255,255,255,.1);
+  color: #aaa;
+  flex-shrink: 0;
+}
+.gd-ed-tag-steam   { background: rgba(23,130,209,.2); color: #5eb3f0; }
+.gd-ed-tag-ubisoft { background: rgba(0,115,255,.2);  color: #6aa9ff; }
+.gd-ed-tag-xbox    { background: rgba(16,124,16,.2);  color: #5cb85c; }
+.gd-ed-tag-ps      { background: rgba(0,55,145,.2);   color: #5b8dd9; }
+.gd-ed-tag-epic    { background: rgba(255,255,255,.08); color: #ccc; }
+.gd-ed-tag-gog     { background: rgba(148,70,209,.2); color: #c07af5; }
+
+/* Indicateur stock */
+.gd-ed-stock {
+  font-size: 9px;
+  font-weight: 600;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.gd-ed-stock-in  { color: #27ae60; }
+.gd-ed-stock-out { color: #888; }
+
+/* Responsive */
+@media (max-width: 767px) {
+  .gd-editions-list {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .gd-editions-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ── Features Steam (tags) ── */
+.gd-steam-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.gd-feature-tag {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,.15);
+  color: #aaa;
+  background: rgba(255,255,255,.04);
+  white-space: nowrap;
+}
+
+/* ── Responsive ── */
+@media (max-width: 767px) {
+  .gd-scores-row { gap: 8px; }
+  .gd-score-block { min-width: 110px; padding: 8px 12px; }
+  .gd-editions-list { gap: 6px; }
+  .gd-edition-card { min-width: 110px; padding: 8px 10px; }
+  .gd-metacritic-score { width: 44px; height: 44px; font-size: 22px; }
+}
+
+/* ── Badge plateforme dynamique ── */
+.gd-platform-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 20px;
+  padding: 5px 12px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Titre du jeu : évite le débordement */
+.nk-productpro-title.h3pro {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+}
+
+/* subinfos : aligne badge + titre proprement */
+.subinfos {
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+/* ── Bouton achat : en stock ── */
+.gd-btn-instock {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  letter-spacing: .04em;
+}
+
+/* ── Bouton achat : hors stock ── */
+.gd-btn-outofstock {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
+  background: rgba(255,255,255,.05) !important;
+  border-color: rgba(255,255,255,.1) !important;
+  color: #666 !important;
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+
+/* ── Sélecteurs Plateforme / Édition ── */
+.gd-selectors {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gd-selector-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gd-selector-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: #888;
+  font-weight: 600;
+}
+
+.gd-selector-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.gd-selector-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.15);
+  background: rgba(255,255,255,.05);
+  color: #bbb;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color .2s, background .2s, color .2s;
+  white-space: nowrap;
+}
+
+.gd-selector-btn:hover {
+  border-color: rgba(221,22,59,.5);
+  background: rgba(221,22,59,.08);
+  color: #fff;
+}
+
+.gd-selector-active {
+  border-color: #dd163b !important;
+  background: rgba(221,22,59,.18) !important;
+  color: #fff !important;
+  font-weight: 700;
+}
+
+.gd-selector-soldout {
+  opacity: 0.45;
+}
+
+.gd-sel-rupture {
+  font-size: 10px;
+  color: #e74c3c;
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+.gd-sel-instock {
+  font-size: 10px;
+  color: #27ae60;
+  font-weight: 600;
+}
