@@ -5,7 +5,7 @@ import { selectUser } from "../../features/userSlice";
 import { auth, db } from "../../Firebase";
 import {
   collection, addDoc, query, where, onSnapshot,
-  serverTimestamp, updateDoc, setDoc, doc, getDoc
+  serverTimestamp, updateDoc, setDoc, doc, getDoc, getDocs
 } from "firebase/firestore";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
@@ -170,6 +170,9 @@ function GameDetail() {
   const [activeMedia,  setActiveMedia]  = useState("video");
   const [comments,     setComments]     = useState([]);
   const [newComment,   setNewComment]   = useState({ title: "", message: "", rating: 0 });
+  const [franchise,    setFranchise]    = useState([]);
+  const [similar,      setSimilar]      = useState([]);
+  const [articles,     setArticles]     = useState([]);
 
   // Sélecteurs plateforme / édition (comme sur IG)
   const [selectedPlatform, setSelectedPlatform] = useState(null);
@@ -201,6 +204,65 @@ function GameDetail() {
         const all = [...(Array.isArray(r1)?r1:[]), ...(Array.isArray(r2)?r2:[]), ...(Array.isArray(r3)?r3:[])];
         setIgGame(all.find(g => String(g.id) === String(igId)) || null);
       } catch (e) { console.error("IG fetch error", e); }
+    })();
+  }, [igId]);
+
+  // ── Articles du jeu (Firestore) ──────────────────────────────────────────
+  useEffect(() => {
+    if (!igId) return;
+    (async () => {
+      try {
+        // Filtre par nom du jeu (premiers mots) — couvre toutes les éditions
+        // gameTitle peut ne pas être dispo dans useEffect, on utilise les sources directes
+        const rawTitle = steamData?.name || igGame?.name || decodeURIComponent(title || "");
+        const baseTitle = rawTitle
+          .replace(/[-–:].*/,'')
+          .replace(/deluxe|ultimate|gold|premium|standard|edition/gi,'')
+          .trim()
+          .toLowerCase()
+          .split(' ')
+          .slice(0, 3)
+          .join(' ');
+
+        const allSnap = await getDocs(collection(db, "articles"));
+        const arts = allSnap.docs
+          .map(d => ({ doc_id: d.id, ...d.data() }))
+          .filter(a => {
+            if (a.status !== "public") return false;
+            const artName = (a.game_name || "")
+              .replace(/[-–:].*/,'')
+              .replace(/deluxe|ultimate|gold|premium|standard|edition/gi,'')
+              .trim()
+              .toLowerCase()
+              .split(' ')
+              .slice(0, 3)
+              .join(' ');
+            return artName.includes(baseTitle) || baseTitle.includes(artName);
+          })
+          .sort((a, b) => (b.created_at?.toMillis?.() || 0) - (a.created_at?.toMillis?.() || 0))
+          .slice(0, 5);
+        setArticles(arts);
+      } catch (e) {
+        console.warn("Articles fetch error", e);
+        setArticles([]);
+      }
+    })();
+    // Dépend de igGame et steamData pour avoir le nom du jeu
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [igId, igGame?.name, steamData?.name]);
+
+  // ── Franchise + Similar ─────────────────────────────────────────────────
+  useEffect(() => {
+    if (!igId) return;
+    (async () => {
+      try {
+        const [fr, si] = await Promise.all([
+          fetch(`${BACKEND_URL}/api/franchise/${igId}`).then(r => r.json()).catch(() => []),
+          fetch(`${BACKEND_URL}/api/similar/${igId}`).then(r => r.json()).catch(() => []),
+        ]);
+        setFranchise(Array.isArray(fr) ? fr : []);
+        setSimilar(Array.isArray(si) ? si : []);
+      } catch (e) { console.error("Franchise/similar error", e); }
     })();
   }, [igId]);
 
@@ -603,6 +665,20 @@ function GameDetail() {
 
               </div>{/* fin gd-right-price */}
 
+              {/* Bouton achat — colonne droite, visible desktop seulement */}
+              <div className="gd-buy-btn gd-buy-btn-right">
+                {chosenInStock && chosenUrl ? (
+                  <a href={chosenUrl} target="_blank" rel="noopener noreferrer"
+                    className="nk-btn nk-btn-rounded nk-btn-color-main-1 gd-btn-instock">
+                    🛒 Acheter sur Instant Gaming
+                  </a>
+                ) : (
+                  <button className="nk-btn nk-btn-rounded gd-btn-outofstock" disabled aria-disabled="true">
+                    ⛔ Hors stock — {editionName}
+                  </button>
+                )}
+              </div>
+
               <div className="nk-gap-1" />
 
               <div className="nk-product-meta gd-meta">
@@ -748,6 +824,113 @@ function GameDetail() {
           </div>
         </div>
       </div>
+      {/* ── Articles du jeu ── */}
+      {articles.length > 0 && (
+        <div className="container gd-container">
+          <Separator label="L'actualité du jeu" />
+          <div className="gd-articles-list">
+            {articles.map(a => {
+              const img = a.photos?.[0]?.url || a.game_img || null;
+              const excerpt = a.content
+                ? a.content.replace(/<[^>]*>/g, "").slice(0, 180) + "…"
+                : "";
+              const date = a.created_at?.toDate
+                ? a.created_at.toDate().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })
+                : "";
+              return (
+                <Link key={a.doc_id} to={`/article/${a.doc_id}`} className="gd-article-card">
+                  {img && (
+                    <div className="gd-article-img">
+                      <img src={img} alt={a.title} />
+                    </div>
+                  )}
+                  <div className="gd-article-body">
+                    {date && <div className="gd-article-meta">{date}</div>}
+                    <div className="gd-article-title">{a.title}</div>
+                    {excerpt && <div className="gd-article-excerpt">{excerpt}</div>}
+                    {a.game_type && <span className="gd-article-tag">{a.game_type}</span>}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ── Franchise ── */}
+      {franchise.length > 0 && (
+        <div className="container gd-container">
+          <Separator label="Autres jeux de la franchise" />
+          <div className="gd-related-grid">
+            {franchise.map(g => {
+              const price  = parseFloat(g.price);
+              const retail = parseFloat(g.retail);
+              const promo  = retail && price && retail > price
+                ? `-${Math.round(((retail - price) / retail) * 100)}%` : null;
+              return (
+                <a key={g.id} href={g.url} target="_blank" rel="noopener noreferrer" className="gd-related-card">
+                  <div className="gd-related-img">
+                    <img src={g.img} alt={g.name} />
+                    {promo && <span className="gd-related-promo">{promo}</span>}
+                    {g.stock === 0 && <span className="gd-related-outofstock">Rupture</span>}
+                  </div>
+                  <div className="gd-related-info">
+                    <div className="gd-related-name">{g.name}</div>
+                    <div className="gd-related-price">
+                      {g.stock === 1 && price > 0 ? (
+                        <>
+                          {retail > price && <span className="gd-related-retail">{retail.toFixed(2)} €</span>}
+                          <span className="gd-related-final">{price.toFixed(2)} €</span>
+                        </>
+                      ) : (
+                        <span className="gd-related-na">Hors stock</span>
+                      )}
+                    </div>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ── Jeux similaires ── */}
+      {similar.length > 0 && (
+        <div className="container gd-container">
+          <Separator label="Jeux similaires" />
+          <div className="gd-related-grid">
+            {similar.map(g => {
+              const price  = parseFloat(g.price);
+              const retail = parseFloat(g.retail);
+              const promo  = retail && price && retail > price
+                ? `-${Math.round(((retail - price) / retail) * 100)}%` : null;
+              return (
+                <a key={g.id} href={g.url} target="_blank" rel="noopener noreferrer" className="gd-related-card">
+                  <div className="gd-related-img">
+                    <img src={g.img} alt={g.name} />
+                    {promo && <span className="gd-related-promo">{promo}</span>}
+                    {g.stock === 0 && <span className="gd-related-outofstock">Rupture</span>}
+                  </div>
+                  <div className="gd-related-info">
+                    <div className="gd-related-name">{g.name}</div>
+                    <div className="gd-related-price">
+                      {g.stock === 1 && price > 0 ? (
+                        <>
+                          {retail > price && <span className="gd-related-retail">{retail.toFixed(2)} €</span>}
+                          <span className="gd-related-final">{price.toFixed(2)} €</span>
+                        </>
+                      ) : (
+                        <span className="gd-related-na">Hors stock</span>
+                      )}
+                    </div>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <div className="separator product-panel" />
       <Footer />
     </div>
