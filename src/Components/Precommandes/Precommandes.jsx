@@ -8,37 +8,32 @@ function Precommandes() {
   useEffect(() => {
     const fetchPrecommandes = async () => {
       try {
-        // ✅ ON UTILISE DIRECT TON BACKEND
         const response = await fetch("https://api.sm-artweb.fr/api/precommandes");
         const data = await response.json();
+
         const uniqueGames = Object.values(
-  data.reduce((acc, game) => {
-    // clé basée sur début du nom (évite éditions)
-    const key = game.name
-      .toLowerCase()
-      .replace(/deluxe|ultimate|gold|premium|standard/gi, "")
-      .replace(/\s+/g, " ")
-      .trim()
-      .split(" ")
-      .slice(0, 3)
-      .join(" ");
+          data.reduce((acc, game) => {
+            const key = game.name
+              .toLowerCase()
+              .replace(/deluxe|ultimate|gold|premium|standard/gi, "")
+              .replace(/\s+/g, " ")
+              .trim()
+              .split(" ")
+              .slice(0, 3)
+              .join(" ");
 
-    if (!acc[key]) {
-      acc[key] = game;
-    } else {
-      // garde le moins cher
-      const currentPrice = parseFloat(acc[key].price);
-      const newPrice = parseFloat(game.price);
+            if (!acc[key]) {
+              acc[key] = game;
+            } else {
+              if (parseFloat(game.price) < parseFloat(acc[key].price)) {
+                acc[key] = game;
+              }
+            }
+            return acc;
+          }, {})
+        );
 
-      if (newPrice < currentPrice) {
-        acc[key] = game;
-      }
-    }
-
-    return acc;
-  }, {})
-);
-      setGames(uniqueGames.slice(0, 6));
+        setGames(uniqueGames.slice(0, 6));
       } catch (err) {
         console.error("Erreur fetch précommandes :", err);
         setGames([]);
@@ -84,28 +79,26 @@ function Precommandes() {
         <div className="nk-blog-grid">
           <div className="row">
             {games.map((game) => {
-              const promo = getPromo(game.retail, game.price);
-              const price = parseFloat(game.price);
+              const promo   = getPromo(game.retail, game.price);
+              const price   = parseFloat(game.price);
+
+              // 🔑 Même route que Popular → GameDetail
+              const detailPath = `/store/${game.id}/${game.steam_id || 0}/${cleanTitle(game.name)}`;
 
               return (
                 <div className="col-md-6 col-lg-4" key={game.id}>
                   <div className="nk-blog-post">
 
-                    <Link
-                      to={`/PC/${game.id}/${cleanTitle(game.name)}`}
-                      className="nk-post-img"
-                    >
+                    <Link to={detailPath} className="nk-post-img">
                       <img
                         src={game.img}
                         alt={game.name}
                         className="img-fluid"
                         style={{ width: "100%", objectFit: "cover" }}
                       />
-
                       {promo && (
                         <span className="nk-post-comments-count">{promo}</span>
                       )}
-
                       <span className="nk-post-categories">
                         <span className="bg-main-5">{game.type}</span>
                       </span>
@@ -114,7 +107,7 @@ function Precommandes() {
                     <div className="nk-gap"></div>
 
                     <span className="nk-post-title h4">
-                      <Link to={`/PC/${game.id}/${cleanTitle(game.name)}`}>
+                      <Link to={detailPath}>
                         {game.name.length > 17
                           ? game.name.slice(0, 17) + "..."
                           : game.name}
@@ -132,7 +125,6 @@ function Precommandes() {
                             : `🌍 ${game.region}`}
                         </span>
                       </div>
-
                       <span>{price ? `${price.toFixed(2)}€` : "N/A"}</span>
                     </div>
 

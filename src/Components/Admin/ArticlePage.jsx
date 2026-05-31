@@ -96,7 +96,7 @@ function ArticlePage() {
     <div>
       <Header />
 
-      <div className="nk-main" style={{ paddingTop: 80, maxWidth: 900, margin: "0 auto" }}>
+      <div className="nk-main" style={{ paddingTop: 80, maxWidth: 1100, margin: "0 auto" }}>
 
         {/* Breadcrumb */}
         <div className="container">

@@ -2,7 +2,7 @@ import Home from "./Home";
 import Admin from "./Components/Admin/Admin";
 import ArticlePage from "./Components/Admin/ArticlePage";
 import { Routes, Route } from "react-router-dom";
-
+import GameDetail from "./Components/GameDetail/GameDetail";
 function App() {
   return (
     <div className="App">
@@ -10,7 +10,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/article/:doc_id" element={<ArticlePage />} />
-
+<Route path="/store/:igId/:steamId/:title" element={<GameDetail />} />
         {/* Routes existantes (décommentez si besoin) */}
         {/* <Route path="/Login" element={<Login />}/> */}
         {/* <Route path="/Register" element={<Register />}/> */}
