@@ -13,9 +13,24 @@ function Sorties() {
 
         const today = new Date();
 
-        const filtered = data
-          .filter(g => g.releaseDate && new Date(g.releaseDate) <= today)
-          .sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate));
+ const filtered = data
+  .filter(g => {
+    if (!g.releaseDate) return false;
+
+    const todayDate = new Date(g.releaseDate);
+    if (todayDate > today) return false;
+
+    // gérer category string OU array
+    const cats = Array.isArray(g.category)
+      ? g.category.map(c => c.toLowerCase())
+      : [(g.category || "").toLowerCase()];
+
+    // filtre indie
+    if (cats.some(c => c.includes("indie"))) return false;
+
+    return true;
+  })
+  .sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate));
 
         setGames(filtered);
       } catch (err) {
@@ -55,14 +70,21 @@ function Sorties() {
       <div className="carousel">
         <div
           className="main-image"
-          style={{ backgroundImage: `url(${current.img})` }}
+          style={{
+  backgroundImage: `url(${current.img})`,
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  backgroundRepeat: "no-repeat"
+}}
         >
           <div className="price-tag">{current.price}€</div>
 
           <div className="image-overlay">
-            <Link to={`/PC/${current.id}`}>
-              <h2>{current.name}</h2>
-            </Link>
+          <Link to={`/store/${current.id}/${current.steam_id || 0}/${current.name
+  .replace(/\s+/g, "-")
+  .replace(/[^a-zA-Z0-9-]/g, "")}`}>
+  <h2>{current.name}</h2>
+</Link>
 
             <p>📅 {current.releaseDate}</p>
           </div>

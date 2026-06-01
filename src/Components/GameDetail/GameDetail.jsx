@@ -108,7 +108,7 @@ function Separator({ label }) {
       {label && (
         <span style={{
           fontFamily: "Montserrat, sans-serif",
-          fontSize: 13,
+          fontSize: 25,
           color: "#ccc",
           letterSpacing: 4,
           textTransform: "uppercase",
@@ -271,8 +271,9 @@ function GameDetail() {
           fetch(`${BACKEND_URL}/api/franchise/${igId}`).then(r => r.json()).catch(() => []),
           fetch(`${BACKEND_URL}/api/similar/${igId}`).then(r => r.json()).catch(() => []),
         ]);
-        setFranchise(Array.isArray(fr) ? fr : []);
-        setSimilar(Array.isArray(si) ? si : []);
+        // N'affiche que les jeux avec steam_id (sinon le lien GameDetail ne fonctionne pas)
+        setFranchise((Array.isArray(fr) ? fr : []).filter(g => g.steam_id));
+        setSimilar((Array.isArray(si) ? si : []).filter(g => g.steam_id));
       } catch (e) { console.error("Franchise/similar error", e); }
     })();
   }, [igId]);
@@ -874,12 +875,14 @@ function GameDetail() {
           <Separator label="Autres jeux de la franchise" />
           <div className="gd-related-grid">
             {franchise.map(g => {
-              const price  = parseFloat(g.price);
-              const retail = parseFloat(g.retail);
-              const promo  = retail && price && retail > price
+              const price    = parseFloat(g.price);
+              const retail   = parseFloat(g.retail);
+              const promo    = retail && price && retail > price
                 ? `-${Math.round(((retail - price) / retail) * 100)}%` : null;
+              const gSteamId = g.steam_id || 0;
+              const gSlug    = g.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
               return (
-                <a key={g.id} href={g.url} target="_blank" rel="noopener noreferrer" className="gd-related-card">
+                <Link key={g.id} to={`/store/${g.id}/${gSteamId}/${gSlug}`} className="gd-related-card">
                   <div className="gd-related-img">
                     <img src={g.img} alt={g.name} />
                     {promo && <span className="gd-related-promo">{promo}</span>}
@@ -898,7 +901,7 @@ function GameDetail() {
                       )}
                     </div>
                   </div>
-                </a>
+                </Link>
               );
             })}
           </div>
@@ -911,12 +914,14 @@ function GameDetail() {
           <Separator label="Jeux similaires" />
           <div className="gd-related-grid">
             {similar.map(g => {
-              const price  = parseFloat(g.price);
-              const retail = parseFloat(g.retail);
-              const promo  = retail && price && retail > price
+              const price    = parseFloat(g.price);
+              const retail   = parseFloat(g.retail);
+              const promo    = retail && price && retail > price
                 ? `-${Math.round(((retail - price) / retail) * 100)}%` : null;
+              const gSteamId = g.steam_id || 0;
+              const gSlug    = g.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
               return (
-                <a key={g.id} href={g.url} target="_blank" rel="noopener noreferrer" className="gd-related-card">
+                <Link key={g.id} to={`/store/${g.id}/${gSteamId}/${gSlug}`} className="gd-related-card">
                   <div className="gd-related-img">
                     <img src={g.img} alt={g.name} />
                     {promo && <span className="gd-related-promo">{promo}</span>}
@@ -935,7 +940,7 @@ function GameDetail() {
                       )}
                     </div>
                   </div>
-                </a>
+                </Link>
               );
             })}
           </div>

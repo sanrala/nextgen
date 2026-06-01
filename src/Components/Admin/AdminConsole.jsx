@@ -10,7 +10,7 @@ import "react-quill/dist/quill.snow.css";
 import "./Admin.css";
 
 const IG_CATALOG_URL =
-  "https://www.instant-gaming.com/fr/exportCatalog/json/?igr=gamer-707207";
+  "https://api.sm-artweb.fr/api/ig-catalog";
 const CLOUDINARY_CLOUD = "dl0eijxyn";
 const CLOUDINARY_PRESET = "ml_default";
 
