@@ -209,6 +209,15 @@ useEffect(() => {
     if (!igId) return;
     (async () => {
       try {
+        // Appel direct au catalogue par igId — fonctionne pour tous les jeux
+        // (pas seulement topsellers/latest/precommandes)
+        const res = await fetch(`${BACKEND_URL}/api/game/${igId}`);
+        if (res.ok) {
+          const game = await res.json();
+          setIgGame(game || null);
+          return;
+        }
+        // Fallback sur les 3 listes si l'endpoint échoue
         const [r1, r2, r3] = await Promise.all([
           fetch(`${BACKEND_URL}/api/topsellers-recent`).then(r => r.json()).catch(() => []),
           fetch(`${BACKEND_URL}/api/latest-releases`).then(r => r.json()).catch(() => []),

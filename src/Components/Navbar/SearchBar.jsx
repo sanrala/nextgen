@@ -10,6 +10,11 @@ const expandWidth = keyframes`
   to   { width: 280px; opacity: 1; }
 `;
 
+const collapseWidth = keyframes`
+  from { width: 280px; opacity: 1; }
+  to   { width: 36px;  opacity: 0.6; }
+`;
+
 const fadeInDown = keyframes`
   from { opacity: 0; transform: translateY(-8px) scaleY(0.92); }
   to   { opacity: 1; transform: translateY(0)   scaleY(1); }
@@ -262,32 +267,6 @@ const ResultsHeader = styled.div`
 `;
 
 // ── Component ──────────────────────────────────────────────────────────────────
-// ── Helpers déduplications (hors composant pour éviter warning exhaustive-deps) ──
-function getBaseName(name) {
-  return name
-    .replace(/[-–—].*$/i, "")
-    .replace(/\b(deluxe|ultimate|gold|premium|standard|complete|definitive|enhanced|remastered|anniversary|edition|pack|bundle|season pass|year one|goty|game of the year)\b.*$/gi, "")
-    .replace(/\s+/g, " ")
-    .trim()
-    .toLowerCase();
-}
-
-function deduplicateEditions(games) {
-  const map = new Map();
-  for (const g of games) {
-    const base = getBaseName(g.name);
-    const existing = map.get(base);
-    if (!existing) {
-      map.set(base, g);
-    } else {
-      if (g.stock === 1 && existing.stock === 0) { map.set(base, g); continue; }
-      if (g.stock === 0 && existing.stock === 1) continue;
-      if (g.name.length < existing.name.length) { map.set(base, g); }
-    }
-  }
-  return Array.from(map.values());
-}
-
 export default function SearchBar() {
   const [open, setOpen]           = useState(false);
   const [query, setQuery]         = useState("");
@@ -298,7 +277,7 @@ export default function SearchBar() {
   const inputRef                  = useRef(null);
   const wrapperRef                = useRef(null);
   const debounceRef               = useRef(null);
-  const prefetchCache             = useRef({});  // cache steamId par igId
+  const prefetchCache             = useRef({});
   const navigate                  = useNavigate();
 
   // ── Close on outside click ────────────────────────────────────────────────
@@ -340,6 +319,37 @@ export default function SearchBar() {
     setShowDrop(false);
   };
 
+  // ── Helpers pour dédupliquer les éditions ─────────────────────────────────
+  // Extrait le nom de base d'un jeu (sans "Deluxe", "Ultimate", etc.)
+  const getBaseName = (name) => {
+    return name
+      .replace(/[-–—].*$/i, "")                                        // tout après un tiret
+      .replace(/\b(deluxe|ultimate|gold|premium|standard|complete|definitive|enhanced|remastered|anniversary|edition|pack|bundle|season pass|year one|goty|game of the year)\b.*$/gi, "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
+  };
+
+  // Parmi les doublons d'une même base, garde le plus "standard" :
+  // priorité : stock=1, puis moins de mots dans le nom (= moins d'éditions), puis prix bas
+  const deduplicateEditions = (games) => {
+    const map = new Map();
+    for (const g of games) {
+      const base = getBaseName(g.name);
+      const existing = map.get(base);
+      if (!existing) {
+        map.set(base, g);
+      } else {
+        // Préfère stock disponible
+        if (g.stock === 1 && existing.stock === 0) { map.set(base, g); continue; }
+        if (g.stock === 0 && existing.stock === 1) continue;
+        // Préfère le nom le plus court (= édition standard / moins de mots)
+        if (g.name.length < existing.name.length) { map.set(base, g); }
+      }
+    }
+    return Array.from(map.values());
+  };
+
   // ── Search logic ──────────────────────────────────────────────────────────
   const doSearch = useCallback(async (q, cat) => {
     if (!q.trim()) { setResults([]); setShowDrop(false); return; }
@@ -351,14 +361,35 @@ export default function SearchBar() {
 
     const lower = q.toLowerCase();
     const matching = data.filter(
-      (g) =>
-        g.name?.toLowerCase().includes(lower) &&
-        parseFloat(g.price) > 0
+      (g) => g.name?.toLowerCase().includes(lower) && parseFloat(g.price) > 0
     );
 
-    const deduped = deduplicateEditions(matching);
+    // Déduplique par nom de base, mais en choisissant le meilleur igId :
+    // priorité Europe en stock, puis stock=1, puis prix le plus bas
+    const map = new Map();
+    for (const g of matching) {
+      const base = getBaseName(g.name);
+      const existing = map.get(base);
+      if (!existing) {
+        map.set(base, g);
+      } else {
+        const gEu   = (g.region   || "").toLowerCase().includes("europe");
+        const exEu  = (existing.region || "").toLowerCase().includes("europe");
+        const gSt   = g.stock === 1;
+        const exSt  = existing.stock === 1;
+        // Préfère Europe en stock
+        if (gEu && gSt && !(exEu && exSt)) { map.set(base, g); continue; }
+        if (exEu && exSt) continue;
+        // Puis stock disponible
+        if (gSt && !exSt) { map.set(base, g); continue; }
+        if (!gSt && exSt) continue;
+        // Puis prix le plus bas
+        if (parseFloat(g.price) < parseFloat(existing.price)) { map.set(base, g); }
+      }
+    }
+    const deduped = Array.from(map.values());
 
-    // Trie : stock d'abord, puis par pertinence (commence par la query > contient)
+    // Trie : commence par la query d'abord, puis contient
     const sorted = deduped.sort((a, b) => {
       if (b.stock !== a.stock) return b.stock - a.stock;
       const aStarts = a.name.toLowerCase().startsWith(lower) ? 0 : 1;
@@ -379,39 +410,40 @@ export default function SearchBar() {
     debounceRef.current = setTimeout(() => doSearch(val, catalog), 260);
   };
 
-  // ── Prefetch steamId au hover — résultat mis en cache ────────────────────
-  const handleHover = useCallback((game) => {
-    if (prefetchCache.current[game.id] !== undefined) return; // déjà en cache
-    prefetchCache.current[game.id] = null; // marque comme en cours
-    fetch(`${BACKEND_URL}/api/editions/${game.id}`)
-      .then(r => r.json())
-      .then(data => {
-        const enriched = Array.isArray(data) && data.find(g => g.steam_id);
-        prefetchCache.current[game.id] = enriched ? enriched.steam_id : 0;
-      })
-      .catch(() => { prefetchCache.current[game.id] = 0; });
-  }, []);
-
-  // ── Navigate to game — utilise le cache prefetch si dispo ─────────────────
+  // ── Navigate to game ─────────────────────────────────────────────────────
   const handleSelect = async (game) => {
     const slug = game.name
       .replace(/\s+/g, "-")
       .replace(/[^a-zA-Z0-9-]/g, "");
 
-    // Si steamId déjà dans le cache prefetch → navigation instantanée
+    console.log("[SearchBar] clic sur:", game.name, "igId:", game.id, "steam_id:", game.steam_id);
+
+    // Si steam_id déjà présent dans le catalogue enrichi → direct
+    if (game.steam_id) {
+      handleClose();
+      navigate(`/store/${game.id}/${game.steam_id}/${slug}`);
+      return;
+    }
+
+    // Utilise le cache prefetch si disponible (hover préalable)
     const cached = prefetchCache.current[game.id];
     if (cached) {
+      console.log("[SearchBar] prefetch hit, steamId:", cached);
       handleClose();
       navigate(`/store/${game.id}/${cached}/${slug}`);
       return;
     }
 
-    // Sinon fetch (cas où l'utilisateur clique sans avoir survolé)
+    // Sinon fetch /api/editions pour récupérer le steam_id
     try {
       const res  = await fetch(`${BACKEND_URL}/api/editions/${game.id}`);
       const data = await res.json();
-      const enriched = Array.isArray(data) && data.find(g => g.steam_id);
-      const steamId  = enriched ? enriched.steam_id : 0;
+      // Cherche d'abord l'entrée exacte (même igId), sinon la première avec steam_id
+      const exact    = Array.isArray(data) && data.find(g => String(g.id) === String(game.id));
+      const fallback = Array.isArray(data) && data.find(g => g.steam_id);
+      const entry    = (exact?.steam_id ? exact : fallback) || null;
+      const steamId  = entry?.steam_id || 0;
+      console.log("[SearchBar] editions fetch -> steamId:", steamId, "entry:", entry?.name);
       handleClose();
       navigate(`/store/${game.id}/${steamId}/${slug}`);
     } catch {
@@ -487,7 +519,7 @@ export default function SearchBar() {
                 const platform = (game.platform || game.type || "").toLowerCase();
 
                 return (
-                  <ResultItem key={game.id} onClick={() => handleSelect(game)} onMouseEnter={() => handleHover(game)}>
+                  <ResultItem key={game.id} onClick={() => handleSelect(game)}>
                     <GameThumb
                       src={game.img}
                       alt={game.name}
