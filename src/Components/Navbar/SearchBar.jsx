@@ -10,10 +10,10 @@ const expandWidth = keyframes`
   to   { width: 280px; opacity: 1; }
 `;
 
-const collapseWidth = keyframes`
-  from { width: 280px; opacity: 1; }
-  to   { width: 36px;  opacity: 0.6; }
-`;
+// const collapseWidth = keyframes`
+//   from { width: 280px; opacity: 1; }
+//   to   { width: 36px;  opacity: 0.6; }
+// `;
 
 const fadeInDown = keyframes`
   from { opacity: 0; transform: translateY(-8px) scaleY(0.92); }
@@ -332,23 +332,23 @@ export default function SearchBar() {
 
   // Parmi les doublons d'une même base, garde le plus "standard" :
   // priorité : stock=1, puis moins de mots dans le nom (= moins d'éditions), puis prix bas
-  const deduplicateEditions = (games) => {
-    const map = new Map();
-    for (const g of games) {
-      const base = getBaseName(g.name);
-      const existing = map.get(base);
-      if (!existing) {
-        map.set(base, g);
-      } else {
-        // Préfère stock disponible
-        if (g.stock === 1 && existing.stock === 0) { map.set(base, g); continue; }
-        if (g.stock === 0 && existing.stock === 1) continue;
-        // Préfère le nom le plus court (= édition standard / moins de mots)
-        if (g.name.length < existing.name.length) { map.set(base, g); }
-      }
-    }
-    return Array.from(map.values());
-  };
+  // const deduplicateEditions = (games) => {
+  //   const map = new Map();
+  //   for (const g of games) {
+  //     const base = getBaseName(g.name);
+  //     const existing = map.get(base);
+  //     if (!existing) {
+  //       map.set(base, g);
+  //     } else {
+  //       // Préfère stock disponible
+  //       if (g.stock === 1 && existing.stock === 0) { map.set(base, g); continue; }
+  //       if (g.stock === 0 && existing.stock === 1) continue;
+  //       // Préfère le nom le plus court (= édition standard / moins de mots)
+  //       if (g.name.length < existing.name.length) { map.set(base, g); }
+  //     }
+  //   }
+  //   return Array.from(map.values());
+  // };
 
   // ── Search logic ──────────────────────────────────────────────────────────
   const doSearch = useCallback(async (q, cat) => {
