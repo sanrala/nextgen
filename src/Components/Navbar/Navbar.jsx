@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import logo from "./../../assets/images/logoGames/logo.png";
 import { Link } from "react-router-dom";
 import Burger from "./Burger";
+import SearchBar from "./SearchBar";
 
 function NavBar() {
   const navRef = useRef(null);
@@ -10,7 +11,6 @@ function NavBar() {
     const nav = navRef.current;
     if (!nav) return;
 
-    // Force transparent au départ
     nav.style.setProperty('background', 'transparent', 'important');
     nav.style.setProperty('background-color', 'transparent', 'important');
     nav.style.setProperty('box-shadow', 'none', 'important');
@@ -60,8 +60,15 @@ function NavBar() {
               <li><Link to={{ pathname: `/PrecoFull/` }}>Précommandes</Link></li>
             </ul>
 
-            <ul className="nk-nav nk-nav-right nk-nav-icons">
+            <ul
+              className="nk-nav nk-nav-right nk-nav-icons"
+              style={{ display: "flex", alignItems: "center", gap: "10px" }}
+            >
               <Burger />
+              {/* Barre de recherche — visible desktop ET mobile, à droite du burger */}
+              <li style={{ padding: 0, listStyle: "none" }}>
+                <SearchBar />
+              </li>
             </ul>
           </div>
         </div>
