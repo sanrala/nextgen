@@ -190,17 +190,19 @@ function GameDetail() {
   const [selectedEdition,  setSelectedEdition]  = useState(null);
 
   // ── Steam ─────────────────────────────────────────────────────────────────
-  useEffect(() => {
-    if (!steamId || steamId === "0") { setLoadingSteam(false); return; }
-    (async () => {
-      try {
-        const res  = await fetch(`${BACKEND_URL}/api/steam/${steamId}`);
-        const data = await res.json();
-        setSteamData(data || null);
-      } catch (e) { console.error("Steam proxy error", e); }
-      finally { setLoadingSteam(false); }
-    })();
-  }, [steamId]);
+// GameDetail.jsx — useEffect Steam (ligne ~193)
+useEffect(() => {
+  if (!steamId || steamId === "0") { setLoadingSteam(false); return; }
+  (async () => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/steam/${steamId}`);
+      if (!res.ok) { setLoadingSteam(false); return; } // ← ajoute ce check
+      const data = await res.json();
+      setSteamData(data || null);
+    } catch (e) { console.error("Steam proxy error", e); }
+    finally { setLoadingSteam(false); }
+  })();
+}, [steamId]);
 
   // ── IG game ───────────────────────────────────────────────────────────────
   useEffect(() => {

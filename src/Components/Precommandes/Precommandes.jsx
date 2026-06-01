@@ -11,6 +11,8 @@ function Precommandes() {
         const response = await fetch("https://api.sm-artweb.fr/api/precommandes");
         const data = await response.json();
 
+        const EXCLUDED = ['indies', 'indépendant', 'independant', 'indie', 'occasionnel', 'casual'];
+
         const uniqueGames = Object.values(
           data.reduce((acc, game) => {
             const key = game.name
@@ -21,7 +23,6 @@ function Precommandes() {
               .split(" ")
               .slice(0, 3)
               .join(" ");
-
             if (!acc[key]) {
               acc[key] = game;
             } else {
@@ -33,7 +34,12 @@ function Precommandes() {
           }, {})
         );
 
-        setGames(uniqueGames.slice(0, 6));
+        const filtered = uniqueGames.filter(game => {
+          const cats = (game.category || []).map(c => c.toLowerCase());
+          return !cats.some(c => EXCLUDED.includes(c));
+        });
+
+        setGames(filtered.slice(0, 6));
       } catch (err) {
         console.error("Erreur fetch précommandes :", err);
         setGames([]);
@@ -58,7 +64,6 @@ function Precommandes() {
   return (
     <div>
       <div className="nk-gap-2"></div>
-
       <Link to={{ pathname: `/PrecoFull/` }}>
         <h3 className="nk-decorated-h-2">
           <span>
@@ -66,29 +71,21 @@ function Precommandes() {
           </span>
         </h3>
       </Link>
-
       <div className="nk-gap"></div>
-
       {loading && <p>Chargement...</p>}
-
       {!loading && games.length === 0 && (
         <p style={{ color: "#aaa" }}>Aucune précommande disponible.</p>
       )}
-
       {!loading && (
         <div className="nk-blog-grid">
           <div className="row">
             {games.map((game) => {
-              const promo   = getPromo(game.retail, game.price);
-              const price   = parseFloat(game.price);
-
-              // 🔑 Même route que Popular → GameDetail
+              const promo = getPromo(game.retail, game.price);
+              const price = parseFloat(game.price);
               const detailPath = `/store/${game.id}/${game.steam_id || 0}/${cleanTitle(game.name)}`;
-
               return (
                 <div className="col-md-6 col-lg-4" key={game.id}>
                   <div className="nk-blog-post">
-
                     <Link to={detailPath} className="nk-post-img">
                       <img
                         src={game.img}
@@ -103,31 +100,22 @@ function Precommandes() {
                         <span className="bg-main-5">{game.type}</span>
                       </span>
                     </Link>
-
                     <div className="nk-gap"></div>
-
                     <span className="nk-post-title h4">
                       <Link to={detailPath}>
-                        {game.name.length > 17
-                          ? game.name.slice(0, 17) + "..."
-                          : game.name}
+                        {game.name.length > 17 ? game.name.slice(0, 17) + "..." : game.name}
                       </Link>
                     </span>
-
                     <div className="nk-gap"></div>
-
                     <div className="d-flex justify-content-between text-white">
                       <div>
                         <span className="preco">PRECO</span>{" "}
                         <span className="preco__date">
-                          {game.releaseDate
-                            ? `📅 ${game.releaseDate}`
-                            : `🌍 ${game.region}`}
+                          {game.releaseDate ? `📅 ${game.releaseDate}` : `🌍 ${game.region}`}
                         </span>
                       </div>
                       <span>{price ? `${price.toFixed(2)}€` : "N/A"}</span>
                     </div>
-
                   </div>
                 </div>
               );
