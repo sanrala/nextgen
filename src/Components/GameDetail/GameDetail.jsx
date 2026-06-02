@@ -5,7 +5,7 @@ import { selectUser } from "../../features/userSlice";
 import { auth, db } from "../../Firebase";
 import {
   collection, addDoc, query, where, onSnapshot,
-  serverTimestamp, updateDoc, setDoc, doc, getDoc, getDocs
+  serverTimestamp, setDoc, doc, getDoc, getDocs
 } from "firebase/firestore";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
@@ -443,7 +443,7 @@ function GameDetail() {
         const gameKey = `ig_${igId}`;
         const avg     = comments.reduce((a, c) => a + parseInt(c.rating || 0), 0) / comments.length;
         const ref     = doc(db, "games", gameKey);
-        const snap    = await getDoc(ref);
+        // const snap    = await getDoc(ref);
         await setDoc(ref, { gameId: gameKey, averageRating: avg }, { merge: true });
       } catch (err) { console.warn("Firestore write denied:", err.message); }
     })();
