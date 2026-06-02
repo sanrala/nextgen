@@ -45,7 +45,7 @@ function NavBar() {
     <div>
       <nav ref={navRef} className="nk-navbar nk-navbar-top nk-navbar-sticky nk-navbar-autohide">
         <div className="container">
-          <div className="nk-nav-table">
+          <div className="nk-nav-table" style={{ minHeight: "70px" }}>
             <Link to={{ pathname: `/` }} className="nk-nav-logo">
               <img src={logo} alt="NextGen" width="199" />
             </Link>
@@ -58,17 +58,19 @@ function NavBar() {
               <li><Link to={{ pathname: `/Sorties/` }}>Nouveautés</Link></li>
               <li><Link to={{ pathname: `/Populaires/` }}>Populaires</Link></li>
               <li><Link to={{ pathname: `/PrecoFull/` }}>Précommandes</Link></li>
+              <li><Link to={{ pathname: `/Login/` }}>Connexion</Link></li>
             </ul>
 
-            <ul
-              className="nk-nav nk-nav-right nk-nav-icons"
-              style={{ display: "flex", alignItems: "center", gap: "10px" }}
+            {/* SearchBar — positionnée absolument à droite, par-dessus les liens quand ouverte */}
+            <div
+              className="d-none d-lg-block"
+              style={{ position: "absolute", right: "80px", top: "50%", transform: "translateY(-50%)", zIndex: 1200 }}
             >
+              <SearchBar />
+            </div>
+
+            <ul className="nk-nav nk-nav-right nk-nav-icons">
               <Burger />
-              {/* Barre de recherche — visible desktop ET mobile, à droite du burger */}
-              <li style={{ padding: 0, listStyle: "none" }}>
-                <SearchBar />
-              </li>
             </ul>
           </div>
         </div>
