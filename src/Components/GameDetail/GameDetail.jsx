@@ -108,11 +108,11 @@ function Separator({ label }) {
       {label && (
         <span style={{
           fontFamily: "Montserrat, sans-serif",
-          fontSize: 25,
+          fontSize: "clamp(14px, 4vw, 25px)",
           color: "#ccc",
-          letterSpacing: 4,
+          letterSpacing: "clamp(1px, 0.8vw, 4px)",
           textTransform: "uppercase",
-          whiteSpace: "nowrap",
+          whiteSpace: "normal",
           fontWeight: 800,
         }}>
           {label}
@@ -776,15 +776,65 @@ function GameDetail() {
         <Separator />
 
         <div className="nk-tabs">
-          <ul className="nav nav-tabs" role="tablist">
+          <style>{`
+            .gd-tabs-nav {
+              display: flex !important;
+              flex-wrap: nowrap !important;
+              gap: 6px;
+              list-style: none;
+              padding: 0;
+              margin: 0 0 16px 0;
+              border-bottom: none !important;
+            }
+            .gd-tab-item {
+              flex: 1 1 0;
+              min-width: 0;
+            }
+            .gd-tab-btn {
+              display: flex !important;
+              align-items: center;
+              justify-content: center;
+              width: 100%;
+              padding: 10px 6px;
+              font-size: clamp(10px, 2.5vw, 13px);
+              font-weight: 700;
+              font-family: inherit;
+              text-transform: uppercase;
+              letter-spacing: 0.05em;
+              text-align: center;
+              white-space: nowrap;
+              cursor: pointer;
+              border: 2px solid #333 !important;
+              border-radius: 4px;
+              color: #aaa !important;
+              background: transparent !important;
+              transition: all 0.18s ease;
+              line-height: 1.2;
+              box-sizing: border-box;
+            }
+            .gd-tab-btn:hover {
+              border-color: #dd163b !important;
+              color: #fff !important;
+            }
+            .gd-tab-btn.gd-tab-active {
+              background: #dd163b !important;
+              border-color: #dd163b !important;
+              color: #fff !important;
+            }
+          `}</style>
+          <ul className="gd-tabs-nav" role="tablist">
             {[
               { key: "description", label: "Description" },
               { key: "config",      label: "Config requise" },
               { key: "comment",     label: `Commentaires (${comments.length})` },
             ].map(t => (
-              <li className="nav-item" key={t.key}>
-                <span className={activeTab === t.key ? "active nav-link" : "nav-link"}
-                  style={{ cursor: "pointer" }} onClick={() => setActiveTab(t.key)}>{t.label}</span>
+              <li className="gd-tab-item" key={t.key}>
+                <span
+                  className={`gd-tab-btn${activeTab === t.key ? " gd-tab-active" : ""}`}
+                  onClick={() => setActiveTab(t.key)}
+                >
+                  {t.label}
+                </span>
               </li>
             ))}
           </ul>
