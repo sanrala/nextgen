@@ -360,15 +360,16 @@ export default function SearchBar() {
     if (!data || !Array.isArray(data)) { setLoading(false); return; }
 
     const lower = q.toLowerCase();
-    const matching = data.filter(
-      (g) => g.name?.toLowerCase().includes(lower) && parseFloat(g.price) > 0
-    );
+ const matching = data.filter(
+  (g) => g.name?.toLowerCase().includes(lower)
+);
 
     // Déduplique par nom de base, mais en choisissant le meilleur igId :
     // priorité Europe en stock, puis stock=1, puis prix le plus bas
     const map = new Map();
     for (const g of matching) {
-      const base = getBaseName(g.name);
+      const platform = (g.platform || g.type || "").toLowerCase();
+const base = getBaseName(g.name) + "|" + platform;
       const existing = map.get(base);
       if (!existing) {
         map.set(base, g);
@@ -411,46 +412,51 @@ export default function SearchBar() {
   };
 
   // ── Navigate to game ─────────────────────────────────────────────────────
-  const handleSelect = async (game) => {
-    const slug = game.name
-      .replace(/\s+/g, "-")
-      .replace(/[^a-zA-Z0-9-]/g, "");
+ const handleSelect = async (game) => {
+  const slug = game.name
+    .replace(/\s+/g, "-")
+    .replace(/[^a-zA-Z0-9-]/g, "");
 
-    console.log("[SearchBar] clic sur:", game.name, "igId:", game.id, "steam_id:", game.steam_id);
+  const platform = (game.platform || game.type || "").toLowerCase();
+  const isPS5 = platform.includes("ps5") || platform.includes("playstation");
 
-    // Si steam_id déjà présent dans le catalogue enrichi → direct
-    if (game.steam_id) {
-      handleClose();
-      navigate(`/store/${game.id}/${game.steam_id}/${slug}`);
-      return;
-    }
+  // Jeu PS5 → route dédiée sans steamId
+  if (isPS5) {
+    handleClose();
+    navigate(`/store/${game.id}/0/${slug}`);
+    return;
+  }
 
-    // Utilise le cache prefetch si disponible (hover préalable)
-    const cached = prefetchCache.current[game.id];
-    if (cached) {
-      console.log("[SearchBar] prefetch hit, steamId:", cached);
-      handleClose();
-      navigate(`/store/${game.id}/${cached}/${slug}`);
-      return;
-    }
+  // Si steam_id déjà présent dans le catalogue enrichi → direct
+  if (game.steam_id) {
+    handleClose();
+    navigate(`/store/${game.id}/${game.steam_id}/${slug}`);
+    return;
+  }
 
-    // Sinon fetch /api/editions pour récupérer le steam_id
-    try {
-      const res  = await fetch(`${BACKEND_URL}/api/editions/${game.id}`);
-      const data = await res.json();
-      // Cherche d'abord l'entrée exacte (même igId), sinon la première avec steam_id
-      const exact    = Array.isArray(data) && data.find(g => String(g.id) === String(game.id));
-      const fallback = Array.isArray(data) && data.find(g => g.steam_id);
-      const entry    = (exact?.steam_id ? exact : fallback) || null;
-      const steamId  = entry?.steam_id || 0;
-      console.log("[SearchBar] editions fetch -> steamId:", steamId, "entry:", entry?.name);
-      handleClose();
-      navigate(`/store/${game.id}/${steamId}/${slug}`);
-    } catch {
-      handleClose();
-      navigate(`/store/${game.id}/0/${slug}`);
-    }
-  };
+  // Utilise le cache prefetch si disponible (hover préalable)
+  const cached = prefetchCache.current[game.id];
+  if (cached) {
+    handleClose();
+    navigate(`/store/${game.id}/${cached}/${slug}`);
+    return;
+  }
+
+  // Sinon fetch /api/editions pour récupérer le steam_id
+  try {
+    const res  = await fetch(`${BACKEND_URL}/api/editions/${game.id}`);
+    const data = await res.json();
+    const exact    = Array.isArray(data) && data.find(g => String(g.id) === String(game.id));
+    const fallback = Array.isArray(data) && data.find(g => g.steam_id);
+    const entry    = (exact?.steam_id ? exact : fallback) || null;
+    const steamId  = entry?.steam_id || 0;
+    handleClose();
+    navigate(`/store/${game.id}/${steamId}/${slug}`);
+  } catch {
+    handleClose();
+    navigate(`/store/${game.id}/0/${slug}`);
+  }
+};
 
   // ── ESC key ───────────────────────────────────────────────────────────────
   const handleKeyDown = (e) => {
@@ -542,9 +548,9 @@ export default function SearchBar() {
                         </GameMeta>
                       )}
                     </GameInfo>
-                    <GamePrice>
-                      {price.toFixed(2)} €
-                    </GamePrice>
+                 <GamePrice style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.65rem", fontWeight: 600 }}>
+  {parseFloat(game.price) > 0 ? `${parseFloat(game.price).toFixed(2)} €` : "Prochainement"}
+</GamePrice>
                   </ResultItem>
                 );
               })}

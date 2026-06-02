@@ -191,72 +191,83 @@ function GameDetail() {
 
   // ── Steam + Firebase cache ────────────────────────────────────────────────
   useEffect(() => {
-    if (!igId) { setLoadingSteam(false); return; }
-    (async () => {
-      try {
-        const fbRef  = doc(db, "games", `ig_${igId}`);
-        const fbSnap = await getDoc(fbRef);
+  if (!igId) { setLoadingSteam(false); return; }
+  (async () => {
+    try {
+      const fbRef  = doc(db, "games", `ig_${igId}`);
+      const fbSnap = await getDoc(fbRef);
 
-        if (fbSnap.exists()) {
-          // ── Données déjà dans Firebase → on les utilise directement ──────
-          const cached = fbSnap.data();
-          if (cached.steamData) setSteamData(cached.steamData);
-          if (cached.franchise) setFranchise((cached.franchise || []).filter(g => g.steam_id));
-          if (cached.similar)   setSimilar((cached.similar   || []).filter(g => g.steam_id));
-          setLoadingSteam(false);
-          return;
-        }
+     if (fbSnap.exists()) {
+  const cached = fbSnap.data();
 
-        // ── Pas dans Firebase → fetch APIs puis écriture ──────────────────
-        const resolvedSteamId = steamId && steamId !== "0" ? steamId : null;
+  // Si le cache existe mais n'a pas de steamData ET c'est potentiellement
+  // un jeu console → on ignore le cache et on re-fetch
+  if (!cached.steamData) {
+    // laisse tomber le cache, continue vers le fetch
+  } else {
+    if (cached.steamData) setSteamData(cached.steamData);
+    if (cached.franchise) setFranchise((cached.franchise || []).filter(g => g.steam_id));
+    if (cached.similar)   setSimilar((cached.similar   || []).filter(g => g.steam_id));
+    setLoadingSteam(false);
+    return;
+  }
+}
 
-        const [steamRes, frRes, siRes] = await Promise.all([
-          resolvedSteamId
-            ? fetch(`${BACKEND_URL}/api/steam/${resolvedSteamId}`).then(r => r.ok ? r.json() : null).catch(() => null)
+      const resolvedSteamId = steamId && steamId !== "0" ? steamId : null;
+
+      // Détecte si le jeu est PS5/Nintendo (pas de steamId)
+      const igGameData = await fetch(`${BACKEND_URL}/api/game/${igId}`)
+        .then(r => r.ok ? r.json() : null).catch(() => null);
+      const gameType = (igGameData?.type || "").toLowerCase();
+      const isConsole = !resolvedSteamId && (
+        gameType.includes("playstation") || gameType.includes("ps5") ||
+        gameType.includes("ps4") || gameType.includes("nintendo") ||
+        gameType.includes("switch")
+      );
+
+      const [gameDataRes, frRes, siRes] = await Promise.all([
+        // Steam pour PC, RAWG pour PS5/Nintendo
+        resolvedSteamId
+          ? fetch(`${BACKEND_URL}/api/steam/${resolvedSteamId}`).then(r => r.ok ? r.json() : null).catch(() => null)
+          : isConsole
+            ? fetch(`${BACKEND_URL}/api/rawg/${igId}`).then(r => r.ok ? r.json() : null).catch(() => null)
             : Promise.resolve(null),
-          fetch(`${BACKEND_URL}/api/franchise/${igId}`).then(r => r.json()).catch(() => []),
-          fetch(`${BACKEND_URL}/api/similar/${igId}`).then(r => r.json()).catch(() => []),
-        ]);
+        fetch(`${BACKEND_URL}/api/franchise/${igId}`).then(r => r.json()).catch(() => []),
+        fetch(`${BACKEND_URL}/api/similar/${igId}`).then(r => r.json()).catch(() => []),
+      ]);
 
-        const fr = (Array.isArray(frRes) ? frRes : []).filter(g => g.steam_id);
-        const si = (Array.isArray(siRes) ? siRes : []).filter(g => g.steam_id);
+      const fr = (Array.isArray(frRes) ? frRes : []).filter(g => g.steam_id);
+      const si = (Array.isArray(siRes) ? siRes : []).filter(g => g.steam_id);
 
-        if (steamRes) setSteamData(steamRes);
-        setFranchise(fr);
-        setSimilar(si);
+      if (gameDataRes) setSteamData(gameDataRes);
+      setFranchise(fr);
+      setSimilar(si);
 
-        // ── Écriture dans Firebase (données stables uniquement, sans prix/stock) ──
-        try {
-          const toStore = {
-            igId,
-            savedAt: serverTimestamp(),
-          };
-          if (steamRes) toStore.steamData = steamRes;
-
-          // Franchise sans prix/stock
-          if (fr.length) toStore.franchise = fr.map(g => ({
-            id: g.id, name: g.name, img: g.img,
-            steam_id: g.steam_id, type: g.type,
-          }));
-          // Similar sans prix/stock
-          if (si.length) toStore.similar = si.map(g => ({
-            id: g.id, name: g.name, img: g.img,
-            steam_id: g.steam_id, type: g.type,
-          }));
-
-          await setDoc(fbRef, toStore, { merge: true });
-        } catch (writeErr) {
-          console.warn("Firebase write error:", writeErr.message);
-        }
-
-      } catch (e) {
-        console.error("Steam/Firebase error", e);
-      } finally {
-        setLoadingSteam(false);
+      // Écriture Firebase (inchangée)
+      try {
+        const toStore = { igId, savedAt: serverTimestamp() };
+        if (gameDataRes) toStore.steamData = gameDataRes;
+        if (fr.length) toStore.franchise = fr.map(g => ({
+          id: g.id, name: g.name, img: g.img,
+          steam_id: g.steam_id, type: g.type,
+        }));
+        if (si.length) toStore.similar = si.map(g => ({
+          id: g.id, name: g.name, img: g.img,
+          steam_id: g.steam_id, type: g.type,
+        }));
+        await setDoc(fbRef, toStore, { merge: true });
+      } catch (writeErr) {
+        console.warn("Firebase write error:", writeErr.message);
       }
-    })();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [igId]);
+
+    } catch (e) {
+      console.error("Steam/Firebase error", e);
+    } finally {
+      setLoadingSteam(false);
+    }
+  })();
+// eslint-disable-next-line react-hooks/exhaustive-deps
+}, [igId]);
 
   // ── IG game ───────────────────────────────────────────────────────────────
   useEffect(() => {

@@ -217,7 +217,7 @@ const RightNav = ({ open, setOpen }) => {
       if (!Array.isArray(data)) return;
       const lower = q.toLowerCase();
       setSearchResults(
-        data.filter(g => g.name?.toLowerCase().includes(lower) && parseFloat(g.price) > 0 && g.stock === 1).slice(0, 8)
+       data.filter(g => g.name?.toLowerCase().includes(lower)).slice(0, 8)
       );
     }, 260);
   }, [fetchCatalog]);
