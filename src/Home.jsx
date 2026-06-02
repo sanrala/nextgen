@@ -160,11 +160,11 @@ function LogoLoader() {
         </g>
 
         {/* Letters NEXTGEN */}
-        <text className="ng-ltr ng-n1" x="53"  y="141">N</text>
+        <text className="ng-ltr ng-n1" x="53" y="141">N</text>
         <text className="ng-ltr ng-e1" x="101" y="141">Ξ</text>
-        <text className="ng-ltr ng-x"  x="145" y="141">X</text>
-        <text className="ng-ltr ng-t"  x="193" y="141">T</text>
-        <text className="ng-ltr ng-g"  x="238" y="141">G</text>
+        <text className="ng-ltr ng-x" x="145" y="141">X</text>
+        <text className="ng-ltr ng-t" x="193" y="141">T</text>
+        <text className="ng-ltr ng-g" x="238" y="141">G</text>
         <text className="ng-ltr ng-e2" x="286" y="141">E</text>
         <text className="ng-ltr ng-n2" x="332" y="141">N</text>
 
@@ -278,8 +278,8 @@ function Home() {
             <ImgSlider gameData={topSeller} />
 
             <div className="container">
-                <div className="separator product-panel"></div>
-  <BoxNews />          {/* ← ajoute ici */}
+              <div className="separator product-panel"></div>
+              <BoxNews />          {/* ← ajoute ici */}
               <div className="separator product-panel"></div>
               <Sorties />
               <div className="separator product-panel"></div>

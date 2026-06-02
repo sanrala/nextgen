@@ -492,7 +492,7 @@ function GameDetail() {
     <><Header /><Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}><CircularProgress /></Box></>
   );
 
-  const gameTitle  = steamData?.name || igGame?.name || decodeURIComponent(title || "");
+  const gameTitle = chosenEntry?.name || steamData?.name || igGame?.name || decodeURIComponent(title || "");
   // Badge plateforme (de l'édition choisie)
   const pt = (chosenEntry?.type || igGame?.type || "Steam").toLowerCase();
   const platformLabel = pt.includes("ubisoft") ? "Ubisoft Connect"

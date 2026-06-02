@@ -64,7 +64,7 @@ function NavBar() {
             {/* SearchBar — positionnée absolument à droite, par-dessus les liens quand ouverte */}
             <div
               className="d-none d-lg-block"
-              style={{ position: "absolute", right: "80px", top: "50%", transform: "translateY(-50%)", zIndex: 1200 }}
+              style={{ position: "absolute", right: "50px", top: "50%", transform: "translateY(-50%)", zIndex: 1200 }}
             >
               <SearchBar />
             </div>

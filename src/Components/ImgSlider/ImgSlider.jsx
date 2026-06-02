@@ -21,7 +21,7 @@ function ImgSlider({ gameData }) {
     const img = new Image();
     img.src = steamPortrait;
     img.onload = () => setMobileImg(steamPortrait);
-    img.onerror = () => setMobileImg(gameData.img); // 👈 fallback image IG
+    img.onerror = () => setMobileImg(gameData.img);
 
     setRandomImage({
       id: gameData.id,
@@ -50,67 +50,60 @@ function ImgSlider({ gameData }) {
         backgroundImage: `url(${currentImg})`,
         backgroundSize: "cover",
         backgroundPosition: isMobile ? "center center" : "center top",
-        height: isMobile ? "500px" : "600px",
+        height: isMobile ? "600px" : "600px",
         position: "relative",
         display: "flex",
-        alignItems: "flex-end",
+        alignItems: isMobile ? "flex-end" : "center",
         overflow: "hidden",
         width: "100%",
       }}
     >
       {/* Dégradé principal */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background: isMobile
-            ? "linear-gradient(to top, rgba(0,0,0,0.95) 30%, transparent 70%)"
-            : "linear-gradient(to right, rgba(0,0,0,0.9) 20%, transparent 60%)",
-        }}
-      />
-
+      <div style={{ position: "absolute", inset: 0, background: isMobile ? "linear-gradient(to top, rgba(0,0,0,0.95) 30%, transparent 70%)" : "linear-gradient(to right, rgba(0,0,0,0.9) 20%, transparent 60%)" }} />
       {/* Dégradé bas */}
-      <div
-        style={{
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(23,30,34,1) 0%, transparent 40%)" }} />
+
+      {isMobile ? (
+        /* ── VERSION MOBILE : position absolue centrée ── */
+        <div style={{
           position: "absolute",
-          inset: 0,
-          background:
-            "linear-gradient(to top, rgba(23,30,34,1) 0%, transparent 40%)",
-        }}
-      />
-
-      {/* Contenu */}
-      <div
-        style={{
-          position: "relative",
+          bottom: "40px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "90%",
           zIndex: 1,
-          padding: isMobile ? "30px 20px" : "40px 60px",
-          maxWidth: isMobile ? "100%" : "500px",
-          width: isMobile ? "100%" : "auto",
-          textAlign: isMobile ? "center" : "left",
-        }}
-      >
-        <Link
-          to={`/jeux/${randomImage.id}`}
-          style={{ textDecoration: "none" }}
-        >
-          <h1 className="title__price">{randomImage.title}</h1>
-        </Link>
-
-        <p className="text-white" style={{ margin: "10px 0 20px" }}>
-          <span className="priceSlidePromo">{randomImage.promo}</span>{" "}
-          <span className="price">{randomImage.price}</span>
-        </p>
-
-        <a
-          href={randomImage.buy}
-          className="nk-btn nk-btn-rounded nk-btn-color-white nk-btn-hover-color-main-1"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Instant Gaming
-        </a>
-      </div>
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}>
+          <Link to={`/jeux/${randomImage.id}`} style={{ textDecoration: "none", width: "100%", display: "block", textAlign: "center" }}>
+            <h1 className="title__price" style={{ fontSize: "32px", lineHeight: "1.2", textAlign: "center", width: "100%", margin: "0 0 10px" }}>
+              {randomImage.title}
+            </h1>
+          </Link>
+          <p className="text-white" style={{ margin: "0 0 20px", textAlign: "center" }}>
+            <span className="priceSlidePromo">{randomImage.promo}</span>{" "}
+            <span className="price">{randomImage.price}</span>
+          </p>
+          <a href={randomImage.buy} className="nk-btn nk-btn-rounded nk-btn-color-white nk-btn-hover-color-main-1" target="_blank" rel="noreferrer">
+            Acheter
+          </a>
+        </div>
+      ) : (
+        /* ── VERSION DESKTOP ── */
+        <div style={{ position: "relative", zIndex: 1, padding: "0 100px", maxWidth: "700px" }}>
+          <Link to={`/jeux/${randomImage.id}`} style={{ textDecoration: "none" }}>
+            <h1 className="title__price" style={{ whiteSpace: "nowrap" }}>{randomImage.title}</h1>
+          </Link>
+          <p className="text-white" style={{ margin: "10px 0 20px" }}>
+            <span className="priceSlidePromo">{randomImage.promo}</span>{" "}
+            <span className="price">{randomImage.price}</span>
+          </p>
+          <a href={randomImage.buy} className="nk-btn nk-btn-rounded nk-btn-color-white nk-btn-hover-color-main-1" target="_blank" rel="noreferrer">
+            Acheter
+          </a>
+        </div>
+      )}
     </div>
   );
 }
