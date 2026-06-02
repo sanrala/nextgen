@@ -672,7 +672,7 @@ function GameDetail() {
                 {chosenInStock && chosenUrl ? (
                   <a href={chosenUrl} target="_blank" rel="noopener noreferrer"
                     className="nk-btn nk-btn-rounded nk-btn-color-main-1 gd-btn-instock">
-                    🛒 Acheter sur Instant Gaming
+                    🛒 Acheter
                   </a>
                 ) : (
                   <button className="nk-btn nk-btn-rounded gd-btn-outofstock" disabled aria-disabled="true">
@@ -745,7 +745,7 @@ function GameDetail() {
                 {chosenInStock && chosenUrl ? (
                   <a href={chosenUrl} target="_blank" rel="noopener noreferrer"
                     className="nk-btn nk-btn-rounded nk-btn-color-main-1 gd-btn-instock">
-                    🛒 Acheter sur Instant Gaming
+                    🛒 Acheter
                   </a>
                 ) : (
                   <button className="nk-btn nk-btn-rounded gd-btn-outofstock" disabled aria-disabled="true">
