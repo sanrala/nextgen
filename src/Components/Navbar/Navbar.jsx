@@ -42,7 +42,6 @@ function NavBar() {
   }, []);
 
   return (
-    <div>
       <nav ref={navRef} className="nk-navbar nk-navbar-top nk-navbar-sticky nk-navbar-autohide">
         <div className="container">
           <div className="nk-nav-table" style={{ minHeight: "70px" }}>
@@ -75,7 +74,6 @@ function NavBar() {
           </div>
         </div>
       </nav>
-    </div>
   );
 }
 

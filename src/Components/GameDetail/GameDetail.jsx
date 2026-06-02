@@ -512,15 +512,28 @@ function GameDetail() {
     : "#14487b";
 
   return (
-    <div>
+    <div style={{ position: "relative" }}>
       <Header />
-      {steamData?.background && (
-        <div className="gd-hero" style={{ backgroundImage: `url(${steamData.background})` }}>
-          <div className="gd-hero-overlay" />
+     
+
+      {/* ── Hero background pleine largeur ── */}
+      {steamId && steamId !== "0" && (
+        <div style={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          height: "580px",
+          backgroundImage: `url(https://cdn.akamai.steamstatic.com/steam/apps/${steamId}/library_hero.jpg)`,
+          backgroundSize: "cover",
+          backgroundPosition: "center top",
+          zIndex: 0,
+        }}>
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(23,30,34,0.9) 10%, rgba(23,30,34,0.4) 60%)" }} />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(23,30,34,1) 0%, transparent 55%)" }} />
         </div>
       )}
-      <div className="nk-gap-1" />
-      <div className="container gd-container">
+
+      <div className="container gd-container" style={{ position: "relative", zIndex: 1 }}>
         <ul className="nk-breadcrumbs">
           <li><Link to="/">Accueil</Link></li>
           <li><span className="fa fa-angle-right" /></li>
@@ -532,7 +545,6 @@ function GameDetail() {
 
         <div className="nk-store-product">
           <div className="row vertical-gap">
-
             {/* ── Colonne gauche ── */}
             <div className="col-12 col-md-6">
               <div className="gd-media-main">
