@@ -3,6 +3,8 @@ import Admin from "./Components/Admin/Admin";
 import ArticlePage from "./Components/Admin/ArticlePage";
 import { Routes, Route } from "react-router-dom";
 import GameDetail from "./Components/GameDetail/GameDetail";
+import Populaires from "./Components/Populaires/Populaires";
+
 function App() {
   return (
     <div className="App">
@@ -10,7 +12,9 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/article/:doc_id" element={<ArticlePage />} />
-<Route path="/store/:igId/:steamId/:title" element={<GameDetail />} />
+        <Route path="/store/:igId/:steamId/:title" element={<GameDetail />} />
+        <Route path="/Populaires" element={<Populaires />} />
+        <Route path="/Populaires/" element={<Populaires />} />
         {/* Routes existantes (décommentez si besoin) */}
         {/* <Route path="/Login" element={<Login />}/> */}
         {/* <Route path="/Register" element={<Register />}/> */}
@@ -21,7 +25,6 @@ function App() {
         {/* <Route path="/PC_Rockstar/:id/:title" element={<ProductRockstar />}/> */}
         {/* <Route path="/Battlenet/:id/:support" element={<ProductBlizzard />}/> */}
         {/* <Route path="/actualités" element={<BlocArticle />} /> */}
-        {/* <Route path="/Populaires" element={<Populaires />} /> */}
         {/* <Route path="/Sorties" element={<Sorties />} /> */}
         {/* <Route path="/PrecoFull" element={<PrecoFull />} /> */}
         {/* <Route path="/précommandes/:id/:title" element={<Preco />}/> */}
