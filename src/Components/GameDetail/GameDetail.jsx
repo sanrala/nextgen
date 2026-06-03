@@ -213,16 +213,32 @@ function GameDetail() {
   }
 }
 
-      const resolvedSteamId = steamId && steamId !== "0" ? steamId : null;
-
-      // Détecte si le jeu est PS5/Nintendo (pas de steamId)
+      // Récupère les infos IG du jeu (type, steam_id éventuel)
       const igGameData = await fetch(`${BACKEND_URL}/api/game/${igId}`)
         .then(r => r.ok ? r.json() : null).catch(() => null);
       const gameType = (igGameData?.type || "").toLowerCase();
+
+      // Si steamId est 0, on essaie de le résoudre via /api/editions
+      let resolvedSteamId = steamId && steamId !== "0" ? steamId : null;
+      if (!resolvedSteamId) {
+        const isPC = (gameType.includes("steam") || gameType.includes("epic") ||
+          gameType.includes("gog") || gameType.includes("ubisoft") ||
+          gameType.includes("battle") || gameType.includes("rockstar") ||
+          gameType.includes("ea app") || gameType.includes("other")) &&
+          !gameType.includes("microsoft") && !gameType.includes("xbox");
+        if (isPC) {
+          const editions = await fetch(`${BACKEND_URL}/api/editions/${igId}`)
+            .then(r => r.ok ? r.json() : []).catch(() => []);
+          const found = editions.find(e => e.steam_id);
+          if (found) resolvedSteamId = found.steam_id;
+        }
+      }
+
       const isConsole = !resolvedSteamId && (
         gameType.includes("playstation") || gameType.includes("ps5") ||
         gameType.includes("ps4") || gameType.includes("nintendo") ||
-        gameType.includes("switch")
+        gameType.includes("switch") || gameType.includes("microsoft") ||
+        gameType.includes("xbox")
       );
 
       const [gameDataRes, frRes, siRes] = await Promise.all([

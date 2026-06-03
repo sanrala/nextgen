@@ -169,12 +169,22 @@ function Populaires() {
     const fetchGames = async () => {
       try {
         setLoading(true);
-        const res  = await fetch(`${BACKEND_URL}/api/topsellers-all`, {
+        const res  = await fetch(`${BACKEND_URL}/api/allgames`, {
           headers: { "User-Agent": "IG-ExportCatalog-Fetcher" },
         });
         const data = await res.json();
         if (!data || data.length === 0) { setAllGames([]); return; }
-        setAllGames(data);
+        const today = new Date();
+        today.setHours(23, 59, 59, 999);
+        const released = data.filter(g => {
+          if (g.preorder === 1) return false;
+          if (g.releaseDate) {
+            const d = new Date(g.releaseDate);
+            if (!isNaN(d) && d > today) return false;
+          }
+          return true;
+        });
+        setAllGames(released);
       } catch (err) {
         console.error(err);
         setError("Impossible de charger les jeux.");
