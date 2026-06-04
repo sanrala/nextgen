@@ -6,7 +6,6 @@ const PROXY = "https://api.sm-artweb.fr";
 function ImgSlider({ gameData }) {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [heroUrl, setHeroUrl] = useState(null);
-  const [portraitUrl, setPortraitUrl] = useState(null);
   const [gameInfo, setGameInfo] = useState(null);
 
   useEffect(() => {
@@ -33,64 +32,55 @@ function ImgSlider({ gameData }) {
       buy: gameData.url,
     });
 
-    // On tente directement les URLs Steam — le <img> caché gèrera le fallback
-    setHeroUrl(
-      `https://cdn.akamai.steamstatic.com/steam/apps/${gameData.steam_id}/library_hero.jpg`
-    );
-    setPortraitUrl(
-      `https://cdn.akamai.steamstatic.com/steam/apps/${gameData.steam_id}/portrait.png`
-    );
-  }, [gameData]);
+    const steamHero = `https://cdn.akamai.steamstatic.com/steam/apps/${gameData.steam_id}/library_hero.jpg`;
 
-  // Quand le hero échoue : storesearch via proxy pour trouver le jeu de base
-  const handleHeroError = async () => {
-    console.log("❌ Hero échoué, storesearch via proxy...");
-    try {
-      const searchTerm = gameData.name.split(':')[0].trim();
-      const res = await fetch(
-        `${PROXY}/api/steam-search?term=${encodeURIComponent(searchTerm)}`
-      );
-      const json = await res.json();
-      const baseGame = json?.items?.find(
-        (item) =>
-          item.type === "app" &&
-          item.price &&
-          item.id !== gameData.steam_id
-      );
-      if (baseGame) {
-        console.log("🔍 baseGame:", baseGame.name, baseGame.id);
-        setHeroUrl(
-          `https://cdn.akamai.steamstatic.com/steam/apps/${baseGame.id}/library_hero.jpg`
+    const resolveHero = async () => {
+      try {
+        const check = await fetch(
+          `${PROXY}/api/check-image?url=${encodeURIComponent(steamHero)}`
         );
-        setPortraitUrl(
-          `https://cdn.akamai.steamstatic.com/steam/apps/${baseGame.id}/portrait.png`
-        );
-      } else {
+        const { ok } = await check.json();
+        console.log("check-image ok:", ok, steamHero);
+
+        if (ok) {
+          setHeroUrl(steamHero);
+        } else {
+          const searchTerm = gameData.name.split(":")[0].trim();
+          console.log("searchTerm:", searchTerm);
+          const res = await fetch(
+            `${PROXY}/api/steam-search?term=${encodeURIComponent(searchTerm)}`
+          );
+          const json = await res.json();
+          const baseGame = json?.items?.find(
+            (item) =>
+              item.type === "app" &&
+              item.price &&
+              item.id !== parseInt(gameData.steam_id)
+          );
+          console.log("baseGame:", baseGame);
+          if (baseGame) {
+            setHeroUrl(
+              `https://cdn.akamai.steamstatic.com/steam/apps/${baseGame.id}/library_hero.jpg`
+            );
+          } else {
+            setHeroUrl(gameData.img);
+          }
+        }
+      } catch (e) {
+        console.error("resolveHero error:", e);
         setHeroUrl(gameData.img);
       }
-    } catch {
-      setHeroUrl(gameData.img);
-    }
-  };
+    };
 
-  const handlePortraitError = () => {
-    setPortraitUrl(gameData?.img || null);
-  };
-
-  // Deuxième échec hero (après storesearch) → image IG
-  // const handleHeroError2 = () => {
-  //   console.log("⚠️ Fallback image IG");
-  //   setHeroUrl(gameData.img);
-  // };
+    resolveHero(); // ← appel indispensable
+  }, [gameData]);
 
   if (!gameInfo || !heroUrl) return null;
-
-  const currentImg = isMobile ? (portraitUrl || heroUrl) : heroUrl;
 
   return (
     <div
       style={{
-        backgroundImage: `url(${currentImg})`,
+        backgroundImage: `url(${heroUrl})`,
         backgroundSize: "cover",
         backgroundPosition: isMobile ? "center center" : "center top",
         height: "600px",
@@ -101,22 +91,6 @@ function ImgSlider({ gameData }) {
         width: "100%",
       }}
     >
-      {/* Images cachées pour détecter les erreurs de chargement */}
-      <img
-        src={heroUrl}
-        alt=""
-        style={{ display: "none" }}
-        onError={heroUrl === gameData?.img ? undefined : handleHeroError}
-      />
-      {portraitUrl && (
-        <img
-          src={portraitUrl}
-          alt=""
-          style={{ display: "none" }}
-          onError={handlePortraitError}
-        />
-      )}
-
       {/* Dégradé principal */}
       <div
         style={{
@@ -132,7 +106,8 @@ function ImgSlider({ gameData }) {
         style={{
           position: "absolute",
           inset: 0,
-          background: "linear-gradient(to top, rgba(23,30,34,1) 0%, transparent 40%)",
+          background:
+            "linear-gradient(to top, rgba(23,30,34,1) 0%, transparent 40%)",
         }}
       />
 
@@ -152,11 +127,22 @@ function ImgSlider({ gameData }) {
         >
           <Link
             to={`/jeux/${gameInfo.id}`}
-            style={{ textDecoration: "none", width: "100%", display: "block", textAlign: "center" }}
+            style={{
+              textDecoration: "none",
+              width: "100%",
+              display: "block",
+              textAlign: "center",
+            }}
           >
             <h1
               className="title__price"
-              style={{ fontSize: "32px", lineHeight: "1.2", textAlign: "center", width: "100%", margin: "0 0 10px" }}
+              style={{
+                fontSize: "32px",
+                lineHeight: "1.2",
+                textAlign: "center",
+                width: "100%",
+                margin: "0 0 10px",
+              }}
             >
               {gameInfo.title}
             </h1>
@@ -175,7 +161,14 @@ function ImgSlider({ gameData }) {
           </a>
         </div>
       ) : (
-        <div style={{ position: "relative", zIndex: 1, padding: "0 100px", maxWidth: "700px" }}>
+        <div
+          style={{
+            position: "relative",
+            zIndex: 1,
+            padding: "0 100px",
+            maxWidth: "700px",
+          }}
+        >
           <Link to={`/jeux/${gameInfo.id}`} style={{ textDecoration: "none" }}>
             <h1 className="title__price" style={{ whiteSpace: "nowrap" }}>
               {gameInfo.title}

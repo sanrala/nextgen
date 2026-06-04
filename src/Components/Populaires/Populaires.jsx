@@ -75,10 +75,8 @@ function GameCard({ game }) {
         </h2>
         <div className="nk-gap" />
         <div>
-          {game.releaseDate
-            ? <span>📅 {game.releaseDate}</span>
-            : <span>🌍 {game.region || getPlatformKey(game.type)}</span>
-          }
+          {game.releaseDate && <span>📅 {game.releaseDate}</span>}
+          <span>🎮 {getPlatformKey(game.type)}</span>
         </div>
         <div className="nk-gap" />
         <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
