@@ -30288,3 +30288,39 @@ div.burgerNav > ul {
     visibility: visible !important;
   }
 }
+/* ── Sélecteurs déroulants ── */
+.gd-select-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+}
+
+.gd-select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  background: #1e1e1e;
+  color: #e0e0e0;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 9px 36px 9px 12px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.gd-select:focus,
+.gd-select:hover {
+  border-color: #dd163b;
+}
+
+.gd-select-arrow {
+  position: absolute;
+  right: 12px;
+  color: #dd163b;
+  pointer-events: none;
+  font-size: 0.75rem;
+}

@@ -53,7 +53,11 @@ function GameCard({ game }) {
   const promo   = getPromo(game.retail, game.price);
   const price   = parseFloat(game.price);
   const retail  = parseFloat(game.retail);
-  const steamId = game.steam_id || 0;
+  const type    = (game.type || "").toLowerCase();
+  const isConsole = type.includes("playstation") || type.includes("ps5") || type.includes("ps4") ||
+    type.includes("nintendo") || type.includes("switch") || type.includes("microsoft") ||
+    type.includes("xbox") || type.includes("ubisoft");
+  const steamId = isConsole ? 0 : (game.steam_id || 0);
   const path    = `/store/${game.id}/${steamId}/${cleanTitle(game.name)}`;
 
   return (

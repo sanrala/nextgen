@@ -418,10 +418,12 @@ const base = getBaseName(g.name) + "|" + platform;
     .replace(/[^a-zA-Z0-9-]/g, "");
 
   const platform = (game.platform || game.type || "").toLowerCase();
-  const isPS5 = platform.includes("ps5") || platform.includes("playstation");
+  const isConsole = platform.includes("ps5") || platform.includes("playstation") ||
+    platform.includes("ps4") || platform.includes("nintendo") || platform.includes("switch") ||
+    platform.includes("microsoft") || platform.includes("xbox") || platform.includes("ubisoft");
 
-  // Jeu PS5 → route dédiée sans steamId
-  if (isPS5) {
+  // Jeux console/non-Steam → toujours steamId=0
+  if (isConsole) {
     handleClose();
     navigate(`/store/${game.id}/0/${slug}`);
     return;

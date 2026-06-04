@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../features/userSlice";
 import { auth, db } from "../../Firebase";
@@ -172,6 +172,7 @@ function GameDetail() {
   const { igId, steamId, title } = useParams();
   const user  = useSelector(selectUser);
   const userN = auth.currentUser;
+  const navigate = useNavigate();
 
   const [steamData,    setSteamData]    = useState(null);
   const [igGame,       setIgGame]       = useState(null);
@@ -222,10 +223,11 @@ function GameDetail() {
       let resolvedSteamId = steamId && steamId !== "0" ? steamId : null;
       if (!resolvedSteamId) {
         const isPC = (gameType.includes("steam") || gameType.includes("epic") ||
-          gameType.includes("gog") || gameType.includes("ubisoft") ||
-          gameType.includes("battle") || gameType.includes("rockstar") ||
-          gameType.includes("ea app") || gameType.includes("other")) &&
-          !gameType.includes("microsoft") && !gameType.includes("xbox");
+          gameType.includes("gog") || gameType.includes("battle") ||
+          gameType.includes("rockstar") || gameType.includes("ea app") ||
+          gameType.includes("other")) &&
+          !gameType.includes("microsoft") && !gameType.includes("xbox") &&
+          !gameType.includes("ubisoft");
         if (isPC) {
           const editions = await fetch(`${BACKEND_URL}/api/editions/${igId}`)
             .then(r => r.ok ? r.json() : []).catch(() => []);
@@ -238,7 +240,7 @@ function GameDetail() {
         gameType.includes("playstation") || gameType.includes("ps5") ||
         gameType.includes("ps4") || gameType.includes("nintendo") ||
         gameType.includes("switch") || gameType.includes("microsoft") ||
-        gameType.includes("xbox")
+        gameType.includes("xbox") || gameType.includes("ubisoft")
       );
 
       const [gameDataRes, frRes, siRes] = await Promise.all([
@@ -564,7 +566,7 @@ function GameDetail() {
         <ul className="nk-breadcrumbs">
           <li><Link to="/">Accueil</Link></li>
           <li><span className="fa fa-angle-right" /></li>
-          <li><Link to="/Populaires/">Tendances</Link></li>
+          <li><Link to="/Populaires/">Jeux</Link></li>
           <li><span className="fa fa-angle-right" /></li>
           <li><span>{gameTitle}</span></li>
         </ul>
@@ -625,72 +627,95 @@ function GameDetail() {
               {/* ── Sélecteurs Plateforme / Édition ── */}
               {allEditions.length > 0 && (
                 <div className="gd-selectors">
+
+                  {/* Plateforme */}
                   <div className="gd-selector-group">
                     <label className="gd-selector-label">Plateforme</label>
-                    <div className="gd-selector-options">
-                      {Object.keys(platformGroups).map(type => (
-                        <button
-                          key={type}
-                          onClick={() => {
-                            setSelectedPlatform(type);
-                            // Sélectionne la première édition (par nom) en stock
-                            const firstInStock = platformGroups[type].find(e => e.stock === 1) || platformGroups[type][0];
-                            setSelectedEdition(firstInStock?.name || null);
-                          }}
-                          className={`gd-selector-btn${selectedPlatform === type ? " gd-selector-active" : ""}`}
-                        >
-                          <PlatformLogo type={type} size={14} />
-                          <span>{platformShortName(type)}</span>
-                        </button>
-                      ))}
+                    <div className="gd-select-wrapper">
+                      <select
+                        className="gd-select"
+                        value={selectedPlatform || ""}
+                        onChange={e => {
+                          const type = e.target.value;
+                          setSelectedPlatform(type);
+                          const firstInStock = platformGroups[type].find(ed => ed.stock === 1) || platformGroups[type][0];
+                          setSelectedEdition(firstInStock?.name || null);
+                          if (firstInStock && String(firstInStock.id) !== String(igId)) {
+                            const cleanName = firstInStock.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
+                            navigate(`/store/${firstInStock.id}/${firstInStock.steam_id || 0}/${cleanName}`);
+                          }
+                        }}
+                      >
+                        {Object.keys(platformGroups).map(type => (
+                          <option key={type} value={type}>
+                            {platformShortName(type)}
+                          </option>
+                        ))}
+                      </select>
+                      <span className="gd-select-arrow">▾</span>
                     </div>
                   </div>
 
+                  {/* Édition */}
                   {editionNamesForPlatform.length > 1 && (
                     <div className="gd-selector-group">
                       <label className="gd-selector-label">Édition</label>
-                      <div className="gd-selector-options">
-                        {editionNamesForPlatform.map(edName => {
-                          const short = shortEdName(edName);
-                          // Une édition est "en stock" si au moins une région l'est
-                          const edEntries = (platformGroups[selectedPlatform] || []).filter(e => e.name === edName);
-                          const hasStock  = edEntries.some(e => e.stock === 1);
-                          return (
-                            <button
-                              key={edName}
-                              onClick={() => setSelectedEdition(edName)}
-                              className={`gd-selector-btn${selectedEdition === edName ? " gd-selector-active" : ""}${!hasStock ? " gd-selector-soldout" : ""}`}
-                            >
-                              <span>{short}</span>
-                              {!hasStock && <span className="gd-sel-rupture">Rupture</span>}
-                            </button>
-                          );
-                        })}
+                      <div className="gd-select-wrapper">
+                        <select
+                          className="gd-select"
+                          value={selectedEdition || ""}
+                          onChange={e => {
+                            const edName = e.target.value;
+                            setSelectedEdition(edName);
+                            // Navigue vers l'igId de l'édition choisie
+                            const edEntries = (platformGroups[selectedPlatform] || []).filter(ed => ed.name === edName);
+                            const best = edEntries.find(ed => ed.stock === 1) || edEntries[0];
+                            if (best && String(best.id) !== String(igId)) {
+                              const cleanName = best.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
+                              navigate(`/store/${best.id}/${best.steam_id || 0}/${cleanName}`);
+                            }
+                          }}
+                        >
+                          {editionNamesForPlatform.map(edName => {
+                            const short     = shortEdName(edName);
+                            const edEntries = (platformGroups[selectedPlatform] || []).filter(e => e.name === edName);
+                            const hasStock  = edEntries.some(e => e.stock === 1);
+                            return (
+                              <option key={edName} value={edName}>
+                                {short}{!hasStock ? " — Rupture" : ""}
+                              </option>
+                            );
+                          })}
+                        </select>
+                        <span className="gd-select-arrow">▾</span>
                       </div>
                     </div>
                   )}
 
-                  {/* Sélecteur région (si plusieurs régions pour plateforme+édition choisies) */}
+                  {/* Région */}
                   {regionsForSelection.length > 1 && (
                     <div className="gd-selector-group">
                       <label className="gd-selector-label">Région</label>
-                      <div className="gd-selector-options">
-                        {regionsForSelection.map(entry => (
-                          <button
-                            key={entry.region}
-                            onClick={() => setSelectedRegion(entry.region)}
-                            className={`gd-selector-btn${selectedRegion === entry.region ? " gd-selector-active" : ""}${entry.stock === 0 ? " gd-selector-soldout" : ""}`}
-                          >
-                            <span>{entry.region}</span>
-                            {entry.stock === 0
-                              ? <span className="gd-sel-rupture"> — Hors stock</span>
-                              : <span className="gd-sel-instock"> ✓ {parseFloat(entry.price).toFixed(2)} €</span>
-                            }
-                          </button>
-                        ))}
+                      <div className="gd-select-wrapper">
+                        <select
+                          className="gd-select"
+                          value={selectedRegion || ""}
+                          onChange={e => setSelectedRegion(e.target.value)}
+                        >
+                          {regionsForSelection.map(entry => (
+                            <option key={entry.region} value={entry.region}>
+                              {entry.region}
+                              {entry.stock === 0
+                                ? " — Hors stock"
+                                : ` ✓ ${parseFloat(entry.price).toFixed(2)} €`}
+                            </option>
+                          ))}
+                        </select>
+                        <span className="gd-select-arrow">▾</span>
                       </div>
                     </div>
                   )}
+
                 </div>
               )}
 
