@@ -199,14 +199,6 @@ function GameDetail() {
   const [selectedPlatform, setSelectedPlatform] = useState(null);
   const [selectedEdition,  setSelectedEdition]  = useState(null);
 
-  // Hero background : fallback IG si Steam library_hero.jpg indisponible
-  const [heroImgError, setHeroImgError] = useState(false);
-
-  // ── Test disponibilité hero Steam → fallback IG ──────────────────────────
-  useEffect(() => {
-    setHeroImgError(false);
-  }, [igId]);
-
   // ── Steam + Firebase cache ────────────────────────────────────────────────
   useEffect(() => {
   if (!igId) { setLoadingSteam(false); return; }
@@ -640,37 +632,22 @@ console.log("first img:", allEditions?.[0]?.img);
 
 
 
-{((heroId && heroId !== "0") || screenshots?.[0]?.path_full || igGame?.img || allEditions?.[0]?.img) && (
+{((heroId && heroId !== "0") || allEditions?.[0]?.img) && (
   <div
     style={{
       position: "absolute",
       left: 0,
       right: 0,
       height: "580px",
-      backgroundImage: (() => {
-        const steamHero = heroId && heroId !== "0" && !heroImgError
-          ? `url(https://images.weserv.nl/?url=cdn.akamai.steamstatic.com/steam/apps/${heroId}/library_hero.jpg)`
-          : null;
-        const igFallback = screenshots?.[0]?.path_full || igGame?.img || allEditions?.[0]?.img;
-        const igUrl = igFallback
-          ? `url(https://images.weserv.nl/?url=${igFallback.replace(/^https?:\/\//, "")})`
-          : null;
-        return steamHero || igUrl || "none";
-      })(),
+     backgroundImage:
+  heroId && heroId !== "0"
+    ? `url(https://images.weserv.nl/?url=cdn.akamai.steamstatic.com/steam/apps/${heroId}/library_hero.jpg)`
+    : `url(https://images.weserv.nl/?url=${(allEditions?.[0]?.img || "").replace("http://", "")})`,
       backgroundSize: "cover",
       backgroundPosition: "center top",
       zIndex: 0,
     }}
   >
-    {/* Sonde invisible : détecte si library_hero.jpg est disponible */}
-    {heroId && heroId !== "0" && !heroImgError && (
-      <img
-        src={`https://images.weserv.nl/?url=cdn.akamai.steamstatic.com/steam/apps/${heroId}/library_hero.jpg`}
-        alt=""
-        style={{ display: "none" }}
-        onError={() => setHeroImgError(true)}
-      />
-    )}
      
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(23,30,34,0.9) 10%, rgba(23,30,34,0.4) 60%)" }} />
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(23,30,34,1) 0%, transparent 55%)" }} />
