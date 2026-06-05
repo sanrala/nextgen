@@ -385,7 +385,10 @@ function GameDetail() {
         const fbRef = doc(db, "games", `ig_${igId}`);
         const fbSnap = await getDoc(fbRef);
         if (fbSnap.exists() && fbSnap.data().editions?.length) {
-          setAllEditions(fbSnap.data().editions);
+          const noLatam = fbSnap.data().editions.filter(ed =>
+            !(ed.region || "").toLowerCase().includes("latin")
+          );
+          setAllEditions(noLatam);
           return;
         }
 
@@ -394,10 +397,12 @@ function GameDetail() {
         const data = await res.json();
         let filtered = (Array.isArray(data) ? data : []).filter(ed => {
           const n = (ed.name || "").toLowerCase();
-          return !n.includes("upgrade") && !n.includes("dlc") &&
-                 !n.includes("season pass") && !n.includes("credits") &&
-                 !n.includes("traque") && !n.includes("pack") &&
-                 !n.includes("klauen") && !n.includes("awaji");
+          if (n.includes("upgrade") || n.includes("dlc") ||
+              n.includes("season pass") || n.includes("credits") ||
+              n.includes("traque") || n.includes("pack") ||
+              n.includes("klauen") || n.includes("awaji")) return false;
+          if ((ed.region || "").toLowerCase().includes("latin")) return false;
+          return true;
         });
 if (cachedEditions.length) {
   filtered = filtered.map(apiEd => {

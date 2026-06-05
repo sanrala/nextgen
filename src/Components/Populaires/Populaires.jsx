@@ -206,6 +206,7 @@ function Populaires() {
 
   const filtered = allGames
     .filter(g => {
+      if ((g.region || "").toLowerCase().includes("latin")) return false;
       if (platform !== "Tous" && getPlatformKey(g.type) !== platform) return false;
       if (search.trim()) {
         if (!g.name.toLowerCase().includes(search.toLowerCase())) return false;
@@ -238,7 +239,7 @@ function Populaires() {
     <div className="App">
       <Header />
       <div className="nk-main">
-        <div className="nk-gap-2" ref={topRef} />
+        <div ref={topRef} style={{ paddingTop: 100 }} />
 
         <div className="container">
           {/* ── Titre section ── */}
