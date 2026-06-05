@@ -624,23 +624,24 @@ const heroId =
       <Header />
      
 
-      {/* ── Hero background pleine largeur ── */}
-  const heroId =
-  chosenEntry?.steam_id ||
-  steamData?.steam_appid ||
-  steamId;
 
-{heroId && heroId !== "0" && (
-  <div style={{
-    position: "absolute",
-    left: 0,
-    right: 0,
-    height: "580px",
-    backgroundImage: `url(https://cdn.akamai.steamstatic.com/steam/apps/${heroId}/library_hero.jpg)`,
-    backgroundSize: "cover",
-    backgroundPosition: "center top",
-    zIndex: 0,
-  }}>
+
+{((heroId && heroId !== "0") || igGame?.img) && (
+  <div
+    style={{
+      position: "absolute",
+      left: 0,
+      right: 0,
+      height: "580px",
+      backgroundImage:
+        heroId && heroId !== "0"
+          ? `url(https://cdn.akamai.steamstatic.com/steam/apps/${heroId}/library_hero.jpg)`
+          : `url(${igGame?.img})`, // 🔥 fallback IG
+      backgroundSize: "cover",
+      backgroundPosition: "center top",
+      zIndex: 0,
+    }}
+  >
      
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(23,30,34,0.9) 10%, rgba(23,30,34,0.4) 60%)" }} />
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(23,30,34,1) 0%, transparent 55%)" }} />
