@@ -62,6 +62,14 @@ function PlatformLogo({ type, size = 16 }) {
       <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 3a9 9 0 1 1 0 18A9 9 0 0 1 12 3zm0 2a7 7 0 1 0 0 14A7 7 0 0 0 12 5zm2.5 3.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
     </svg>
   );
+  if (t.includes("rockstar")) return (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+    <rect width="24" height="24" rx="4" fill="#f4c20d"/>
+    <text x="12" y="16" textAnchor="middle" fontSize="10" fill="#000" fontWeight="bold">
+      R*
+    </text>
+  </svg>
+);
   if (t.includes("xbox") || t.includes("microsoft")) return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
       <path d="M4.102 21.033C6.211 22.881 8.977 24 12 24c3.026 0 5.789-1.119 7.902-2.967 1.877-1.912-4.316-8.709-7.902-11.417-3.582 2.708-9.779 9.505-7.898 11.417zm11.16-14.406c2.5 1.851 6.737 6.963 6.477 10.488C23.154 15.473 24 13.822 24 12c0-4.386-2.322-8.216-5.803-10.337.01 0-1.734 2.868-2.935 4.964zM5.804 1.666C2.32 3.783 0 7.614 0 12c0 1.819.846 3.469 1.463 5.116-.261-3.521 3.972-8.636 6.477-10.488-1.206-2.096-2.945-4.964-2.935-4.962zm6.196.341s-3.258 2.735-3.498 9.402c.765.857 2.099 2.186 3.498 3.168 1.399-.982 2.732-2.31 3.499-3.168-.241-6.667-3.499-9.402-3.499-9.402z"/>
@@ -155,6 +163,7 @@ function platformShortName(type) {
   const t = (type || "").toLowerCase();
   if (t.includes("steam"))       return "PC - Steam";
   if (t.includes("ubisoft"))     return "PC - Ubisoft Connect";
+  if (t.includes("rockstar")) return "PC - Rockstar";
   if (t.includes("epic"))        return "PC - Epic Games";
   if (t.includes("gog"))         return "PC - GOG";
   if (t.includes("microsoft") && t.includes("xbox")) return "PC / Xbox Series X|S";
@@ -363,16 +372,43 @@ function GameDetail() {
     if (!igId) return;
     (async () => {
       try {
-        const res  = await fetch(`${BACKEND_URL}/api/editions/${igId}`);
+        // 1. Vérifie Firebase d'abord
+        let cachedEditions = [];
+        const fbRef = doc(db, "games", `ig_${igId}`);
+        const fbSnap = await getDoc(fbRef);
+        if (fbSnap.exists() && fbSnap.data().editions?.length) {
+          setAllEditions(fbSnap.data().editions);
+          return;
+        }
+
+        // 2. Fetch depuis l'API
+        const res = await fetch(`${BACKEND_URL}/api/editions/${igId}`);
         const data = await res.json();
-        // Filtre uniquement Upgrade/DLC, garde TOUTES les régions et plateformes
         let filtered = (Array.isArray(data) ? data : []).filter(ed => {
           const n = (ed.name || "").toLowerCase();
-          return !n.includes("upgrade") && !n.includes("dlc") && 
+          return !n.includes("upgrade") && !n.includes("dlc") &&
                  !n.includes("season pass") && !n.includes("credits") &&
                  !n.includes("traque") && !n.includes("pack") &&
                  !n.includes("klauen") && !n.includes("awaji");
         });
+if (cachedEditions.length) {
+  filtered = filtered.map(apiEd => {
+    const cached = cachedEditions.find(c => c.id === apiEd.id);
+
+    if (!cached) return apiEd;
+
+    return {
+      ...cached,
+      ...apiEd,
+
+      // 🔥 ON FORCE LES PRIX API
+      price: apiEd.price,
+      retail: apiEd.retail
+    };
+  });
+}
+
+        // 3. Si l'igId courant n'est pas dans la liste, l'ajouter
         const currentInList = filtered.find(e => String(e.id) === String(igId));
         if (!currentInList) {
           const selfRes = await fetch(`${BACKEND_URL}/api/game/${igId}`);
@@ -381,7 +417,16 @@ function GameDetail() {
             if (self && self.id) filtered = [self, ...filtered];
           }
         }
+
         setAllEditions(filtered);
+
+        // 4. Sauvegarder dans Firebase pour TOUS les igIds des éditions
+        try {
+          await Promise.all(filtered.map(ed =>
+            setDoc(doc(db, "games", `ig_${ed.id}`), { editions: filtered }, { merge: true })
+          ));
+        } catch (e) { console.warn("Firebase editions write:", e); }
+
       } catch (e) { console.error("Editions fetch error", e); }
     })();
   }, [igId]);
@@ -549,14 +594,15 @@ function GameDetail() {
   const gameTitle = chosenEntry?.name || steamData?.name || igGame?.name || decodeURIComponent(title || "");
   // Badge plateforme (de l'édition choisie)
   const pt = (chosenEntry?.type || igGame?.type || "Steam").toLowerCase();
-  const platformLabel = pt.includes("ubisoft") ? "Ubisoft Connect"
-    : pt.includes("microsoft") ? "Microsoft Store"
-    : pt.includes("xbox")      ? "Xbox"
-    : pt.includes("playstation") ? "PlayStation Store"
-    : pt.includes("epic")      ? "Epic Games"
-    : pt.includes("gog")       ? "GOG"
-    : pt.includes("nintendo")  ? "Nintendo eShop"
-    : "Steam";
+const platformLabel = pt.includes("rockstar") ? "Rockstar"
+  : pt.includes("ubisoft") ? "Ubisoft Connect"
+  : pt.includes("microsoft") ? "Microsoft Store"
+  : pt.includes("xbox")      ? "Xbox"
+  : pt.includes("playstation") ? "PlayStation Store"
+  : pt.includes("epic")      ? "Epic Games"
+  : pt.includes("gog")       ? "GOG"
+  : pt.includes("nintendo")  ? "Nintendo eShop"
+  : "Steam";
   const platformBg = pt.includes("ubisoft")    ? "#0070cc"
     : pt.includes("microsoft") || pt.includes("xbox") ? "#107c10"
     : pt.includes("playstation") ? "#003087"
@@ -564,24 +610,38 @@ function GameDetail() {
     : pt.includes("gog")       ? "#6c4db9"
     : pt.includes("nintendo")  ? "#e4000f"
     : "#14487b";
-
+function formatEdition(name) {
+  return name
+    .replace(/^[^:]+:\s*/, '')
+    .trim()
+}
+const heroId =
+  chosenEntry?.steam_id ||
+  steamData?.steam_appid ||
+  steamId;
   return (
     <div style={{ position: "relative" }}>
       <Header />
      
 
       {/* ── Hero background pleine largeur ── */}
-      {steamId && steamId !== "0" && (
-        <div style={{
-          position: "absolute",
-          left: 0,
-          right: 0,
-          height: "580px",
-          backgroundImage: `url(https://cdn.akamai.steamstatic.com/steam/apps/${steamId}/library_hero.jpg)`,
-          backgroundSize: "cover",
-          backgroundPosition: "center top",
-          zIndex: 0,
-        }}>
+  const heroId =
+  chosenEntry?.steam_id ||
+  steamData?.steam_appid ||
+  steamId;
+
+{heroId && heroId !== "0" && (
+  <div style={{
+    position: "absolute",
+    left: 0,
+    right: 0,
+    height: "580px",
+    backgroundImage: `url(https://cdn.akamai.steamstatic.com/steam/apps/${heroId}/library_hero.jpg)`,
+    backgroundSize: "cover",
+    backgroundPosition: "center top",
+    zIndex: 0,
+  }}>
+     
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(23,30,34,0.9) 10%, rgba(23,30,34,0.4) 60%)" }} />
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(23,30,34,1) 0%, transparent 55%)" }} />
         </div>
@@ -650,99 +710,100 @@ function GameDetail() {
               </div>
 
               {/* ── Sélecteurs Plateforme / Édition ── */}
-              {allEditions.length > 0 && (
-                <div className="gd-selectors">
+             {/* ── Sélecteurs Plateforme / Édition ── */}
+{allEditions.length > 0 && (
+  <div className="gd-selectors">
 
-                  {/* Plateforme */}
-                  <div className="gd-selector-group">
-                    <label className="gd-selector-label">Plateforme</label>
-                    <div className="gd-select-wrapper">
-                      <select
-                        className="gd-select"
-                        value={selectedPlatform || ""}
-                        onChange={e => {
-                          const type = e.target.value;
-                          setSelectedPlatform(type);
-                          const firstInStock = platformGroups[type].find(ed => ed.stock === 1) || platformGroups[type][0];
-                          setSelectedEdition(firstInStock?.name || null);
-                          if (firstInStock && String(firstInStock.id) !== String(igId)) {
-                            const cleanName = firstInStock.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
-                            navigate(`/store/${firstInStock.id}/${firstInStock.steam_id || 0}/${cleanName}`);
-                          }
-                        }}
-                      >
-                        {Object.keys(platformGroups).map(type => (
-                          <option key={type} value={type}>
-                            {platformShortName(type)}
-                          </option>
-                        ))}
-                      </select>
-                      <span className="gd-select-arrow">▾</span>
-                    </div>
-                  </div>
+    {/* Plateforme */}
+    <div className="gd-selector-group">
+      <label className="gd-selector-label">Plateforme</label>
+      <div className="gd-select-wrapper">
+        <select
+          className="gd-select"
+          value={selectedPlatform || ""}
+          onChange={e => {
+            const type = e.target.value;
+            setSelectedPlatform(type);
 
-                  {/* Édition */}
-                  {editionNamesForPlatform.length > 1 && (
-                    <div className="gd-selector-group">
-                      <label className="gd-selector-label">Édition</label>
-                      <div className="gd-select-wrapper">
-                        <select
-                          className="gd-select"
-                          value={allEditions.find(e => String(e.id) === String(igId))?.name || selectedEdition || ""}
-                          onChange={e => {
-                            const edName = e.target.value;
-                            setSelectedEdition(edName);
-                            // Navigue vers l'igId de l'édition choisie
-                            const edEntries = (platformGroups[selectedPlatform] || []).filter(ed => ed.name === edName);
-                            const best = edEntries.find(ed => ed.stock === 1) || edEntries[0];
-                            if (best && String(best.id) !== String(igId)) {
-                              const cleanName = best.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
-                              navigate(`/store/${best.id}/${best.steam_id || 0}/${cleanName}`);
-                            }
-                          }}
-                        >
-                          {editionNamesForPlatform.map(edName => {
-                            const short     = shortEdName(edName);
-                            const edEntries = (platformGroups[selectedPlatform] || []).filter(e => e.name === edName);
-                            const hasStock  = edEntries.some(e => e.stock === 1);
-                            return (
-                              <option key={edName} value={edName}>
-                                {short}{!hasStock ? " — Rupture" : ""}
-                              </option>
-                            );
-                          })}
-                        </select>
-                        <span className="gd-select-arrow">▾</span>
-                      </div>
-                    </div>
-                  )}
+            const first = platformGroups[type]?.find(ed => ed.stock === 1) || platformGroups[type]?.[0];
+            setSelectedEdition(first?.name || null);
+            setSelectedRegion(null);
 
-                  {/* Région */}
-                  {regionsForSelection.length > 1 && (
-                    <div className="gd-selector-group">
-                      <label className="gd-selector-label">Région</label>
-                      <div className="gd-select-wrapper">
-                        <select
-                          className="gd-select"
-                          value={selectedRegion || ""}
-                          onChange={e => setSelectedRegion(e.target.value)}
-                        >
-                          {regionsForSelection.map(entry => (
-                            <option key={entry.region} value={entry.region}>
-                              {entry.region}
-                              {entry.stock === 0
-                                ? " — Hors stock"
-                                : ` ✓ ${parseFloat(entry.price).toFixed(2)} €`}
-                            </option>
-                          ))}
-                        </select>
-                        <span className="gd-select-arrow">▾</span>
-                      </div>
-                    </div>
-                  )}
+            if (first && String(first.id) !== String(igId)) {
+              const clean = first.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
+              navigate(`/store/${first.id}/${first.steam_id || 0}/${clean}`);
+            }
+          }}
+        >
+          {Object.keys(platformGroups).map(type => (
+            <option key={type} value={type}>
+              {platformShortName(type)}
+            </option>
+          ))}
+        </select>
+        <span className="gd-select-arrow">▾</span>
+      </div>
+    </div>
 
-                </div>
-              )}
+    {/* Édition */}
+    {editionNamesForPlatform.length > 1 && (
+      <div className="gd-selector-group">
+        <label className="gd-selector-label">Édition</label>
+        <div className="gd-select-wrapper">
+          <select
+            className="gd-select"
+            value={selectedEdition || ""}
+            onChange={e => {
+              const edName = e.target.value;
+              setSelectedEdition(edName);
+              setSelectedRegion(null);
+
+              const entries = (platformGroups[selectedPlatform] || []).filter(e => e.name === edName);
+              const best = entries.find(e => e.stock === 1) || entries[0];
+
+              if (best && String(best.id) !== String(igId)) {
+                const clean = best.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
+                navigate(`/store/${best.id}/${best.steam_id || 0}/${clean}`);
+              }
+            }}
+          >
+            {editionNamesForPlatform.map(name => (
+              <option key={name} value={name}>
+                {formatEdition(name)}
+              </option>
+            ))}
+          </select>
+          <span className="gd-select-arrow">▾</span>
+        </div>
+      </div>
+    )}
+
+    {/* Région */}
+    {regionsForSelection.length > 1 && (
+      <div className="gd-selector-group">
+        <label className="gd-selector-label">Région</label>
+        <div className="gd-select-wrapper">
+          <select
+            className="gd-select"
+            value={selectedRegion || ""}
+            onChange={e => setSelectedRegion(e.target.value)}
+          >
+            {regionsForSelection.map(entry => (
+              <option key={entry.region} value={entry.region}>
+                {entry.region}
+                {entry.stock === 0
+                  ? " — Hors stock"
+                  : ` ✓ ${parseFloat(entry.price).toFixed(2)} €`}
+              </option>
+            ))}
+          </select>
+          <span className="gd-select-arrow">▾</span>
+        </div>
+      </div>
+    )}
+
+  </div>
+)}
 
               {/* Bouton achat — sous les sélecteurs sur mobile */}
               <div className="gd-buy-btn gd-buy-btn-left">
