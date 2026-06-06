@@ -359,9 +359,15 @@ export default function SearchBar() {
     const data = cat || (await fetchCatalog());
     if (!data || !Array.isArray(data)) { setLoading(false); return; }
 
-    const lower = q.toLowerCase();
- const matching = data.filter(
-  (g) => g.name?.toLowerCase().includes(lower)
+const normalize = (str) =>
+  str.toLowerCase()
+    .replace(/[:\-''\u2018\u2019!?.,]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const lower = normalize(q);
+const matching = data.filter(
+  (g) => normalize(g.name || "").includes(lower)
 );
 
     // Déduplique par nom de base, mais en choisissant le meilleur igId :

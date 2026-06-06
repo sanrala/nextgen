@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   collection, addDoc, updateDoc, getDocs,
-  doc, query, where, orderBy, serverTimestamp
+  doc, query, where, orderBy, serverTimestamp,
+  getDoc, setDoc, deleteField
 } from "firebase/firestore";
 import { signOut } from "firebase/auth";
 import { db, auth } from "../../Firebase";
@@ -58,6 +59,30 @@ function AdminConsole({ user }) {
   const [articles, setArticles] = useState([]);
   const [articlesLoading, setArticlesLoading] = useState(false);
   const [editingArticle, setEditingArticle] = useState(null);
+
+  // ── State onglet Jeux ─────────────────────────────────────────────────────
+  const [gameSearch, setGameSearch]       = useState("");
+  const [gameResults, setGameResults]     = useState([]);
+  const [selectedGameEdit, setSelectedGameEdit] = useState(null);
+  const [gameFirebase, setGameFirebase]   = useState(null);
+  const [gameLoading, setGameLoading]     = useState(false);
+  const [gameSaving, setGameSaving]       = useState(false);
+  const [gameMsg, setGameMsg]             = useState("");
+  const [gameMsgType, setGameMsgType]     = useState("success");
+  // Champs éditables
+  const [editDesc, setEditDesc]           = useState("");
+  const [editDev, setEditDev]             = useState("");
+  const [editPub, setEditPub]             = useState("");
+  const [editDate, setEditDate]           = useState("");
+  const [editScreenshots, setEditScreenshots] = useState([]);
+  const [newScreenFiles, setNewScreenFiles]   = useState([]);
+  const [newScreenPreviews, setNewScreenPreviews] = useState([]);
+  // Vidéos
+  const [editMovies, setEditMovies]       = useState([]);
+  const [newMovieHls, setNewMovieHls]     = useState("");
+  const [newMovieName, setNewMovieName]   = useState("");
+  const [editYoutubeUrl, setEditYoutubeUrl] = useState("");
+  const screenshotInputRef = useRef();
 
   const [search, setSearch] = useState("");
   const [results, setResults] = useState([]);
@@ -243,6 +268,181 @@ function AdminConsole({ user }) {
     return d.toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" });
   };
 
+  // ── Logique onglet Jeux ───────────────────────────────────────────────────
+
+  // Recherche dans le catalogue
+  useEffect(() => {
+    if (gameSearch.trim().length < 2) { setGameResults([]); return; }
+    const normalize = (s) => s.toLowerCase().replace(/[:\-''\u2018\u2019!?.,]/g, " ").replace(/\s+/g, " ").trim();
+    const lower = normalize(gameSearch);
+    const matching = catalog.filter(g => {
+      if ((g.region || "").toLowerCase().includes("latin")) return false;
+      return normalize(g.name).includes(lower);
+    });
+
+    // Déduplique par nom de base uniquement (ignore la plateforme)
+    // Garde : stock=1 en priorité, sinon hors stock quand même
+    const seen = new Map();
+    for (const g of matching) {
+      const baseName = normalize(g.name)
+        .replace(/deluxe|ultimate|gold|premium|standard|edition/g, "")
+        .replace(/\s+/g, " ").trim();
+      const key = baseName.slice(0, 40);
+      const ex = seen.get(key);
+      if (!ex) {
+        seen.set(key, g);
+      } else {
+        // Préfère stock=1, sinon garde le moins cher
+        if (g.stock === 1 && ex.stock !== 1) seen.set(key, g);
+        else if (g.stock === ex.stock && parseFloat(g.price) < parseFloat(ex.price)) seen.set(key, g);
+      }
+    }
+    setGameResults(Array.from(seen.values()).slice(0, 8));
+  }, [gameSearch, catalog]);
+
+  // Charge la fiche Firebase du jeu sélectionné
+  const loadGameFirebase = async (game) => {
+    setGameLoading(true);
+    setGameFirebase(null);
+    setGameMsg("");
+    try {
+      const fbRef = doc(db, "games", `ig_${game.id}`);
+      const snap = await getDoc(fbRef);
+      const data = snap.exists() ? snap.data() : null;
+      setGameFirebase(data);
+      // Pré-remplit les champs
+      const sd = data?.steamData;
+      setEditDesc(sd?.short_description || "");
+      setEditDev(Array.isArray(sd?.developers) ? sd.developers[0] || "" : sd?.developers || "");
+      setEditPub(Array.isArray(sd?.publishers) ? sd.publishers[0] || "" : sd?.publishers || "");
+      setEditDate(sd?.release_date?.date || "");
+      setEditScreenshots(sd?.screenshots || []);
+      setEditMovies(sd?.movies || []);
+      setNewMovieHls("");
+      setNewMovieName("");
+      setEditYoutubeUrl(sd?.youtube_id ? `https://www.youtube.com/watch?v=${sd.youtube_id}` : "");
+      setNewScreenFiles([]);
+      setNewScreenPreviews([]);
+    } catch (e) {
+      setGameMsg("Erreur chargement Firebase : " + e.message);
+      setGameMsgType("error");
+    } finally {
+      setGameLoading(false);
+    }
+  };
+
+  const handleSelectGameEdit = (game) => {
+    setSelectedGameEdit(game);
+    setGameSearch(game.name);
+    setGameResults([]);
+    loadGameFirebase(game);
+  };
+
+  // Ajout de nouveaux screenshots
+  const handleScreenshotFiles = (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    setNewScreenFiles(prev => [...prev, ...files]);
+    setNewScreenPreviews(prev => [...prev, ...files.map(f => URL.createObjectURL(f))]);
+  };
+
+  const removeExistingScreen = (i) => {
+    setEditScreenshots(prev => prev.filter((_, idx) => idx !== i));
+  };
+
+  const removeNewScreen = (i) => {
+    setNewScreenFiles(prev => prev.filter((_, idx) => idx !== i));
+    setNewScreenPreviews(prev => prev.filter((_, idx) => idx !== i));
+  };
+
+  // Sauvegarde dans Firebase
+  const handleSaveGame = async () => {
+    if (!selectedGameEdit) return;
+    setGameSaving(true);
+    setGameMsg("");
+    try {
+      // Upload nouveaux screenshots sur Cloudinary
+      const uploaded = [];
+      for (let i = 0; i < newScreenFiles.length; i++) {
+        const formData = new FormData();
+        formData.append("file", newScreenFiles[i]);
+        formData.append("upload_preset", CLOUDINARY_PRESET);
+        formData.append("folder", "nextgen/screenshots");
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method: "POST", body: formData });
+        const data = await res.json();
+        uploaded.push({ id: Date.now() + i, path_full: data.secure_url, path_thumbnail: data.secure_url });
+      }
+
+      const allScreenshots = [...editScreenshots, ...uploaded];
+
+      // Ajout nouvelle vidéo si renseignée
+      let allMovies = [...editMovies];
+      if (newMovieHls.trim()) {
+        allMovies = [{
+          id: Date.now(),
+          name: newMovieName.trim() || "Bande-annonce",
+          hls_h264: newMovieHls.trim(),
+          highlight: true,
+          thumbnail: "",
+        }, ...allMovies];
+      }
+
+      // Extrait youtube_id depuis l'URL
+      const ytMatch = editYoutubeUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+      const ytId = ytMatch ? ytMatch[1] : null;
+
+      // Merge dans Firebase
+      const fbRef = doc(db, "games", `ig_${selectedGameEdit.id}`);
+      await setDoc(fbRef, {
+        steamData: {
+          ...(gameFirebase?.steamData || {}),
+          short_description: editDesc,
+          developers: [editDev],
+          publishers: [editPub],
+          release_date: { ...(gameFirebase?.steamData?.release_date || {}), date: editDate },
+          screenshots: allScreenshots,
+          movies: allMovies,
+          ...(ytId ? { youtube_id: ytId } : {}),
+        },
+        savedAt: serverTimestamp(),
+      }, { merge: true });
+
+      setEditScreenshots(allScreenshots);
+      setEditMovies(allMovies);
+      setNewMovieHls("");
+      setNewMovieName("");
+      setNewScreenFiles([]);
+      setNewScreenPreviews([]);
+      setGameMsg("✅ Fiche mise à jour avec succès !");
+      setGameMsgType("success");
+    } catch (e) {
+      setGameMsg("Erreur : " + e.message);
+      setGameMsgType("error");
+    } finally {
+      setGameSaving(false);
+    }
+  };
+
+  // Forcer un refresh (vide steamData du cache Firebase)
+  const handleForceRefresh = async () => {
+    if (!selectedGameEdit) return;
+    if (!window.confirm(`Vider le cache Firebase de "${selectedGameEdit.name}" ? Il sera re-fetché à la prochaine visite.`)) return;
+    setGameSaving(true);
+    try {
+      const fbRef = doc(db, "games", `ig_${selectedGameEdit.id}`);
+      await setDoc(fbRef, { steamData: deleteField(), savedAt: deleteField() }, { merge: true });
+      setGameFirebase(null);
+      setEditDesc(""); setEditDev(""); setEditPub(""); setEditDate(""); setEditScreenshots([]);
+      setGameMsg("🔄 Cache vidé. La fiche sera rechargée depuis Steam/RAWG à la prochaine visite.");
+      setGameMsgType("success");
+    } catch (e) {
+      setGameMsg("Erreur : " + e.message);
+      setGameMsgType("error");
+    } finally {
+      setGameSaving(false);
+    }
+  };
+
   const youtubeId = getYouTubeId(youtubeUrl);
 
   return (
@@ -277,9 +477,18 @@ function AdminConsole({ user }) {
             </div>
           </div>
           <div className="sidebar-section">
+            <div className="sidebar-label">Jeux</div>
+            <div
+              className={`sidebar-item ${activeTab === "games" ? "active" : ""}`}
+              onClick={() => { setActiveTab("games"); setSidebarOpen(false); }}
+            >
+              <span className="sidebar-icon">🎮</span> Modifier une fiche
+            </div>
+          </div>
+          <div className="sidebar-section">
             <div className="sidebar-label">Catalogue</div>
             <div className="sidebar-item">
-              <span className="sidebar-icon">🎮</span>
+              <span className="sidebar-icon">📦</span>
               {catalogLoading ? "Chargement..." : `${catalog.length} jeux`}
             </div>
           </div>
@@ -497,6 +706,246 @@ function AdminConsole({ user }) {
               </button>
             </form>
           )}
+          {/* ── TAB : JEUX ── */}
+          {activeTab === "games" && (
+            <div>
+              <div className="admin-section-title">
+                <span className="step-badge">🎮</span>
+                Modifier une fiche jeu
+              </div>
+
+              {/* Recherche */}
+              <div className="admin-search-wrap">
+                <span className="admin-search-icon">🔍</span>
+                <input
+                  className="admin-search-input"
+                  type="text"
+                  placeholder={catalogLoading ? "Chargement..." : "Rechercher un jeu..."}
+                  value={gameSearch}
+                  onChange={e => {
+                    setGameSearch(e.target.value);
+                    if (selectedGameEdit && e.target.value !== selectedGameEdit.name) {
+                      setSelectedGameEdit(null); setGameFirebase(null);
+                    }
+                  }}
+                  disabled={catalogLoading}
+                  autoComplete="off"
+                />
+              </div>
+
+              {gameResults.length > 0 && (
+                <div className="admin-results">
+                  {gameResults.map(game => (
+                    <div key={game.id} className="admin-result-item" onClick={() => handleSelectGameEdit(game)}>
+                      <img className="admin-result-img" src={game.img} alt={game.name} onError={e => e.target.style.background="#2a2a2a"} />
+                      <div className="admin-result-name">{game.name}</div>
+                      <span className="admin-type-badge">{game.type}</span>
+                      <span className="admin-id-badge">#{game.id}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {selectedGameEdit && (
+                <div className="admin-selected-game" style={{ marginBottom: 24 }}>
+                  <img src={selectedGameEdit.img} alt={selectedGameEdit.name} onError={e => e.target.style.background="#2a2a2a"} />
+                  <div className="admin-selected-info">
+                    <div className="admin-selected-name">{selectedGameEdit.name}</div>
+                    <div className="admin-selected-id">ID IG : #{selectedGameEdit.id} · {selectedGameEdit.type}</div>
+                  </div>
+                  <span className="admin-check">✔</span>
+                </div>
+              )}
+
+              {gameLoading && (
+                <div style={{ color: "#666", fontFamily: "Rajdhani", padding: "20px 0" }}>Chargement de la fiche Firebase...</div>
+              )}
+
+              {selectedGameEdit && !gameLoading && (
+                <>
+                  {!gameFirebase?.steamData && (
+                    <div className="admin-msg" style={{ background: "rgba(255,180,0,0.08)", border: "1px solid rgba(255,180,0,0.25)", color: "#f39c12", marginBottom: 20 }}>
+                      ⚠ Aucune fiche en cache Firebase pour ce jeu. Elle sera chargée depuis Steam/RAWG à la première visite.
+                    </div>
+                  )}
+
+                  <div className="admin-divider" />
+
+                  {/* Description */}
+                  <div className="admin-form-group">
+                    <label className="admin-form-label">Description courte</label>
+                    <textarea
+                      className="admin-form-input"
+                      rows={4}
+                      value={editDesc}
+                      onChange={e => setEditDesc(e.target.value)}
+                      placeholder="Description courte du jeu..."
+                      style={{ resize: "vertical", fontFamily: "Rajdhani, sans-serif" }}
+                    />
+                  </div>
+
+                  {/* Développeur / Éditeur / Date */}
+                  <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                    <div className="admin-form-group" style={{ flex: "1 1 180px" }}>
+                      <label className="admin-form-label">Développeur</label>
+                      <input className="admin-form-input" type="text" value={editDev} onChange={e => setEditDev(e.target.value)} placeholder="Ex: IO Interactive" />
+                    </div>
+                    <div className="admin-form-group" style={{ flex: "1 1 180px" }}>
+                      <label className="admin-form-label">Éditeur</label>
+                      <input className="admin-form-input" type="text" value={editPub} onChange={e => setEditPub(e.target.value)} placeholder="Ex: IO Interactive A/S" />
+                    </div>
+                    <div className="admin-form-group" style={{ flex: "1 1 140px" }}>
+                      <label className="admin-form-label">Date de sortie</label>
+                      <input className="admin-form-input" type="text" value={editDate} onChange={e => setEditDate(e.target.value)} placeholder="Ex: 26 mai 2026" />
+                    </div>
+                  </div>
+
+                  <div className="admin-divider" />
+
+                  {/* Vidéos */}
+                  <div className="admin-form-group">
+                    <label className="admin-form-label">Bandes-annonces ({editMovies.length})</label>
+
+                    {/* Vidéos existantes */}
+                    {editMovies.length > 0 && (
+                      <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 12 }}>
+                        {editMovies.map((m, i) => (
+                          <div key={i} style={{
+                            display: "flex", alignItems: "center", gap: 10,
+                            background: "rgba(255,255,255,0.03)", border: "1px solid #222",
+                            borderRadius: 6, padding: "8px 12px",
+                          }}>
+                            {m.thumbnail && <img src={m.thumbnail} alt="" style={{ width: 60, height: 34, objectFit: "cover", borderRadius: 3 }} />}
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontSize: 12, color: "#ccc", fontFamily: "Rajdhani", fontWeight: 700 }}>{m.name || "Bande-annonce"}</div>
+                              <div style={{ fontSize: 10, color: "#555", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{m.hls_h264 || m.hls_h265 || "—"}</div>
+                            </div>
+                            <button type="button" className="admin-photo-remove" style={{ position: "static", flexShrink: 0 }}
+                              onClick={() => setEditMovies(prev => prev.filter((_, idx) => idx !== i))}>✕</button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Ajouter une nouvelle vidéo via URL HLS */}
+                    <div style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed #333", borderRadius: 6, padding: 14 }}>
+                      <div style={{ fontSize: 11, color: "#666", fontFamily: "Orbitron", letterSpacing: 1, marginBottom: 10 }}>AJOUTER UNE VIDÉO (URL HLS)</div>
+                      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                        <input
+                          className="admin-form-input"
+                          type="text"
+                          placeholder="Nom (ex: Trailer officiel)"
+                          value={newMovieName}
+                          onChange={e => setNewMovieName(e.target.value)}
+                          style={{ flex: "1 1 160px" }}
+                        />
+                        <input
+                          className="admin-form-input"
+                          type="text"
+                          placeholder="URL HLS (.m3u8) ou MP4"
+                          value={newMovieHls}
+                          onChange={e => setNewMovieHls(e.target.value)}
+                          style={{ flex: "2 1 260px" }}
+                        />
+                      </div>
+                      {newMovieHls && (
+                        <div style={{ fontSize: 11, color: "#27ae60", marginTop: 6, fontFamily: "Rajdhani" }}>
+                          ✓ URL renseignée — sera ajoutée en première position à la sauvegarde
+                        </div>
+                      )}
+                    </div>
+
+                    {/* YouTube */}
+                    <div style={{ marginTop: 12, background: "rgba(255,0,0,0.04)", border: "1px dashed #8b0000", borderRadius: 6, padding: 14 }}>
+                      <div style={{ fontSize: 11, color: "#8b0000", fontFamily: "Orbitron", letterSpacing: 1, marginBottom: 10 }}>▶ VIDÉO YOUTUBE (FALLBACK)</div>
+                      <input
+                        className="admin-form-input"
+                        type="text"
+                        placeholder="https://www.youtube.com/watch?v=..."
+                        value={editYoutubeUrl}
+                        onChange={e => setEditYoutubeUrl(e.target.value)}
+                      />
+                      {editYoutubeUrl && (() => {
+                        const m = editYoutubeUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+                        return m ? (
+                          <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 8 }}>
+                            <img src={`https://img.youtube.com/vi/${m[1]}/mqdefault.jpg`} alt="preview" style={{ width: 80, height: 45, objectFit: "cover", borderRadius: 4 }} />
+                            <span style={{ fontSize: 11, color: "#27ae60", fontFamily: "Rajdhani" }}>✓ YouTube ID : {m[1]}</span>
+                          </div>
+                        ) : <div style={{ fontSize: 11, color: "#e74c3c", marginTop: 6, fontFamily: "Rajdhani" }}>URL YouTube non reconnue</div>;
+                      })()}
+                    </div>
+                  </div>
+
+                  {/* Screenshots */}
+                  <div className="admin-form-group">
+                    <label className="admin-form-label">Screenshots ({editScreenshots.length})</label>
+                    {editScreenshots.length > 0 && (
+                      <div className="admin-photo-grid" style={{ marginBottom: 12 }}>
+                        {editScreenshots.map((s, i) => (
+                          <div key={i} className="admin-photo-thumb">
+                            <img src={s.path_thumbnail || s.path_full} alt={`screen ${i}`} />
+                            <button type="button" className="admin-photo-remove" onClick={() => removeExistingScreen(i)}>✕</button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Nouveaux screenshots */}
+                    <div className="admin-dropzone" onClick={() => screenshotInputRef.current.click()}>
+                      <span className="admin-dropzone-icon">🖼</span>
+                      <span>Ajouter des screenshots</span>
+                      <span className="admin-dropzone-hint">JPG, PNG, WEBP — hébergés sur Cloudinary</span>
+                    </div>
+                    <input ref={screenshotInputRef} type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handleScreenshotFiles} />
+
+                    {newScreenPreviews.length > 0 && (
+                      <div className="admin-photo-grid" style={{ marginTop: 10 }}>
+                        {newScreenPreviews.map((src, i) => (
+                          <div key={i} className="admin-photo-thumb">
+                            <img src={src} alt={`new ${i}`} />
+                            <button type="button" className="admin-photo-remove" onClick={() => removeNewScreen(i)}>✕</button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {gameMsg && (
+                    <div className={`admin-msg ${gameMsgType === "error" ? "admin-msg-error" : "admin-msg-success"}`}>
+                      {gameMsg}
+                    </div>
+                  )}
+
+                  {/* Boutons */}
+                  <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 8 }}>
+                    <button className="admin-submit-btn" onClick={handleSaveGame} disabled={gameSaving} style={{ flex: "1 1 200px" }}>
+                      {gameSaving ? "SAUVEGARDE..." : "💾 SAUVEGARDER LA FICHE"}
+                    </button>
+                    <button
+                      onClick={handleForceRefresh}
+                      disabled={gameSaving}
+                      style={{
+                        flex: "0 0 auto",
+                        background: "none",
+                        border: "1px solid #444",
+                        color: "#888",
+                        fontFamily: "Orbitron, sans-serif",
+                        fontSize: 11,
+                        letterSpacing: 1,
+                        padding: "10px 18px",
+                        borderRadius: 4,
+                        cursor: "pointer",
+                      }}
+                    >
+                      🔄 VIDER LE CACHE
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
         </div>
       </div>
     </div>

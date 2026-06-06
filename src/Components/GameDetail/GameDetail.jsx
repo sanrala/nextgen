@@ -50,53 +50,53 @@ function getSteamReviewLabel(total) {
   return                      { label: "Peu d'avis",            color: "#888"    };
 }
 
+const IG_ICON_BASE = "https://www.instant-gaming.com/themes/assets/store";
+
+const PLATFORM_ICONS = {
+  steam:       `${IG_ICON_BASE}/icon-stm.svg`,
+  ubisoft:     `${IG_ICON_BASE}/icon-uplay.svg`,
+  playstation: `${IG_ICON_BASE}/icon-play2.svg`,
+  nintendo:    `${IG_ICON_BASE}/icon-swt.svg`,
+  xbox:        `${IG_ICON_BASE}/icon-xbx-360.svg`,
+  microsoft:   `${IG_ICON_BASE}/icon-xbx-360.svg`,
+  epic:        `${IG_ICON_BASE}/icon-epic.svg`,
+  gog:         `${IG_ICON_BASE}/icon-gog.svg`,
+  ea:          `${IG_ICON_BASE}/icon-ea.svg`,
+};
+
+// Filtre CSS pour forcer l'icône en blanc
+const WHITE_FILTER = "brightness(0) invert(1)";
+
 function PlatformLogo({ type, size = 16 }) {
   const t = (type || "").toLowerCase();
-  if (t.includes("steam")) return (
-    <svg width={size} height={size} viewBox="0 0 448 512" fill="currentColor">
-      <path d="M395.5 177.5c0 33.8-27.5 61-61 61-33.8 0-61-27.3-61-61s27.3-61 61-61c33.5 0 61 27.2 61 61zm52.5.2c0 63-51 113.8-113.7 113.8L225 371.3c-4 43-40.5 76.8-84.5 76.8-40.5 0-74.7-28.8-83-67L0 358V250.7L97.2 290c15.1-9.2 32.2-13.3 52-11.5l71-101.7c.5-62.3 51.5-112.8 114-112.8C397 64 448 115 448 177.7z"/>
-    </svg>
-  );
-  if (t.includes("ubisoft")) return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 3a9 9 0 1 1 0 18A9 9 0 0 1 12 3zm0 2a7 7 0 1 0 0 14A7 7 0 0 0 12 5zm2.5 3.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
-    </svg>
-  );
+  const base = { width: size, height: size, display: "inline-block", verticalAlign: "middle", flexShrink: 0, objectFit: "contain" };
+
+  // Rockstar : R noir sur fond jaune, étoile blanche — SVG inline
   if (t.includes("rockstar")) return (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-    <rect width="24" height="24" rx="4" fill="#f4c20d"/>
-    <text x="12" y="16" textAnchor="middle" fontSize="10" fill="#000" fontWeight="bold">
-      R*
-    </text>
-  </svg>
-);
-  if (t.includes("xbox") || t.includes("microsoft")) return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M4.102 21.033C6.211 22.881 8.977 24 12 24c3.026 0 5.789-1.119 7.902-2.967 1.877-1.912-4.316-8.709-7.902-11.417-3.582 2.708-9.779 9.505-7.898 11.417zm11.16-14.406c2.5 1.851 6.737 6.963 6.477 10.488C23.154 15.473 24 13.822 24 12c0-4.386-2.322-8.216-5.803-10.337.01 0-1.734 2.868-2.935 4.964zM5.804 1.666C2.32 3.783 0 7.614 0 12c0 1.819.846 3.469 1.463 5.116-.261-3.521 3.972-8.636 6.477-10.488-1.206-2.096-2.945-4.964-2.935-4.962zm6.196.341s-3.258 2.735-3.498 9.402c.765.857 2.099 2.186 3.498 3.168 1.399-.982 2.732-2.31 3.499-3.168-.241-6.667-3.499-9.402-3.499-9.402z"/>
+    <svg width={size} height={size} viewBox="0 0 100 100" style={{ display: "inline-block", verticalAlign: "middle", flexShrink: 0 }}>
+      {/* R noir */}
+      <path d="M8 8 h36 c17 0 27 10 27 23 c0 10-6 18-16 21 l18 28 h-19 l-17-26 h-13 v26 h-16 z M24 22 v16 h18 c5 0 9-3.5 9-8 s-4-8-9-8 z" fill="#1a1a1a"/>
+      {/* Étoile blanche plus grande */}
+      <polygon points="76,48 80,62 95,62 83,71 87,85 76,76 65,85 69,71 57,62 72,62" fill="#ffffff"/>
     </svg>
   );
-  if (t.includes("playstation")) return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M8.984 2.596v15.47l3.915 1.338V6.668c0-.69.304-1.151.794-.991.636.18.76.814.76 1.503v5.324c2.909 1.618 5.106.041 5.106-3.973 0-4.137-1.638-5.88-4.488-6.923-1.493-.54-4.064-1.231-6.087-1.012zm-4.453 15.08c-2.147.896-3.838.098-3.838-1.97 0-1.95 1.374-4.142 3.838-5.637v2.406c-.955.56-1.362 1.197-1.362 1.76 0 .773.497 1.143 1.362.838V19.5zm9.953 2.323c-1.063.385-2.077.493-2.965.228v-2.414c.667.14 1.31.121 1.94-.107 1.054-.384 1.765-1.191 1.765-2.028 0-.838-.711-1.062-1.766-.757l-1.94.667V13.2c2.94-.907 5.293-.127 5.293 2.087 0 2.214-1.28 4.188-2.327 4.712z"/>
-    </svg>
-  );
-  if (t.includes("epic")) return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M3.963 0v18.496l2.913.925V.926zm10.043.001l-4.017 1.271v18.252l4.017-1.272zm6.031 1.906l-4.017 1.271v15.98l4.017 1.272z"/>
-    </svg>
-  );
-  if (t.includes("gog")) return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm5.25 16.5h-3v-3h3v3zm0-4.5h-3V9h1.5V7.5h-6V9H9v3H6V7.5A1.5 1.5 0 0 1 7.5 6h9A1.5 1.5 0 0 1 18 7.5V12zm-4.5 4.5h-3v-3h3v3z"/>
-    </svg>
-  );
-  if (t.includes("nintendo")) return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M9.434 0C4.226.002 0 4.228 0 9.434v5.132C0 19.774 4.226 24 9.434 24h5.132C19.773 24 24 19.774 24 14.566V9.434C24 4.228 19.773.002 14.566 0zm-.717 5.046h1.992l3.59 7.77V5.046h1.974v13.908h-1.973l-3.61-7.789v7.789H8.717zm-4.89 0h2.062v13.908H3.827z"/>
-    </svg>
-  );
+
+  let src = null;
+  if (t.includes("steam"))                                                        src = PLATFORM_ICONS.steam;
+  else if (t.includes("ubisoft"))                                                 src = PLATFORM_ICONS.ubisoft;
+  else if (t.includes("playstation") || t.includes("ps5") || t.includes("ps4")) src = PLATFORM_ICONS.playstation;
+  else if (t.includes("nintendo") || t.includes("switch"))                       src = PLATFORM_ICONS.nintendo;
+  else if (t.includes("xbox"))                                                    src = PLATFORM_ICONS.xbox;
+  else if (t.includes("microsoft"))                                               src = PLATFORM_ICONS.microsoft;
+  else if (t.includes("epic"))                                                    src = PLATFORM_ICONS.epic;
+  else if (t.includes("gog"))                                                     src = PLATFORM_ICONS.gog;
+  else if (t.includes("ea app") || t.includes("origin"))                         src = PLATFORM_ICONS.ea;
+
+  if (src) return <img src={src} alt={type} style={{ ...base, filter: WHITE_FILTER }} />;
+
+  // Fallback générique manette
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="#ffffff" style={{ display: "inline-block", verticalAlign: "middle" }}>
       <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5S14.67 12 15.5 12s1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S18.67 9 19.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
     </svg>
   );
@@ -215,20 +215,25 @@ function GameDetail() {
       const fbRef  = doc(db, "games", `ig_${igId}`);
       const fbSnap = await getDoc(fbRef);
 
-     if (fbSnap.exists()) {
+if (fbSnap.exists()) {
   const cached = fbSnap.data();
+  const savedAt = cached.savedAt?.toMillis?.() || 0;
+  const AGE_LIMIT = 24 * 60 * 60 * 1000; // 24h
+  const isFresh = (Date.now() - savedAt) < AGE_LIMIT;
 
-  // Si le cache existe mais n'a pas de steamData ET c'est potentiellement
-  // un jeu console → on ignore le cache et on re-fetch
-  if (!cached.steamData) {
-    // laisse tomber le cache, continue vers le fetch
-  } else {
-    if (cached.steamData) setSteamData(cached.steamData);
-    if (cached.franchise) setFranchise((cached.franchise || []).filter(g => g.steam_id));
-    if (cached.similar)   setSimilar((cached.similar   || []).filter(g => g.steam_id));
+  if (cached.steamData && isFresh) {
+    setSteamData(cached.steamData);
+    // franchise et similar : toujours fetch live, pas de cache Firebase
+    const [frRes, siRes] = await Promise.all([
+      fetch(`${BACKEND_URL}/api/franchise/${igId}`).then(r => r.json()).catch(() => []),
+      fetch(`${BACKEND_URL}/api/similar/${igId}`).then(r => r.json()).catch(() => []),
+    ]);
+    setFranchise(Array.isArray(frRes) ? frRes : []);
+    setSimilar(Array.isArray(siRes) ? siRes : []);
     setLoadingSteam(false);
     return;
   }
+  // cache expiré ou absent → re-fetch
 }
 
       // Récupère les infos IG du jeu (type, steam_id éventuel)
@@ -271,25 +276,17 @@ function GameDetail() {
         fetch(`${BACKEND_URL}/api/similar/${igId}`).then(r => r.json()).catch(() => []),
       ]);
 
-      const fr = (Array.isArray(frRes) ? frRes : []).filter(g => g.steam_id);
-      const si = (Array.isArray(siRes) ? siRes : []).filter(g => g.steam_id);
+      const fr = Array.isArray(frRes) ? frRes : [];
+      const si = Array.isArray(siRes) ? siRes : [];
 
       if (gameDataRes) setSteamData(gameDataRes);
       setFranchise(fr);
       setSimilar(si);
 
-      // Écriture Firebase (inchangée)
+      // Écriture Firebase — steamData uniquement, plus franchise/similar
       try {
         const toStore = { igId, savedAt: serverTimestamp() };
         if (gameDataRes) toStore.steamData = gameDataRes;
-        if (fr.length) toStore.franchise = fr.map(g => ({
-          id: g.id, name: g.name, img: g.img,
-          steam_id: g.steam_id, type: g.type,
-        }));
-        if (si.length) toStore.similar = si.map(g => ({
-          id: g.id, name: g.name, img: g.img,
-          steam_id: g.steam_id, type: g.type,
-        }));
         await setDoc(fbRef, toStore, { merge: true });
       } catch (writeErr) {
         console.warn("Firebase write error:", writeErr.message);
@@ -532,7 +529,7 @@ if (cachedEditions.length) {
   useEffect(() => {
     if (!steamData) return;
     const m = steamData?.movies?.[0];
-    const hasVideo = m?.webm?.max || m?.webm?.["480"] || m?.mp4?.max || m?.mp4?.["480"] || m?.hls_h264;
+    const hasVideo = m?.webm?.max || m?.webm?.["480"] || m?.mp4?.max || m?.mp4?.["480"] || m?.hls_h264 || steamData?.youtube_id;
     if (!hasVideo) setActiveMedia(0);
   }, [steamData]);
 
@@ -582,6 +579,7 @@ if (cachedEditions.length) {
 
   const screenshots = steamData?.screenshots || [];
   const movies      = steamData?.movies      || [];
+  const youtubeId   = steamData?.youtube_id  || null;
   const getVideoSrc = (movie) => {
     if (!movie) return null;
     if (movie?.webm?.max)     return { url: movie.webm.max,    type: "mp4" };
@@ -616,7 +614,8 @@ const platformLabel = pt.includes("rockstar") ? "Rockstar"
   : pt.includes("gog")       ? "GOG"
   : pt.includes("nintendo")  ? "Nintendo eShop"
   : "Steam";
-  const platformBg = pt.includes("ubisoft")    ? "#0070cc"
+  const platformBg = pt.includes("rockstar")   ? "#F7941D"
+    : pt.includes("ubisoft")    ? "#0070cc"
     : pt.includes("microsoft") || pt.includes("xbox") ? "#107c10"
     : pt.includes("playstation") ? "#003087"
     : pt.includes("epic")      ? "#2a2a2a"
@@ -699,6 +698,17 @@ console.log("first img:", allEditions?.[0]?.img);
               <div className="gd-media-main">
                 {activeMedia === "video" && videoSrc ? (
                   <HlsPlayer key={videoSrc.url} src={videoSrc.url} type={videoSrc.type} poster={videoThumb} className="gd-media-video" />
+                ) : activeMedia === "video" && youtubeId ? (
+                  <iframe
+                    key={youtubeId}
+                    className="gd-media-video"
+                    src={`https://www.youtube.com/embed/${youtubeId}?autoplay=0&rel=0`}
+                    title="YouTube video"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    style={{ width: "100%", aspectRatio: "16/9", border: "none" }}
+                  />
                 ) : screenshots[activeMedia] ? (
                   <img src={screenshots[activeMedia].path_full} alt="screenshot" className="gd-media-img" />
                 ) : igGame?.img ? (
@@ -706,11 +716,16 @@ console.log("first img:", allEditions?.[0]?.img);
                 ) : null}
               </div>
 
-              {(videoSrc || screenshots.length > 0) && (
+              {(videoSrc || youtubeId || screenshots.length > 0) && (
                 <div className="gd-thumbstrip">
-                  {videoSrc && (
+                  {(videoSrc || youtubeId) && (
                     <div className={`gd-thumb-wrap${activeMedia === "video" ? " gd-thumb-active" : ""}`} onClick={() => setActiveMedia("video")}>
-                      {videoThumb ? <img src={videoThumb} alt="vidéo" className="gd-thumb" /> : <div className="gd-thumb gd-thumb-video-placeholder">▶</div>}
+                      {videoThumb
+                        ? <img src={videoThumb} alt="vidéo" className="gd-thumb" />
+                        : youtubeId
+                          ? <img src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`} alt="vidéo" className="gd-thumb" />
+                          : <div className="gd-thumb gd-thumb-video-placeholder">▶</div>
+                      }
                       <div className="gd-thumb-play">▶</div>
                     </div>
                   )}
@@ -725,8 +740,10 @@ console.log("first img:", allEditions?.[0]?.img);
               {/* Titre + prix dupliqués ici pour mobile (cachés sur desktop) */}
               <div className="gd-mobile-header">
                 <div className="subinfos" style={{ marginTop: 12 }}>
-                  <span className="platform gd-platform-badge" style={{ background: platformBg }}>
-                    <PlatformLogo type={chosenEntry?.type || igGame?.type || "Steam"} size={16} />
+                  <span className="platform gd-platform-badge" style={{ background: "rgba(255,255,255,0.1)" }}>
+                    <span style={{ background: platformBg, borderRadius: "50%", width: 42, height: 42, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                      <PlatformLogo type={chosenEntry?.type || igGame?.type || "Steam"} size={32} />
+                    </span>
                     &nbsp;{platformLabel}
                   </span>
                   <h2 className="nk-productpro-title h3pro" style={{ marginLeft: 10, marginBottom: 0, fontSize: "1rem" }}>
@@ -861,8 +878,10 @@ console.log("first img:", allEditions?.[0]?.img);
               {/* Badge plateforme + titre — order 1 sur mobile */}
               <div className="gd-right-title">
               <div className="subinfos">
-                <span className="platform gd-platform-badge" style={{ background: platformBg }}>
-                  <PlatformLogo type={chosenEntry?.type || igGame?.type || "Steam"} size={18} />
+                <span className="platform gd-platform-badge" style={{ background: "rgba(255,255,255,0.1)" }}>
+                  <span style={{ background: platformBg, borderRadius: "50%", width: 42, height: 42, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <PlatformLogo type={chosenEntry?.type || igGame?.type || "Steam"} size={32} />
+                  </span>
                   &nbsp;{platformLabel}
                 </span>
                 <h2 className="nk-productpro-title h3pro" style={{ marginLeft: 12, marginBottom: 0 }}>
@@ -940,12 +959,20 @@ console.log("first img:", allEditions?.[0]?.img);
                 {steamData?.release_date?.date && (
                   <div><strong>Date de sortie</strong>: {steamData.release_date.date}</div>
                 )}
-                {steamData?.developers?.[0] && (
-                  <div><strong>Développeur</strong>: {steamData.developers[0]}</div>
-                )}
-                {steamData?.publishers?.[0] && (
-                  <div><strong>Éditeur</strong>: {steamData.publishers[0]}</div>
-                )}
+               {steamData?.developers && (
+  <div><strong>Développeur</strong>: {
+    Array.isArray(steamData.developers)
+      ? steamData.developers[0]
+      : steamData.developers
+  }</div>
+)}
+{steamData?.publishers && (
+  <div><strong>Éditeur</strong>: {
+    Array.isArray(steamData.publishers)
+      ? steamData.publishers[0]
+      : steamData.publishers
+  }</div>
+)}
                 {steamCategories.length > 0 && (
                   <div className="gd-steam-features">
                     {steamCategories.map(cat => (
@@ -1168,7 +1195,7 @@ console.log("first img:", allEditions?.[0]?.img);
               const gSteamId = g.steam_id || 0;
               const gSlug    = g.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
               return (
-                <Link key={g.id} to={`/store/${g.id}/${gSteamId}/${gSlug}`} className="gd-related-card">
+                <Link key={g.id} to={`/store/${g.id}/${gSteamId}/${gSlug}`} className="gd-related-card" onClick={() => window.scrollTo(0, 0)}>
                   <div className="gd-related-img">
                     <img src={g.img} alt={g.name} />
                     {promo && <span className="gd-related-promo">{promo}</span>}
@@ -1207,7 +1234,7 @@ console.log("first img:", allEditions?.[0]?.img);
               const gSteamId = g.steam_id || 0;
               const gSlug    = g.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
               return (
-                <Link key={g.id} to={`/store/${g.id}/${gSteamId}/${gSlug}`} className="gd-related-card">
+                <Link key={g.id} to={`/store/${g.id}/${gSteamId}/${gSlug}`} className="gd-related-card" onClick={() => window.scrollTo(0, 0)}>
                   <div className="gd-related-img">
                     <img src={g.img} alt={g.name} />
                     {promo && <span className="gd-related-promo">{promo}</span>}

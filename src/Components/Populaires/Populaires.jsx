@@ -181,16 +181,9 @@ function Populaires() {
         });
         const data = await res.json();
         if (!data || data.length === 0) { setAllGames([]); return; }
-        const today = new Date();
-        today.setHours(23, 59, 59, 999);
-        const released = data.filter(g => {
-          if (g.preorder === 1) return false;
-          if (g.releaseDate) {
-            const d = new Date(g.releaseDate);
-            if (!isNaN(d) && d > today) return false;
-          }
-          return true;
-        });
+        // const today = new Date();
+        // today.setHours(23, 59, 59, 999);
+  const released = data;
         setAllGames(released);
       } catch (err) {
         console.error(err);
@@ -209,7 +202,13 @@ function Populaires() {
       if ((g.region || "").toLowerCase().includes("latin")) return false;
       if (platform !== "Tous" && getPlatformKey(g.type) !== platform) return false;
       if (search.trim()) {
-        if (!g.name.toLowerCase().includes(search.toLowerCase())) return false;
+      const normalize = (str) =>
+  str.toLowerCase()
+    .replace(/[:\-''\u2018\u2019!?.,]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+if (!normalize(g.name).includes(normalize(search))) return false;
       }
       return true;
     })

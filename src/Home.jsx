@@ -11,6 +11,8 @@ import gameData from "./exclu.json";
 import Sorties from "./Components/Sorties/Sorties";
 import Banner from "./Components/Banner/Banner.jsx";
 import BoxNews from "./Components/BoxNews/BoxNews.jsx";
+import PlaystationTendances from "./Components/Playstation/PlaystationTendances";
+import PlaystationPrecommandes from "./Components/Playstation/PlaystationPrecommandes";
 
 function LogoLoader() {
   return (
@@ -320,6 +322,10 @@ function Home() {
 
             <div className="container">
               <Precommandes />
+              <div className="separator product-panel"></div>
+              <PlaystationTendances />
+              <div className="separator product-panel"></div>
+              <PlaystationPrecommandes />
               <div className="separator product-panel"></div>
               <LastPosts />
               <div className="separator product-panel"></div>
