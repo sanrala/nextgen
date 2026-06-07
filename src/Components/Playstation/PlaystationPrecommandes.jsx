@@ -14,9 +14,16 @@ function getPromo(retail, price) {
   return `-${Math.round(((r - p) / r) * 100)}%`;
 }
 
+function formatDate(dateStr) {
+  if (!dateStr) return null;
+  if (/^\d{4}$/.test(dateStr)) return dateStr;
+  const d = new Date(dateStr);
+  if (isNaN(d)) return dateStr;
+  return d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+}
+
 function PlaystationPrecommandes() {
   const [games, setGames] = useState([]);
-  const [isFallback, setIsFallback] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,11 +31,9 @@ function PlaystationPrecommandes() {
       try {
         const res  = await fetch(`${BACKEND_URL}/api/precommandes-playstation`);
         const data = await res.json();
-        const list = Array.isArray(data) ? data.slice(0, 6) : [];
-        setGames(list);
-        setIsFallback(list.length > 0 && list[0]._fallback === true);
+        setGames(Array.isArray(data) ? data.slice(0, 6) : []);
       } catch (e) {
-        console.error("Erreur PlayStation précommandes:", e);
+        console.error("Erreur PlayStation prochaines sorties:", e);
       } finally {
         setLoading(false);
       }
@@ -44,8 +49,7 @@ function PlaystationPrecommandes() {
       <Link to="/Populaires/?platform=PlayStation">
         <h3 className="nk-decorated-h-2">
           <span>
-            <span className="text-main-1">PlayStation</span>{" "}
-            {isFallback ? "— Nouveautés récentes" : "en précommandes"}
+            <span className="text-main-1">PlayStation</span> — Prochaines sorties
           </span>
         </h3>
       </Link>
@@ -55,43 +59,44 @@ function PlaystationPrecommandes() {
           {games.map(game => {
             const promo = getPromo(game.retail, game.price);
             const price = parseFloat(game.price);
-            const path  = `/store/${game.id}/0/${cleanTitle(game.name)}`;
-            return (
-              <div className="col-md-6 col-lg-4" key={game.id}>
-                <div className="nk-blog-post">
-                  <Link to={path} className="nk-post-img">
-                    <img
-                      src={game.img}
-                      alt={game.name}
-                      className="img-fluid"
-                      style={{ width: "100%", objectFit: "cover" }}
-                    />
-                    {promo && (
-                      <span className="nk-post-comments-count">{promo}</span>
-                    )}
-                    <span className="nk-post-categories">
-                      <span className="bg-main-5">{game.type}</span>
-                    </span>
-                  </Link>
-                  <div className="nk-gap" />
-                  <span className="nk-post-title h4">
-                    <Link to={path}>
-                      {game.name.length > 22 ? game.name.slice(0, 22) + "…" : game.name}
-                    </Link>
+       const path = game._igFound && game._igId
+  ? `/store/${game._igId}/0/${cleanTitle(game.name)}`
+  : `/store-ps/${game._rawgId || game.id}/${cleanTitle(game.name)}`;
+
+            const cardContent = (
+              <div className="nk-blog-post">
+                <div className="nk-post-img">
+                  <img
+                    src={game.img}
+                    alt={game.name}
+                    className="img-fluid"
+                    style={{ width: "100%", objectFit: "cover" }}
+                  />
+                  {promo && <span className="nk-post-comments-count">{promo}</span>}
+                  <span className="nk-post-categories">
+                    <span className="bg-main-5">{game.type}</span>
                   </span>
-                  <div className="nk-gap" />
-                  <div className="d-flex justify-content-between text-white">
-                    {!isFallback && (
-                      <div>
-                        <span className="preco">PRECO</span>{" "}
-                        <span className="preco__date">
-                          {game.releaseDate ? `📅 ${game.releaseDate}` : `🌍 ${game.region}`}
-                        </span>
-                      </div>
-                    )}
-                    <span>{price ? `${price.toFixed(2)} €` : "N/A"}</span>
-                  </div>
                 </div>
+                <div className="nk-gap" />
+                <span className="nk-post-title h4">
+                  {game.name.length > 22 ? game.name.slice(0, 22) + "…" : game.name}
+                </span>
+                <div className="nk-gap" />
+                <div className="d-flex justify-content-between text-white">
+                  <span className="preco__date">📅 {formatDate(game.releaseDate)}</span>
+                  <span>{price > 0 ? `${price.toFixed(2)} €` : "À venir"}</span>
+                </div>
+              </div>
+            );
+
+            return (
+              <div className="col-md-6 col-lg-4" key={game.id || game.name}>
+                {path
+                  ? <Link to={path} style={{ textDecoration: "none" }}>{cardContent}</Link>
+                  : game.url
+                    ? <a href={game.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>{cardContent}</a>
+                    : cardContent
+                }
               </div>
             );
           })}

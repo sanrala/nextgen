@@ -359,6 +359,27 @@ export default function SearchBar() {
     const data = cat || (await fetchCatalog());
     if (!data || !Array.isArray(data)) { setLoading(false); return; }
 
+const ABBREV = {
+  "gta 6": "grand theft auto vi",
+  "gta vi": "grand theft auto vi",
+  "gta 5": "grand theft auto v",
+  "gta v": "grand theft auto v",
+  "gta 4": "grand theft auto iv",
+  "gta iv": "grand theft auto iv",
+  "gta san andreas": "grand theft auto san andreas",
+  "cod": "call of duty",
+  "bf": "battlefield",
+  "ac": "assassin's creed",
+  "rdr": "red dead redemption",
+  "rdr2": "red dead redemption 2",
+  "ff": "final fantasy",
+  "fifa": "ea sports fc",
+  "pes": "efootball",
+  "wow": "world of warcraft",
+  "cs2": "counter-strike 2",
+  "csgo": "counter-strike",
+};
+
 const normalize = (str) =>
   str.toLowerCase()
     .replace(/[:\-''\u2018\u2019!?.,]/g, " ")
@@ -366,8 +387,12 @@ const normalize = (str) =>
     .trim();
 
 const lower = normalize(q);
+const expanded = ABBREV[lower] || lower;
 const matching = data.filter(
-  (g) => normalize(g.name || "").includes(lower)
+  (g) => {
+    const name = normalize(g.name || "");
+    return name.includes(expanded) || name.includes(lower);
+  }
 );
 
     // Déduplique par nom de base, mais en choisissant le meilleur igId :
@@ -426,9 +451,10 @@ const base = getBaseName(g.name) + "|" + platform;
   const platform = (game.platform || game.type || "").toLowerCase();
   const isConsole = platform.includes("ps5") || platform.includes("playstation") ||
     platform.includes("ps4") || platform.includes("nintendo") || platform.includes("switch") ||
-    platform.includes("microsoft") || platform.includes("xbox") || platform.includes("ubisoft");
+    platform.includes("microsoft") || platform.includes("xbox") || platform.includes("ubisoft") ||
+    platform.includes("rockstar") || platform.includes("ea") || platform.includes("origin");
 
-  // Jeux console/non-Steam → toujours steamId=0
+  // Jeux console → toujours steamId=0, jamais le steam_id du catalogue qui peut pointer vers un mauvais jeu
   if (isConsole) {
     handleClose();
     navigate(`/store/${game.id}/0/${slug}`);

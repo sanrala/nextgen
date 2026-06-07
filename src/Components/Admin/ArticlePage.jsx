@@ -14,6 +14,12 @@ function ArticlePage() {
   const [loading, setLoading] = useState(true);
   const [activePhoto, setActivePhoto] = useState(0);
 
+  const cleanTitle = (name) =>
+    (name || "").replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
+
+  const gameLink = (igId, gameName) =>
+    `/store/${igId}/0/${cleanTitle(gameName)}`;
+
   function formatDate(timestamp) {
     if (!timestamp) return "";
     const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
@@ -104,7 +110,7 @@ function ArticlePage() {
             <li><Link to="/">Accueil</Link></li>
             <li><span className="fa fa-angle-right" /></li>
             <li>
-              <Link to={`/PC/${article.ig_id}/${article.game_name}`}>
+              <Link to={gameLink(article.ig_id, article.game_name)}>
                 {article.game_name}
               </Link>
             </li>
@@ -270,7 +276,7 @@ function ArticlePage() {
                         {article.game_type} · ID #{article.ig_id}
                       </div>
                       <Link
-                        to={`/PC/${article.ig_id}/${article.game_name}`}
+                        to={gameLink(article.ig_id, article.game_name)}
                         className="nk-btn nk-btn-rounded nk-btn-color-main-1"
                         style={{ fontSize: 12 }}
                       >

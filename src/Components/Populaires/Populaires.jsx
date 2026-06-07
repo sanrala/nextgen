@@ -202,13 +202,38 @@ function Populaires() {
       if ((g.region || "").toLowerCase().includes("latin")) return false;
       if (platform !== "Tous" && getPlatformKey(g.type) !== platform) return false;
       if (search.trim()) {
-      const normalize = (str) =>
-  str.toLowerCase()
-    .replace(/[:\-''\u2018\u2019!?.,]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+        const ABBREV = {
+          "gta 6": "grand theft auto vi",
+          "gta vi": "grand theft auto vi",
+          "gta 5": "grand theft auto v",
+          "gta v": "grand theft auto v",
+          "gta 4": "grand theft auto iv",
+          "gta iv": "grand theft auto iv",
+          "gta san andreas": "grand theft auto san andreas",
+          "cod": "call of duty",
+          "bf": "battlefield",
+          "ac": "assassin's creed",
+          "rdr": "red dead redemption",
+          "rdr2": "red dead redemption 2",
+          "ff": "final fantasy",
+          "fifa": "ea sports fc",
+          "pes": "efootball",
+          "wow": "world of warcraft",
+          "lol": "league of legends",
+          "cs2": "counter-strike 2",
+          "csgo": "counter-strike",
+        };
 
-if (!normalize(g.name).includes(normalize(search))) return false;
+        const normalize = (str) =>
+          str.toLowerCase()
+            .replace(/[:\-''\u2018\u2019!?.,]/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+
+        const raw = normalize(search);
+        const expanded = ABBREV[raw] || raw;
+        const gameName = normalize(g.name);
+        if (!gameName.includes(expanded) && !gameName.includes(raw)) return false;
       }
       return true;
     })

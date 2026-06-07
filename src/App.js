@@ -3,7 +3,9 @@ import Admin from "./Components/Admin/Admin";
 import ArticlePage from "./Components/Admin/ArticlePage";
 import { Routes, Route } from "react-router-dom";
 import GameDetail from "./Components/GameDetail/GameDetail";
+
 import Populaires from "./Components/Populaires/Populaires";
+
 
 function App() {
   return (
@@ -13,6 +15,7 @@ function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/article/:doc_id" element={<ArticlePage />} />
         <Route path="/store/:igId/:steamId/:title" element={<GameDetail />} />
+
         <Route path="/Populaires" element={<Populaires />} />
         <Route path="/Populaires/" element={<Populaires />} />
         {/* Routes existantes (décommentez si besoin) */}

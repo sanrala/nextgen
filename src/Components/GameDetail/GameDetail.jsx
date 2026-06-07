@@ -220,10 +220,10 @@ if (fbSnap.exists()) {
   const savedAt = cached.savedAt?.toMillis?.() || 0;
   const AGE_LIMIT = 24 * 60 * 60 * 1000; // 24h
   const isFresh = (Date.now() - savedAt) < AGE_LIMIT;
+  const isConsoleCached = cached.steamData?.source === 'rawg';
 
-  if (cached.steamData && isFresh) {
+  if (cached.steamData && isFresh && !isConsoleCached) {
     setSteamData(cached.steamData);
-    // franchise et similar : toujours fetch live, pas de cache Firebase
     const [frRes, siRes] = await Promise.all([
       fetch(`${BACKEND_URL}/api/franchise/${igId}`).then(r => r.json()).catch(() => []),
       fetch(`${BACKEND_URL}/api/similar/${igId}`).then(r => r.json()).catch(() => []),
@@ -233,7 +233,7 @@ if (fbSnap.exists()) {
     setLoadingSteam(false);
     return;
   }
-  // cache expiré ou absent → re-fetch
+  // cache expiré, absent, ou données RAWG → re-fetch
 }
 
       // Récupère les infos IG du jeu (type, steam_id éventuel)
@@ -241,15 +241,19 @@ if (fbSnap.exists()) {
         .then(r => r.ok ? r.json() : null).catch(() => null);
       const gameType = (igGameData?.type || "").toLowerCase();
 
-      // Si steamId est 0, on essaie de le résoudre via /api/editions
       let resolvedSteamId = steamId && steamId !== "0" ? steamId : null;
-      if (!resolvedSteamId) {
-        const isPC = (gameType.includes("steam") || gameType.includes("epic") ||
+
+      const isConsole = gameType.includes("playstation") || gameType.includes("ps5") ||
+        gameType.includes("ps4") || gameType.includes("nintendo") ||
+        gameType.includes("switch") || gameType.includes("microsoft") ||
+        gameType.includes("xbox") || gameType.includes("ubisoft");
+
+      // PC uniquement — jamais pour les consoles (risque de mauvais jeu)
+      if (!resolvedSteamId && !isConsole) {
+        const isPC = gameType.includes("steam") || gameType.includes("epic") ||
           gameType.includes("gog") || gameType.includes("battle") ||
           gameType.includes("rockstar") || gameType.includes("ea app") ||
-          gameType.includes("other")) &&
-          !gameType.includes("microsoft") && !gameType.includes("xbox") &&
-          !gameType.includes("ubisoft");
+          gameType.includes("other");
         if (isPC) {
           const editions = await fetch(`${BACKEND_URL}/api/editions/${igId}`)
             .then(r => r.ok ? r.json() : []).catch(() => []);
@@ -258,20 +262,36 @@ if (fbSnap.exists()) {
         }
       }
 
-      const isConsole = !resolvedSteamId && (
-        gameType.includes("playstation") || gameType.includes("ps5") ||
-        gameType.includes("ps4") || gameType.includes("nintendo") ||
-        gameType.includes("switch") || gameType.includes("microsoft") ||
-        gameType.includes("xbox") || gameType.includes("ubisoft")
-      );
+      // Pour les jeux console : cherche sur Steam via le nom
+      // Quand Steam aura les infos, ça se mettra à jour automatiquement via Firebase
+      let steamIdFromSearch = null;
+      if (!resolvedSteamId && isConsole && igGameData?.name) {
+        const cleanName = (igGameData.name)
+          .replace(/[\u2018\u2019]/g, "'")
+          .replace(/:/g, "")
+          .replace(/\+.*$/, "")
+          .replace(/deluxe|ultimate|gold|premium|standard/gi, "")
+          .trim();
+        const steamSearch = await fetch(`${BACKEND_URL}/api/steam-search?term=${encodeURIComponent(cleanName)}`)
+          .then(r => r.ok ? r.json() : null).catch(() => null);
+        const items = steamSearch?.items || [];
+        const nameLower = cleanName.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+        const match = items.find(i => i.name.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim() === nameLower)
+          || items.find(i => {
+            const iName = i.name.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+            const iWords = iName.split(' ').slice(0, 4).join(' ');
+            const gWords = nameLower.split(' ').slice(0, 4).join(' ');
+            return gWords.length > 6 && iWords === gWords;
+          });
+        if (match?.id) steamIdFromSearch = match.id;
+      }
+
+      const finalSteamId = resolvedSteamId || steamIdFromSearch;
 
       const [gameDataRes, frRes, siRes] = await Promise.all([
-        // Steam pour PC, RAWG pour PS5/Nintendo
-        resolvedSteamId
-          ? fetch(`${BACKEND_URL}/api/steam/${resolvedSteamId}`).then(r => r.ok ? r.json() : null).catch(() => null)
-          : isConsole
-            ? fetch(`${BACKEND_URL}/api/rawg/${igId}`).then(r => r.ok ? r.json() : null).catch(() => null)
-            : Promise.resolve(null),
+        finalSteamId
+          ? fetch(`${BACKEND_URL}/api/steam/${finalSteamId}`).then(r => r.ok ? r.json() : null).catch(() => null)
+          : Promise.resolve(null),
         fetch(`${BACKEND_URL}/api/franchise/${igId}`).then(r => r.json()).catch(() => []),
         fetch(`${BACKEND_URL}/api/similar/${igId}`).then(r => r.json()).catch(() => []),
       ]);
@@ -279,18 +299,33 @@ if (fbSnap.exists()) {
       const fr = Array.isArray(frRes) ? frRes : [];
       const si = Array.isArray(siRes) ? siRes : [];
 
-      if (gameDataRes) setSteamData(gameDataRes);
+      if (gameDataRes) {
+        setSteamData(gameDataRes);
+        // Sauvegarde Firebase uniquement si vraies données Steam
+        try {
+          await setDoc(fbRef, { igId, savedAt: serverTimestamp(), steamData: gameDataRes }, { merge: true });
+        } catch (writeErr) {
+          console.warn("Firebase write error:", writeErr.message);
+        }
+      } else if (igGameData) {
+        // Pas encore sur Steam → données IG minimales, rien en Firebase
+        // Quand Steam ajoutera le jeu, Firebase vide → re-fetch automatique
+        setSteamData({
+          name: igGameData.name,
+          short_description: "",
+          detailed_description: "",
+          header_image: igGameData.img || "",
+          genres: [],
+          developers: "",
+          publishers: "",
+          release_date: { date: "" },
+          screenshots: [],
+          movies: [],
+          source: "ig",
+        });
+      }
       setFranchise(fr);
       setSimilar(si);
-
-      // Écriture Firebase — steamData uniquement, plus franchise/similar
-      try {
-        const toStore = { igId, savedAt: serverTimestamp() };
-        if (gameDataRes) toStore.steamData = gameDataRes;
-        await setDoc(fbRef, toStore, { merge: true });
-      } catch (writeErr) {
-        console.warn("Firebase write error:", writeErr.message);
-      }
 
     } catch (e) {
       console.error("Steam/Firebase error", e);
@@ -956,9 +991,20 @@ console.log("first img:", allEditions?.[0]?.img);
                 {steamData?.genres && (
                   <div><strong>Genres</strong>: {steamData.genres.map(g => g.description).join(", ")}</div>
                 )}
-                {steamData?.release_date?.date && (
-                  <div><strong>Date de sortie</strong>: {steamData.release_date.date}</div>
-                )}
+                {(() => {
+                  const byPlatform = steamData?.release_date?.byPlatform;
+                  // Détermine la clé plateforme depuis le type sélectionné
+                  const platformKey = pt.includes("playstation") || pt.includes("ps") ? "PlayStation"
+                    : pt.includes("xbox") || pt.includes("microsoft") ? "Xbox"
+                    : pt.includes("nintendo") || pt.includes("switch") ? "Nintendo"
+                    : "PC";
+                  const date = byPlatform
+                    ? (byPlatform[platformKey] || "Date inconnue")
+                    : steamData?.release_date?.date;
+                  return date ? (
+                    <div><strong>Date de sortie</strong>: {date}</div>
+                  ) : null;
+                })()}
                {steamData?.developers && (
   <div><strong>Développeur</strong>: {
     Array.isArray(steamData.developers)

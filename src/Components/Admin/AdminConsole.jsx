@@ -74,6 +74,10 @@ function AdminConsole({ user }) {
   const [editDev, setEditDev]             = useState("");
   const [editPub, setEditPub]             = useState("");
   const [editDate, setEditDate]           = useState("");
+  const [editDateMode, setEditDateMode]   = useState("global"); // "global" ou "byplatform"
+  const [editDateByPlatform, setEditDateByPlatform] = useState({
+    PC: "", PlayStation: "", Xbox: "", Nintendo: "",
+  });
   const [editScreenshots, setEditScreenshots] = useState([]);
   const [newScreenFiles, setNewScreenFiles]   = useState([]);
   const [newScreenPreviews, setNewScreenPreviews] = useState([]);
@@ -82,6 +86,9 @@ function AdminConsole({ user }) {
   const [newMovieHls, setNewMovieHls]     = useState("");
   const [newMovieName, setNewMovieName]   = useState("");
   const [editYoutubeUrl, setEditYoutubeUrl] = useState("");
+  // Mise en avant
+  const [editFeatured, setEditFeatured]                   = useState(false);
+  const [editFeaturedPlatforms, setEditFeaturedPlatforms] = useState([]);
   const screenshotInputRef = useRef();
 
   const [search, setSearch] = useState("");
@@ -316,6 +323,13 @@ function AdminConsole({ user }) {
       setEditDev(Array.isArray(sd?.developers) ? sd.developers[0] || "" : sd?.developers || "");
       setEditPub(Array.isArray(sd?.publishers) ? sd.publishers[0] || "" : sd?.publishers || "");
       setEditDate(sd?.release_date?.date || "");
+      setEditDateMode(sd?.release_date?.byPlatform ? "byplatform" : "global");
+      setEditDateByPlatform({
+        PC:          sd?.release_date?.byPlatform?.PC          || "",
+        PlayStation: sd?.release_date?.byPlatform?.PlayStation || "",
+        Xbox:        sd?.release_date?.byPlatform?.Xbox        || "",
+        Nintendo:    sd?.release_date?.byPlatform?.Nintendo    || "",
+      });
       setEditScreenshots(sd?.screenshots || []);
       setEditMovies(sd?.movies || []);
       setNewMovieHls("");
@@ -323,6 +337,9 @@ function AdminConsole({ user }) {
       setEditYoutubeUrl(sd?.youtube_id ? `https://www.youtube.com/watch?v=${sd.youtube_id}` : "");
       setNewScreenFiles([]);
       setNewScreenPreviews([]);
+      // Mise en avant
+      setEditFeatured(data?.featured || false);
+      setEditFeaturedPlatforms(data?.featuredPlatforms || []);
     } catch (e) {
       setGameMsg("Erreur chargement Firebase : " + e.message);
       setGameMsgType("error");
@@ -399,11 +416,24 @@ function AdminConsole({ user }) {
           short_description: editDesc,
           developers: [editDev],
           publishers: [editPub],
-          release_date: { ...(gameFirebase?.steamData?.release_date || {}), date: editDate },
+          release_date: {
+            ...(gameFirebase?.steamData?.release_date || {}),
+            date: editDateMode === "global" ? editDate : "",
+            byPlatform: editDateMode === "byplatform" ? editDateByPlatform : null,
+          },
           screenshots: allScreenshots,
           movies: allMovies,
           ...(ytId ? { youtube_id: ytId } : {}),
         },
+        featured: editFeatured,
+        featuredPlatforms: editFeatured ? editFeaturedPlatforms : [],
+        featuredGame: editFeatured ? {
+          id: selectedGameEdit.id,
+          name: selectedGameEdit.name,
+          img: selectedGameEdit.img,
+          type: selectedGameEdit.type,
+          platforms: editFeaturedPlatforms,
+        } : null,
         savedAt: serverTimestamp(),
       }, { merge: true });
 
@@ -794,10 +824,58 @@ function AdminConsole({ user }) {
                       <label className="admin-form-label">Éditeur</label>
                       <input className="admin-form-input" type="text" value={editPub} onChange={e => setEditPub(e.target.value)} placeholder="Ex: IO Interactive A/S" />
                     </div>
-                    <div className="admin-form-group" style={{ flex: "1 1 140px" }}>
-                      <label className="admin-form-label">Date de sortie</label>
-                      <input className="admin-form-input" type="text" value={editDate} onChange={e => setEditDate(e.target.value)} placeholder="Ex: 26 mai 2026" />
+                  </div>
+
+                  {/* Date de sortie */}
+                  <div className="admin-form-group">
+                    <label className="admin-form-label">Date de sortie</label>
+                    <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
+                      {["global", "byplatform"].map(mode => (
+                        <label key={mode} style={{
+                          display: "flex", alignItems: "center", gap: 6, cursor: "pointer",
+                          fontFamily: "Rajdhani", fontSize: 13,
+                          color: editDateMode === mode ? "#dd163b" : "#aaa",
+                          background: editDateMode === mode ? "rgba(221,22,59,0.08)" : "rgba(255,255,255,0.03)",
+                          border: `1px solid ${editDateMode === mode ? "#dd163b" : "#333"}`,
+                          borderRadius: 4, padding: "5px 12px",
+                        }}>
+                          <input
+                            type="radio"
+                            checked={editDateMode === mode}
+                            onChange={() => setEditDateMode(mode)}
+                            style={{ accentColor: "#dd163b" }}
+                          />
+                          {mode === "global" ? "Même date pour toutes les plateformes" : "Date différente par plateforme"}
+                        </label>
+                      ))}
                     </div>
+
+                    {editDateMode === "global" && (
+                      <input
+                        className="admin-form-input"
+                        type="text"
+                        value={editDate}
+                        onChange={e => setEditDate(e.target.value)}
+                        placeholder="Ex: 26 mai 2026"
+                      />
+                    )}
+
+                    {editDateMode === "byplatform" && (
+                      <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                        {["PC", "PlayStation", "Xbox", "Nintendo"].map(p => (
+                          <div key={p} className="admin-form-group" style={{ flex: "1 1 140px" }}>
+                            <label className="admin-form-label" style={{ fontSize: 11 }}>{p}</label>
+                            <input
+                              className="admin-form-input"
+                              type="text"
+                              value={editDateByPlatform[p]}
+                              onChange={e => setEditDateByPlatform(prev => ({ ...prev, [p]: e.target.value }))}
+                              placeholder={p === "PC" ? "Date inconnue" : "Ex: 26 mai 2026"}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   <div className="admin-divider" />
@@ -908,6 +986,70 @@ function AdminConsole({ user }) {
                           </div>
                         ))}
                       </div>
+                    )}
+                  </div>
+
+                  {/* ── Mise en avant ── */}
+                  <div className="admin-divider" />
+                  <div className="admin-form-group">
+                    <label className="admin-form-label">⭐ Mise en avant — Sorties attendues</label>
+                    <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", marginTop: 8 }}>
+                      <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontFamily: "Rajdhani", fontSize: 15, color: editFeatured ? "#dd163b" : "#aaa" }}>
+                        <input
+                          type="checkbox"
+                          checked={editFeatured}
+                          onChange={e => {
+                            setEditFeatured(e.target.checked);
+                            if (!e.target.checked) setEditFeaturedPlatforms([]);
+                          }}
+                          style={{ width: 18, height: 18, accentColor: "#dd163b", cursor: "pointer" }}
+                        />
+                        Afficher dans "Sorties les plus attendues"
+                      </label>
+                    </div>
+
+                    {editFeatured && (
+                      <>
+                        <div style={{ marginTop: 12, fontSize: 12, color: "#888", fontFamily: "Rajdhani", letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>
+                          Plateformes concernées :
+                        </div>
+                        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                          {["PlayStation", "Nintendo", "Xbox", "PC", "Tous"].map(p => (
+                            <label key={p} style={{
+                              display: "flex", alignItems: "center", gap: 6, cursor: "pointer",
+                              fontFamily: "Rajdhani", fontSize: 14,
+                              color: editFeaturedPlatforms.includes(p) ? "#dd163b" : "#aaa",
+                              background: editFeaturedPlatforms.includes(p) ? "rgba(221,22,59,0.08)" : "rgba(255,255,255,0.03)",
+                              border: `1px solid ${editFeaturedPlatforms.includes(p) ? "#dd163b" : "#333"}`,
+                              borderRadius: 4, padding: "6px 12px",
+                            }}>
+                              <input
+                                type="checkbox"
+                                checked={editFeaturedPlatforms.includes(p)}
+                                onChange={e => {
+                                  if (e.target.checked) {
+                                    setEditFeaturedPlatforms(prev => [...prev, p]);
+                                  } else {
+                                    setEditFeaturedPlatforms(prev => prev.filter(x => x !== p));
+                                  }
+                                }}
+                                style={{ accentColor: "#dd163b", cursor: "pointer" }}
+                              />
+                              {p}
+                            </label>
+                          ))}
+                        </div>
+                        {editFeaturedPlatforms.length > 0 && (
+                          <div style={{ fontSize: 11, color: "#f39c12", fontFamily: "Rajdhani", marginTop: 8 }}>
+                            ⚠ Ce jeu apparaîtra dans : {editFeaturedPlatforms.join(", ")}
+                          </div>
+                        )}
+                        {editFeaturedPlatforms.length === 0 && (
+                          <div style={{ fontSize: 11, color: "#e74c3c", fontFamily: "Rajdhani", marginTop: 8 }}>
+                            ⚠ Sélectionne au moins une plateforme
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
 
