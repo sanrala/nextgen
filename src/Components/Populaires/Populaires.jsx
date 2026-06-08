@@ -58,11 +58,11 @@ function GameCard({ game }) {
   const price   = parseFloat(game.price);
   const retail  = parseFloat(game.retail);
   const type    = (game.type || "").toLowerCase();
-  const isConsole = type.includes("playstation") || type.includes("ps5") || type.includes("ps4") ||
+  // const isConsole = type.includes("playstation") || type.includes("ps5") || type.includes("ps4") ||
     type.includes("nintendo") || type.includes("switch") || type.includes("microsoft") ||
     type.includes("xbox") || type.includes("ubisoft") || type.includes("rockstar") ||
     type.includes("ea") || type.includes("origin") || type.includes("electronic arts");
-  const steamId = isConsole ? 0 : (game.steam_id || 0);
+  const steamId = 0;
   const path    = `/store/${game.id}/${steamId}/${cleanTitle(game.name)}`;
 
   return (

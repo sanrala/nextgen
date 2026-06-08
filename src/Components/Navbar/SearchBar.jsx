@@ -454,17 +454,10 @@ const base = getBaseName(g.name) + "|" + platform;
     platform.includes("microsoft") || platform.includes("xbox") || platform.includes("ubisoft") ||
     platform.includes("rockstar") || platform.includes("ea") || platform.includes("origin");
 
-  // Jeux console → toujours steamId=0, jamais le steam_id du catalogue qui peut pointer vers un mauvais jeu
+  // Jeux console → toujours steamId=0
   if (isConsole) {
     handleClose();
     navigate(`/store/${game.id}/0/${slug}`);
-    return;
-  }
-
-  // Si steam_id déjà présent dans le catalogue enrichi → direct
-  if (game.steam_id) {
-    handleClose();
-    navigate(`/store/${game.id}/${game.steam_id}/${slug}`);
     return;
   }
 
@@ -476,14 +469,13 @@ const base = getBaseName(g.name) + "|" + platform;
     return;
   }
 
-  // Sinon fetch /api/editions pour récupérer le steam_id
+  // Fetch /api/editions — uniquement l'entrée exacte par igId
   try {
     const res  = await fetch(`${BACKEND_URL}/api/editions/${game.id}`);
     const data = await res.json();
-    const exact    = Array.isArray(data) && data.find(g => String(g.id) === String(game.id));
-    const fallback = Array.isArray(data) && data.find(g => g.steam_id);
-    const entry    = (exact?.steam_id ? exact : fallback) || null;
-    const steamId  = entry?.steam_id || 0;
+    // Cherche d'abord l'entrée avec le même igId exact
+    const exact = Array.isArray(data) && data.find(g => String(g.id) === String(game.id));
+    const steamId = exact?.steam_id || 0;
     handleClose();
     navigate(`/store/${game.id}/${steamId}/${slug}`);
   } catch {

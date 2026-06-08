@@ -11,9 +11,12 @@ import gameData from "./exclu.json";
 import Sorties from "./Components/Sorties/Sorties";
 import Banner from "./Components/Banner/Banner.jsx";
 import BoxNews from "./Components/BoxNews/BoxNews.jsx";
-import FeaturedGames from "./Components/FeaturedGames/FeaturedGames";
-// import PlaystationTendances from "./Components/Playstation/PlaystationTendances";
-// import PlaystationPrecommandes from "./Components/Playstation/PlaystationPrecommandes";
+// import FeaturedGames from "./Components/FeaturedGames/FeaturedGames";
+import BannerSlider from "./Components/ImgSlider/BannerSlider";
+import FeaturedGamesPlayStation from "./Components/FeaturedGames/FeaturedGamesPlayStation";
+import FeaturedGamesNintendo from "./Components/FeaturedGames/FeaturedGamesNintendo";
+import FeaturedGamesXbox from "./Components/FeaturedGames/FeaturedGamesXbox";
+import FeaturedGamesPC from "./Components/FeaturedGames/FeaturedGamesPC";
 
 function LogoLoader() {
   return (
@@ -190,6 +193,7 @@ function Home() {
   // const [bgImage, setBgImage] = useState(bg);
   const [isReady, setIsReady] = useState(false);
   const [topSeller, setTopSeller] = useState(null);
+  const [topSeller2, setTopSeller2] = useState(null);
 
   useEffect(() => {
     const getRandomImage = () => {
@@ -247,6 +251,7 @@ function Home() {
 
         const game = data[0];
         setTopSeller(game);
+        if (data[1]) setTopSeller2(data[1]);
 
         const steamBg = `https://cdn.akamai.steamstatic.com/steam/apps/${game.steam_id}/library_hero.jpg`;
 
@@ -318,16 +323,35 @@ function Home() {
               <div className="separator product-panel"></div>
             </div>
 
-            <Banner />
+
+            <div className="separator product-panel"></div>
+
+
+
             <div className="separator product-panel"></div>
 
             <div className="container">
               <Precommandes />
               <div className="separator product-panel"></div>
-              <FeaturedGames />
-              {/* <PlaystationTendances /> */}
+
               <div className="separator product-panel"></div>
-              {/* <PlaystationPrecommandes /> */}
+              <FeaturedGamesPC />
+            </div>
+
+            <Banner />
+            <div className="container">
+              <FeaturedGamesPlayStation />
+              <div className="separator product-panel"></div>
+              <FeaturedGamesNintendo />
+                </div>
+                 <div className="separator product-panel"></div>
+              {topSeller2 && <BannerSlider gameData={topSeller2} />}
+              <div className="separator product-panel"></div>
+               <div className="container">
+              <FeaturedGamesXbox />
+
+              <div className="separator product-panel"></div>
+              {/* <PlaystationPrecommandes /> */}   
               <div className="separator product-panel"></div>
               <LastPosts />
               <div className="separator product-panel"></div>
