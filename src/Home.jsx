@@ -17,6 +17,9 @@ import FeaturedGamesPlayStation from "./Components/FeaturedGames/FeaturedGamesPl
 import FeaturedGamesNintendo from "./Components/FeaturedGames/FeaturedGamesNintendo";
 import FeaturedGamesXbox from "./Components/FeaturedGames/FeaturedGamesXbox";
 import FeaturedGamesPC from "./Components/FeaturedGames/FeaturedGamesPC";
+import RecentReleasesPlayStation from "./Components/FeaturedGames/RecentReleasesPlayStation";
+import RecentReleasesNintendo from "./Components/FeaturedGames/RecentReleasesNintendo";
+import RecentReleasesXbox from "./Components/FeaturedGames/RecentReleasesXbox";
 
 function LogoLoader() {
   return (
@@ -342,13 +345,19 @@ function Home() {
             <div className="container">
               <FeaturedGamesPlayStation />
               <div className="separator product-panel"></div>
+              <RecentReleasesPlayStation/>
+               <div className="separator product-panel"></div>
               <FeaturedGamesNintendo />
+                <div className="separator product-panel"></div>
+              <RecentReleasesNintendo/>
                 </div>
                  <div className="separator product-panel"></div>
               {topSeller2 && <BannerSlider gameData={topSeller2} />}
               <div className="separator product-panel"></div>
                <div className="container">
               <FeaturedGamesXbox />
+                 <div className="separator product-panel"></div>
+              <RecentReleasesXbox/>
 
               <div className="separator product-panel"></div>
               {/* <PlaystationPrecommandes /> */}   

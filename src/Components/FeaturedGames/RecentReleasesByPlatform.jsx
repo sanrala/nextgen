@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { collection, getDocs, query, where, doc, setDoc } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../Firebase";
 
 function cleanTitle(name) {
@@ -14,14 +14,9 @@ function getPromo(retail, price) {
   return `-${Math.round(((r - p) / r) * 100)}%`;
 }
 
-function getReleaseDate(game, platform) {
-  const byPlatform = game.release_date?.byPlatform || game.steamData?.release_date?.byPlatform;
-  if (byPlatform) return byPlatform[platform] || "";
-  return game.release_date?.date || game.steamData?.release_date?.date || "";
-}
-
 function parseDate(dateStr) {
-  if (!dateStr || dateStr === "Date inconnue") return null;
+  if (!dateStr || dateStr === "sorti") return new Date(0); // très ancienne date = sorti
+  // Format français : "30 Avril 2026", "19 novembre 2026" etc.
   const FR_MONTHS = {
     janvier: 0, février: 1, fevrier: 1, mars: 2, avril: 3, mai: 4, juin: 5,
     juillet: 6, août: 7, aout: 7, septembre: 8, octobre: 9, novembre: 10, décembre: 11, decembre: 11
@@ -29,70 +24,66 @@ function parseDate(dateStr) {
   const frMatch = dateStr.match(/(\d{1,2})\s+(\w+)\s+(\d{4})/i);
   if (frMatch) {
     const month = FR_MONTHS[frMatch[2].toLowerCase()];
-    if (month !== undefined) return new Date(parseInt(frMatch[3]), month, parseInt(frMatch[1]));
+    if (month !== undefined) {
+      return new Date(parseInt(frMatch[3]), month, parseInt(frMatch[1]));
+    }
   }
+  // Fallback formats ISO
   const d = new Date(dateStr);
   return isNaN(d.getTime()) ? null : d;
-}
-
-function isReleased(dateStr) {
-  if (!dateStr || dateStr === "Date inconnue" || dateStr === "") return false;
-  const parsed = parseDate(dateStr);
-  if (!parsed) return false;
-  return parsed <= new Date();
 }
 
 const PLATFORM_LABELS = {
   PlayStation: "PlayStation",
   Nintendo:    "Nintendo",
   Xbox:        "Xbox",
-  PC:          "PC",
-  Tous:        "Toutes plateformes",
 };
 
-function FeaturedGamesByPlatform({ platform, maxItems = 6 }) {
+function RecentReleasesByPlatform({ platform, maxItems = 6 }) {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
+        // Récupère les jeux marqués comme sortis (featured=false mais avec releasedAt)
         const snap = await getDocs(query(
           collection(db, "games"),
-          where("featured", "==", true)
+          where("featured", "==", false)
         ));
         const all = snap.docs.map(d => ({ docId: d.id, ...d.data() }));
+        console.log("RecentReleases all docs:", all.length, all.map(g => ({ docId: g.docId, releasedAt: g.releasedAt, featuredPlatforms: g.featuredPlatforms, featured: g.featured })));
+        const today = new Date();
 
-        const filtered = [];
-        for (const g of all) {
-          const platforms = g.featuredPlatforms?.length > 0
-            ? g.featuredPlatforms
-            : [g.featuredPlatform || "Tous"];
-          if (!platforms.includes(platform) && !platforms.includes("Tous")) continue;
+        const filtered = all
+          .filter(g => {
+            // Doit avoir releasedAt
+            if (!g.releasedAt) return false;
+            // Vérifier que le jeu concernait cette plateforme
+            const platforms = g.featuredPlatforms?.length > 0
+              ? g.featuredPlatforms
+              : [g.featuredPlatform || ""];
+            if (!platforms.includes(platform) && !platforms.includes("Tous")) return false;
+            // Date de sortie passée ou "sorti"
+            if (g.releasedAt === "sorti") return true;
+            const d = parseDate(g.releasedAt);
+            return d && d <= today;
+          })
+          .sort((a, b) => {
+            const da = parseDate(a.releasedAt) || new Date(0);
+            const db2 = parseDate(b.releasedAt) || new Date(0);
+            return db2 - da; // plus récent en premier
+          })
+          .slice(0, maxItems);
 
-          const releaseDate = getReleaseDate(g, platform);
-          if (isReleased(releaseDate)) {
-            try {
-              await setDoc(doc(db, "games", g.docId), {
-                featured: false,
-                featuredPlatforms: [],
-                releasedAt: releaseDate,
-              }, { merge: true });
-            } catch (e) {
-              console.warn("Firebase unfeatured error:", e);
-            }
-            continue;
-          }
-          filtered.push(g);
-        }
         setGames(filtered);
       } catch (e) {
-        console.error(`FeaturedGames ${platform} error:`, e);
+        console.error(`RecentReleases ${platform} error:`, e);
       } finally {
         setLoading(false);
       }
     })();
-  }, [platform]);
+  }, [platform, maxItems]);
 
   if (loading || games.length === 0) return null;
 
@@ -102,23 +93,21 @@ function FeaturedGamesByPlatform({ platform, maxItems = 6 }) {
       <h3 className="nk-decorated-h-2">
         <span>
           <span className="text-main-1">{PLATFORM_LABELS[platform] || platform}</span>
-          {" "}— Sorties les plus attendues
+          {" "}— Dernières sorties
         </span>
       </h3>
       <div className="nk-gap" />
       <div className="nk-blog-grid">
         <div className="row">
-          {games.slice(0, maxItems).map(game => {
-            const fg     = game.featuredGame || {};
-            const igId   = fg.id || game.docId?.replace("ig_", "");
-            const name   = fg.name || "";
-            const img    = fg.img || game.steamData?.header_image || "";
-            const type   = fg.type || platform;
+          {games.map(game => {
+            const fg    = game.featuredGame || {};
+            const igId  = fg.id || game.docId?.replace("ig_", "");
+            const name  = fg.name || "";
+            const img   = fg.img || game.steamData?.header_image || "";
             const price  = parseFloat(fg.price || 0);
             const retail = parseFloat(fg.retail || 0);
             const promo  = getPromo(retail, price);
             const path   = `/store/${igId}/0/${cleanTitle(name)}`;
-            const releaseDate = getReleaseDate(game, platform);
 
             return (
               <div className="col-md-6 col-lg-4" key={igId}>
@@ -126,9 +115,6 @@ function FeaturedGamesByPlatform({ platform, maxItems = 6 }) {
                   <Link to={path} className="nk-post-img" onClick={() => window.scrollTo(0, 0)}>
                     <img src={img} alt={name} className="img-fluid" style={{ width: "100%", objectFit: "cover" }} />
                     {promo && <span className="nk-post-comments-count">{promo}</span>}
-                    <span className="nk-post-categories">
-                      <span className="bg-main-5">{type}</span>
-                    </span>
                   </Link>
                   <div className="nk-gap" />
                   <span className="nk-post-title h4">
@@ -138,10 +124,8 @@ function FeaturedGamesByPlatform({ platform, maxItems = 6 }) {
                   </span>
                   <div className="nk-gap" />
                   <div className="d-flex justify-content-between text-white">
-                    <span className="preco__date">
-                      {releaseDate ? `📅 ${releaseDate}` : "📅 Date à confirmer"}
-                    </span>
-                    <span>{price > 0 ? `${price.toFixed(2)} €` : "À venir"}</span>
+                    <span className="preco__date">📅 {game.releasedAt}</span>
+                    <span>{price > 0 ? `${price.toFixed(2)} €` : "N/A"}</span>
                   </div>
                 </div>
               </div>
@@ -153,4 +137,4 @@ function FeaturedGamesByPlatform({ platform, maxItems = 6 }) {
   );
 }
 
-export default FeaturedGamesByPlatform;
+export default RecentReleasesByPlatform;

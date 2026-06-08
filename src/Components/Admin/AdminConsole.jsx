@@ -89,6 +89,8 @@ function AdminConsole({ user }) {
   // Mise en avant
   const [editFeatured, setEditFeatured]                   = useState(false);
   const [editFeaturedPlatforms, setEditFeaturedPlatforms] = useState([]);
+  const [editMarkAsReleased, setEditMarkAsReleased]       = useState(false);
+  const [editReleasedPlatforms, setEditReleasedPlatforms] = useState([]);
   const screenshotInputRef = useRef();
 
   const [search, setSearch] = useState("");
@@ -340,6 +342,8 @@ function AdminConsole({ user }) {
       // Mise en avant
       setEditFeatured(data?.featured || false);
       setEditFeaturedPlatforms(data?.featuredPlatforms || []);
+      setEditMarkAsReleased(data?.releasedAt ? true : false);
+      setEditReleasedPlatforms(data?.releasedAt ? (data?.featuredPlatforms || []) : []);
     } catch (e) {
       setGameMsg("Erreur chargement Firebase : " + e.message);
       setGameMsgType("error");
@@ -425,15 +429,20 @@ function AdminConsole({ user }) {
           movies: allMovies,
           ...(ytId ? { youtube_id: ytId } : {}),
         },
-        featured: editFeatured,
-        featuredPlatforms: editFeatured ? editFeaturedPlatforms : [],
-        featuredGame: editFeatured ? {
+        featured: editMarkAsReleased ? false : editFeatured,
+        featuredPlatforms: editMarkAsReleased
+          ? editReleasedPlatforms
+          : (editFeatured ? editFeaturedPlatforms : []),
+        featuredGame: (editFeatured || editMarkAsReleased) ? {
           id: selectedGameEdit.id,
           name: selectedGameEdit.name,
           img: selectedGameEdit.img,
           type: selectedGameEdit.type,
-          platforms: editFeaturedPlatforms,
+          platforms: editMarkAsReleased ? editReleasedPlatforms : editFeaturedPlatforms,
         } : null,
+        releasedAt: editMarkAsReleased
+          ? (editDate || editDateByPlatform?.PlayStation || editDateByPlatform?.Xbox || editDateByPlatform?.Nintendo || "sorti")
+          : null,
         savedAt: serverTimestamp(),
       }, { merge: true });
 
@@ -1046,6 +1055,73 @@ function AdminConsole({ user }) {
                         )}
                         {editFeaturedPlatforms.length === 0 && (
                           <div style={{ fontSize: 11, color: "#e74c3c", fontFamily: "Rajdhani", marginTop: 8 }}>
+                            ⚠ Sélectionne au moins une plateforme
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+
+                  {/* ── Marquer comme sorti ── */}
+                  <div className="admin-divider" />
+                  <div className="admin-form-group">
+                    <label className="admin-form-label">✅ Marquer comme sorti</label>
+                    <div style={{ fontSize: 11, color: "#888", fontFamily: "Rajdhani", marginBottom: 10 }}>
+                      Cocher pour retirer ce jeu de "Sorties attendues" et l'ajouter dans "Dernières sorties".
+                    </div>
+                    <label style={{
+                      display: "flex", alignItems: "center", gap: 8, cursor: "pointer",
+                      fontFamily: "Rajdhani", fontSize: 15,
+                      color: editMarkAsReleased ? "#27ae60" : "#aaa",
+                    }}>
+                      <input
+                        type="checkbox"
+                        checked={editMarkAsReleased}
+                        onChange={e => {
+                          setEditMarkAsReleased(e.target.checked);
+                          if (e.target.checked) setEditFeatured(false);
+                          if (!e.target.checked) setEditReleasedPlatforms([]);
+                        }}
+                        style={{ width: 18, height: 18, accentColor: "#27ae60", cursor: "pointer" }}
+                      />
+                      Ce jeu est sorti — l'afficher dans "Dernières sorties"
+                    </label>
+
+                    {editMarkAsReleased && (
+                      <>
+                        <div style={{ marginTop: 12, fontSize: 12, color: "#888", fontFamily: "Rajdhani", letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>
+                          Plateformes concernées :
+                        </div>
+                        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                          {["PlayStation", "Nintendo", "Xbox", "PC"].map(p => (
+                            <label key={p} style={{
+                              display: "flex", alignItems: "center", gap: 6, cursor: "pointer",
+                              fontFamily: "Rajdhani", fontSize: 14,
+                              color: editReleasedPlatforms.includes(p) ? "#27ae60" : "#aaa",
+                              background: editReleasedPlatforms.includes(p) ? "rgba(39,174,96,0.08)" : "rgba(255,255,255,0.03)",
+                              border: `1px solid ${editReleasedPlatforms.includes(p) ? "#27ae60" : "#333"}`,
+                              borderRadius: 4, padding: "6px 12px",
+                            }}>
+                              <input
+                                type="checkbox"
+                                checked={editReleasedPlatforms.includes(p)}
+                                onChange={e => {
+                                  if (e.target.checked) setEditReleasedPlatforms(prev => [...prev, p]);
+                                  else setEditReleasedPlatforms(prev => prev.filter(x => x !== p));
+                                }}
+                                style={{ accentColor: "#27ae60", cursor: "pointer" }}
+                              />
+                              {p}
+                            </label>
+                          ))}
+                        </div>
+                        {editReleasedPlatforms.length > 0 && (
+                          <div style={{ fontSize: 11, color: "#27ae60", fontFamily: "Rajdhani", marginTop: 6 }}>
+                            ✓ Apparaîtra dans "Dernières sorties" : {editReleasedPlatforms.join(", ")}
+                          </div>
+                        )}
+                        {editReleasedPlatforms.length === 0 && (
+                          <div style={{ fontSize: 11, color: "#e74c3c", fontFamily: "Rajdhani", marginTop: 6 }}>
                             ⚠ Sélectionne au moins une plateforme
                           </div>
                         )}
