@@ -62,6 +62,32 @@ const PLATFORM_LABELS = {
   Tous:        "Toutes plateformes",
 };
 
+const SLIDER_STYLE = `
+  .featured-mobile-slider { display: none; }
+  .featured-desktop-grid  { display: block; }
+  @media (max-width: 767px) {
+    .featured-mobile-slider {
+      display: block;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .featured-mobile-slider::-webkit-scrollbar { display: none; }
+    .featured-mobile-slider-inner {
+      display: flex;
+      gap: 12px;
+      padding: 0 4px 8px;
+    }
+    .featured-mobile-slider-card {
+      flex: 0 0 75vw;
+      max-width: 280px;
+      scroll-snap-align: start;
+    }
+    .featured-desktop-grid { display: none; }
+  }
+`;
+
 function FeaturedGamesByPlatform({ platform, maxItems = 6 }) {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -110,6 +136,7 @@ function FeaturedGamesByPlatform({ platform, maxItems = 6 }) {
 
   return (
     <div>
+      <style>{SLIDER_STYLE}</style>
       <div className="nk-gap-2" />
       <h3 className="nk-decorated-h-2">
         <span>
@@ -118,29 +145,26 @@ function FeaturedGamesByPlatform({ platform, maxItems = 6 }) {
         </span>
       </h3>
       <div className="nk-gap" />
-      <div className="nk-blog-grid">
-        <div className="row">
-          {games.slice(0, maxItems).map(game => {
-            const fg     = game.featuredGame || {};
-            const igId   = fg.id || game.docId?.replace("ig_", "");
-            const name   = fg.name || "";
-            const img    = fg.img || game.steamData?.header_image || "";
-            const type   = fg.type || platform;
-            const price  = parseFloat(fg.price || 0);
-            const retail = parseFloat(fg.retail || 0);
-            const promo  = getPromo(retail, price);
-            const path   = `/store/${igId}/0/${cleanTitle(name)}`;
-            const releaseDate = getReleaseDate(game, platform);
 
+      {/* ── Mobile slider ── */}
+      <div className="featured-mobile-slider">
+        <div className="featured-mobile-slider-inner">
+          {games.slice(0, maxItems).map(game => {
+            const fg = game.featuredGame || {};
+            const igId = fg.id || game.docId?.replace("ig_", "");
+            const name = fg.name || "";
+            const img = fg.img || game.steamData?.header_image || "";
+            const price = parseFloat(fg.price || 0);
+            const retail = parseFloat(fg.retail || 0);
+            const promo = getPromo(retail, price);
+            const path = `/store/${igId}/0/${cleanTitle(name)}`;
+            const releaseDate = getReleaseDate(game, platform);
             return (
-              <div className="col-md-6 col-lg-4" key={igId}>
+              <div className="featured-mobile-slider-card" key={igId}>
                 <div className="nk-blog-post">
                   <Link to={path} className="nk-post-img" onClick={() => window.scrollTo(0, 0)}>
                     <img src={img} alt={name} className="img-fluid" style={{ width: "100%", objectFit: "cover" }} />
                     {promo && <span className="nk-post-comments-count">{promo}</span>}
-                    <span className="nk-post-categories">
-                      <span className="bg-main-5">{type}</span>
-                    </span>
                   </Link>
                   <div className="nk-gap" />
                   <span className="nk-post-title h4">
@@ -150,15 +174,57 @@ function FeaturedGamesByPlatform({ platform, maxItems = 6 }) {
                   </span>
                   <div className="nk-gap" />
                   <div className="d-flex justify-content-between text-white">
-                    <span className="preco__date">
-                      {releaseDate ? `📅 ${releaseDate}` : "📅 Date à confirmer"}
-                    </span>
+                    <span className="preco__date">{releaseDate ? `📅 ${releaseDate}` : "📅 Date à confirmer"}</span>
                     <span>{price > 0 ? `${price.toFixed(2)} €` : "À venir"}</span>
                   </div>
                 </div>
               </div>
             );
           })}
+        </div>
+      </div>
+
+      {/* ── Desktop grid ── */}
+      <div className="featured-desktop-grid">
+        <div className="nk-blog-grid">
+          <div className="row">
+            {games.slice(0, maxItems).map(game => {
+              const fg     = game.featuredGame || {};
+              const igId   = fg.id || game.docId?.replace("ig_", "");
+              const name   = fg.name || "";
+              const img    = fg.img || game.steamData?.header_image || "";
+              const type   = fg.type || platform;
+              const price  = parseFloat(fg.price || 0);
+              const retail = parseFloat(fg.retail || 0);
+              const promo  = getPromo(retail, price);
+              const path   = `/store/${igId}/0/${cleanTitle(name)}`;
+              const releaseDate = getReleaseDate(game, platform);
+              return (
+                <div className="col-md-6 col-lg-4" key={igId}>
+                  <div className="nk-blog-post">
+                    <Link to={path} className="nk-post-img" onClick={() => window.scrollTo(0, 0)}>
+                      <img src={img} alt={name} className="img-fluid" style={{ width: "100%", objectFit: "cover" }} />
+                      {promo && <span className="nk-post-comments-count">{promo}</span>}
+                      <span className="nk-post-categories">
+                        <span className="bg-main-5">{type}</span>
+                      </span>
+                    </Link>
+                    <div className="nk-gap" />
+                    <span className="nk-post-title h4">
+                      <Link to={path} onClick={() => window.scrollTo(0, 0)}>
+                        {name.length > 22 ? name.slice(0, 22) + "…" : name}
+                      </Link>
+                    </span>
+                    <div className="nk-gap" />
+                    <div className="d-flex justify-content-between text-white">
+                      <span className="preco__date">{releaseDate ? `📅 ${releaseDate}` : "📅 Date à confirmer"}</span>
+                      <span>{price > 0 ? `${price.toFixed(2)} €` : "À venir"}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

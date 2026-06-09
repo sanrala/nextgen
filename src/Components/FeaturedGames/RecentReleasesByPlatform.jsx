@@ -52,6 +52,32 @@ const PLATFORM_LABELS = {
   Xbox:        "Xbox",
 };
 
+const SLIDER_STYLE = `
+  .recent-mobile-slider { display: none; }
+  .recent-desktop-grid  { display: block; }
+  @media (max-width: 767px) {
+    .recent-mobile-slider {
+      display: block;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .recent-mobile-slider::-webkit-scrollbar { display: none; }
+    .recent-mobile-slider-inner {
+      display: flex;
+      gap: 12px;
+      padding: 0 4px 8px;
+    }
+    .recent-mobile-slider-card {
+      flex: 0 0 75vw;
+      max-width: 280px;
+      scroll-snap-align: start;
+    }
+    .recent-desktop-grid { display: none; }
+  }
+`;
+
 function RecentReleasesByPlatform({ platform, maxItems = 6 }) {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -111,6 +137,7 @@ function RecentReleasesByPlatform({ platform, maxItems = 6 }) {
 
   return (
     <div>
+      <style>{SLIDER_STYLE}</style>
       <div className="nk-gap-2" />
       <h3 className="nk-decorated-h-2">
         <span>
@@ -119,20 +146,21 @@ function RecentReleasesByPlatform({ platform, maxItems = 6 }) {
         </span>
       </h3>
       <div className="nk-gap" />
-      <div className="nk-blog-grid">
-        <div className="row">
-          {games.map(game => {
-            const fg    = game.featuredGame || {};
-            const igId  = fg.id || game.docId?.replace("ig_", "");
-            const name  = fg.name || "";
-            const img   = fg.img || game.steamData?.header_image || "";
-            const price  = parseFloat(fg.price || 0);
-            const retail = parseFloat(fg.retail || 0);
-            const promo  = getPromo(retail, price);
-            const path   = `/store/${igId}/0/${cleanTitle(name)}`;
 
+      {/* ── Mobile slider ── */}
+      <div className="recent-mobile-slider">
+        <div className="recent-mobile-slider-inner">
+          {games.map(game => {
+            const fg = game.featuredGame || {};
+            const igId = fg.id || game.docId?.replace("ig_", "");
+            const name = fg.name || "";
+            const img = fg.img || game.steamData?.header_image || "";
+            const price = parseFloat(fg.price || 0);
+            const retail = parseFloat(fg.retail || 0);
+            const promo = getPromo(retail, price);
+            const path = `/store/${igId}/0/${cleanTitle(name)}`;
             return (
-              <div className="col-md-6 col-lg-4" key={igId}>
+              <div className="recent-mobile-slider-card" key={igId}>
                 <div className="nk-blog-post">
                   <Link to={path} className="nk-post-img" onClick={() => window.scrollTo(0, 0)}>
                     <img src={img} alt={name} className="img-fluid" style={{ width: "100%", objectFit: "cover" }} />
@@ -153,6 +181,45 @@ function RecentReleasesByPlatform({ platform, maxItems = 6 }) {
               </div>
             );
           })}
+        </div>
+      </div>
+
+      {/* ── Desktop grid ── */}
+      <div className="recent-desktop-grid">
+        <div className="nk-blog-grid">
+          <div className="row">
+            {games.map(game => {
+              const fg    = game.featuredGame || {};
+              const igId  = fg.id || game.docId?.replace("ig_", "");
+              const name  = fg.name || "";
+              const img   = fg.img || game.steamData?.header_image || "";
+              const price  = parseFloat(fg.price || 0);
+              const retail = parseFloat(fg.retail || 0);
+              const promo  = getPromo(retail, price);
+              const path   = `/store/${igId}/0/${cleanTitle(name)}`;
+              return (
+                <div className="col-md-6 col-lg-4" key={igId}>
+                  <div className="nk-blog-post">
+                    <Link to={path} className="nk-post-img" onClick={() => window.scrollTo(0, 0)}>
+                      <img src={img} alt={name} className="img-fluid" style={{ width: "100%", objectFit: "cover" }} />
+                      {promo && <span className="nk-post-comments-count">{promo}</span>}
+                    </Link>
+                    <div className="nk-gap" />
+                    <span className="nk-post-title h4">
+                      <Link to={path} onClick={() => window.scrollTo(0, 0)}>
+                        {name.length > 22 ? name.slice(0, 22) + "…" : name}
+                      </Link>
+                    </span>
+                    <div className="nk-gap" />
+                    <div className="d-flex justify-content-between text-white">
+                      <span className="preco__date">📅 {game.releasedAt}</span>
+                      <span>{price > 0 ? `${price.toFixed(2)} €` : "N/A"}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
