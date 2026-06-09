@@ -177,6 +177,7 @@ function Populaires() {
   const [search, setSearch]     = useState("");
   const [page, setPage]         = useState(1);
   const [showSort, setShowSort] = useState(false);
+  const [catFilter, setCatFilter] = useState("all"); // "all" | "topseller" | "preorder" | "upcoming"
   const sortRef = useRef(null);
   const topRef  = useRef(null);
 
@@ -211,7 +212,10 @@ function Populaires() {
     fetchGames();
   }, []);
 
-  useEffect(() => { setPage(1); }, [platform, sort, search]);
+  useEffect(() => { setPage(1); }, [platform, sort, search, catFilter]);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   const filtered = allGames
     .filter(g => {
@@ -219,6 +223,17 @@ function Populaires() {
       const region = (g.region || "").toLowerCase();
       if (region.includes("us") && !region.includes("australia")) return false;
       if (platform !== "Tous" && getPlatformKey(g.type) !== platform) return false;
+
+      // Filtre catégorie
+      if (catFilter === "topseller") {
+        if (g.topseller !== 1) return false;
+      } else if (catFilter === "preorder") {
+        if (g.preorder !== 1) return false;
+      } else if (catFilter === "upcoming") {
+        const rd = g.releaseDate ? new Date(g.releaseDate) : null;
+        if (!rd || rd <= today) return false;
+      }
+
       if (search.trim()) {
         const ABBREV = {
           "gta 6": "grand theft auto vi",
@@ -302,6 +317,35 @@ function Populaires() {
 
               {/* ── Barre de filtres ── */}
               <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, marginBottom: 20 }}>
+
+              {/* ── Filtres catégorie ── */}
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 8, width: "100%" }}>
+                  {[
+                    { key: "all",       label: "Tous",              icon: "🎮" },
+                    { key: "topseller", label: "Populaires",        icon: "🔥" },
+                    { key: "preorder",  label: "Précommandes",      icon: "⏳" },
+                    { key: "upcoming",  label: "Prochaines sorties", icon: "📅" },
+                  ].map(f => (
+                    <label key={f.key} style={{
+                      display: "flex", alignItems: "center", gap: 6, cursor: "pointer",
+                      fontFamily: "Rajdhani, sans-serif", fontSize: 13, fontWeight: 600,
+                      padding: "5px 12px", borderRadius: 20,
+                      background: catFilter === f.key ? "rgba(221,22,59,0.15)" : "rgba(255,255,255,0.05)",
+                      border: `1px solid ${catFilter === f.key ? "#dd163b" : "#333"}`,
+                      color: catFilter === f.key ? "#dd163b" : "#aaa",
+                      transition: "all 0.15s",
+                    }}>
+                      <input
+                        type="radio"
+                        name="catFilter"
+                        checked={catFilter === f.key}
+                        onChange={() => setCatFilter(f.key)}
+                        style={{ display: "none" }}
+                      />
+                      {f.icon} {f.label}
+                    </label>
+                  ))}
+                </div>
 
                 {/* Recherche */}
                 <div style={{ position: "relative", flex: "1 1 180px", maxWidth: 260 }}>

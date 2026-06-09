@@ -186,7 +186,8 @@ function GameDetail() {
   const [steamData,    setSteamData]    = useState(null);
   const [igGame,       setIgGame]       = useState(null);
   const [allEditions,  setAllEditions]  = useState([]); // toutes éditions sans filtre région
-  const [loadingSteam, setLoadingSteam] = useState(true);
+  // eslint-disable-next-line no-unused-vars
+  const [loadingSteam, setLoadingSteam] = useState(false);
   const [activeTab,    setActiveTab]    = useState("description");
   const [activeMedia,  setActiveMedia]  = useState("video");
   const [comments,     setComments]     = useState([]);
@@ -658,7 +659,8 @@ if (cachedEditions.length) {
   const metacritic       = steamData?.metacritic || null;
   const steamCategories  = steamData?.categories || [];
 
-  if (loadingSteam) return (
+  // Attend seulement les données IG (rapides) avant d'afficher
+  if (!igGame && !steamData) return (
     <><Header /><Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}><CircularProgress /></Box></>
   );
 
