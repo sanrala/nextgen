@@ -3,6 +3,38 @@ import { Link } from "react-router-dom";
 
 const API_URL = "https://api.sm-artweb.fr/api/topsellers-recent";
 
+const SLIDER_STYLE = `
+  .mobile-slider {
+    display: none;
+  }
+  .desktop-grid {
+    display: block;
+  }
+  @media (max-width: 767px) {
+    .mobile-slider {
+      display: block;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .mobile-slider::-webkit-scrollbar { display: none; }
+    .mobile-slider-inner {
+      display: flex;
+      gap: 12px;
+      padding: 0 4px 8px;
+    }
+    .mobile-slider-card {
+      flex: 0 0 75vw;
+      max-width: 280px;
+      scroll-snap-align: start;
+    }
+    .desktop-grid {
+      display: none;
+    }
+  }
+`;
+
 function Popular() {
   const [igGames, setIgGames] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -80,6 +112,7 @@ function Popular() {
 
   return (
     <div className="row vertical-gap">
+      <style>{SLIDER_STYLE}</style>
       <div className="col-lg-12">
         <Link to="/Populaires/">
           <h3 className="nk-decorated-h-2">
@@ -89,11 +122,41 @@ function Popular() {
           </h3>
         </Link>
         <div className="nk-gap" />
-        <div className="nk-blog-grid">
-          <div className="row">
-            {loading && <p>Chargement...</p>}
-            {!loading &&
-              igGames.map((game) => {
+
+        {/* ── Mobile slider ── */}
+        <div className="mobile-slider">
+          <div className="mobile-slider-inner">
+            {!loading && igGames.map((game) => {
+              const promo = getPromo(game.retail, game.price);
+              const price = parseFloat(game.price);
+              const detailPath = `/store/${game.id}/${game.steam_id || 0}/${cleanTitle(game.name)}`;
+              return (
+                <div className="mobile-slider-card" key={game.id}>
+                  <div className="nk-blog-post">
+                    <Link to={detailPath} className="nk-post-img">
+                      <img src={game.img} alt={game.name} style={{ width: "100%", objectFit: "cover" }} />
+                      {promo && <span className="nk-post-comments-count">{promo}</span>}
+                    </Link>
+                    <div className="nk-gap" />
+                    <h2 className="nk-post-title h4">
+                      <Link to={detailPath}>{game.name.length > 22 ? game.name.slice(0, 22) + "…" : game.name}</Link>
+                    </h2>
+                    <div className="nk-gap" />
+                    <div>{game.releaseDate ? `📅 ${game.releaseDate}` : `🌍 ${game.region}`}</div>
+                    <span>{price ? `${price.toFixed(2)} €` : "N/A"}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ── Desktop grid ── */}
+        <div className="desktop-grid">
+          <div className="nk-blog-grid">
+            <div className="row">
+              {loading && <p>Chargement...</p>}
+              {!loading && igGames.map((game) => {
                 const promo = getPromo(game.retail, game.price);
                 const price = parseFloat(game.price);
                 const detailPath = `/store/${game.id}/${game.steam_id || 0}/${cleanTitle(game.name)}`;
@@ -102,23 +165,20 @@ function Popular() {
                     <div className="nk-blog-post">
                       <Link to={detailPath} className="nk-post-img">
                         <img src={game.img} alt={game.name} />
-                        {promo && (
-                          <span className="nk-post-comments-count">{promo}</span>
-                        )}
+                        {promo && <span className="nk-post-comments-count">{promo}</span>}
                       </Link>
                       <div className="nk-gap" />
                       <h2 className="nk-post-title h4">
                         <Link to={detailPath}>{game.name}</Link>
                       </h2>
                       <div className="nk-gap" />
-                      <div>
-                        {game.releaseDate ? `📅 ${game.releaseDate}` : `🌍 ${game.region}`}
-                      </div>
+                      <div>{game.releaseDate ? `📅 ${game.releaseDate}` : `🌍 ${game.region}`}</div>
                       <span>{price ? `${price.toFixed(2)} €` : "N/A"}</span>
                     </div>
                   </div>
                 );
               })}
+            </div>
           </div>
         </div>
       </div>
