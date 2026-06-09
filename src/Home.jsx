@@ -327,21 +327,23 @@ function Home() {
             </div>
 
 
-            <div className="separator product-panel"></div>
+            
 
 
 
-            <div className="separator product-panel"></div>
+        
 
             <div className="container">
               <Precommandes />
               <div className="separator product-panel"></div>
 
-              <div className="separator product-panel"></div>
               <FeaturedGamesPC />
+              
+              <div className="separator product-panel"></div>
             </div>
 
             <Banner />
+             <div className="separator product-panel"></div>
             <div className="container">
               <FeaturedGamesPlayStation />
               <div className="separator product-panel"></div>
