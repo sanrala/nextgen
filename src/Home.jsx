@@ -318,7 +318,7 @@ function Home() {
               </div>
             </section>
 
-            <div className="separator product-panel"></div>
+            
 
             <div className="container">
               <div className="separator product-panel"></div>
@@ -346,11 +346,11 @@ function Home() {
              <div className="separator product-panel"></div>
             <div className="container">
               <FeaturedGamesPlayStation />
-              <div className="separator product-panel"></div>
+              {/* <div className="separator product-panel"></div> */}
               <RecentReleasesPlayStation/>
-               <div className="separator product-panel"></div>
+               {/* <div className="separator product-panel"></div> */}
               <FeaturedGamesNintendo />
-                <div className="separator product-panel"></div>
+                {/* <div className="separator product-panel"></div> */}
               <RecentReleasesNintendo/>
                 </div>
                  <div className="separator product-panel"></div>
@@ -358,14 +358,14 @@ function Home() {
               <div className="separator product-panel"></div>
                <div className="container">
               <FeaturedGamesXbox />
-                 <div className="separator product-panel"></div>
+                 {/* <div className="separator product-panel"></div> */}
               <RecentReleasesXbox/>
 
-              <div className="separator product-panel"></div>
+              {/* <div className="separator product-panel"></div> */}
               {/* <PlaystationPrecommandes /> */}   
-              <div className="separator product-panel"></div>
+              {/* <div className="separator product-panel"></div> */}
               <LastPosts />
-              <div className="separator product-panel"></div>
+              {/* <div className="separator product-panel"></div> */}
             </div>
           </div>
           <div className="separator product-panel"></div>
