@@ -46,7 +46,7 @@ function BannerSlider({ gameData }) {
       backgroundImage: `url(${heroUrl})`,
       backgroundSize: "cover",
       backgroundPosition: "center center",
-      height: "280px",
+      height: "600px",
       position: "relative",
       display: "flex",
       alignItems: "center",

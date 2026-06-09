@@ -23,12 +23,24 @@ function getReleaseDate(game, platform) {
 function parseDate(dateStr) {
   if (!dateStr || dateStr === "Date inconnue") return null;
   const FR_MONTHS = {
-    janvier: 0, février: 1, fevrier: 1, mars: 2, avril: 3, mai: 4, juin: 5,
-    juillet: 6, août: 7, aout: 7, septembre: 8, octobre: 9, novembre: 10, décembre: 11, decembre: 11
+    janvier: 0, janv: 0,
+    fevrier: 1, février: 1, fev: 1, févr: 1,
+    mars: 2,
+    avril: 3, avr: 3,
+    mai: 4,
+    juin: 5,
+    juillet: 6, juil: 6,
+    aout: 7, août: 7,
+    septembre: 8, sept: 8,
+    octobre: 9, oct: 9,
+    novembre: 10, nov: 10,
+    decembre: 11, décembre: 11, dec: 11, déc: 11
   };
-  const frMatch = dateStr.match(/(\d{1,2})\s+(\w+)\s+(\d{4})/i);
+  const frMatch = dateStr.match(/(\d{1,2})\s+([\wéèêëàâùûüîïôœç]+)\s+(\d{4})/i);
   if (frMatch) {
-    const month = FR_MONTHS[frMatch[2].toLowerCase()];
+    const monthAccented = frMatch[2].toLowerCase();
+    const monthStripped = monthAccented.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const month = FR_MONTHS[monthAccented] ?? FR_MONTHS[monthStripped];
     if (month !== undefined) return new Date(parseInt(frMatch[3]), month, parseInt(frMatch[1]));
   }
   const d = new Date(dateStr);

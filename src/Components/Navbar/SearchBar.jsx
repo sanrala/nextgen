@@ -391,6 +391,9 @@ const expanded = ABBREV[lower] || lower;
 const matching = data.filter(
   (g) => {
     const name = normalize(g.name || "");
+    const region = (g.region || "").toLowerCase();
+    // Exclure toujours Latin America et US & CA
+    if (region.includes("latin") || (region.includes("us") && !region.includes("australia"))) return false;
     return name.includes(expanded) || name.includes(lower);
   }
 );
@@ -454,14 +457,7 @@ const base = getBaseName(g.name) + "|" + platform;
     platform.includes("microsoft") || platform.includes("xbox") || platform.includes("ubisoft") ||
     platform.includes("rockstar") || platform.includes("ea") || platform.includes("origin");
 
-  // Jeux console → toujours steamId=0
-  if (isConsole) {
-    handleClose();
-    navigate(`/store/${game.id}/0/${slug}`);
-    return;
-  }
-
-  // Utilise le cache prefetch si disponible (hover préalable)
+  // Utilise le cache prefetch si disponible
   const cached = prefetchCache.current[game.id];
   if (cached) {
     handleClose();
@@ -469,13 +465,22 @@ const base = getBaseName(g.name) + "|" + platform;
     return;
   }
 
-  // Fetch /api/editions — uniquement l'entrée exacte par igId
+  // Toujours chercher dans /api/editions pour trouver le bon steam_id
+  // même pour les jeux console (qui peuvent avoir une version Steam)
   try {
     const res  = await fetch(`${BACKEND_URL}/api/editions/${game.id}`);
     const data = await res.json();
-    // Cherche d'abord l'entrée avec le même igId exact
+    // Cherche l'entrée exacte par igId
     const exact = Array.isArray(data) && data.find(g => String(g.id) === String(game.id));
     const steamId = exact?.steam_id || 0;
+
+    // Si jeu console sans steam_id → steamId=0
+    if (isConsole && !steamId) {
+      handleClose();
+      navigate(`/store/${game.id}/0/${slug}`);
+      return;
+    }
+
     handleClose();
     navigate(`/store/${game.id}/${steamId}/${slug}`);
   } catch {
@@ -562,12 +567,25 @@ const base = getBaseName(g.name) + "|" + platform;
                       {platform && (
                         <GameMeta>
                           {platform.charAt(0).toUpperCase() + platform.slice(1)}
+                          {/* Badge région */}
+                          {game.region && (() => {
+                            const r = (game.region || "").toLowerCase();
+                            const isEU = r.includes("europe") || r.includes("fr");
+                            const isWW = r === "worldwide";
+                            const isUS = r.includes("us") && !r.includes("australia");
+                            if (!isEU && !isWW && !isUS) return null;
+                            return (
+                              <span style={{
+                                marginLeft: 5, fontSize: 10, fontWeight: 600,
+                                color: isEU ? "#27ae60" : isWW ? "#6666cc" : "#cc7700",
+                                opacity: 0.8,
+                              }}>
+                                {isEU ? "🇪🇺 EU" : isWW ? "🌍 WW" : "🇺🇸 US"}
+                              </span>
+                            );
+                          })()}
                           {promo && (
-                            <span style={{
-                              marginLeft: 6,
-                              color: "#27ae60",
-                              fontWeight: 700,
-                            }}>
+                            <span style={{ marginLeft: 6, color: "#27ae60", fontWeight: 700 }}>
                               {promo}
                             </span>
                           )}

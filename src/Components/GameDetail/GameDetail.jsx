@@ -248,7 +248,8 @@ if (fbSnap.exists()) {
         gameType.includes("switch") || gameType.includes("microsoft") ||
         gameType.includes("xbox") || gameType.includes("ubisoft");
 
-      // PC uniquement — jamais pour les consoles (risque de mauvais jeu)
+      // Si steamId fourni dans l'URL → toujours utiliser Steam (peu importe le type)
+      // PC uniquement sans steamId — jamais pour les consoles (risque de mauvais jeu)
       if (!resolvedSteamId && !isConsole) {
         const isPC = gameType.includes("steam") || gameType.includes("epic") ||
           gameType.includes("gog") || gameType.includes("battle") ||
@@ -257,8 +258,8 @@ if (fbSnap.exists()) {
         if (isPC) {
           const editions = await fetch(`${BACKEND_URL}/api/editions/${igId}`)
             .then(r => r.ok ? r.json() : []).catch(() => []);
-          const found = editions.find(e => e.steam_id);
-          if (found) resolvedSteamId = found.steam_id;
+          const found = editions.find(e => String(e.id) === String(igId));
+          if (found?.steam_id) resolvedSteamId = found.steam_id;
         }
       }
 
@@ -465,6 +466,29 @@ if (cachedEditions.length) {
 
         setAllEditions(filtered);
 
+        // ── Redirection automatique US/Worldwide → Europe ──────────────────
+        // Si l'édition courante est US ou Worldwide, et qu'une version Europe
+        // avec prix existe, rediriger vers elle
+        const currentEd = filtered.find(e => String(e.id) === String(igId));
+        if (currentEd) {
+          const currentRegion = (currentEd.region || "").toLowerCase();
+          const isUSOrWorldwide = currentRegion.includes("us") || currentRegion === "worldwide";
+          if (isUSOrWorldwide) {
+            const europeEd = filtered.find(e => {
+              const r = (e.region || "").toLowerCase();
+              return (r.includes("europe") || r.includes("fr")) &&
+                     e.type === currentEd.type &&
+                     parseFloat(e.price) > 0 &&
+                     e.stock === 1;
+            });
+            if (europeEd) {
+              const slug = europeEd.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
+              navigate(`/store/${europeEd.id}/${europeEd.steam_id || 0}/${slug}`, { replace: true });
+              return;
+            }
+          }
+        }
+
         // 4. Sauvegarder dans Firebase pour TOUS les igIds des éditions
         try {
           await Promise.all(filtered.map(ed =>
@@ -474,6 +498,7 @@ if (cachedEditions.length) {
 
       } catch (e) { console.error("Editions fetch error", e); }
     })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [igId]);
 
   // ── Init sélecteurs quand les éditions sont chargées ─────────────────────

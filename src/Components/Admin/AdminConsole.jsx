@@ -153,7 +153,11 @@ function AdminConsole({ user }) {
   useEffect(() => {
     if (search.trim().length < 2) { setResults([]); return; }
     const lower = search.toLowerCase();
-    setResults(catalog.filter((g) => g.name.toLowerCase().includes(lower)).slice(0, 8));
+    setResults(catalog.filter((g) => {
+      const region = (g.region || "").toLowerCase();
+      if (region.includes("latin") || (region.includes("us") && !region.includes("australia"))) return false;
+      return g.name.toLowerCase().includes(lower);
+    }).slice(0, 8));
   }, [search, catalog]);
 
   const handleSelectGame = (game) => {
@@ -285,7 +289,8 @@ function AdminConsole({ user }) {
     const normalize = (s) => s.toLowerCase().replace(/[:\-''\u2018\u2019!?.,]/g, " ").replace(/\s+/g, " ").trim();
     const lower = normalize(gameSearch);
     const matching = catalog.filter(g => {
-      if ((g.region || "").toLowerCase().includes("latin")) return false;
+      const region = (g.region || "").toLowerCase();
+      if (region.includes("latin") || (region.includes("us") && !region.includes("australia"))) return false;
       return normalize(g.name).includes(lower);
     });
 
@@ -623,6 +628,14 @@ function AdminConsole({ user }) {
                       <img className="admin-result-img" src={game.img} alt={game.name} onError={(e) => (e.target.style.background = "#2a2a2a")} />
                       <div className="admin-result-name">{game.name}</div>
                       <span className="admin-type-badge">{game.type}</span>
+                      {(() => {
+                        const r = (game.region || "").toLowerCase();
+                        const isEU = r.includes("europe") || r.includes("fr");
+                        const isWW = r === "worldwide";
+                        const isUS = r.includes("us") && !r.includes("australia");
+                        if (!isEU && !isWW && !isUS) return null;
+                        return <span style={{ fontSize: 10, fontWeight: 600, color: isEU ? "#27ae60" : isWW ? "#6666cc" : "#cc7700", opacity: 0.8 }}>{isEU ? "🇪🇺 EU" : isWW ? "🌍 WW" : "🇺🇸 US"}</span>;
+                      })()}
                       <span className="admin-id-badge">#{game.id}</span>
                     </div>
                   ))}
@@ -779,6 +792,14 @@ function AdminConsole({ user }) {
                       <img className="admin-result-img" src={game.img} alt={game.name} onError={e => e.target.style.background="#2a2a2a"} />
                       <div className="admin-result-name">{game.name}</div>
                       <span className="admin-type-badge">{game.type}</span>
+                      {(() => {
+                        const r = (game.region || "").toLowerCase();
+                        const isEU = r.includes("europe") || r.includes("fr");
+                        const isWW = r === "worldwide";
+                        const isUS = r.includes("us") && !r.includes("australia");
+                        if (!isEU && !isWW && !isUS) return null;
+                        return <span style={{ fontSize: 10, fontWeight: 600, color: isEU ? "#27ae60" : isWW ? "#6666cc" : "#cc7700", opacity: 0.8 }}>{isEU ? "🇪🇺 EU" : isWW ? "🌍 WW" : "🇺🇸 US"}</span>;
+                      })()}
                       <span className="admin-id-badge">#{game.id}</span>
                     </div>
                   ))}

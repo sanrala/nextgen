@@ -58,11 +58,11 @@ function GameCard({ game }) {
   const price   = parseFloat(game.price);
   const retail  = parseFloat(game.retail);
   const type    = (game.type || "").toLowerCase();
-  // const isConsole = type.includes("playstation") || type.includes("ps5") || type.includes("ps4") ||
+  const isConsole = type.includes("playstation") || type.includes("ps5") || type.includes("ps4") ||
     type.includes("nintendo") || type.includes("switch") || type.includes("microsoft") ||
     type.includes("xbox") || type.includes("ubisoft") || type.includes("rockstar") ||
     type.includes("ea") || type.includes("origin") || type.includes("electronic arts");
-  const steamId = 0;
+  const steamId = isConsole ? 0 : (game.steam_id || 0);
   const path    = `/store/${game.id}/${steamId}/${cleanTitle(game.name)}`;
 
   return (
@@ -79,9 +79,25 @@ function GameCard({ game }) {
           <Link to={path}>{game.name}</Link>
         </h2>
         <div className="nk-gap" />
-        <div>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
           {game.releaseDate && <span>📅 {game.releaseDate}</span>}
           <span>🎮 {getPlatformKey(game.type)}</span>
+          {(() => {
+            const r = (game.region || "").toLowerCase();
+            const isEU = r.includes("europe") || r.includes("fr");
+            const isWW = r === "worldwide";
+            const isUS = r.includes("us") && !r.includes("australia");
+            if (!isEU && !isWW && !isUS) return null;
+            return (
+              <span style={{
+                fontSize: 10, fontWeight: 600,
+                color: isEU ? "#27ae60" : isWW ? "#6666cc" : "#cc7700",
+                opacity: 0.8,
+              }}>
+                {isEU ? "🇪🇺 EU" : isWW ? "🌍 WW" : "🇺🇸 US"}
+              </span>
+            );
+          })()}
         </div>
         <div className="nk-gap" />
         <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
@@ -200,6 +216,8 @@ function Populaires() {
   const filtered = allGames
     .filter(g => {
       if ((g.region || "").toLowerCase().includes("latin")) return false;
+      const region = (g.region || "").toLowerCase();
+      if (region.includes("us") && !region.includes("australia")) return false;
       if (platform !== "Tous" && getPlatformKey(g.type) !== platform) return false;
       if (search.trim()) {
         const ABBREV = {
