@@ -278,9 +278,14 @@ function Populaires() {
       // Filtre catégorie
       if (catFilter === "preorder") {
         if (g.preorder !== 1) return false;
+      } else if (catFilter === "nouveautes") {
+        // Nouveautés = jeux en stock disponibles à la vente
+        if (g.stock !== 1 || parseFloat(g.price) <= 0) return false;
+        if (g.preorder === 1) return false; // pas les précommandes
       } else if (catFilter === "upcoming") {
-        // Prochaines sorties = jeux sans date de sortie connue
-        if (g.releaseDate) return false;
+        // Prochaines sorties = pas encore disponible à la vente (stock=0, prix=0, pas précommande)
+        if (g.preorder === 1) return false; // déjà dans précommandes
+        if (g.stock === 1 || parseFloat(g.price) > 0) return false; // déjà disponible
       }
 
       if (search.trim()) {
@@ -320,6 +325,7 @@ function Populaires() {
       return true;
     })
     .sort((a, b) => {
+      if (catFilter === "nouveautes") return b.id - a.id;
       if (sort === "date_desc")  return new Date(b.releaseDate || 0) - new Date(a.releaseDate || 0);
       if (sort === "date_asc")   return new Date(a.releaseDate || 0) - new Date(b.releaseDate || 0);
       if (sort === "price_asc")  return parseFloat(a.price) - parseFloat(b.price);
@@ -370,10 +376,11 @@ function Populaires() {
                 {/* Filtres catégorie */}
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8, width: "100%", marginBottom: 4 }}>
                   {[
-                    { key: "all",       label: "Tous",               icon: "🎮" },
-                    { key: "topseller", label: "Populaires",         icon: "🔥" },
-                    { key: "preorder",  label: "Précommandes",       icon: "⏳" },
-                    { key: "upcoming",  label: "Prochaines sorties", icon: "📅" },
+                    { key: "all",         label: "Tous",               icon: "🎮" },
+                    { key: "topseller",   label: "Populaires",         icon: "🔥" },
+                    { key: "nouveautes",  label: "Nouveautés",         icon: "✨" },
+                    { key: "preorder",    label: "Précommandes",       icon: "⏳" },
+                    { key: "upcoming",    label: "Prochaines sorties", icon: "📅" },
                   ].map(f => (
                     <label key={f.key} style={{
                       display: "flex", alignItems: "center", gap: 6, cursor: "pointer",

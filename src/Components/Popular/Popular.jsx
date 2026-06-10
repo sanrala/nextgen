@@ -83,13 +83,7 @@ function Popular() {
           return getYear(b.releaseDate) - getYear(a.releaseDate);
         });
 
-        const EXCLUDED = ['indies', 'indépendant', 'independant', 'indie', 'occasionnel', 'casual'];
-        const filtered = sorted.filter(game => {
-          const cats = (game.category || []).map(c => c.toLowerCase());
-          return !cats.some(c => EXCLUDED.includes(c));
-        });
-
-        setIgGames(filtered.slice(0, 6));
+        setIgGames(sorted.slice(0, 6));
       } catch (error) {
         console.error("Erreur fetch Popular :", error);
       } finally {
