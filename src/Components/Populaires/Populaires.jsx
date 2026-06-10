@@ -5,6 +5,24 @@ import Footer from "../Footer/Footer";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../Firebase";
 
+function parseRelease(dateStr) {
+  if (!dateStr) return null;
+  const FR = {
+    janvier:0, janv:0, fevrier:1, février:1, fev:1, mars:2,
+    avril:3, avr:3, mai:4, juin:5, juillet:6, juil:6,
+    aout:7, août:7, septembre:8, sept:8, octobre:9, oct:9,
+    novembre:10, nov:10, decembre:11, décembre:11, dec:11, déc:11
+  };
+  const m = dateStr.match(/(\d{1,2})\s+([\wéèêëàâùûüîïôœç]+)\s+(\d{4})/i);
+  if (m) {
+    const mn = m[2].toLowerCase();
+    const mo = FR[mn] ?? FR[mn.normalize("NFD").replace(/[\u0300-\u036f]/g,"")];
+    if (mo !== undefined) return new Date(parseInt(m[3]), mo, parseInt(m[1]));
+  }
+  const d = new Date(dateStr);
+  return isNaN(d.getTime()) ? null : d;
+}
+
 const BACKEND_URL = "https://api.sm-artweb.fr";
 const PER_PAGE = 15;
 
@@ -202,9 +220,20 @@ function Populaires() {
             collection(db, "games"),
             where("trending", "==", true)
           ));
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+
           const fbGames = snap.docs
             .map(d => ({ docId: d.id, ...d.data() }))
-            .filter(g => g.trendingGame)
+            .filter(g => {
+              if (!g.trendingGame) return false;
+              // Vérifie la date de sortie
+              const releaseDate = g.release_date?.date || g.steamData?.release_date?.date || "";
+              if (!releaseDate) return false; // pas de date → pas encore sorti
+              const rd = parseRelease(releaseDate);
+              if (!rd) return false;
+              return rd <= today;
+            })
             .map(g => ({
               id: g.trendingGame.id,
               name: g.trendingGame.name,
