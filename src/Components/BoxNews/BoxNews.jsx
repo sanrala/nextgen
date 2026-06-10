@@ -9,10 +9,13 @@ function getYoutubeId(url) {
   return match ? match[1] : null;
 }
 
+// ✅ AJOUT
+const isMobile = () => window.innerWidth <= 768;
+
 function BoxNews() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [expandedVideo, setExpandedVideo] = useState(null); // ytId de la vidéo agrandie
+  const [expandedVideo, setExpandedVideo] = useState(null);
   const [playingMain, setPlayingMain] = useState(false);
 
   useEffect(() => {
@@ -91,32 +94,29 @@ function BoxNews() {
                 </span>
               </div>
             )}
-            <Link to={`/article/${main.doc_id}`} className="image-title-large">{main.title}</Link>
+            <Link to={`/article/${main.doc_id}`} className="image-title-large">
+              {main.title}
+            </Link>
           </div>
 
           {/* ── Petites cartes ── */}
           <div className="small-images-container" style={{ position: "relative" }}>
 
-            {/* Vidéo agrandie par-dessus les 4 petites cartes */}
+            {/* ✅ MODIFIÉ UNIQUEMENT ICI */}
             {expandedVideo && (
-              <div style={{
-                position: "absolute", inset: 0, zIndex: 10,
-                background: "#000", borderRadius: 4, overflow: "hidden",
-                animation: "zoomIn 0.3s cubic-bezier(.4,0,.2,1) forwards",
-              }}>
-                <style>{`
-                  @keyframes zoomIn {
-                    from { transform: scale(0.5); opacity: 0; }
-                    to   { transform: scale(1);   opacity: 1; }
-                  }
-                  @keyframes zoomOut {
-                    from { transform: scale(1);   opacity: 1; }
-                    to   { transform: scale(0.5); opacity: 0; }
-                  }
-                  .video-closing {
-                    animation: zoomOut 0.25s cubic-bezier(.4,0,.2,1) forwards !important;
-                  }
-                `}</style>
+              <div
+                style={{
+                  position: isMobile() ? "fixed" : "absolute",
+                  top: 0,
+                  left: 0,
+                  width: isMobile() ? "100vw" : "100%",
+                  height: isMobile() ? "100vh" : "100%",
+                  zIndex: 9999,
+                  background: "#000",
+                  borderRadius: isMobile() ? 0 : 4,
+                  overflow: "hidden",
+                }}
+              >
                 <iframe
                   src={`https://www.youtube.com/embed/${expandedVideo}?autoplay=1&rel=0`}
                   title="video"
@@ -124,20 +124,25 @@ function BoxNews() {
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
-                {/* Bouton fermer */}
+
                 <button
-                  onClick={(e) => {
-                    const container = e.currentTarget.parentElement;
-                    container.classList.add("video-closing");
-                    setTimeout(() => setExpandedVideo(null), 240);
-                  }}
+                  onClick={() => setExpandedVideo(null)}
                   style={{
-                    position: "absolute", top: 8, right: 8,
-                    background: "rgba(0,0,0,0.7)", border: "1px solid #555",
-                    borderRadius: "50%", width: 32, height: 32,
-                    cursor: "pointer", color: "#fff", fontSize: 18,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    zIndex: 11, lineHeight: 1,
+                    position: "absolute",
+                    top: isMobile() ? 15 : 8,
+                    right: isMobile() ? 15 : 8,
+                    background: "rgba(0,0,0,0.7)",
+                    border: "1px solid #555",
+                    borderRadius: "50%",
+                    width: 32,
+                    height: 32,
+                    cursor: "pointer",
+                    color: "#fff",
+                    fontSize: 18,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 11,
                   }}
                 >
                   ✕
@@ -159,7 +164,53 @@ function BoxNews() {
                     />
                     {ytId && (
                       <button
-                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setExpandedVideo(ytId); }}
+                      onClick={(e) => {
+  e.preventDefault();
+  e.stopPropagation();
+
+  if (window.innerWidth <= 768) {
+    // 📱 MOBILE → plein écran direct
+    const iframe = document.createElement("iframe");
+    iframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0`;
+    iframe.style.position = "fixed";
+    iframe.style.top = "0";
+    iframe.style.left = "0";
+    iframe.style.width = "100vw";
+    iframe.style.height = "100vh";
+    iframe.style.zIndex = "9999";
+    iframe.style.border = "none";
+    iframe.allow = "autoplay; encrypted-media";
+    iframe.allowFullscreen = true;
+
+    // bouton fermer
+    const close = document.createElement("button");
+    close.innerHTML = "✕";
+    close.style.position = "fixed";
+    close.style.top = "15px";
+    close.style.right = "15px";
+    close.style.zIndex = "10000";
+    close.style.width = "40px";
+    close.style.height = "40px";
+    close.style.borderRadius = "50%";
+    close.style.border = "none";
+    close.style.background = "rgba(0,0,0,0.7)";
+    close.style.color = "#fff";
+    close.style.fontSize = "20px";
+    close.style.cursor = "pointer";
+
+    close.onclick = () => {
+      document.body.removeChild(iframe);
+      document.body.removeChild(close);
+    };
+
+    document.body.appendChild(iframe);
+    document.body.appendChild(close);
+
+  } else {
+    // 🖥 DESKTOP → ton système actuel
+    setExpandedVideo(ytId);
+  }
+}}
                         style={playBtnStyle(36)}
                       >
                         <PlayIcon size={14} />

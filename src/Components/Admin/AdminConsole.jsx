@@ -91,6 +91,7 @@ function AdminConsole({ user }) {
   const [editFeaturedPlatforms, setEditFeaturedPlatforms] = useState([]);
   const [editMarkAsReleased, setEditMarkAsReleased]       = useState(false);
   const [editReleasedPlatforms, setEditReleasedPlatforms] = useState([]);
+  const [editTrending, setEditTrending]                   = useState(false);
   const screenshotInputRef = useRef();
 
   const [search, setSearch] = useState("");
@@ -349,6 +350,7 @@ function AdminConsole({ user }) {
       setEditFeaturedPlatforms(data?.featuredPlatforms || []);
       setEditMarkAsReleased(data?.releasedAt ? true : false);
       setEditReleasedPlatforms(data?.releasedAt ? (data?.featuredPlatforms || []) : []);
+      setEditTrending(data?.trending || false);
     } catch (e) {
       setGameMsg("Erreur chargement Firebase : " + e.message);
       setGameMsgType("error");
@@ -448,6 +450,13 @@ function AdminConsole({ user }) {
         releasedAt: editMarkAsReleased
           ? (editDate || editDateByPlatform?.PlayStation || editDateByPlatform?.Xbox || editDateByPlatform?.Nintendo || "sorti")
           : null,
+        trending: editTrending,
+        trendingGame: editTrending ? {
+          id: selectedGameEdit.id,
+          name: selectedGameEdit.name,
+          img: selectedGameEdit.img,
+          type: selectedGameEdit.type,
+        } : null,
         savedAt: serverTimestamp(),
       }, { merge: true });
 
@@ -1080,6 +1089,33 @@ function AdminConsole({ user }) {
                           </div>
                         )}
                       </>
+                    )}
+                  </div>
+
+                  {/* ── Tendances ── */}
+                  <div className="admin-divider" />
+                  <div className="admin-form-group">
+                    <label className="admin-form-label">📈 Tendances</label>
+                    <div style={{ fontSize: 11, color: "#888", fontFamily: "Rajdhani", marginBottom: 10 }}>
+                      Cocher pour afficher ce jeu dans le filtre "Populaires" de la page Jeux.
+                    </div>
+                    <label style={{
+                      display: "flex", alignItems: "center", gap: 8, cursor: "pointer",
+                      fontFamily: "Rajdhani", fontSize: 15,
+                      color: editTrending ? "#f39c12" : "#aaa",
+                    }}>
+                      <input
+                        type="checkbox"
+                        checked={editTrending}
+                        onChange={e => setEditTrending(e.target.checked)}
+                        style={{ width: 18, height: 18, accentColor: "#f39c12", cursor: "pointer" }}
+                      />
+                      Afficher dans les tendances actuelles
+                    </label>
+                    {editTrending && (
+                      <div style={{ fontSize: 11, color: "#f39c12", fontFamily: "Rajdhani", marginTop: 6 }}>
+                        ✓ Ce jeu apparaîtra dans le filtre "🔥 Populaires" de la page Jeux.
+                      </div>
                     )}
                   </div>
 

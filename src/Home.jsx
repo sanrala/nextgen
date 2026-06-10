@@ -20,6 +20,8 @@ import FeaturedGamesPC from "./Components/FeaturedGames/FeaturedGamesPC";
 import RecentReleasesPlayStation from "./Components/FeaturedGames/RecentReleasesPlayStation";
 import RecentReleasesNintendo from "./Components/FeaturedGames/RecentReleasesNintendo";
 import RecentReleasesXbox from "./Components/FeaturedGames/RecentReleasesXbox";
+import SteamSpecials from "./Components/SteamSpecials/SteamSpecials";
+
 
 function LogoLoader() {
   return (
@@ -318,7 +320,7 @@ function Home() {
               </div>
             </section>
 
-            
+
 
             <div className="container">
               <div className="separator product-panel"></div>
@@ -327,48 +329,58 @@ function Home() {
             </div>
 
 
-            
 
 
 
-        
+
+
 
             <div className="container">
               <Precommandes />
               <div className="separator product-panel"></div>
 
               <FeaturedGamesPC />
-              
+
               <div className="separator product-panel"></div>
             </div>
 
             <Banner />
-             <div className="separator product-panel"></div>
+            <div className="separator product-panel"></div>
+
+
             <div className="container">
               <FeaturedGamesPlayStation />
               {/* <div className="separator product-panel"></div> */}
-              <RecentReleasesPlayStation/>
-               {/* <div className="separator product-panel"></div> */}
-              <FeaturedGamesNintendo />
-                {/* <div className="separator product-panel"></div> */}
-              <RecentReleasesNintendo/>
-                </div>
-                 <div className="separator product-panel"></div>
-              {topSeller2 && <BannerSlider gameData={topSeller2} />}
-              <div className="separator product-panel"></div>
-               <div className="container">
-              <FeaturedGamesXbox />
-                 {/* <div className="separator product-panel"></div> */}
-              <RecentReleasesXbox/>
-
+              <RecentReleasesPlayStation />
               {/* <div className="separator product-panel"></div> */}
-              {/* <PlaystationPrecommandes /> */}   
+              <FeaturedGamesNintendo />
+              {/* <div className="separator product-panel"></div> */}
+              <RecentReleasesNintendo />
+            </div>
+            <div className="separator product-panel"></div>
+            {topSeller2 && <BannerSlider gameData={topSeller2} />}
+            <div className="separator product-panel"></div>
+            <div className="container">
+              <FeaturedGamesXbox />
+              {/* <div className="separator product-panel"></div> */}
+              <RecentReleasesXbox />
+
+              <div className="separator product-panel"></div>
+              <SteamSpecials />
               {/* <div className="separator product-panel"></div> */}
               <LastPosts />
               {/* <div className="separator product-panel"></div> */}
             </div>
           </div>
           <div className="separator product-panel"></div>
+  <a
+  href="https://www.instant-gaming.com/?igr=gamer-707207"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="f-banner"
+>
+  <img src="/images/banner-instant-gaming.png" alt="Promo Instant Gaming" />
+</a>
           <Footer />
         </div>
       ) : (

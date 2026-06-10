@@ -6,6 +6,9 @@ import "./Footer.css";
 
 function Footer() {
   return (
+
+
+    
     <footer className="f-root">
 
       {/* Radar background */}

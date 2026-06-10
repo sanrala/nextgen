@@ -30324,3 +30324,18 @@ div.burgerNav > ul {
   pointer-events: none;
   font-size: 0.75rem;
 }
+.image-title,
+.image-title-large {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.f-banner {
+  width: 100%;
+}
+
+.f-banner img {
+  width: 100%;
+  display: block;
+}

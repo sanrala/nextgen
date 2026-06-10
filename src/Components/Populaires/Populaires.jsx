@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "../../Firebase";
 
 const BACKEND_URL = "https://api.sm-artweb.fr";
 const PER_PAGE = 15;
@@ -194,13 +196,27 @@ function Populaires() {
       try {
         setLoading(true);
 
-        // Populaires → endpoint dédié (topsellers avec releaseDate)
+        // Populaires → jeux marqués "trending" dans Firebase
         if (catFilter === "topseller") {
-          const res = await fetch(`${BACKEND_URL}/api/topsellers-recent`, {
-            headers: { "User-Agent": "IG-ExportCatalog-Fetcher" },
-          });
-          const data = await res.json();
-          setAllGames(Array.isArray(data) ? data : []);
+          const snap = await getDocs(query(
+            collection(db, "games"),
+            where("trending", "==", true)
+          ));
+          const fbGames = snap.docs
+            .map(d => ({ docId: d.id, ...d.data() }))
+            .filter(g => g.trendingGame)
+            .map(g => ({
+              id: g.trendingGame.id,
+              name: g.trendingGame.name,
+              img: g.trendingGame.img,
+              type: g.trendingGame.type,
+              price: g.steamData?.price || "0.00",
+              retail: g.steamData?.retail || "0.00",
+              steam_id: g.steamData?.steam_appid || 0,
+              region: "Europe",
+              stock: 1,
+            }));
+          setAllGames(fbGames);
           return;
         }
 
