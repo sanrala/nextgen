@@ -53,7 +53,7 @@ function NavBar() {
               className="nk-nav nk-nav-right d-none d-lg-table-cell"
               data-nav-mobile="#nk-nav-mobile"
             >
-              <li><Link to={{ pathname: `/actualités/` }}>Actualités</Link></li>
+              <li><Link to={{ pathname: `/actualites/` }}>Actualités</Link></li>
               <li><Link to="/Catalogues?catFilter=nouveautes">Nouveautés</Link></li>
               <li><Link to="/Catalogues?catFilter=topseller">Populaires</Link></li>
               <li><Link to="/Catalogues?catFilter=preorder">Précommandes</Link></li>
