@@ -350,7 +350,7 @@ function Home() {
             </div>
 
             <a
-              href="/populaires?platform=CartesCadeaux"
+              href="/Catalogues?platform=CartesCadeaux"
               className="f-banner"
             >
               <img src="/images/BannerCards.png" alt="Cartes cadeaux NextGen Gaming Instant Gaming" />

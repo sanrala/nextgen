@@ -36,14 +36,14 @@ function Footer() {
             <p className="f-brand-desc">
               La plateforme gaming de référence — actualités, bons plans et communauté passionnée.
             </p>
-            <div className="f-socials">
+            {/* <div className="f-socials">
               <Link to="#" className="f-soc ig" aria-label="Instagram">
                 <i className="ti ti-brand-instagram" aria-hidden="true" />
               </Link>
               <Link to="#" className="f-soc tw" aria-label="Twitter / X">
                 <i className="ti ti-brand-x" aria-hidden="true" />
               </Link>
-            </div>
+            </div> */}
           </div>
 
           {/* Nav */}
@@ -51,16 +51,17 @@ function Footer() {
             <div className="f-nav-col">
               <h5>Navigation</h5>
               <Link to="/">Accueil</Link>
-              <Link to="/catalogue">Catalogue</Link>
-              <Link to="/nouveautes">Nouveautés</Link>
-              <Link to="/promotions">Promotions</Link>
+              <Link to="/Catalogues">Catalogue</Link>
+              <Link to="//Catalogues?catFilter=nouveautes">Nouveautés</Link>
+              <Link to="/Catalogues?catFilter=preorder">Précommandes</Link>
+              <Link to="/Catalogues?platform=CartesCadeaux">Cartes Cadeaux</Link>
             </div>
-            <div className="f-nav-col">
+            {/* <div className="f-nav-col">
               <h5>À propos</h5>
               <Link to="/about">Qui sommes-nous</Link>
               <Link to="/actualites">Actualités</Link>
               <Link to="/contact">Contact</Link>
-            </div>
+            </div> */}
           </nav>
 
           {/* Partner card */}
