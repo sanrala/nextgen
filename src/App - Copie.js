@@ -3,8 +3,8 @@ import Admin from "./Components/Admin/Admin";
 import ArticlePage from "./Components/Admin/ArticlePage";
 import { Routes, Route } from "react-router-dom";
 import GameDetail from "./Components/GameDetail/GameDetail";
+
 import Populaires from "./Components/Populaires/Populaires";
-import LoginPage from "./Components/Login/LoginPage";
 import ActualitesPage from "./Components/BoxNews/ActualitesPage";
 
 
@@ -19,8 +19,6 @@ function App() {
 
         <Route path="/Catalogues" element={<Populaires />} />
         <Route path="/Catalogues/" element={<Populaires />} />
-        <Route path="/Login"      element={<LoginPage />} />
-        <Route path="/Login/"     element={<LoginPage />} />
         <Route path="/actualites" element={<ActualitesPage />} />
         <Route path="/actualités" element={<ActualitesPage />} />
         {/* Routes existantes (décommentez si besoin) */}

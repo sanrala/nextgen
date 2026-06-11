@@ -3,12 +3,8 @@ import logo from "./../../assets/images/logoGames/logo.png";
 import { Link } from "react-router-dom";
 import Burger from "./Burger";
 import SearchBar from "./SearchBar";
-import { useAdmin } from "../../useAdmin";
-import { signOut } from "firebase/auth";
-import { auth } from "../../Firebase";
 
 function NavBar() {
-  const { user, isAdmin } = useAdmin();
   const navRef = useRef(null);
 
   useEffect(() => {
@@ -61,29 +57,7 @@ function NavBar() {
               <li><Link to="/Catalogues?catFilter=nouveautes">Nouveautés</Link></li>
               <li><Link to="/Catalogues?catFilter=topseller">Populaires</Link></li>
               <li><Link to="/Catalogues?catFilter=preorder">Précommandes</Link></li>
-              <li>
-                {user ? (
-                  <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-                    {isAdmin && (
-                      <Link to="/admin" style={{
-                        fontSize:"10px", fontWeight:800, letterSpacing:"0.1em",
-                        color:"#dd163b", border:"1px solid rgba(221,22,59,0.4)",
-                        borderRadius:"4px", padding:"4px 10px", textTransform:"uppercase",
-                        textDecoration:"none"
-                      }}>Admin</Link>
-                    )}
-                    <img
-                      src={user.photoURL || "https://zupimages.net/up/24/22/cib6.png"}
-                      alt="avatar"
-                      style={{ width:32, height:32, borderRadius:"50%", border:"2px solid rgba(221,22,59,0.5)", cursor:"pointer", objectFit:"cover" }}
-                      onClick={() => signOut(auth)}
-                      title="Se déconnecter"
-                    />
-                  </div>
-                ) : (
-                  <Link to="/Login">Connexion</Link>
-                )}
-              </li>
+              <li><Link to={{ pathname: `/Login/` }}>Connexion</Link></li>
             </ul>
 
             {/* SearchBar — positionnée absolument à droite, par-dessus les liens quand ouverte */}

@@ -7,7 +7,6 @@ import { auth } from "./../../Firebase";
 import { Avatar } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { useAdmin } from "../../useAdmin";
 
 const BACKEND_URL = "https://api.sm-artweb.fr";
 
@@ -195,7 +194,6 @@ const RightNav = ({ open, setOpen }) => {
   const dispatch                          = useDispatch();
   const user                              = useSelector(selectUser);
   const navigate                          = useNavigate();
-  const { isAdmin }                       = useAdmin();
 
   const handleSignOut = () => { auth.signOut().then(() => dispatch(logout())); };
 
@@ -289,9 +287,6 @@ const RightNav = ({ open, setOpen }) => {
         </li>
 
         {/* Liens */}
-        {isAdmin && (
-          <li><Link to="/admin" onClick={() => setOpen(false)} style={{ color:"#dd163b" }}>⚙ Admin</Link></li>
-        )}
         <li><Link to="/actualites" onClick={() => setOpen(false)}>Actualités</Link></li>
         <li><Link to="/Catalogues?catFilter=nouveautes" onClick={() => setOpen(false)}>Nouveautés</Link></li>
         <li><Link to="/Catalogues?catFilter=topseller" onClick={() => setOpen(false)}>Populaires</Link></li>

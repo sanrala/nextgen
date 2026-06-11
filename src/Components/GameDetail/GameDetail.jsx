@@ -7,6 +7,7 @@ import {
   collection, addDoc, query, where, onSnapshot,
   serverTimestamp, setDoc, doc, getDoc, getDocs
 } from "firebase/firestore";
+import { useAdmin } from "../../useAdmin";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
@@ -179,9 +180,34 @@ function platformShortName(type) {
 
 function GameDetail() {
   const { igId, steamId, title } = useParams();
-  const user  = useSelector(selectUser);
-  const userN = auth.currentUser;
+  const user    = useSelector(selectUser);
+  const userN   = auth.currentUser;
   const navigate = useNavigate();
+  const { isAdmin } = useAdmin();
+
+  // ── Admin panel state ──
+  const [adminOpen,      setAdminOpen]      = useState(false);
+  const [adminSaving,    setAdminSaving]    = useState(false);
+  const [adminMsg,       setAdminMsg]       = useState("");
+  const [adminMsgType,   setAdminMsgType]   = useState("success");
+  const [adminDesc,      setAdminDesc]      = useState("");
+  const [adminDev,       setAdminDev]       = useState("");
+  const [adminPub,       setAdminPub]       = useState("");
+  const [adminDate,      setAdminDate]      = useState("");
+  const [adminDateMode,  setAdminDateMode]  = useState("global");
+  const [adminDateByPlatform, setAdminDateByPlatform] = useState({ PC:"", PlayStation:"", Xbox:"", Nintendo:"" });
+  const [adminYoutube,   setAdminYoutube]   = useState("");
+  const [adminFeatured,  setAdminFeatured]  = useState(false);
+  const [adminFeaturedPlatforms, setAdminFeaturedPlatforms] = useState([]);
+  const [adminTrending,  setAdminTrending]  = useState(false);
+  const [adminReleased,  setAdminReleased]  = useState(false);
+  const [adminReleasedPlatforms, setAdminReleasedPlatforms] = useState([]);
+  const [adminScreenshots, setAdminScreenshots] = useState([]);
+  const [adminNewFiles,  setAdminNewFiles]  = useState([]);
+  const [adminNewPreviews, setAdminNewPreviews] = useState([]);
+  const adminScreenRef = useRef();
+  const CLOUDINARY_CLOUD  = "dl0eijxyn";
+  const CLOUDINARY_PRESET = "ml_default";
 
   const [steamData,    setSteamData]    = useState(null);
   const [igGame,       setIgGame]       = useState(null);
@@ -585,6 +611,111 @@ if (cachedEditions.length) {
   const chosenInStock = chosenEntry ? chosenEntry.stock === 1 && chosenPrice > 0 : false;
   const chosenUrl     = chosenEntry?.url || null;
   const editionName   = chosenEntry ? shortEdName(chosenEntry.name) : "Standard Edition";
+
+  // ── Pré-remplir le panneau admin depuis Firebase/steamData ─────────────
+  useEffect(() => {
+    if (!isAdmin || !igId) return;
+    (async () => {
+      const snap = await getDoc(doc(db, "games", `ig_${igId}`));
+      const data = snap.exists() ? snap.data() : null;
+      const sd   = data?.steamData;
+      setAdminDesc(sd?.short_description || "");
+      setAdminDev(Array.isArray(sd?.developers) ? sd.developers[0] || "" : sd?.developers || "");
+      setAdminPub(Array.isArray(sd?.publishers) ? sd.publishers[0] || "" : sd?.publishers || "");
+      setAdminDate(sd?.release_date?.date || "");
+      setAdminDateMode(sd?.release_date?.byPlatform ? "byplatform" : "global");
+      setAdminDateByPlatform({
+        PC:          sd?.release_date?.byPlatform?.PC          || "",
+        PlayStation: sd?.release_date?.byPlatform?.PlayStation || "",
+        Xbox:        sd?.release_date?.byPlatform?.Xbox        || "",
+        Nintendo:    sd?.release_date?.byPlatform?.Nintendo    || "",
+      });
+      setAdminYoutube(sd?.youtube_id ? `https://www.youtube.com/watch?v=${sd.youtube_id}` : "");
+      setAdminFeatured(data?.featured || false);
+      setAdminFeaturedPlatforms(data?.featuredPlatforms || []);
+      setAdminTrending(data?.trending || false);
+      setAdminReleased(!!data?.releasedAt);
+      setAdminReleasedPlatforms(data?.releasedAt ? (data?.featuredPlatforms || []) : []);
+      setAdminScreenshots(sd?.screenshots || []);
+    })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAdmin, igId]);
+
+  // ── Save admin changes ────────────────────────────────────────────────────
+  const handleAdminSave = async () => {
+    setAdminSaving(true); setAdminMsg("");
+    try {
+      // Upload nouveaux screenshots
+      const uploaded = [];
+      for (let i = 0; i < adminNewFiles.length; i++) {
+        const fd = new FormData();
+        fd.append("file", adminNewFiles[i]);
+        fd.append("upload_preset", CLOUDINARY_PRESET);
+        fd.append("folder", "nextgen/screenshots");
+        const res  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method:"POST", body:fd });
+        const data = await res.json();
+        uploaded.push({ id: Date.now()+i, path_full: data.secure_url, path_thumbnail: data.secure_url });
+      }
+      const allScreenshots = [...adminScreenshots, ...uploaded];
+
+      const ytMatch = adminYoutube.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+      const ytId = ytMatch ? ytMatch[1] : null;
+
+      const fbRef  = doc(db, "games", `ig_${igId}`);
+      const fbSnap = await getDoc(fbRef);
+      const existing = fbSnap.exists() ? fbSnap.data() : {};
+
+      await setDoc(fbRef, {
+        steamData: {
+          ...(existing.steamData || {}),
+          short_description: adminDesc,
+          developers: [adminDev],
+          publishers: [adminPub],
+          release_date: {
+            ...(existing.steamData?.release_date || {}),
+            date: adminDateMode === "global" ? adminDate : "",
+            byPlatform: adminDateMode === "byplatform" ? adminDateByPlatform : null,
+          },
+          screenshots: allScreenshots,
+          ...(ytId ? { youtube_id: ytId } : {}),
+        },
+        featured: adminReleased ? false : adminFeatured,
+        featuredPlatforms: adminReleased ? adminReleasedPlatforms : (adminFeatured ? adminFeaturedPlatforms : []),
+        featuredGame: (adminFeatured || adminReleased) ? {
+          id: igId, name: igGame?.name || gameTitle,
+          img: igGame?.img || "", type: igGame?.type || "",
+        } : null,
+        releasedAt: adminReleased
+          ? (adminDate || adminDateByPlatform?.PlayStation || adminDateByPlatform?.Xbox || adminDateByPlatform?.Nintendo || "sorti")
+          : null,
+        trending: adminTrending,
+        trendingGame: adminTrending ? {
+          id: igId, name: igGame?.name || gameTitle,
+          img: igGame?.img || "", type: igGame?.type || "",
+        } : null,
+        savedAt: serverTimestamp(),
+      }, { merge: true });
+
+      setAdminScreenshots(allScreenshots);
+      setAdminNewFiles([]); setAdminNewPreviews([]);
+      setAdminMsg("✅ Fiche mise à jour !");
+      setAdminMsgType("success");
+      // Recharge steamData
+      setSteamData(prev => ({
+        ...prev,
+        short_description: adminDesc,
+        developers: [adminDev],
+        publishers: [adminPub],
+        screenshots: allScreenshots,
+        ...(ytId ? { youtube_id: ytId } : {}),
+      }));
+    } catch (e) {
+      setAdminMsg("Erreur : " + e.message);
+      setAdminMsgType("error");
+    } finally {
+      setAdminSaving(false);
+    }
+  };
 
   // ── Fallback media ────────────────────────────────────────────────────────
   useEffect(() => {
@@ -1335,6 +1466,214 @@ console.log("first img:", allEditions?.[0]?.img);
 
       <div className="separator product-panel" />
       <Footer />
+
+      {/* ── Bouton flottant admin ── */}
+      {isAdmin && (
+        <button
+          onClick={() => setAdminOpen(v => !v)}
+          style={{
+            position: "fixed", bottom: 28, right: 28, zIndex: 9000,
+            width: 52, height: 52, borderRadius: "50%",
+            background: adminOpen ? "#333" : "#dd163b",
+            border: "none", cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 22, boxShadow: "0 4px 20px rgba(0,0,0,0.5)",
+            transition: "background 0.2s",
+          }}
+          title={adminOpen ? "Fermer le panneau admin" : "Modifier ce jeu"}
+        >
+          {adminOpen ? "✕" : "✏️"}
+        </button>
+      )}
+
+      {/* ── Panneau admin slide-in ── */}
+      {isAdmin && (
+        <>
+          {/* Overlay */}
+          {adminOpen && (
+            <div
+              onClick={() => setAdminOpen(false)}
+              style={{
+                position:"fixed", inset:0, background:"rgba(0,0,0,0.6)", zIndex:8000,
+              }}
+            />
+          )}
+          <div style={{
+            position: "fixed", top:0, right: adminOpen ? 0 : "-480px",
+            width: "100%", maxWidth: 460, height: "100vh",
+            background: "#0d0e13", borderLeft: "1px solid rgba(221,22,59,0.25)",
+            zIndex: 8001, transition: "right 0.3s ease",
+            overflowY: "auto", padding: "24px 24px 100px",
+            boxSizing: "border-box",
+          }}>
+            {/* Header panneau */}
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:20 }}>
+              <div>
+                <div style={{ fontFamily:"Orbitron,sans-serif", fontSize:11, color:"#dd163b", letterSpacing:"0.15em", textTransform:"uppercase" }}>Console Admin</div>
+                <div style={{ fontFamily:"Rajdhani,sans-serif", fontSize:18, fontWeight:700, color:"#fff", marginTop:2 }}>
+                  Modifier la fiche
+                </div>
+              </div>
+              <button onClick={() => setAdminOpen(false)} style={{ background:"rgba(255,255,255,0.06)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:"50%", width:36, height:36, color:"#fff", cursor:"pointer", fontSize:16 }}>✕</button>
+            </div>
+
+            {/* Jeu sélectionné */}
+            {igGame && (
+              <div style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 12px", background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:8, marginBottom:20 }}>
+                <img src={igGame.img} alt={igGame.name} style={{ width:48, height:30, objectFit:"cover", borderRadius:4 }} />
+                <div>
+                  <div style={{ fontFamily:"Rajdhani,sans-serif", fontSize:14, fontWeight:700, color:"#fff" }}>{igGame.name}</div>
+                  <div style={{ fontFamily:"Montserrat,sans-serif", fontSize:10, color:"#555" }}>#{igId} · {igGame.type}</div>
+                </div>
+              </div>
+            )}
+
+            {/* Section helper */}
+            {(() => {
+              const S = ({ children }) => (
+                <div style={{ fontFamily:"Montserrat,sans-serif", fontSize:10, fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"#555", marginBottom:8, marginTop:20 }}>
+                  {children}
+                </div>
+              );
+              const Field = ({ label, children }) => (
+                <div style={{ marginBottom:14 }}>
+                  <div style={{ fontFamily:"Montserrat,sans-serif", fontSize:10, fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase", color:"#444", marginBottom:6 }}>{label}</div>
+                  {children}
+                </div>
+              );
+              const Input = (props) => (
+                <input {...props} style={{ width:"100%", background:"rgba(255,255,255,0.04)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:6, color:"#ddd", fontSize:13, padding:"9px 12px", outline:"none", fontFamily:"Montserrat,sans-serif", boxSizing:"border-box", ...props.style }} />
+              );
+              const CheckLabel = ({ checked, onChange, color="#dd163b", children }) => (
+                <label style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer", fontFamily:"Rajdhani,sans-serif", fontSize:14, color: checked ? color : "#888" }}>
+                  <input type="checkbox" checked={checked} onChange={onChange} style={{ width:16, height:16, accentColor:color, cursor:"pointer" }} />
+                  {children}
+                </label>
+              );
+
+              return (
+                <>
+                  <S>Description & Infos</S>
+                  <Field label="Description courte">
+                    <textarea value={adminDesc} onChange={e=>setAdminDesc(e.target.value)} rows={4}
+                      style={{ width:"100%", background:"rgba(255,255,255,0.04)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:6, color:"#ddd", fontSize:13, padding:"9px 12px", outline:"none", fontFamily:"Rajdhani,sans-serif", resize:"vertical", boxSizing:"border-box" }} />
+                  </Field>
+                  <div style={{ display:"flex", gap:10 }}>
+                    <Field label="Développeur"><Input value={adminDev} onChange={e=>setAdminDev(e.target.value)} placeholder="Ex: CD Projekt" /></Field>
+                    <Field label="Éditeur"><Input value={adminPub} onChange={e=>setAdminPub(e.target.value)} placeholder="Ex: CD Projekt" /></Field>
+                  </div>
+
+                  <S>Date de sortie</S>
+                  <div style={{ display:"flex", gap:8, marginBottom:10 }}>
+                    {["global","byplatform"].map(m => (
+                      <label key={m} style={{ display:"flex", alignItems:"center", gap:6, cursor:"pointer", fontFamily:"Rajdhani,sans-serif", fontSize:12, color: adminDateMode===m?"#dd163b":"#666", background: adminDateMode===m?"rgba(221,22,59,0.08)":"rgba(255,255,255,0.02)", border:`1px solid ${adminDateMode===m?"#dd163b":"#333"}`, borderRadius:4, padding:"5px 10px" }}>
+                        <input type="radio" checked={adminDateMode===m} onChange={()=>setAdminDateMode(m)} style={{ accentColor:"#dd163b" }} />
+                        {m==="global" ? "Globale" : "Par plateforme"}
+                      </label>
+                    ))}
+                  </div>
+                  {adminDateMode==="global" && (
+                    <Input value={adminDate} onChange={e=>setAdminDate(e.target.value)} placeholder="Ex: 26 mai 2026" />
+                  )}
+                  {adminDateMode==="byplatform" && (
+                    <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+                      {["PC","PlayStation","Xbox","Nintendo"].map(p => (
+                        <div key={p} style={{ flex:"1 1 120px" }}>
+                          <div style={{ fontFamily:"Montserrat,sans-serif", fontSize:10, color:"#444", marginBottom:4 }}>{p}</div>
+                          <Input value={adminDateByPlatform[p]} onChange={e=>setAdminDateByPlatform(prev=>({...prev,[p]:e.target.value}))} placeholder="Date..." />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <S>Vidéo YouTube</S>
+                  <Input value={adminYoutube} onChange={e=>setAdminYoutube(e.target.value)} placeholder="https://youtube.com/watch?v=..." />
+
+                  <S>Screenshots</S>
+                  {adminScreenshots.length > 0 && (
+                    <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:10 }}>
+                      {adminScreenshots.map((s,i) => (
+                        <div key={i} style={{ position:"relative" }}>
+                          <img src={s.path_thumbnail||s.path_full} alt="" style={{ width:72, height:42, objectFit:"cover", borderRadius:4 }} />
+                          <button type="button" onClick={()=>setAdminScreenshots(prev=>prev.filter((_,idx)=>idx!==i))}
+                            style={{ position:"absolute", top:-6, right:-6, background:"#dd163b", border:"none", borderRadius:"50%", width:18, height:18, color:"#fff", fontSize:10, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center" }}>✕</button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {adminNewPreviews.length > 0 && (
+                    <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:10 }}>
+                      {adminNewPreviews.map((src,i) => (
+                        <div key={i} style={{ position:"relative" }}>
+                          <img src={src} alt="" style={{ width:72, height:42, objectFit:"cover", borderRadius:4, opacity:0.7 }} />
+                          <button type="button" onClick={()=>{setAdminNewFiles(p=>p.filter((_,idx)=>idx!==i));setAdminNewPreviews(p=>p.filter((_,idx)=>idx!==i));}}
+                            style={{ position:"absolute", top:-6, right:-6, background:"#dd163b", border:"none", borderRadius:"50%", width:18, height:18, color:"#fff", fontSize:10, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center" }}>✕</button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <button type="button" onClick={()=>adminScreenRef.current?.click()}
+                    style={{ width:"100%", padding:"10px", background:"rgba(255,255,255,0.04)", border:"1px dashed rgba(255,255,255,0.15)", borderRadius:6, color:"#666", fontFamily:"Montserrat,sans-serif", fontSize:11, cursor:"pointer", marginBottom:4 }}>
+                    🖼 Ajouter des screenshots
+                  </button>
+                  <input ref={adminScreenRef} type="file" accept="image/*" multiple style={{ display:"none" }}
+                    onChange={e=>{
+                      const files=Array.from(e.target.files);
+                      setAdminNewFiles(p=>[...p,...files]);
+                      setAdminNewPreviews(p=>[...p,...files.map(f=>URL.createObjectURL(f))]);
+                    }} />
+
+                  <S>Mise en avant</S>
+                  <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                    <CheckLabel checked={adminFeatured} onChange={e=>{setAdminFeatured(e.target.checked);if(!e.target.checked)setAdminFeaturedPlatforms([]);}} >
+                      Afficher dans "Sorties les plus attendues"
+                    </CheckLabel>
+                    {adminFeatured && (
+                      <div style={{ display:"flex", gap:8, flexWrap:"wrap", paddingLeft:24 }}>
+                        {["PlayStation","Nintendo","Xbox","PC","Tous"].map(p=>(
+                          <label key={p} style={{ display:"flex", alignItems:"center", gap:5, cursor:"pointer", fontFamily:"Rajdhani,sans-serif", fontSize:13, color:adminFeaturedPlatforms.includes(p)?"#dd163b":"#888", background:adminFeaturedPlatforms.includes(p)?"rgba(221,22,59,0.08)":"rgba(255,255,255,0.02)", border:`1px solid ${adminFeaturedPlatforms.includes(p)?"#dd163b":"#333"}`, borderRadius:4, padding:"4px 10px" }}>
+                            <input type="checkbox" checked={adminFeaturedPlatforms.includes(p)} onChange={e=>{ if(e.target.checked) setAdminFeaturedPlatforms(prev=>[...prev,p]); else setAdminFeaturedPlatforms(prev=>prev.filter(x=>x!==p)); }} style={{ accentColor:"#dd163b" }} />
+                            {p}
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                    <CheckLabel checked={adminTrending} onChange={e=>setAdminTrending(e.target.checked)} color="#f39c12">
+                      Afficher dans les Tendances 🔥
+                    </CheckLabel>
+                    <CheckLabel checked={adminReleased} onChange={e=>{setAdminReleased(e.target.checked);if(e.target.checked)setAdminFeatured(false);if(!e.target.checked)setAdminReleasedPlatforms([]);}} color="#27ae60">
+                      Marquer comme sorti ✅
+                    </CheckLabel>
+                    {adminReleased && (
+                      <div style={{ display:"flex", gap:8, flexWrap:"wrap", paddingLeft:24 }}>
+                        {["PlayStation","Nintendo","Xbox","PC"].map(p=>(
+                          <label key={p} style={{ display:"flex", alignItems:"center", gap:5, cursor:"pointer", fontFamily:"Rajdhani,sans-serif", fontSize:13, color:adminReleasedPlatforms.includes(p)?"#27ae60":"#888", background:adminReleasedPlatforms.includes(p)?"rgba(39,174,96,0.08)":"rgba(255,255,255,0.02)", border:`1px solid ${adminReleasedPlatforms.includes(p)?"#27ae60":"#333"}`, borderRadius:4, padding:"4px 10px" }}>
+                            <input type="checkbox" checked={adminReleasedPlatforms.includes(p)} onChange={e=>{ if(e.target.checked) setAdminReleasedPlatforms(prev=>[...prev,p]); else setAdminReleasedPlatforms(prev=>prev.filter(x=>x!==p)); }} style={{ accentColor:"#27ae60" }} />
+                            {p}
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {adminMsg && (
+                    <div style={{ marginTop:16, padding:"10px 14px", background: adminMsgType==="success" ? "rgba(39,174,96,0.1)" : "rgba(221,22,59,0.1)", border:`1px solid ${adminMsgType==="success"?"rgba(39,174,96,0.3)":"rgba(221,22,59,0.3)"}`, borderRadius:6, fontFamily:"Rajdhani,sans-serif", fontSize:14, color: adminMsgType==="success"?"#27ae60":"#dd163b" }}>
+                      {adminMsg}
+                    </div>
+                  )}
+
+                  <div style={{ position:"sticky", bottom:0, background:"#0d0e13", padding:"16px 0 0", marginTop:20, borderTop:"1px solid rgba(255,255,255,0.06)" }}>
+                    <button onClick={handleAdminSave} disabled={adminSaving}
+                      style={{ width:"100%", padding:13, background:"#dd163b", border:"none", borderRadius:6, color:"#fff", fontFamily:"Montserrat,sans-serif", fontSize:12, fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase", cursor: adminSaving?"default":"pointer", opacity: adminSaving?0.6:1 }}>
+                      {adminSaving ? "Sauvegarde..." : "💾 Sauvegarder"}
+                    </button>
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        </>
+      )}
     </div>
   );
 }
