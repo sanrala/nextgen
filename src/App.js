@@ -5,6 +5,7 @@ import { Routes, Route } from "react-router-dom";
 import GameDetail from "./Components/GameDetail/GameDetail";
 
 import Populaires from "./Components/Populaires/Populaires";
+import ActualitesPage from "./Components/BoxNews/ActualitesPage";
 
 
 function App() {
@@ -18,6 +19,8 @@ function App() {
 
         <Route path="/Catalogues" element={<Populaires />} />
         <Route path="/Catalogues/" element={<Populaires />} />
+        <Route path="/actualites" element={<ActualitesPage />} />
+        <Route path="/actualités" element={<ActualitesPage />} />
         {/* Routes existantes (décommentez si besoin) */}
         {/* <Route path="/Login" element={<Login />}/> */}
         {/* <Route path="/Register" element={<Register />}/> */}

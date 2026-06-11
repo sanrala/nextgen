@@ -49,7 +49,7 @@ function BoxNews() {
 
   return (
     <div>
-      <Link to="/actualités">
+      <Link to="/actualites">
         <h3 className="nk-decorated-h-2">
           <span>
             <span className="text-main-1">Actualités</span> du jour
