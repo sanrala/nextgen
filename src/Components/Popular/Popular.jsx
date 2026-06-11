@@ -108,7 +108,7 @@ function Popular() {
     <div className="row vertical-gap">
       <style>{SLIDER_STYLE}</style>
       <div className="col-lg-12">
-        <Link to="/Populaires/">
+        <Link to="/populaires?catFilter=topseller">
           <h3 className="nk-decorated-h-2">
             <span>
               <span className="text-main-1">Tendances</span> Récentes

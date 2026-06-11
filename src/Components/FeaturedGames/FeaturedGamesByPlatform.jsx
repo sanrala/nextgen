@@ -138,12 +138,14 @@ function FeaturedGamesByPlatform({ platform, maxItems = 6 }) {
     <div>
       <style>{SLIDER_STYLE}</style>
       <div className="nk-gap-2" />
-      <h3 className="nk-decorated-h-2">
-        <span>
-          <span className="text-main-1">{PLATFORM_LABELS[platform] || platform}</span>
-          {" "}— Sorties les plus attendues
-        </span>
-      </h3>
+      <Link to={`/populaires?catFilter=upcoming&platform=${platform === "PC" ? "Steam" : platform}`}>
+        <h3 className="nk-decorated-h-2">
+          <span>
+            <span className="text-main-1">{PLATFORM_LABELS[platform] || platform}</span>
+            {" "}— Sorties les plus attendues
+          </span>
+        </h3>
+      </Link>
       <div className="nk-gap" />
 
       {/* ── Mobile slider ── */}
