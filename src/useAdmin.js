@@ -10,12 +10,16 @@ export function useAdmin() {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
+      console.log("useAdmin — auth state changed, user:", u?.uid || "null");
       setUser(u);
       if (u) {
         try {
-          const snap = await getDoc(doc(db, "admins", u.uid));
+          const ref  = doc(db, "admins", u.uid);
+          const snap = await getDoc(ref);
+          console.log("useAdmin — admins doc exists:", snap.exists(), "data:", snap.data());
           setIsAdmin(snap.exists() && snap.data()?.isAdmin === true);
-        } catch {
+        } catch(e) {
+          console.error("useAdmin — Firestore error:", e.message);
           setIsAdmin(false);
         }
       } else {

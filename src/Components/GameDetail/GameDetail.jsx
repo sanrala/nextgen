@@ -510,7 +510,8 @@ if (cachedEditions.length) {
             });
             if (europeEd) {
               const slug = europeEd.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
-              navigate(`/store/${europeEd.id}/${europeEd.steam_id || 0}/${slug}`, { replace: true });
+              const isEuSteam = (europeEd.type || "").toLowerCase().includes("steam");
+              navigate(`/store/${europeEd.id}/${isEuSteam ? (europeEd.steam_id || 0) : 0}/${slug}`, { replace: true });
               return;
             }
           }
@@ -642,6 +643,30 @@ if (cachedEditions.length) {
   }, [isAdmin, igId]);
 
   // ── Save admin changes ────────────────────────────────────────────────────
+  const handleAdminClearCache = async () => {
+    if (!window.confirm("Vider le cache Firebase de ce jeu (steamData + éditions) ?")) return;
+    setAdminSaving(true);
+    try {
+      const { deleteField } = await import("firebase/firestore");
+      // Vide le cache pour TOUTES les éditions du jeu
+      const allIds = allEditions.length > 0
+        ? [...new Set(allEditions.map(e => e.id))]
+        : [igId];
+      await Promise.all(allIds.map(id =>
+        setDoc(doc(db, "games", `ig_${id}`), {
+          steamData: deleteField(), savedAt: deleteField(),
+          igName: deleteField(), editions: deleteField()
+        }, { merge: true })
+      ));
+      setSteamData(null);
+      setAdminMsg(`🔄 Cache vidé pour ${allIds.length} édition(s). Rechargez la page.`);
+      setAdminMsgType("success");
+    } catch (e) {
+      setAdminMsg("Erreur : " + e.message);
+      setAdminMsgType("error");
+    } finally { setAdminSaving(false); }
+  };
+
   const handleAdminSave = async () => {
     setAdminSaving(true); setAdminMsg("");
     try {
@@ -661,24 +686,37 @@ if (cachedEditions.length) {
       const ytMatch = adminYoutube.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
       const ytId = ytMatch ? ytMatch[1] : null;
 
-      const fbRef  = doc(db, "games", `ig_${igId}`);
-      const fbSnap = await getDoc(fbRef);
-      const existing = fbSnap.exists() ? fbSnap.data() : {};
+      // Sauvegarde steamData sur TOUTES les éditions du jeu
+      const allEditionIds = allEditions.length > 0
+        ? [...new Set(allEditions.map(e => e.id))]
+        : [igId];
 
-      await setDoc(fbRef, {
-        steamData: {
-          ...(existing.steamData || {}),
-          short_description: adminDesc,
-          developers: [adminDev],
-          publishers: [adminPub],
-          release_date: {
-            ...(existing.steamData?.release_date || {}),
-            date: adminDateMode === "global" ? adminDate : "",
-            byPlatform: adminDateMode === "byplatform" ? adminDateByPlatform : null,
-          },
-          screenshots: allScreenshots,
-          ...(ytId ? { youtube_id: ytId } : {}),
+      const steamDataPayload = {
+        short_description: adminDesc,
+        developers: [adminDev],
+        publishers: [adminPub],
+        release_date: {
+          date: adminDateMode === "global" ? adminDate : "",
+          byPlatform: adminDateMode === "byplatform" ? adminDateByPlatform : null,
         },
+        screenshots: allScreenshots,
+        ...(ytId ? { youtube_id: ytId } : {}),
+      };
+
+      // Pour chaque édition : merge steamData
+      await Promise.all(allEditionIds.map(async (edId) => {
+        const edRef  = doc(db, "games", `ig_${edId}`);
+        const edSnap = await getDoc(edRef);
+        const edExisting = edSnap.exists() ? edSnap.data() : {};
+        await setDoc(edRef, {
+          steamData: { ...(edExisting.steamData || {}), ...steamDataPayload },
+          savedAt: serverTimestamp(),
+        }, { merge: true });
+      }));
+
+      // Mise en avant + trending : seulement sur l'édition courante
+      const fbRef = doc(db, "games", `ig_${igId}`);
+      await setDoc(fbRef, {
         featured: adminReleased ? false : adminFeatured,
         featuredPlatforms: adminReleased ? adminReleasedPlatforms : (adminFeatured ? adminFeaturedPlatforms : []),
         featuredGame: (adminFeatured || adminReleased) ? {
@@ -693,12 +731,11 @@ if (cachedEditions.length) {
           id: igId, name: igGame?.name || gameTitle,
           img: igGame?.img || "", type: igGame?.type || "",
         } : null,
-        savedAt: serverTimestamp(),
       }, { merge: true });
 
       setAdminScreenshots(allScreenshots);
       setAdminNewFiles([]); setAdminNewPreviews([]);
-      setAdminMsg("✅ Fiche mise à jour !");
+      setAdminMsg(`✅ Fiche mise à jour sur ${allEditionIds.length} édition(s) !`);
       setAdminMsgType("success");
       // Recharge steamData
       setSteamData(prev => ({
@@ -878,7 +915,7 @@ console.log("first img:", allEditions?.[0]?.img);
         <ul className="nk-breadcrumbs">
           <li><Link to="/">Accueil</Link></li>
           <li><span className="fa fa-angle-right" /></li>
-          <li><Link to="/Populaires/">Jeux</Link></li>
+          <li><Link to="/Catalogues/">Jeux</Link></li>
           <li><span className="fa fa-angle-right" /></li>
           <li><span>{gameTitle}</span></li>
         </ul>
@@ -976,7 +1013,8 @@ console.log("first img:", allEditions?.[0]?.img);
 
             if (first && String(first.id) !== String(igId)) {
               const clean = first.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
-              navigate(`/store/${first.id}/${first.steam_id || 0}/${clean}`);
+              const isSteamType = (first.type || "").toLowerCase().includes("steam");
+              navigate(`/store/${first.id}/${isSteamType ? (first.steam_id || 0) : 0}/${clean}`);
             }
           }}
         >
@@ -1008,7 +1046,8 @@ console.log("first img:", allEditions?.[0]?.img);
 
               if (best && String(best.id) !== String(igId)) {
                 const clean = best.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
-                navigate(`/store/${best.id}/${best.steam_id || 0}/${clean}`);
+                const isSteamType = (best.type || "").toLowerCase().includes("steam");
+                navigate(`/store/${best.id}/${isSteamType ? (best.steam_id || 0) : 0}/${clean}`);
               }
             }}
           >
@@ -1662,10 +1701,14 @@ console.log("first img:", allEditions?.[0]?.img);
                     </div>
                   )}
 
-                  <div style={{ position:"sticky", bottom:0, background:"#0d0e13", padding:"16px 0 0", marginTop:20, borderTop:"1px solid rgba(255,255,255,0.06)" }}>
+                  <div style={{ position:"sticky", bottom:0, background:"#0d0e13", padding:"16px 0 0", marginTop:20, borderTop:"1px solid rgba(255,255,255,0.06)", display:"flex", flexDirection:"column", gap:8 }}>
                     <button onClick={handleAdminSave} disabled={adminSaving}
                       style={{ width:"100%", padding:13, background:"#dd163b", border:"none", borderRadius:6, color:"#fff", fontFamily:"Montserrat,sans-serif", fontSize:12, fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase", cursor: adminSaving?"default":"pointer", opacity: adminSaving?0.6:1 }}>
-                      {adminSaving ? "Sauvegarde..." : "💾 Sauvegarder"}
+                      {adminSaving ? "Sauvegarde..." : `💾 Sauvegarder (${allEditions.length > 0 ? allEditions.length : 1} édition(s))`}
+                    </button>
+                    <button onClick={handleAdminClearCache} disabled={adminSaving}
+                      style={{ width:"100%", padding:10, background:"none", border:"1px solid #333", borderRadius:6, color:"#555", fontFamily:"Montserrat,sans-serif", fontSize:11, letterSpacing:"0.08em", textTransform:"uppercase", cursor:"pointer" }}>
+                      🔄 Vider le cache (toutes éditions)
                     </button>
                   </div>
                 </>

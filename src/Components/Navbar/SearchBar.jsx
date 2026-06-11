@@ -465,22 +465,24 @@ const base = getBaseName(g.name) + "|" + platform;
     return;
   }
 
-  // Toujours chercher dans /api/editions pour trouver le bon steam_id
-  // même pour les jeux console (qui peuvent avoir une version Steam)
+  // Pour les jeux non-Steam (Rockstar, Epic, GOG, EA, consoles) → steamId=0
+  // Pour les jeux Steam uniquement → cherche le vrai steam_id
+  const isNonSteam = isConsole ||
+    platform.includes("rockstar") || platform.includes("epic") ||
+    platform.includes("gog") || platform.includes("ea app") || platform.includes("battle");
+
+  if (isNonSteam) {
+    handleClose();
+    navigate(`/store/${game.id}/0/${slug}`);
+    return;
+  }
+
+  // Jeu Steam : cherche le steam_id
   try {
     const res  = await fetch(`${BACKEND_URL}/api/editions/${game.id}`);
     const data = await res.json();
-    // Cherche l'entrée exacte par igId
     const exact = Array.isArray(data) && data.find(g => String(g.id) === String(game.id));
     const steamId = exact?.steam_id || 0;
-
-    // Si jeu console sans steam_id → steamId=0
-    if (isConsole && !steamId) {
-      handleClose();
-      navigate(`/store/${game.id}/0/${slug}`);
-      return;
-    }
-
     handleClose();
     navigate(`/store/${game.id}/${steamId}/${slug}`);
   } catch {
