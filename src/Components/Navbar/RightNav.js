@@ -288,9 +288,9 @@ const RightNav = ({ open, setOpen }) => {
 
         {/* Liens */}
         <li><Link to="/actualites" onClick={() => setOpen(false)}>Actualités</Link></li>
-        <li><Link to="/populaires?catFilter=nouveautes" onClick={() => setOpen(false)}>Nouveautés</Link></li>
-        <li><Link to="/populaires?catFilter=topseller" onClick={() => setOpen(false)}>Populaires</Link></li>
-        <li><Link to="/populaires?catFilter=preorder" onClick={() => setOpen(false)}>Précommandes</Link></li>
+        <li><Link to="/Catalogues?catFilter=nouveautes" onClick={() => setOpen(false)}>Nouveautés</Link></li>
+        <li><Link to="/Catalogues?catFilter=topseller" onClick={() => setOpen(false)}>Populaires</Link></li>
+        <li><Link to="/Catalogues?catFilter=preorder" onClick={() => setOpen(false)}>Précommandes</Link></li>
 
         <li>
           {user ? (

@@ -54,9 +54,9 @@ function NavBar() {
               data-nav-mobile="#nk-nav-mobile"
             >
               <li><Link to={{ pathname: `/actualités/` }}>Actualités</Link></li>
-              <li><Link to="/populaires?catFilter=nouveautes">Nouveautés</Link></li>
-              <li><Link to="/populaires?catFilter=topseller">Populaires</Link></li>
-              <li><Link to="/populaires?catFilter=preorder">Précommandes</Link></li>
+              <li><Link to="/Catalogues?catFilter=nouveautes">Nouveautés</Link></li>
+              <li><Link to="/Catalogues?catFilter=topseller">Populaires</Link></li>
+              <li><Link to="/Catalogues?catFilter=preorder">Précommandes</Link></li>
               <li><Link to={{ pathname: `/Login/` }}>Connexion</Link></li>
             </ul>
 

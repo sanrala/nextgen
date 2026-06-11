@@ -97,7 +97,7 @@ function Precommandes() {
     <div>
       <style>{SLIDER_STYLE}</style>
       <div className="nk-gap-2"></div>
-      <Link to="/populaires?catFilter=preorder">
+      <Link to="/Catalogues?catFilter=preorder">
         <h3 className="nk-decorated-h-2">
           <span>
             <span className="text-main-1">Jeux</span> en précommandes

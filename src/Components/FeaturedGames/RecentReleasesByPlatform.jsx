@@ -139,7 +139,7 @@ function RecentReleasesByPlatform({ platform, maxItems = 6 }) {
     <div>
       <style>{SLIDER_STYLE}</style>
       <div className="nk-gap-2" />
-      <Link to={`/populaires?catFilter=nouveautes&platform=${platform === "PC" ? "Steam" : platform}`}>
+      <Link to={`/Catalogues?catFilter=nouveautes&platform=${platform === "PC" ? "Steam" : platform}`}>
         <h3 className="nk-decorated-h-2">
           <span>
             <span className="text-main-1">{PLATFORM_LABELS[platform] || platform}</span>

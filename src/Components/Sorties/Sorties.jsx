@@ -52,7 +52,7 @@ function Sorties() {
 
    <div className="row vertical-gap">
   <div className="col-lg-12">
-    <Link to="/populaires?catFilter=nouveautes">
+    <Link to="/Catalogues?catFilter=nouveautes">
       <h3 className="nk-decorated-h-2">
         <span>
           <span className="text-main-1">Les dernières</span> sorties

@@ -16,8 +16,8 @@ function App() {
         <Route path="/article/:doc_id" element={<ArticlePage />} />
         <Route path="/store/:igId/:steamId/:title" element={<GameDetail />} />
 
-        <Route path="/Populaires" element={<Populaires />} />
-        <Route path="/Populaires/" element={<Populaires />} />
+        <Route path="/Catalogues" element={<Populaires />} />
+        <Route path="/Catalogues/" element={<Populaires />} />
         {/* Routes existantes (décommentez si besoin) */}
         {/* <Route path="/Login" element={<Login />}/> */}
         {/* <Route path="/Register" element={<Register />}/> */}
