@@ -6,6 +6,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithPopup,
   updateProfile,
+  sendEmailVerification,
   onAuthStateChanged,
 } from "firebase/auth";
 import { auth, googleProvider } from "../../Firebase";
@@ -297,7 +298,10 @@ export default function LoginPage() {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
-      if (u) navigate("/", { replace: true });
+      // Ne redirige que si email vérifié OU connexion Google
+      if (u && (u.emailVerified || u.providerData?.[0]?.providerId === "google.com")) {
+        navigate("/", { replace: true });
+      }
     });
     return () => unsub();
   }, [navigate]);
@@ -312,7 +316,11 @@ export default function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault(); reset(); setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+   if (!cred.user.emailVerified) {
+  setError("Ton email n'est pas encore vérifié. Consulte ta boîte mail et clique sur le lien d'activation.");
+  return;
+}
       navigate("/");
     } catch {
       setError("Email ou mot de passe incorrect.");
@@ -326,8 +334,16 @@ export default function LoginPage() {
     if (password !== confirm) { setError("Les mots de passe ne correspondent pas."); setLoading(false); return; }
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password);
+      
       await updateProfile(cred.user, { displayName: pseudo.trim() });
-      navigate("/");
+      await sendEmailVerification(cred.user, {
+        url: window.location.origin + "/Login",
+        handleCodeInApp: false,
+      });
+      await auth.signOut();
+      setSuccess("✅ Compte créé ! Un email de confirmation a été envoyé à " + email + ". Pensez à vérifier dans vos spams.");
+      setTab("login");
+      setEmail(""); setPassword(""); setPseudo(""); setConfirm("");
     } catch (err) {
       if (err.code === "auth/email-already-in-use") setError("Cet email est déjà utilisé.");
       else setError("Erreur : " + err.message);
@@ -382,7 +398,23 @@ export default function LoginPage() {
 
         {error   && <div className="auth-error">{error}</div>}
         {success && <div className="auth-success">{success}</div>}
-
+{auth.currentUser && !auth.currentUser.emailVerified && (
+  <button 
+    onClick={() => sendEmailVerification(auth.currentUser)}
+    style={{
+      marginBottom: "10px",
+      padding: "10px",
+      width: "100%",
+      background: "#444",
+      color: "#fff",
+      border: "none",
+      borderRadius: "6px",
+      cursor: "pointer"
+    }}
+  >
+    Renvoyer email de confirmation
+  </button>
+)}
         <form onSubmit={isLogin ? handleLogin : handleRegister}>
           {!isLogin && (
             <div className="auth-field">

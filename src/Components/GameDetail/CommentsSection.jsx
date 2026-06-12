@@ -471,7 +471,16 @@ export default function CommentsSection({ gameKey, user, userN }) {
       </div>
 
       {/* Formulaire */}
-      {user ? (
+      {user && userN?.emailVerified === false ? (
+        <div style={S.loginPrompt}>
+          <p style={{ color: "#f39c12", marginBottom: 8, fontFamily: "Montserrat,sans-serif", fontSize: 14, fontWeight: 700 }}>
+            ✉️ Email non vérifié
+          </p>
+          <p style={{ color: "#888", marginBottom: 0, fontFamily: "Montserrat,sans-serif", fontSize: 13 }}>
+            Vérifie ta boîte mail et clique sur le lien d'activation pour pouvoir commenter.
+          </p>
+        </div>
+      ) : user ? (
         <div style={S.formWrap}>
           <CommentForm user={user} userN={userN} onSubmit={handleSubmit} />
         </div>
