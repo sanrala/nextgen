@@ -61,6 +61,7 @@ function NavBar() {
               <li><Link to="/Catalogues?catFilter=nouveautes">Nouveautés</Link></li>
               <li><Link to="/Catalogues?catFilter=topseller">Populaires</Link></li>
               <li><Link to="/Catalogues?catFilter=preorder">Précommandes</Link></li>
+            
               <li>
                 {user ? (
                   <div style={{ display:"flex", alignItems:"center", gap:8 }}>
