@@ -32,47 +32,85 @@ function ImgSlider({ gameData }) {
       buy: gameData.url,
     });
 
-    const steamHero = `https://cdn.akamai.steamstatic.com/steam/apps/${gameData.steam_id}/library_hero.jpg`;
-
     const resolveHero = async () => {
-      try {
-        const check = await fetch(
-          `${PROXY}/api/check-image?url=${encodeURIComponent(steamHero)}`
-        );
-        const { ok } = await check.json();
-        console.log("check-image ok:", ok, steamHero);
+      const checkImg = async (url) => {
+        try {
+          const r = await fetch(`${PROXY}/api/check-image?url=${encodeURIComponent(url)}`);
+          const { ok } = await r.json();
+          return ok;
+        } catch { return false; }
+      };
 
-        if (ok) {
-          setHeroUrl(steamHero);
-        } else {
-          const searchTerm = gameData.name.split(":")[0].trim();
-          console.log("searchTerm:", searchTerm);
-          const res = await fetch(
-            `${PROXY}/api/steam-search?term=${encodeURIComponent(searchTerm)}`
-          );
-          const json = await res.json();
-          const baseGame = json?.items?.find(
-            (item) =>
-              item.type === "app" &&
-              item.price &&
-              item.id !== parseInt(gameData.steam_id)
-          );
-          console.log("baseGame:", baseGame);
-          if (baseGame) {
-            setHeroUrl(
-              `https://cdn.akamai.steamstatic.com/steam/apps/${baseGame.id}/library_hero.jpg`
-            );
-          } else {
-            setHeroUrl(gameData.img);
-          }
+      try {
+        // 1. library_hero depuis steam_id IG
+        if (gameData.steam_id) {
+          const heroUrl = `https://cdn.akamai.steamstatic.com/steam/apps/${gameData.steam_id}/library_hero.jpg`;
+          if (await checkImg(heroUrl)) { setHeroUrl(heroUrl); return; }
         }
+
+        // 2. Cherche steamData en Firebase pour avoir le vrai steam_appid
+        let steamAppId = gameData.steam_id || null;
+        try {
+          const { initializeApp, getApps } = await import("firebase/app");
+          const { getFirestore, doc, getDoc } = await import("firebase/firestore");
+          const firebaseConfig = {
+            apiKey: "AIzaSyBNmVRdmNm0Sh3mfVp7lJbEGxlGEa2jm18",
+            authDomain: "nextgen-d1ff5.firebaseapp.com",
+            projectId: "nextgen-d1ff5",
+          };
+          const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+          const db = getFirestore(app);
+          const snap = await getDoc(doc(db, "games", `ig_${gameData.id}`));
+          if (snap.exists()) {
+            const fbData = snap.data();
+            const appId = fbData?.steamData?.steam_appid;
+            if (appId) steamAppId = appId;
+
+            // Essai library_hero avec steamAppId Firebase
+            if (appId && appId !== gameData.steam_id) {
+              const heroFb = `https://cdn.akamai.steamstatic.com/steam/apps/${appId}/library_hero.jpg`;
+              if (await checkImg(heroFb)) { setHeroUrl(heroFb); return; }
+            }
+
+            // Essai premier screenshot Firebase
+            const fbScreenshots = fbData?.steamData?.screenshots || [];
+            if (fbScreenshots.length > 0) {
+              setHeroUrl(fbScreenshots[0].path_full || fbScreenshots[0].path_thumbnail);
+              return;
+            }
+          }
+        } catch {}
+
+        // 3. Fallback : premier screenshot via API Steam
+        if (steamAppId) {
+          try {
+            const res = await fetch(`${PROXY}/api/steam/${steamAppId}`);
+            if (res.ok) {
+              const data = await res.json();
+              const screenshots = data?.screenshots || [];
+              if (screenshots.length > 0) {
+                setHeroUrl(screenshots[0].path_full || screenshots[0].path_thumbnail);
+                return;
+              }
+            }
+          } catch {}
+        }
+
+        // 4. Dernier recours : header Steam (petit mais mieux que miniature IG)
+        if (steamAppId) {
+          const header = `https://cdn.akamai.steamstatic.com/steam/apps/${steamAppId}/header.jpg`;
+          if (await checkImg(header)) { setHeroUrl(header); return; }
+        }
+
+        // 5. Rien trouvé : null (pas d'image affichée)
+        setHeroUrl(null);
+
       } catch (e) {
-        console.error("resolveHero error:", e);
-        setHeroUrl(gameData.img);
+        setHeroUrl(null);
       }
     };
 
-    resolveHero(); // ← appel indispensable
+    resolveHero();
   }, [gameData]);
 
   if (!gameInfo || !heroUrl) return null;
@@ -126,7 +164,7 @@ function ImgSlider({ gameData }) {
           }}
         >
           <Link
-            to={`/jeux/${gameInfo.id}`}
+            to={`/store/${gameInfo.id}/0/${gameInfo.title.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "")}`}
             style={{
               textDecoration: "none",
               width: "100%",
@@ -169,7 +207,7 @@ function ImgSlider({ gameData }) {
             maxWidth: "700px",
           }}
         >
-          <Link to={`/jeux/${gameInfo.id}`} style={{ textDecoration: "none" }}>
+          <Link to={`/store/${gameInfo.id}/0/${gameInfo.title.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "")}`} style={{ textDecoration: "none" }}>
             <h1 className="title__price" style={{ whiteSpace: "nowrap" }}>
               {gameInfo.title}
             </h1>

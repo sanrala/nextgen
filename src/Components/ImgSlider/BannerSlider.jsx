@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-
 const PROXY = "https://api.sm-artweb.fr";
 
 function BannerSlider({ gameData }) {
@@ -9,7 +8,6 @@ function BannerSlider({ gameData }) {
 
   useEffect(() => {
     if (!gameData) return;
-
     const slug = gameData.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
     setGameInfo({
       id:    gameData.id,
@@ -21,18 +19,12 @@ function BannerSlider({ gameData }) {
       buy:  gameData.url,
       slug,
     });
-
     const steamHero = `https://cdn.akamai.steamstatic.com/steam/apps/${gameData.steam_id}/library_hero.jpg`;
-
     (async () => {
       try {
         const check = await fetch(`${PROXY}/api/check-image?url=${encodeURIComponent(steamHero)}`);
         const { ok } = await check.json();
-        if (ok) {
-          setHeroUrl(steamHero);
-        } else {
-          setHeroUrl(gameData.img);
-        }
+        setHeroUrl(ok ? steamHero : gameData.img);
       } catch {
         setHeroUrl(gameData.img);
       }
@@ -46,17 +38,18 @@ function BannerSlider({ gameData }) {
       backgroundImage: `url(${heroUrl})`,
       backgroundSize: "cover",
       backgroundPosition: "center center",
-      height: "600px",
       position: "relative",
       display: "flex",
       alignItems: "center",
       overflow: "hidden",
       width: "100%",
+      minHeight: "220px",
+      aspectRatio: "16 / 5",
     }}>
       {/* Dégradé gauche */}
       <div style={{
         position: "absolute", inset: 0,
-        background: "linear-gradient(to right, rgba(0,0,0,0.92) 25%, rgba(0,0,0,0.3) 65%, transparent 100%)",
+        background: "linear-gradient(to right, rgba(0,0,0,0.92) 30%, rgba(0,0,0,0.3) 65%, transparent 100%)",
       }} />
       {/* Dégradé bas */}
       <div style={{
@@ -67,41 +60,38 @@ function BannerSlider({ gameData }) {
       {/* Contenu */}
       <div style={{
         position: "relative", zIndex: 1,
-        padding: "0 60px", maxWidth: "600px",
+        padding: "20px 28px",
+        maxWidth: "520px",
       }}>
-        {/* Badge promo */}
         {gameInfo.promo && (
           <div style={{
             display: "inline-block",
             background: "#dd163b", color: "#fff",
-            fontWeight: 700, fontSize: 13,
+            fontWeight: 700, fontSize: 12,
             padding: "3px 10px", borderRadius: 4,
-            marginBottom: 10, letterSpacing: 1,
+            marginBottom: 8, letterSpacing: 1,
           }}>
             {gameInfo.promo}
           </div>
         )}
-
         <Link to={`/store/${gameInfo.id}/0/${gameInfo.slug}`} style={{ textDecoration: "none" }}>
           <h2 style={{
-            fontFamily: "Rajdhani, sans-serif",
-            fontWeight: 800, fontSize: "clamp(18px, 3vw, 28px)",
-            color: "#fff", margin: "0 0 8px",
+            fontFamily: "Montserrat, sans-serif",
+            fontWeight: 800, fontSize: "clamp(14px, 3.5vw, 26px)",
+            color: "#fff", margin: "0 0 6px",
             textTransform: "uppercase", lineHeight: 1.2,
           }}>
             {gameInfo.title}
           </h2>
         </Link>
-
-        <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 16 }}>
-          <span style={{ color: "#fff", fontSize: "clamp(18px, 2.5vw, 24px)", fontWeight: 700 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+          <span style={{ color: "#fff", fontSize: "clamp(15px, 3vw, 22px)", fontWeight: 700 }}>
             {gameInfo.price}
           </span>
         </div>
-
         <a href={gameInfo.buy} target="_blank" rel="noreferrer"
           className="nk-btn nk-btn-rounded nk-btn-color-main-1"
-          style={{ fontSize: 13, padding: "8px 24px" }}>
+          style={{ fontSize: 12, padding: "7px 18px" }}>
           🛒 Acheter
         </a>
       </div>

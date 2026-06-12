@@ -30339,3 +30339,52 @@ div.burgerNav > ul {
   width: 100%;
   display: block;
 }
+.f-banner {
+  display: block;
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.f-banner img {
+  width: 100%;
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .f-banner {
+    margin-left: -15px;
+    margin-right: -15px;
+    width: calc(100% + 30px);
+  }
+}.f-banner {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+}
+
+.f-banner img {
+  width: 100%;
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .f-banner {
+    margin-left: calc(-1 * var(--bs-gutter-x, 15px));
+    width: 100vw;
+  }
+}
+.f-banner {
+  display: block;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
+.f-banner img {
+  width: 100%;
+  display: block;
+}
