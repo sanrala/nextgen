@@ -54,7 +54,7 @@ function ImgSlider({ gameData }) {
           const { initializeApp, getApps } = await import("firebase/app");
           const { getFirestore, doc, getDoc } = await import("firebase/firestore");
           const firebaseConfig = {
-            apiKey: "AIzaSyBNmVRdmNm0Sh3mfVp7lJbEGxlGEa2jm18",
+            apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
             authDomain: "nextgen-d1ff5.firebaseapp.com",
             projectId: "nextgen-d1ff5",
           };
