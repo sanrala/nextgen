@@ -4,7 +4,7 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAMBtAR_imWQv_Bnj1L9AK4QWQIryXIgEU",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: "nextgen-d1ff5.firebaseapp.com",
   databaseURL: "https://nextgen-d1ff5-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "nextgen-d1ff5",
