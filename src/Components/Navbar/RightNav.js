@@ -4,9 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser, logout } from "./../../features/userSlice";
 import { auth } from "./../../Firebase";
-import { Avatar } from "@mui/material";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
 import { useAdmin } from "../../useAdmin";
 
 const BACKEND_URL = "https://api.sm-artweb.fr";
@@ -186,7 +183,6 @@ const ResultPrice = styled.div`
 `;
 
 const RightNav = ({ open, setOpen }) => {
-  const [anchorEl, setAnchorEl]           = useState(null);
   const [searchQuery, setSearchQuery]     = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [catalog, setCatalog]             = useState(null);
@@ -299,18 +295,48 @@ const RightNav = ({ open, setOpen }) => {
 
         <li>
           {user ? (
-            <>
-              <Avatar
-                src={auth.currentUser?.photoURL}
-                onClick={(e) => setAnchorEl(e.currentTarget)}
-                style={{ cursor: "pointer", border: "2px solid rgba(231,76,60,0.5)", marginLeft: "10px" }}
-              />
-              <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
-                <MenuItem><Link to="/profile">Profil</Link></MenuItem>
-                <MenuItem><Link to="/settings">Paramètres</Link></MenuItem>
-                <MenuItem onClick={handleSignOut}>Déconnexion</MenuItem>
-              </Menu>
-            </>
+            <div style={{ display:"flex", flexDirection:"column", gap:6, padding:"8px 0" }}>
+              {/* Avatar + nom */}
+              <Link
+                to={`/profile/${auth.currentUser?.uid}`}
+                onClick={() => setOpen(false)}
+                style={{
+                  display:"flex", alignItems:"center", gap:10,
+                  padding:"10px 16px", borderRadius:10,
+                  background:"rgba(221,22,59,0.06)",
+                  border:"1px solid rgba(221,22,59,0.2)",
+                  textDecoration:"none",
+                }}
+              >
+                <img
+                  src={auth.currentUser?.photoURL || "https://zupimages.net/up/24/22/cib6.png"}
+                  alt="avatar"
+                  style={{ width:38, height:38, borderRadius:8, objectFit:"cover", border:"2px solid rgba(221,22,59,0.5)", flexShrink:0 }}
+                />
+                <div>
+                  <div style={{ color:"#fff", fontSize:13, fontWeight:700, fontFamily:"Montserrat,sans-serif" }}>
+                    {auth.currentUser?.displayName || "Mon profil"}
+                  </div>
+                  <div style={{ color:"#dd163b", fontSize:10, fontFamily:"Montserrat,sans-serif", letterSpacing:"0.08em" }}>
+                    VOIR MON PROFIL →
+                  </div>
+                </div>
+              </Link>
+              {/* Déconnexion */}
+              <button
+                onClick={handleSignOut}
+                style={{
+                  background:"rgba(255,255,255,0.03)",
+                  border:"1px solid rgba(255,255,255,0.08)",
+                  borderRadius:8, color:"#888", cursor:"pointer",
+                  fontSize:12, fontFamily:"Montserrat,sans-serif",
+                  padding:"8px 16px", textAlign:"left",
+                  letterSpacing:"0.05em",
+                }}
+              >
+                🚪 Déconnexion
+              </button>
+            </div>
           ) : (
             <Link to="/Login" onClick={() => setOpen(false)}>Connexion</Link>
           )}

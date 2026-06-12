@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 import Burger from "./Burger";
 import SearchBar from "./SearchBar";
 import { useAdmin } from "../../useAdmin";
-import { signOut } from "firebase/auth";
-import { auth } from "../../Firebase";
+// import { signOut } from "firebase/auth";
+// import { auth } from "../../Firebase";
 
 function NavBar() {
   const { user, isAdmin } = useAdmin();
@@ -73,13 +73,14 @@ function NavBar() {
                         textDecoration:"none"
                       }}>Admin</Link>
                     )}
-                    <img
-                      src={user.photoURL || "https://zupimages.net/up/24/22/cib6.png"}
-                      alt="avatar"
-                      style={{ width:32, height:32, borderRadius:"50%", border:"2px solid rgba(221,22,59,0.5)", cursor:"pointer", objectFit:"cover" }}
-                      onClick={() => signOut(auth)}
-                      title="Se déconnecter"
-                    />
+                    <Link to={`/profile/${user.uid}`} style={{ display:"inline-block", lineHeight:0 }}>
+                      <img
+                        src={user.photoURL || "https://zupimages.net/up/24/22/cib6.png"}
+                        alt="avatar"
+                        style={{ width:32, height:32, borderRadius:8, border:"2px solid rgba(221,22,59,0.5)", cursor:"pointer", objectFit:"cover" }}
+                        title="Mon profil"
+                      />
+                    </Link>
                   </div>
                 ) : (
                   <Link to="/Login">Connexion</Link>
