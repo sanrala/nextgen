@@ -1,90 +1,233 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useSearchParams } from "react-router-dom";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { onAuthStateChanged, updateProfile } from "firebase/auth";
 import { db, auth } from "../../Firebase";
 import Header from "../Header/Header";
+import { useAdmin } from "../../useAdmin";
 import Footer from "../Footer/Footer";
-import { GAMING_AVATARS } from "./avatars";
+import { GAMING_AVATARS, ADMIN_AVATAR } from "./avatars";
 
-// ── Séparateur (même que GameDetail) ─────────────────────────────────────────
-function Separator({ label }) {
-  return (
-    <div style={{ display:"flex", alignItems:"center", gap:18, margin:"40px 0 24px" }}>
-      <div style={{ width:5, height:28, background:"#dd163b", borderRadius:3, flexShrink:0 }} />
-      <div style={{ width:32, height:3, background:"#dd163b", borderRadius:2, flexShrink:0 }} />
-      {label && (
-        <span style={{
-          fontFamily:"Montserrat,sans-serif", fontSize:"clamp(13px,3.5vw,20px)",
-          color:"#ccc", letterSpacing:"clamp(1px,0.6vw,3px)",
-          textTransform:"uppercase", fontWeight:800,
-        }}>{label}</span>
-      )}
-      <div style={{ flex:1, height:1, background:"linear-gradient(to right, rgba(221,22,59,0.3), transparent)" }} />
-    </div>
-  );
-}
+const CSS = `
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Montserrat:wght@400;600;700;900&display=swap');
 
-// ── Avatar picker ─────────────────────────────────────────────────────────────
-function AvatarPicker({ current, onSelect }) {
-  return (
-    <div style={{
-      display:"grid",
-      gridTemplateColumns:"repeat(auto-fill, minmax(72px, 1fr))",
-      gap:10, marginTop:16,
-    }}>
-      {GAMING_AVATARS.map(av => (
-        <div
-          key={av.id}
-          onClick={() => onSelect(av)}
-          title={av.name}
-          style={{
-            cursor:"pointer",
-            borderRadius:10,
-            border: current === av.url
-              ? "2px solid #dd163b"
-              : "2px solid rgba(255,255,255,0.06)",
-            background: current === av.url
-              ? "rgba(221,22,59,0.12)"
-              : "rgba(255,255,255,0.03)",
-            padding:6,
-            display:"flex", flexDirection:"column", alignItems:"center", gap:4,
-            transition:"all 0.18s",
-          }}
-        >
-          <img
-            src={av.url} alt={av.name}
-            style={{ width:48, height:48, borderRadius:8, objectFit:"cover" }}
-          />
-          <span style={{
-            fontSize:9, color: current === av.url ? "#fff" : "#666",
-            fontFamily:"Montserrat,sans-serif", textAlign:"center",
-            lineHeight:1.2, fontWeight:600,
-          }}>{av.name}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
+  .profile-page { background: #0a0a0f; min-height: 100vh; color: #fff; }
 
-// ── Page principale ───────────────────────────────────────────────────────────
+  .profile-hero {
+    position: relative;
+    height: 320px;
+    background: #0a0a0f;
+    overflow: hidden;
+  }
+  .profile-hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(221,22,59,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(221,22,59,0.07) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .profile-hero-glow {
+    position: absolute;
+    bottom: -80px; left: 50%; transform: translateX(-50%);
+    width: 500px; height: 300px;
+    background: radial-gradient(ellipse, rgba(221,22,59,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .profile-hero-scan {
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      to bottom, transparent 0, transparent 3px,
+      rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px
+    );
+    pointer-events: none;
+  }
+  .profile-hero-corner {
+    position: absolute;
+    width: 24px; height: 24px;
+    border-color: rgba(221,22,59,0.4);
+    border-style: solid;
+  }
+  .profile-hero-corner.tl { top:24px; left:24px; border-width: 2px 0 0 2px; }
+  .profile-hero-corner.tr { top:24px; right:24px; border-width: 2px 2px 0 0; }
+  .profile-hero-corner.bl { bottom:24px; left:24px; border-width: 0 0 2px 2px; }
+  .profile-hero-corner.br { bottom:24px; right:24px; border-width: 0 2px 2px 0; }
+
+  .profile-card-wrap {
+    max-width: 900px; margin: -80px auto 0;
+    padding: 0 20px 60px; position: relative; z-index: 2;
+  }
+
+  .profile-card {
+    background: rgba(14,14,20,0.95);
+    border: 1px solid rgba(221,22,59,0.2);
+    border-radius: 16px;
+    padding: 32px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04) inset;
+  }
+
+  .profile-identity {
+    display: flex; align-items: flex-start; gap: 24px; flex-wrap: wrap;
+  }
+  .profile-avatar-frame {
+    position: relative; flex-shrink: 0;
+  }
+  .profile-avatar-img {
+    width: 100px; height: 100px;
+    border-radius: 12px;
+    border: 2px solid rgba(221,22,59,0.6);
+    object-fit: cover;
+    display: block;
+    box-shadow: 0 0 0 4px rgba(221,22,59,0.08), 0 8px 24px rgba(0,0,0,0.5);
+  }
+  .profile-avatar-badge {
+    position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+    background: #dd163b; color: #fff;
+    font-family: Montserrat, sans-serif; font-size: 9px; font-weight: 800;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 20px; white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(221,22,59,0.4);
+  }
+  .profile-meta { flex: 1; min-width: 0; padding-top: 4px; }
+  .profile-name {
+    font-family: Montserrat, sans-serif; font-weight: 900;
+    font-size: clamp(22px, 4vw, 34px); color: #fff;
+    margin: 0 0 6px; line-height: 1.1; letter-spacing: -0.02em;
+  }
+  .profile-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: Montserrat, sans-serif; font-size: 11px; font-weight: 700;
+    color: #dd163b; letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .profile-tag::before {
+    content: ''; display: block;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #dd163b;
+    box-shadow: 0 0 6px #dd163b;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .profile-stats {
+    display: flex; gap: 20px; flex-wrap: wrap; margin-top: 4px;
+  }
+  .profile-stat {
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .profile-stat-val {
+    font-family: Rajdhani, sans-serif; font-size: 20px; font-weight: 700; color: #fff;
+  }
+  .profile-stat-label {
+    font-family: Montserrat, sans-serif; font-size: 10px; color: #555;
+    font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  .profile-edit-btn {
+    margin-left: auto; flex-shrink: 0;
+    background: rgba(221,22,59,0.1);
+    border: 1px solid rgba(221,22,59,0.35);
+    color: #fff; border-radius: 8px;
+    padding: 10px 18px; cursor: pointer;
+    font-family: Montserrat, sans-serif; font-weight: 700;
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .profile-edit-btn:hover { background: rgba(221,22,59,0.2); border-color: #dd163b; }
+
+  .profile-divider {
+    height: 1px;
+    background: linear-gradient(to right, rgba(221,22,59,0.3), rgba(255,255,255,0.05), transparent);
+    margin: 28px 0;
+  }
+
+  /* Edit panel */
+  .edit-panel {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(221,22,59,0.15);
+    border-radius: 12px; padding: 24px; margin-top: 24px;
+  }
+  .edit-section-title {
+    font-family: Montserrat, sans-serif; font-size: 10px; font-weight: 800;
+    color: #555; letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .edit-input {
+    width: 100%; max-width: 360px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; color: #fff; font-size: 15px;
+    padding: 11px 14px; outline: none;
+    font-family: Montserrat, sans-serif; font-weight: 600;
+    box-sizing: border-box; transition: border-color 0.2s;
+  }
+  .edit-input:focus { border-color: rgba(221,22,59,0.5); }
+
+  .avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px; margin-top: 12px;
+  }
+  .avatar-item {
+    cursor: pointer; border-radius: 10px; padding: 8px 6px;
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+    border: 2px solid rgba(255,255,255,0.05);
+    background: rgba(255,255,255,0.02);
+    transition: all 0.15s;
+  }
+  .avatar-item:hover { border-color: rgba(221,22,59,0.4); background: rgba(221,22,59,0.06); transform: translateY(-2px); }
+  .avatar-item.selected { border-color: #dd163b; background: rgba(221,22,59,0.12); }
+  .avatar-item img { width: 52px; height: 52px; border-radius: 8px; object-fit: cover; display: block; }
+  .avatar-item span {
+    font-size: 9px; color: #888; font-family: Montserrat, sans-serif;
+    font-weight: 600; text-align: center; line-height: 1.2;
+  }
+  .avatar-item.selected span { color: #fff; }
+
+  .edit-actions { display: flex; gap: 10px; margin-top: 20px; }
+  .btn-save {
+    background: #dd163b; border: none; border-radius: 8px;
+    color: #fff; font-family: Montserrat, sans-serif; font-weight: 800;
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 12px 28px; cursor: pointer; transition: opacity 0.2s;
+  }
+  .btn-save:disabled { opacity: 0.5; cursor: default; }
+  .btn-cancel {
+    background: transparent; border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; color: #666; font-family: Montserrat, sans-serif;
+    font-size: 11px; padding: 12px 20px; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-cancel:hover { border-color: rgba(255,255,255,0.2); color: #aaa; }
+
+  .save-msg {
+    margin-top: 12px; padding: 10px 14px;
+    background: rgba(39,174,96,0.1); border: 1px solid rgba(39,174,96,0.25);
+    border-radius: 8px; color: #27ae60;
+    font-family: Montserrat, sans-serif; font-size: 13px;
+  }
+
+  @media (max-width: 600px) {
+    .profile-card { padding: 20px 16px; }
+    .profile-identity { gap: 16px; }
+    .profile-edit-btn { margin-left: 0; width: 100%; justify-content: center; }
+  }
+`;
+
 export default function ProfilePage() {
-  const { uid }    = useParams();
-  const navigate   = useNavigate();
+  const { uid } = useParams();
+  const { isAdmin: viewerIsAdmin } = useAdmin();
+  const [searchParams] = useSearchParams();
+  const [currentUser, setCurrentUser] = useState(null);
+  const [profileData, setProfileData] = useState(null);
+  const [loading,     setLoading]     = useState(true);
+  const [isOwner,     setIsOwner]     = useState(false);
+  const [editMode,    setEditMode]    = useState(searchParams.get('edit') === '1');
+  const [editPseudo,  setEditPseudo]  = useState("");
+  const [editAvatar,  setEditAvatar]  = useState("");
+  const [saving,      setSaving]      = useState(false);
+  const [saveMsg,     setSaveMsg]     = useState("");
 
-  const [currentUser,  setCurrentUser]  = useState(null);
-  const [profileData,  setProfileData]  = useState(null);
-  const [loading,      setLoading]      = useState(true);
-  const [isOwner,      setIsOwner]      = useState(false);
-
-  // Edit state
-  const [editMode,     setEditMode]     = useState(false);
-  const [editPseudo,   setEditPseudo]   = useState("");
-  const [editAvatar,   setEditAvatar]   = useState("");
-  const [saving,       setSaving]       = useState(false);
-  const [saveMsg,      setSaveMsg]      = useState("");
-
-  // Charge auth
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, u => {
       setCurrentUser(u);
@@ -93,7 +236,6 @@ export default function ProfilePage() {
     return () => unsub();
   }, [uid]);
 
-  // Charge profil Firebase
   useEffect(() => {
     if (!uid) return;
     (async () => {
@@ -103,31 +245,29 @@ export default function ProfilePage() {
         if (snap.exists()) {
           setProfileData(snap.data());
         } else {
-          // Profil pas encore créé — données par défaut depuis auth
           const u = auth.currentUser;
-          if (u && u.uid === uid) {
+          if (u?.uid === uid) {
+            // Recharge pour avoir displayName à jour après inscription email
+            try { await u.reload(); } catch {}
+            const fresh = auth.currentUser;
             setProfileData({
-              displayName: u.displayName || "Joueur",
-              photoURL: u.photoURL || GAMING_AVATARS[0].url,
+              displayName: fresh?.displayName || u.displayName || "",
+              photoURL: fresh?.photoURL || u.photoURL || GAMING_AVATARS[0].url,
               uid,
             });
           } else {
             setProfileData(null);
           }
         }
-      } catch(e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
+      } catch(e) { console.error(e); }
+      finally { setLoading(false); }
     })();
   }, [uid]);
 
   const handleEditOpen = () => {
     setEditPseudo(profileData?.displayName || "");
-    setEditAvatar(profileData?.photoURL    || "");
-    setEditMode(true);
-    setSaveMsg("");
+    setEditAvatar(profileData?.photoURL    || GAMING_AVATARS[0].url);
+    setEditMode(true); setSaveMsg("");
   };
 
   const handleSave = async () => {
@@ -137,35 +277,26 @@ export default function ProfilePage() {
       const updated = {
         uid,
         displayName: editPseudo.trim(),
-        photoURL:    editAvatar || GAMING_AVATARS[0].url,
-        updatedAt:   new Date().toISOString(),
+        photoURL: editAvatar || GAMING_AVATARS[0].url,
+        updatedAt: new Date().toISOString(),
       };
       await setDoc(doc(db, "users", uid), updated, { merge: true });
-
-      // Met aussi à jour le profil Firebase Auth
-      if (currentUser && currentUser.uid === uid) {
-        await updateProfile(currentUser, {
-          displayName: updated.displayName,
-          photoURL:    updated.photoURL,
-        });
+      if (currentUser?.uid === uid) {
+        await updateProfile(currentUser, { displayName: updated.displayName, photoURL: updated.photoURL });
       }
-
       setProfileData(updated);
       setEditMode(false);
-      setSaveMsg("✅ Profil mis à jour !");
+      setSaveMsg("Profil mis à jour !");
       setTimeout(() => setSaveMsg(""), 3000);
-    } catch(e) {
-      setSaveMsg("Erreur : " + e.message);
-    } finally {
-      setSaving(false);
-    }
+    } catch(e) { setSaveMsg("Erreur : " + e.message); }
+    finally { setSaving(false); }
   };
 
   if (loading) return (
     <>
       <Header />
       <div style={{ display:"flex", justifyContent:"center", alignItems:"center", height:"60vh" }}>
-        <div style={{ width:40, height:40, border:"3px solid #dd163b", borderTopColor:"transparent", borderRadius:"50%", animation:"spin 0.8s linear infinite" }} />
+        <div style={{ width:36, height:36, border:"3px solid #dd163b", borderTopColor:"transparent", borderRadius:"50%", animation:"spin 0.8s linear infinite" }} />
         <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
       </div>
     </>
@@ -174,220 +305,162 @@ export default function ProfilePage() {
   if (!profileData) return (
     <>
       <Header />
-      <div style={{ textAlign:"center", padding:"80px 20px", color:"#666", fontFamily:"Montserrat,sans-serif" }}>
-        <div style={{ fontSize:48, marginBottom:16 }}>👤</div>
-        <p>Profil introuvable.</p>
-        <Link to="/" style={{ color:"#dd163b" }}>Retour à l'accueil</Link>
+      <div style={{ textAlign:"center", padding:"100px 20px", fontFamily:"Montserrat,sans-serif" }}>
+        <div style={{ fontSize:52, marginBottom:16 }}>👤</div>
+        <p style={{ color:"#555", marginBottom:20 }}>Ce profil n'existe pas.</p>
+        <Link to="/" style={{ color:"#dd163b", fontWeight:700 }}>Retour à l'accueil</Link>
       </div>
       <Footer />
     </>
   );
 
-  const avatar      = profileData.photoURL || GAMING_AVATARS[0].url;
-  const displayName = profileData.displayName || "Joueur";
-  const avatarObj   = GAMING_AVATARS.find(a => a.url === avatar);
+  const avatar    = profileData.photoURL    || GAMING_AVATARS[0].url;
+  const name      = profileData.displayName || "Joueur";
+  const avatarObj = [ADMIN_AVATAR, ...GAMING_AVATARS].find(a => a.url === avatar);
 
   return (
-    <div style={{ background:"#0d0d0d", minHeight:"100vh" }}>
+    <div className="profile-page">
+      <style>{CSS}</style>
       <Header />
 
-      {/* Hero banner */}
-      <div style={{
-        position:"relative", height:260,
-        background:"linear-gradient(135deg, #0d0d0d 0%, #1a0808 50%, #0d0d0d 100%)",
-        overflow:"hidden",
-      }}>
-        {/* Grille déco */}
+      {/* Hero */}
+      <div className="profile-hero">
+        <div className="profile-hero-grid" />
+        <div className="profile-hero-glow" />
+        <div className="profile-hero-scan" />
+        <div className="profile-hero-corner tl" />
+        <div className="profile-hero-corner tr" />
+        <div className="profile-hero-corner bl" />
+        <div className="profile-hero-corner br" />
+        {/* Titre dans le hero */}
         <div style={{
-          position:"absolute", inset:0, opacity:0.06,
-          backgroundImage:"linear-gradient(rgba(221,22,59,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(221,22,59,0.5) 1px, transparent 1px)",
-          backgroundSize:"40px 40px",
-        }} />
-        {/* Lueur */}
-        <div style={{
-          position:"absolute", bottom:-60, left:"50%", transform:"translateX(-50%)",
-          width:300, height:300,
-          background:"radial-gradient(circle, rgba(221,22,59,0.15) 0%, transparent 70%)",
-        }} />
+          position:"absolute", top:"50%", left:"50%",
+          transform:"translate(-50%,-50%)",
+          textAlign:"center", pointerEvents:"none",
+        }}>
+          <div style={{
+            fontFamily:"Montserrat,sans-serif", fontSize:10, fontWeight:800,
+            color:"rgba(221,22,59,0.6)", letterSpacing:"0.3em",
+            textTransform:"uppercase", marginBottom:8,
+          }}>NEXTGEN GAMING</div>
+          <div style={{
+            fontFamily:"Montserrat,sans-serif", fontSize:"clamp(28px,5vw,48px)",
+            fontWeight:900, color:"rgba(255,255,255,0.06)",
+            letterSpacing:"-0.03em", lineHeight:1,
+          }}>PROFIL JOUEUR</div>
+        </div>
       </div>
 
-      <div className="container" style={{ position:"relative" }}>
+      {/* Carte principale */}
+      <div className="profile-card-wrap">
+        <div className="profile-card">
 
-        {/* Avatar flottant */}
-        <div style={{
-          display:"flex", alignItems:"flex-end", gap:24,
-          marginTop:-70, marginBottom:32, flexWrap:"wrap",
-        }}>
-          <div style={{ position:"relative", flexShrink:0 }}>
-            <div style={{
-              width:120, height:120, borderRadius:16,
-              border:"3px solid #dd163b",
-              background:"#1a1a1a",
-              boxShadow:"0 8px 32px rgba(221,22,59,0.3)",
-              overflow:"hidden",
-            }}>
-              <img src={avatar} alt={displayName} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+          {/* Identité */}
+          <div className="profile-identity">
+            <div className="profile-avatar-frame">
+              <img src={avatar} alt={name} className="profile-avatar-img" />
+              {avatarObj && <div className="profile-avatar-badge">{avatarObj.name}</div>}
             </div>
-            {/* Badge classe avatar */}
-            {avatarObj && (
-              <div style={{
-                position:"absolute", bottom:-10, left:"50%", transform:"translateX(-50%)",
-                background:"#dd163b", color:"#fff", fontSize:9, fontWeight:800,
-                fontFamily:"Montserrat,sans-serif", letterSpacing:"0.1em",
-                padding:"3px 10px", borderRadius:20, whiteSpace:"nowrap",
-                textTransform:"uppercase",
-              }}>
-                {avatarObj.name}
+
+            <div className="profile-meta">
+              <h1 className="profile-name">{name}</h1>
+              <div className="profile-tag">Membre NextGen Gaming</div>
+              <div className="profile-stats">
+                <div className="profile-stat">
+                  <span className="profile-stat-val">{avatarObj?.name || "—"}</span>
+                  <span className="profile-stat-label">Classe</span>
+                </div>
+                <div className="profile-stat">
+                  <span className="profile-stat-val">Actif</span>
+                  <span className="profile-stat-label">Statut</span>
+                </div>
               </div>
+            </div>
+
+            {isOwner && !editMode && (
+              <button className="profile-edit-btn" onClick={handleEditOpen}>
+                <span>✏️</span> Modifier
+              </button>
             )}
           </div>
 
-          <div style={{ flex:1, minWidth:0, paddingBottom:8 }}>
-            <h1 style={{
-              fontFamily:"Montserrat,sans-serif", fontWeight:900,
-              fontSize:"clamp(20px,4vw,32px)", color:"#fff", margin:"0 0 6px",
-            }}>{displayName}</h1>
-            <div style={{ color:"#555", fontSize:12, fontFamily:"Montserrat,sans-serif" }}>
-              Membre NextGen Gaming
-            </div>
-          </div>
+          {saveMsg && <div className="save-msg" style={{ marginTop:16 }}>✅ {saveMsg}</div>}
 
-          {isOwner && (
-            <button
-              onClick={handleEditOpen}
-              style={{
-                background:"rgba(221,22,59,0.12)",
-                border:"1px solid rgba(221,22,59,0.4)",
-                color:"#fff", borderRadius:8,
-                padding:"10px 20px", cursor:"pointer",
-                fontFamily:"Montserrat,sans-serif", fontWeight:700,
-                fontSize:12, letterSpacing:"0.08em", textTransform:"uppercase",
-                alignSelf:"flex-end",
-              }}
-            >
-              ✏️ Modifier le profil
-            </button>
+          {/* Panneau édition */}
+          {editMode && isOwner && (
+            <div className="edit-panel">
+              <div className="profile-divider" style={{ marginTop:0 }} />
+
+              {/* Pseudo */}
+              <div style={{ marginBottom:24 }}>
+                <div className="edit-section-title">Pseudo</div>
+                <input
+                  className="edit-input"
+                  value={editPseudo}
+                  onChange={e => setEditPseudo(e.target.value)}
+                  maxLength={24}
+                  placeholder="Ton pseudo..."
+                />
+              </div>
+
+              {/* Avatars */}
+              <div>
+                <div className="edit-section-title">
+                  Choisir un avatar — {viewerIsAdmin ? GAMING_AVATARS.length + 1 : GAMING_AVATARS.length} personnages{viewerIsAdmin ? " (+ exclusif admin)" : ""}
+                </div>
+                <div className="avatar-grid">
+                  {(viewerIsAdmin ? [ADMIN_AVATAR, ...GAMING_AVATARS] : GAMING_AVATARS).map(av => (
+                    <div
+                      key={av.id}
+                      className={`avatar-item${editAvatar === av.url ? " selected" : ""}`}
+                      onClick={() => setEditAvatar(av.url)}
+                      title={av.name}
+                    >
+                      <img src={av.url} alt={av.name} />
+                      <span>{av.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="edit-actions">
+                <button className="btn-save" onClick={handleSave} disabled={saving || !editPseudo.trim()}>
+                  {saving ? "Sauvegarde..." : "Enregistrer"}
+                </button>
+                <button className="btn-cancel" onClick={() => setEditMode(false)}>
+                  Annuler
+                </button>
+              </div>
+            </div>
           )}
-        </div>
 
-        {saveMsg && (
-          <div style={{
-            background:"rgba(39,174,96,0.1)", border:"1px solid rgba(39,174,96,0.3)",
-            borderRadius:8, padding:"10px 16px", color:"#27ae60",
-            fontFamily:"Montserrat,sans-serif", fontSize:13, marginBottom:20,
-          }}>{saveMsg}</div>
-        )}
+          <div className="profile-divider" />
 
-        {/* ── Panneau édition ── */}
-        {editMode && isOwner && (
-          <div style={{
-            background:"rgba(255,255,255,0.03)",
-            border:"1px solid rgba(221,22,59,0.2)",
-            borderRadius:14, padding:24, marginBottom:32,
-          }}>
-            <div style={{
-              fontFamily:"Montserrat,sans-serif", fontWeight:800,
-              fontSize:14, color:"#fff", letterSpacing:"0.1em",
-              textTransform:"uppercase", marginBottom:20,
-            }}>
-              ✏️ Modifier le profil
-            </div>
-
-            {/* Pseudo */}
-            <div style={{ marginBottom:20 }}>
-              <label style={{
-                display:"block", fontSize:11, color:"#666",
-                fontFamily:"Montserrat,sans-serif", fontWeight:700,
-                letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:8,
+          {/* Section infos bas */}
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(160px,1fr))", gap:12 }}>
+            {[
+              { icon:"🎮", label:"Plateforme", val:"NextGen Gaming" },
+              { icon:"🏆", label:"Rang",       val:"Joueur"         },
+              { icon:"⚡", label:"Activité",   val:"En ligne"       },
+            ].map(item => (
+              <div key={item.label} style={{
+                background:"rgba(255,255,255,0.02)",
+                border:"1px solid rgba(255,255,255,0.06)",
+                borderRadius:10, padding:"14px 16px",
+                display:"flex", alignItems:"center", gap:12,
               }}>
-                Pseudo
-              </label>
-              <input
-                value={editPseudo}
-                onChange={e => setEditPseudo(e.target.value)}
-                maxLength={24}
-                style={{
-                  width:"100%", maxWidth:320,
-                  background:"rgba(255,255,255,0.05)",
-                  border:"1px solid rgba(255,255,255,0.12)",
-                  borderRadius:8, color:"#fff", fontSize:15,
-                  padding:"10px 14px", outline:"none",
-                  fontFamily:"Montserrat,sans-serif", boxSizing:"border-box",
-                }}
-              />
-            </div>
-
-            {/* Choix avatar */}
-            <div>
-              <label style={{
-                display:"block", fontSize:11, color:"#666",
-                fontFamily:"Montserrat,sans-serif", fontWeight:700,
-                letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:4,
-              }}>
-                Avatar ({GAMING_AVATARS.length} personnages disponibles)
-              </label>
-              <AvatarPicker current={editAvatar} onSelect={av => setEditAvatar(av.url)} />
-            </div>
-
-            {/* Boutons */}
-            <div style={{ display:"flex", gap:12, marginTop:24 }}>
-              <button
-                onClick={handleSave}
-                disabled={saving || !editPseudo.trim()}
-                style={{
-                  background:"#dd163b", border:"none", borderRadius:8,
-                  color:"#fff", fontFamily:"Montserrat,sans-serif",
-                  fontWeight:700, fontSize:12, letterSpacing:"0.08em",
-                  textTransform:"uppercase", padding:"11px 28px",
-                  cursor: saving ? "default" : "pointer",
-                  opacity: saving ? 0.6 : 1,
-                }}
-              >
-                {saving ? "Sauvegarde..." : "💾 Enregistrer"}
-              </button>
-              <button
-                onClick={() => setEditMode(false)}
-                style={{
-                  background:"rgba(255,255,255,0.05)",
-                  border:"1px solid rgba(255,255,255,0.1)",
-                  borderRadius:8, color:"#888",
-                  fontFamily:"Montserrat,sans-serif", fontSize:12,
-                  padding:"11px 20px", cursor:"pointer",
-                }}
-              >
-                Annuler
-              </button>
-            </div>
+                <span style={{ fontSize:22, flexShrink:0 }}>{item.icon}</span>
+                <div>
+                  <div style={{ fontSize:10, color:"#444", fontFamily:"Montserrat,sans-serif", fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase" }}>{item.label}</div>
+                  <div style={{ fontSize:14, color:"#ccc", fontFamily:"Montserrat,sans-serif", fontWeight:600, marginTop:2 }}>{item.val}</div>
+                </div>
+              </div>
+            ))}
           </div>
-        )}
 
-        {/* ── Infos ── */}
-        <Separator label="Profil du joueur" />
-        <div style={{
-          display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(160px,1fr))",
-          gap:14, marginBottom:40,
-        }}>
-          {[
-            { label:"Pseudo",   value: displayName },
-            { label:"Classe",   value: avatarObj?.name || "—" },
-            { label:"Statut",   value: "Membre" },
-          ].map(item => (
-            <div key={item.label} style={{
-              background:"rgba(255,255,255,0.03)",
-              border:"1px solid rgba(255,255,255,0.07)",
-              borderRadius:10, padding:"16px 18px",
-            }}>
-              <div style={{ fontSize:10, color:"#555", fontFamily:"Montserrat,sans-serif", fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:6 }}>
-                {item.label}
-              </div>
-              <div style={{ fontSize:15, color:"#fff", fontFamily:"Montserrat,sans-serif", fontWeight:700 }}>
-                {item.value}
-              </div>
-            </div>
-          ))}
         </div>
-
       </div>
+
       <Footer />
     </div>
   );

@@ -1,9 +1,11 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser, logout } from "./../../features/userSlice";
-import { auth } from "./../../Firebase";
+import { auth, db } from "./../../Firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { GAMING_AVATARS } from "../Profile/avatars";
 import { useAdmin } from "../../useAdmin";
 
 const BACKEND_URL = "https://api.sm-artweb.fr";
@@ -193,6 +195,27 @@ const RightNav = ({ open, setOpen }) => {
   const navigate                          = useNavigate();
   const { isAdmin }                       = useAdmin();
 
+  const [profileAvatar, setProfileAvatar] = useState(null);
+  const [profileName,   setProfileName]   = useState(null);
+
+  useEffect(() => {
+    if (!user?.uid) return;
+    (async () => {
+      try {
+        const snap = await getDoc(doc(db, "users", user.uid));
+        if (snap.exists()) {
+          setProfileAvatar(snap.data().photoURL || GAMING_AVATARS[0].url);
+          setProfileName(snap.data().displayName || null);
+        } else {
+          setProfileAvatar(GAMING_AVATARS[0].url);
+        }
+      } catch { setProfileAvatar(GAMING_AVATARS[0].url); }
+    })();
+  }, [user?.uid]);
+
+  const avatarSrc  = profileAvatar || GAMING_AVATARS[0].url;
+  const displayName = profileName || user?.displayName || "Mon profil";
+
   const handleSignOut = () => { auth.signOut().then(() => dispatch(logout())); };
 
   const fetchCatalog = useCallback(async () => {
@@ -293,52 +316,85 @@ const RightNav = ({ open, setOpen }) => {
         <li><Link to="/Catalogues?catFilter=topseller" onClick={() => setOpen(false)}>Populaires</Link></li>
         <li><Link to="/Catalogues?catFilter=preorder" onClick={() => setOpen(false)}>Précommandes</Link></li>
 
-        <li>
+        <li style={{ padding:"12px 16px", borderTop:"1px solid rgba(255,255,255,0.06)", marginTop:8, display:"none" }} className="d-lg-none">
           {user ? (
-            <div style={{ display:"flex", flexDirection:"column", gap:6, padding:"8px 0" }}>
-              {/* Avatar + nom */}
+            <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+
+              {/* Carte profil */}
               <Link
-                to={`/profile/${auth.currentUser?.uid}`}
+                to={`/profile/${user?.uid}`}
                 onClick={() => setOpen(false)}
                 style={{
-                  display:"flex", alignItems:"center", gap:10,
-                  padding:"10px 16px", borderRadius:10,
-                  background:"rgba(221,22,59,0.06)",
-                  border:"1px solid rgba(221,22,59,0.2)",
+                  display:"flex", alignItems:"center", gap:14,
+                  padding:"14px 16px", borderRadius:12,
+                  background:"linear-gradient(135deg, rgba(221,22,59,0.12), rgba(221,22,59,0.04))",
+                  border:"1px solid rgba(221,22,59,0.25)",
                   textDecoration:"none",
+                  transition:"all 0.2s",
                 }}
               >
                 <img
-                  src={auth.currentUser?.photoURL || "https://zupimages.net/up/24/22/cib6.png"}
+                  src={avatarSrc}
                   alt="avatar"
-                  style={{ width:38, height:38, borderRadius:8, objectFit:"cover", border:"2px solid rgba(221,22,59,0.5)", flexShrink:0 }}
+                  style={{ width:46, height:46, borderRadius:10, objectFit:"cover", border:"2px solid rgba(221,22,59,0.6)", flexShrink:0, boxShadow:"0 4px 12px rgba(221,22,59,0.3)" }}
                 />
-                <div>
-                  <div style={{ color:"#fff", fontSize:13, fontWeight:700, fontFamily:"Montserrat,sans-serif" }}>
-                    {auth.currentUser?.displayName || "Mon profil"}
+                <div style={{ minWidth:0 }}>
+                  <div style={{ color:"#fff", fontSize:14, fontWeight:800, fontFamily:"Montserrat,sans-serif", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>
+                    {displayName}
                   </div>
-                  <div style={{ color:"#dd163b", fontSize:10, fontFamily:"Montserrat,sans-serif", letterSpacing:"0.08em" }}>
+                  <div style={{ color:"#dd163b", fontSize:10, fontFamily:"Montserrat,sans-serif", letterSpacing:"0.12em", fontWeight:700, marginTop:3 }}>
                     VOIR MON PROFIL →
                   </div>
                 </div>
               </Link>
+
+              {/* Paramètres */}
+              <Link
+                to={`/profile/${user?.uid}?edit=1`}
+                onClick={() => setOpen(false)}
+                style={{
+                  display:"flex", alignItems:"center", gap:12,
+                  padding:"11px 16px", borderRadius:10,
+                  background:"rgba(255,255,255,0.03)",
+                  border:"1px solid rgba(255,255,255,0.08)",
+                  textDecoration:"none", transition:"all 0.2s",
+                }}
+              >
+                <span style={{ fontSize:18 }}>⚙️</span>
+                <span style={{ color:"#ccc", fontSize:13, fontFamily:"Montserrat,sans-serif", fontWeight:600 }}>Paramètres du profil</span>
+              </Link>
+
               {/* Déconnexion */}
               <button
                 onClick={handleSignOut}
                 style={{
-                  background:"rgba(255,255,255,0.03)",
-                  border:"1px solid rgba(255,255,255,0.08)",
-                  borderRadius:8, color:"#888", cursor:"pointer",
-                  fontSize:12, fontFamily:"Montserrat,sans-serif",
-                  padding:"8px 16px", textAlign:"left",
-                  letterSpacing:"0.05em",
+                  display:"flex", alignItems:"center", gap:12,
+                  padding:"11px 16px", borderRadius:10,
+                  background:"rgba(255,255,255,0.02)",
+                  border:"1px solid rgba(255,255,255,0.06)",
+                  cursor:"pointer", width:"100%", textAlign:"left",
+                  transition:"all 0.2s",
                 }}
               >
-                🚪 Déconnexion
+                <span style={{ fontSize:18 }}>🚪</span>
+                <span style={{ color:"#888", fontSize:13, fontFamily:"Montserrat,sans-serif", fontWeight:600 }}>Déconnexion</span>
               </button>
             </div>
           ) : (
-            <Link to="/Login" onClick={() => setOpen(false)}>Connexion</Link>
+            <Link
+              to="/Login"
+              onClick={() => setOpen(false)}
+              style={{
+                display:"flex", alignItems:"center", justifyContent:"center",
+                padding:"13px", borderRadius:10,
+                background:"#dd163b", textDecoration:"none",
+                color:"#fff", fontFamily:"Montserrat,sans-serif",
+                fontWeight:800, fontSize:12, letterSpacing:"0.1em",
+                textTransform:"uppercase",
+              }}
+            >
+              Se connecter
+            </Link>
           )}
         </li>
       </Ul>

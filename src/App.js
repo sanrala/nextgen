@@ -7,17 +7,20 @@ import GameDetail from "./Components/GameDetail/GameDetail";
 import Populaires from "./Components/Populaires/Populaires";
 import LoginPage from "./Components/Login/LoginPage";
 import ActualitesPage from "./Components/BoxNews/ActualitesPage";
+import ProfilePage from "./Components/Profile/ProfilePage";
 import { useDispatch } from "react-redux";
 import { login, logout } from "./features/userSlice";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./Firebase";
+import { auth, db } from "./Firebase";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { GAMING_AVATARS } from "./Components/Profile/avatars";
 
 function App() {
   const dispatch = useDispatch();
 
-  // ── Sync Firebase Auth → Redux ──────────────────────────────────────────
+  // ── Sync Firebase Auth → Redux + création profil auto ───────────────────
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
+    const unsub = onAuthStateChanged(auth, async (u) => {
       if (u) {
         dispatch(login({
           uid:         u.uid,
@@ -25,6 +28,29 @@ function App() {
           displayName: u.displayName,
           photoURL:    u.photoURL,
         }));
+        // Crée le profil Firebase si inexistant
+        try {
+          // Recharge le user pour avoir displayName à jour (cas inscription email)
+          await u.reload();
+          const fresh = auth.currentUser;
+          const ref  = doc(db, "users", u.uid);
+          const snap = await getDoc(ref);
+          if (!snap.exists()) {
+            await setDoc(ref, {
+              uid:         u.uid,
+              displayName: fresh?.displayName || u.displayName || "Joueur",
+              photoURL:    fresh?.photoURL    || GAMING_AVATARS[0].url,
+              createdAt:   new Date().toISOString(),
+            });
+          }
+          // Met aussi à jour Redux avec les données fraîches
+          dispatch(login({
+            uid:         u.uid,
+            email:       u.email,
+            displayName: fresh?.displayName || u.displayName,
+            photoURL:    fresh?.photoURL    || u.photoURL || GAMING_AVATARS[0].url,
+          }));
+        } catch(e) { console.warn("Profil init error:", e.message); }
       } else {
         dispatch(logout());
       }
@@ -45,6 +71,7 @@ function App() {
         <Route path="/Login/"              element={<LoginPage />} />
         <Route path="/actualites"          element={<ActualitesPage />} />
         <Route path="/actualités"          element={<ActualitesPage />} />
+        <Route path="/profile/:uid"        element={<ProfilePage />} />
       </Routes>
     </div>
   );
