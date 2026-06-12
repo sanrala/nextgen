@@ -1,15 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "../../Firebase";
+import { db, auth } from "../../Firebase";
 import { useParams, Link } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
+import CommentsSection from "../GameDetail/CommentsSection";
 
 function ArticlePage() {
   const { doc_id } = useParams();
   const [article, setArticle] = useState(null);
+  const [user,    setUser]    = useState(null);
+  const [userN,   setUserN]   = useState(null);
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (u) => {
+      setUserN(u);
+      setUser(u ? { displayName: u.displayName, uid: u.uid } : null);
+    });
+    return () => unsub();
+  }, []);
   const [similarArticles, setSimilarArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activePhoto, setActivePhoto] = useState(0);
@@ -287,106 +299,11 @@ function ArticlePage() {
 
                   {/* ── Commentaires ── */}
                   <Separator label="Commentaires" />
-
-                  {/* Formulaire commentaire */}
-                  <div style={{
-                    background: "#141414", border: "1px solid #1e1e1e",
-                    borderRadius: 10, padding: 24, marginBottom: 24
-                  }}>
-                    <div style={{
-                      fontFamily: "Orbitron, sans-serif", fontSize: 12,
-                      color: "#f0f0f0", letterSpacing: 1, marginBottom: 16
-                    }}>
-                      Laisser un commentaire
-                    </div>
-                    <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
-                      <input
-                        placeholder="Votre pseudo"
-                        style={{
-                          flex: 1, background: "#1a1a1a", border: "1px solid #2a2a2a",
-                          borderRadius: 6, padding: "10px 14px", color: "#f0f0f0",
-                          fontFamily: "Rajdhani, sans-serif", fontSize: 14, outline: "none"
-                        }}
-                      />
-                      <input
-                        placeholder="Votre email (optionnel)"
-                        style={{
-                          flex: 1, background: "#1a1a1a", border: "1px solid #2a2a2a",
-                          borderRadius: 6, padding: "10px 14px", color: "#f0f0f0",
-                          fontFamily: "Rajdhani, sans-serif", fontSize: 14, outline: "none"
-                        }}
-                      />
-                    </div>
-                    <textarea
-                      placeholder="Votre commentaire..."
-                      rows={4}
-                      style={{
-                        width: "100%", background: "#1a1a1a", border: "1px solid #2a2a2a",
-                        borderRadius: 6, padding: "10px 14px", color: "#f0f0f0",
-                        fontFamily: "Rajdhani, sans-serif", fontSize: 14, outline: "none",
-                        resize: "vertical", marginBottom: 12
-                      }}
-                    />
-                    <button style={{
-                      background: "#cc1a1a", color: "#fff", border: "none",
-                      borderRadius: 6, padding: "10px 24px",
-                      fontFamily: "Orbitron, sans-serif", fontSize: 11,
-                      fontWeight: 700, letterSpacing: 2, cursor: "pointer"
-                    }}>
-                      PUBLIER
-                    </button>
-                  </div>
-
-                  {/* Liste commentaires (mock) */}
-                  {[
-                    { pseudo: "GamerX", date: "il y a 2 heures", texte: "Super article, merci pour les infos ! J'attendais vraiment ce jeu depuis longtemps.", avatar: "G" },
-                    { pseudo: "NightWolf", date: "il y a 5 heures", texte: "Les notes sont impressionnantes, j'espère que le jeu est aussi bon que ce qu'on nous promet.", avatar: "N" },
-                    { pseudo: "Shadow42", date: "hier", texte: "Dommage pour l'absence du doublage FR, c'est toujours frustrant.", avatar: "S" },
-                  ].map((c, i) => (
-                    <div key={i} style={{
-                      display: "flex", gap: 14, marginBottom: 16,
-                      padding: "16px", background: "#111",
-                      border: "1px solid #1e1e1e", borderRadius: 8
-                    }}>
-                      {/* Avatar */}
-                      <div style={{
-                        width: 40, height: 40, borderRadius: "50%",
-                        background: "#cc1a1a22", border: "1px solid #cc1a1a44",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        fontFamily: "Orbitron, sans-serif", fontSize: 14,
-                        color: "#cc1a1a", fontWeight: 700, flexShrink: 0
-                      }}>
-                        {c.avatar}
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                          <span style={{
-                            fontFamily: "Orbitron, sans-serif", fontSize: 11,
-                            color: "#f0f0f0", fontWeight: 700
-                          }}>
-                            {c.pseudo}
-                          </span>
-                          <span style={{ fontSize: 11, color: "#444", fontFamily: "Rajdhani, sans-serif" }}>
-                            {c.date}
-                          </span>
-                        </div>
-                        <p style={{
-                          fontFamily: "Rajdhani, sans-serif", fontSize: 15,
-                          color: "#aaa", lineHeight: 1.6, margin: 0
-                        }}>
-                          {c.texte}
-                        </p>
-                        <button style={{
-                          background: "transparent", border: "none",
-                          color: "#555", fontSize: 12, cursor: "pointer",
-                          fontFamily: "Rajdhani, sans-serif", marginTop: 8,
-                          padding: 0
-                        }}>
-                          👍 Répondre
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                  <CommentsSection
+                    gameKey={`article_${doc_id}`}
+                    user={user}
+                    userN={userN}
+                  />
 
                 </div>
               </div>

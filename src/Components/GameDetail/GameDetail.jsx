@@ -4,12 +4,10 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../../features/userSlice";
 import { auth, db } from "../../Firebase";
 import {
-  collection, addDoc, query, where, onSnapshot,
+  collection, query, where, onSnapshot,
   serverTimestamp, setDoc, doc, getDoc, getDocs
 } from "firebase/firestore";
 import { useAdmin } from "../../useAdmin";
-import StarIcon from "@mui/icons-material/Star";
-import StarBorderIcon from "@mui/icons-material/StarBorder";
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
 import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
 import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
@@ -18,6 +16,7 @@ import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfi
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import Header from "../Header/Header";
+import CommentsSection from "./CommentsSection";
 import Footer from "../Footer/Footer";
 
 const BACKEND_URL = "https://api.sm-artweb.fr";
@@ -217,7 +216,6 @@ function GameDetail() {
   const [activeTab,    setActiveTab]    = useState("description");
   const [activeMedia,  setActiveMedia]  = useState("video");
   const [comments,     setComments]     = useState([]);
-  const [newComment,   setNewComment]   = useState({ title: "", message: "", rating: 0 });
   const [franchise,    setFranchise]    = useState([]);
   const [similar,      setSimilar]      = useState([]);
   const [articles,     setArticles]     = useState([]);
@@ -754,21 +752,7 @@ if (cachedEditions.length) {
   const averageRating = comments.length
     ? comments.reduce((a, c) => a + parseInt(c.rating || 0), 0) / comments.length : 0;
 
-  const handleChanges      = e => setNewComment(p => ({ ...p, [e.target.name]: e.target.value }));
-  const handleRatingChange = e => setNewComment(p => ({ ...p, rating: parseInt(e.target.value) }));
-  const handleSubmit = async e => {
-    e.preventDefault();
-    if (!user || !userN) return;
-    try {
-      await addDoc(collection(db, "comments"), {
-        gameId: `ig_${igId}`, ...newComment,
-        userName: userN.displayName || "Anonymous",
-        userPhoto: userN.photoURL   || "https://zupimages.net/up/24/22/cib6.png",
-        createdAt: serverTimestamp(),
-      });
-      setNewComment({ title: "", message: "", rating: 0 });
-    } catch (err) { console.error("Erreur commentaire:", err); }
-  };
+
 
   const screenshots = steamData?.screenshots || [];
   const movies      = steamData?.movies      || [];
@@ -1291,66 +1275,11 @@ console.log("first img:", allEditions?.[0]?.img);
             {activeTab === "comment" && (
               <div className="tab-pane fade show active">
                 <Separator label="Commentaires" />
-                <h3 className="h4">Ajouter un commentaire</h3>
-                {user ? (
-                  <div className="nk-reply">
-                    <div className="nk-gap-1" />
-                    <form onSubmit={handleSubmit} className="nk-form">
-                      <div className="d-flex flex-column row vertical-gap sm-gap">
-                        <div className="d-flex col-sm-2">
-                          <div className="avatar_product" style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <img src={userN?.photoURL} alt="" style={{ width: 35, borderRadius: "50%" }} />
-                            <span>{user.displayName}</span>
-                          </div>
-                        </div>
-                        <div className="rating">
-                          {[...Array(5)].map((_, i) => (
-                            <React.Fragment key={i}>
-                              <input type="radio" id={`rate-${i + 1}`} name="rating" value={i + 1}
-                                onChange={handleRatingChange} checked={newComment.rating === i + 1}
-                                style={{ display: "none" }} />
-                              <label htmlFor={`rate-${i + 1}`} style={{ cursor: "pointer" }}>
-                                {newComment.rating >= i + 1 ? <StarIcon /> : <StarBorderIcon />}
-                              </label>
-                            </React.Fragment>
-                          ))}
-                        </div>
-                        <div className="col-sm-6">
-                          <input type="text" className="form-control required" name="title"
-                            placeholder="Titre *" value={newComment.title} onChange={handleChanges} required />
-                        </div>
-                      </div>
-                      <div className="nk-gap-1" />
-                      <textarea className="form-control required" name="message" rows="5"
-                        placeholder="Ton message *" value={newComment.message} onChange={handleChanges} required />
-                      <div className="nk-gap-1" />
-                      <button className="nk-btn nk-btn-rounded nk-btn-color-dark-3 float-right">Envoyer</button>
-                    </form>
-                  </div>
-                ) : (
-                  <Link to="/Login"><button className="fa fa-user"> Se connecter</button></Link>
-                )}
-                <div className="clearfix" /><div className="nk-gap-2" />
-                <div className="nk-comments">
-                  <h3>Commentaires</h3>
-                  {comments.map(comment => (
-                    <div key={comment.id} className="nk-comment">
-                      <div className="nk-comment-meta">
-                        <img src={comment.userPhoto} alt={comment.userName} className="rounded-circle" width="35" />{" "}
-                        par <Link to="/...">{comment.userName}</Link>{" "}
-                        {comment.createdAt ? `le ${new Date(comment.createdAt.seconds * 1000).toLocaleDateString("fr-FR")}` : ""}
-                        <div className="nk-review-rating" data-rating={comment.rating}>
-                          {[...Array(5)].map((_, i) => (
-                            <i key={i} className={comment.rating > i ? "fa fa-star" : "far fa-star"} />
-                          ))}
-                        </div>
-                      </div>
-                      <p>{comment.title}</p>
-                      <div className="nk-comment-text"><p>{comment.message}</p></div>
-                    </div>
-                  ))}
-                </div>
-                <div className="clearfix" /><div className="nk-gap-2" />
+                <CommentsSection
+                  gameKey={`ig_${igId}`}
+                  user={user}
+                  userN={userN}
+                />
               </div>
             )}
           </div>
