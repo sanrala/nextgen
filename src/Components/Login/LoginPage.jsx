@@ -6,16 +6,16 @@ import {
   createUserWithEmailAndPassword,
   signInWithPopup,
   updateProfile,
-  sendEmailVerification,
   onAuthStateChanged,
+  sendEmailVerification,
 } from "firebase/auth";
 import { auth, googleProvider } from "../../Firebase";
 
 const GAMING_IMAGES = [
-  { url: "https://cdn.akamai.steamstatic.com/steam/apps/1174180/library_hero.jpg", pos: "90% center" },  // RDR2
-  { url: "https://cdn.akamai.steamstatic.com/steam/apps/292030/library_hero.jpg",  pos: "80% center" },  // Witcher 3
-  { url: "https://cdn.akamai.steamstatic.com/steam/apps/271590/library_hero.jpg",  pos: "90% center" },  // GTA V
-  { url: "https://cdn.akamai.steamstatic.com/steam/apps/1091500/library_hero.jpg", pos: "80% center" },  // Cyberpunk 2077
+  { url: "https://cdn.akamai.steamstatic.com/steam/apps/1174180/library_hero.jpg", pos: "90% center" },
+  { url: "https://cdn.akamai.steamstatic.com/steam/apps/292030/library_hero.jpg",  pos: "80% center" },
+  { url: "https://cdn.akamai.steamstatic.com/steam/apps/271590/library_hero.jpg",  pos: "90% center" },
+  { url: "https://cdn.akamai.steamstatic.com/steam/apps/1091500/library_hero.jpg", pos: "80% center" },
 ];
 
 const CSS = `
@@ -298,7 +298,6 @@ export default function LoginPage() {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
-      // Ne redirige que si email vérifié OU connexion Google
       if (u && (u.emailVerified || u.providerData?.[0]?.providerId === "google.com")) {
         navigate("/", { replace: true });
       }
@@ -317,10 +316,11 @@ export default function LoginPage() {
     e.preventDefault(); reset(); setLoading(true);
     try {
       const cred = await signInWithEmailAndPassword(auth, email, password);
-   if (!cred.user.emailVerified) {
-  setError("Ton email n'est pas encore vérifié. Consulte ta boîte mail et clique sur le lien d'activation.");
-  return;
-}
+      if (!cred.user.emailVerified) {
+        await auth.signOut();
+        setError("Ton email n'est pas encore vérifié. Consulte ta boîte mail et clique sur le lien d'activation.");
+        return;
+      }
       navigate("/");
     } catch {
       setError("Email ou mot de passe incorrect.");
@@ -334,14 +334,22 @@ export default function LoginPage() {
     if (password !== confirm) { setError("Les mots de passe ne correspondent pas."); setLoading(false); return; }
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password);
-      
       await updateProfile(cred.user, { displayName: pseudo.trim() });
-      await sendEmailVerification(cred.user, {
-        url: window.location.origin + "/Login",
-        handleCodeInApp: false,
-      });
+
+      // Email Firebase natif (lien de vérification réel)
+      await sendEmailVerification(cred.user);
+
+      // Email custom Resend (visuel pro)
+      try {
+        await fetch("https://api.sm-artweb.fr/api/send-verification-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, pseudo: pseudo.trim() }),
+        });
+      } catch {}
+
       await auth.signOut();
-      setSuccess("✅ Compte créé ! Un email de confirmation a été envoyé à " + email + ". Pensez à vérifier dans vos spams.");
+      setSuccess("✅ Compte créé ! Un email de confirmation a été envoyé à " + email + ". Vérifie ta boîte mail pour activer ton compte.");
       setTab("login");
       setEmail(""); setPassword(""); setPseudo(""); setConfirm("");
     } catch (err) {
@@ -398,23 +406,7 @@ export default function LoginPage() {
 
         {error   && <div className="auth-error">{error}</div>}
         {success && <div className="auth-success">{success}</div>}
-{auth.currentUser && !auth.currentUser.emailVerified && (
-  <button 
-    onClick={() => sendEmailVerification(auth.currentUser)}
-    style={{
-      marginBottom: "10px",
-      padding: "10px",
-      width: "100%",
-      background: "#444",
-      color: "#fff",
-      border: "none",
-      borderRadius: "6px",
-      cursor: "pointer"
-    }}
-  >
-    Renvoyer email de confirmation
-  </button>
-)}
+
         <form onSubmit={isLogin ? handleLogin : handleRegister}>
           {!isLogin && (
             <div className="auth-field">
