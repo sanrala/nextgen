@@ -91,17 +91,17 @@ function RecentReleasesByPlatform({ platform, maxItems = 6 }) {
           where("featured", "==", false)
         ));
         const all = snap.docs.map(d => ({ docId: d.id, ...d.data() }));
-        console.log("RecentReleases all docs:", all.length, all.map(g => ({ docId: g.docId, releasedAt: g.releasedAt, featuredPlatforms: g.featuredPlatforms, featured: g.featured })));
+        // console.log("RecentReleases all docs:", all.length, all.map(g => ({ docId: g.docId, releasedAt: g.releasedAt, featuredPlatforms: g.featuredPlatforms, featured: g.featured })));
 
         const today = new Date();
-        console.log("Today:", today);
-        all.forEach(g => {
-          const platforms = g.featuredPlatforms?.length > 0 ? g.featuredPlatforms : [];
-          const includesPlatform = platforms.includes(platform);
-          const d = parseDate(g.releasedAt);
-          const isPast = g.releasedAt === "sorti" || (d && d <= today);
-          console.log(`${g.docId}: releasedAt=${g.releasedAt} parsed=${d} isPast=${isPast} includesPlatform=${includesPlatform} platform=${platform}`);
-        });
+        // console.log("Today:", today);
+        // all.forEach(g => {
+        //   const platforms = g.featuredPlatforms?.length > 0 ? g.featuredPlatforms : [];
+        //   const includesPlatform = platforms.includes(platform);
+        //   const d = parseDate(g.releasedAt);
+        //   const isPast = g.releasedAt === "sorti" || (d && d <= today);
+        //   // console.log(`${g.docId}: releasedAt=${g.releasedAt} parsed=${d} isPast=${isPast} includesPlatform=${includesPlatform} platform=${platform}`);
+        // });
 
         const filtered = all
           .filter(g => {
@@ -126,7 +126,7 @@ function RecentReleasesByPlatform({ platform, maxItems = 6 }) {
 
         setGames(filtered);
       } catch (e) {
-        console.error(`RecentReleases ${platform} error:`, e);
+        // console.error(`RecentReleases ${platform} error:`, e);
       } finally {
         setLoading(false);
       }

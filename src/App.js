@@ -18,7 +18,6 @@ import { GAMING_AVATARS } from "./Components/Profile/avatars";
 function App() {
   const dispatch = useDispatch();
 
-  // ── Sync Firebase Auth → Redux + création profil auto ───────────────────
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
       if (u) {
@@ -28,13 +27,15 @@ function App() {
           displayName: u.displayName,
           photoURL:    u.photoURL,
         }));
-        // Crée le profil Firebase si inexistant
+
         try {
-          // Recharge le user pour avoir displayName à jour (cas inscription email)
+          // Attend 2s pour laisser updateProfile se propager
+          await new Promise(r => setTimeout(r, 2000));
           await u.reload();
           const fresh = auth.currentUser;
           const ref  = doc(db, "users", u.uid);
           const snap = await getDoc(ref);
+
           if (!snap.exists()) {
             await setDoc(ref, {
               uid:         u.uid,
@@ -43,7 +44,8 @@ function App() {
               createdAt:   new Date().toISOString(),
             });
           }
-          // Met aussi à jour Redux avec les données fraîches
+
+          // Met à jour Redux avec les données fraîches
           dispatch(login({
             uid:         u.uid,
             email:       u.email,
