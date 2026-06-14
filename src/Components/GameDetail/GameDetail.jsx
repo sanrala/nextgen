@@ -5,7 +5,7 @@ import { selectUser } from "../../features/userSlice";
 import { auth, db } from "../../Firebase";
 import {
   collection, query, where, onSnapshot,
-  serverTimestamp, setDoc, doc, getDoc, getDocs
+  serverTimestamp, setDoc, doc, getDoc, getDocs, deleteDoc
 } from "firebase/firestore";
 import { useAdmin } from "../../useAdmin";
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
@@ -208,6 +208,38 @@ function GameDetail() {
   const CLOUDINARY_CLOUD  = "dl0eijxyn";
   const CLOUDINARY_PRESET = "ml_default";
 
+  // ── Wishlist ──────────────────────────────────────────────────────────────
+  const [inWishlist,     setInWishlist]     = useState(false);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
+
+  useEffect(() => {
+    if (!user?.uid || !igId) return;
+    const ref = doc(db, "users", user.uid, "wishlist", `ig_${igId}`);
+    getDoc(ref).then(snap => setInWishlist(snap.exists())).catch(() => {});
+  }, [user?.uid, igId]);
+
+  const toggleWishlist = async () => {
+    if (!user?.uid) { navigate("/Login"); return; }
+    setWishlistLoading(true);
+    try {
+      const ref = doc(db, "users", user.uid, "wishlist", `ig_${igId}`);
+      if (inWishlist) {
+        await deleteDoc(ref);
+        setInWishlist(false);
+      } else {
+        await setDoc(ref, {
+          igId,
+          name: gameTitle || "",
+          img: igGame?.img || steamData?.header_image || "",
+          price: chosenEntry?.price || igGame?.price || "",
+          addedAt: serverTimestamp(),
+        });
+        setInWishlist(true);
+      }
+    } catch (e) { console.warn("Wishlist error:", e.message); }
+    finally { setWishlistLoading(false); }
+  };
+
   const [steamData,    setSteamData]    = useState(null);
   const [igGame,       setIgGame]       = useState(null);
   const [allEditions,  setAllEditions]  = useState([]); // toutes éditions sans filtre région
@@ -243,11 +275,12 @@ function GameDetail() {
 if (fbSnap.exists()) {
   const cached = fbSnap.data();
   const savedAt = cached.savedAt?.toMillis?.() || 0;
-  const AGE_LIMIT = 24 * 60 * 60 * 1000; // 24h
+  const AGE_LIMIT = 7 * 24 * 60 * 60 * 1000; // 7 jours
   const isFresh = (Date.now() - savedAt) < AGE_LIMIT;
   const isConsoleCached = cached.steamData?.source === 'rawg';
 
-  if (cached.steamData && isFresh && !isConsoleCached) {
+  if (cached.steamData && !isConsoleCached) {
+    // ✅ Affichage immédiat depuis Firebase
     setSteamData(cached.steamData);
     const [frRes, siRes] = await Promise.all([
       fetch(`${BACKEND_URL}/api/franchise/${igId}`).then(r => r.json()).catch(() => []),
@@ -256,9 +289,25 @@ if (fbSnap.exists()) {
     setFranchise(Array.isArray(frRes) ? frRes : []);
     setSimilar(Array.isArray(siRes) ? siRes : []);
     setLoadingSteam(false);
+
+    // 🔄 Refresh silencieux en arrière-plan si cache > 7j
+    if (!isFresh) {
+      (async () => {
+        try {
+          const steamAppId = cached.steamData?.steam_appid;
+          if (!steamAppId) return;
+          const fresh = await fetch(`${BACKEND_URL}/api/steam/${steamAppId}`)
+            .then(r => r.ok ? r.json() : null).catch(() => null);
+          if (fresh) {
+            setSteamData(fresh);
+            await setDoc(fbRef, { igId, savedAt: serverTimestamp(), steamData: fresh }, { merge: true });
+          }
+        } catch {}
+      })();
+    }
     return;
   }
-  // cache expiré, absent, ou données RAWG → re-fetch
+  // données RAWG ou absentes → re-fetch complet
 }
 
       // Récupère les infos IG du jeu (type, steam_id éventuel)
@@ -1113,17 +1162,45 @@ console.log("first img:", allEditions?.[0]?.img);
               </div>{/* fin gd-right-price */}
 
               {/* Bouton achat — colonne droite, visible desktop seulement */}
-              <div className="gd-buy-btn gd-buy-btn-right">
+              <div className="gd-buy-btn gd-buy-btn-right" style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 {chosenInStock && chosenUrl ? (
                   <a href={chosenUrl} target="_blank" rel="noopener noreferrer"
-                    className="nk-btn nk-btn-rounded nk-btn-color-main-1 gd-btn-instock">
+                    className="nk-btn nk-btn-rounded nk-btn-color-main-1 gd-btn-instock"
+                    style={{ flex: 1 }}>
                     🛒 Acheter
                   </a>
                 ) : (
-                  <button className="nk-btn nk-btn-rounded gd-btn-outofstock" disabled aria-disabled="true">
+                  <button className="nk-btn nk-btn-rounded gd-btn-outofstock" disabled aria-disabled="true" style={{ flex: 1 }}>
                     ⛔ Hors stock — {editionName}
                   </button>
                 )}
+                {/* Bouton cœur Wishlist */}
+                <button
+                  onClick={toggleWishlist}
+                  disabled={wishlistLoading}
+                  title={inWishlist ? "Retirer de la wishlist" : "Ajouter à la wishlist"}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 44,
+                    height: 44,
+                    borderRadius: "50%",
+                    border: inWishlist ? "1px solid #dd163b" : "1px solid rgba(255,255,255,0.2)",
+                    background: inWishlist ? "rgba(221,22,59,0.15)" : "rgba(255,255,255,0.06)",
+                    cursor: wishlistLoading ? "default" : "pointer",
+                    opacity: wishlistLoading ? 0.6 : 1,
+                    transition: "all 0.2s",
+                    flexShrink: 0,
+                  }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24"
+                    fill={inWishlist ? "#dd163b" : "none"}
+                    stroke={inWishlist ? "#dd163b" : "rgba(255,255,255,0.6)"}
+                    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  </svg>
+                </button>
               </div>
 
               <div className="nk-gap-1" />
@@ -1279,6 +1356,7 @@ console.log("first img:", allEditions?.[0]?.img);
                   gameKey={`ig_${igId}`}
                   user={user}
                   userN={userN}
+                  releaseDate={steamData?.release_date?.date || null}
                 />
               </div>
             )}

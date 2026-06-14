@@ -88,6 +88,7 @@ function NavBar() {
             <ul
               className="nk-nav nk-nav-right d-none d-lg-table-cell"
               data-nav-mobile="#nk-nav-mobile"
+              style={{ paddingRight: "100px" }}
             >
               <li><Link to={{ pathname: `/actualites/` }}>Actualités</Link></li>
               <li><Link to="/Catalogues?catFilter=nouveautes">Nouveautés</Link></li>
@@ -102,7 +103,7 @@ function NavBar() {
             {/* SearchBar + icône profil — desktop uniquement */}
             <div
               className="d-none d-lg-flex"
-              style={{ position: "absolute", right: "50px", top: "50%", transform: "translateY(-50%)", zIndex: 1200, alignItems:"center", gap:10 }}
+              style={{ position: "absolute", right: "20px", top: "50%", transform: "translateY(-50%)", zIndex: 1200, alignItems:"center", gap:10, marginLeft:"48px" }}
             >
               <SearchBar />
               {user && (
@@ -130,7 +131,7 @@ function NavBar() {
                         <span style={{ fontSize:17, width:22, textAlign:"center" }}>👤</span>
                         <span style={{ color:"#ddd", fontSize:13, fontFamily:"Montserrat,sans-serif", fontWeight:600 }}>Mon profil</span>
                       </Link>
-                      <Link to={`/Catalogues`} onClick={() => setDropOpen(false)} style={{ display:"flex", alignItems:"center", gap:14, padding:"13px 18px", textDecoration:"none", borderBottom:"1px solid rgba(255,255,255,0.05)" }} onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                      <Link to="/wishlist" onClick={() => setDropOpen(false)} style={{ display:"flex", alignItems:"center", gap:14, padding:"13px 18px", textDecoration:"none", borderBottom:"1px solid rgba(255,255,255,0.05)" }} onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.05)"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
                         <span style={{ fontSize:17, width:22, textAlign:"center" }}>❤️</span>
                         <span style={{ color:"#ddd", fontSize:13, fontFamily:"Montserrat,sans-serif", fontWeight:600 }}>Wishlist</span>
                       </Link>

@@ -286,7 +286,7 @@ function Home() {
             <ImgSlider gameData={topSeller} />
 
             <div className="container">
-              <div className="separator product-panel"></div>
+              {/* <div className="separator product-panel"></div> */}
               <BoxNews />
               <div className="separator product-panel"></div>
               <Sorties />
@@ -318,7 +318,7 @@ function Home() {
             <div className="container">
               <div className="separator product-panel"></div>
               <Popular />
-              <div className="separator product-panel"></div>
+             
             </div>
 
             <div className="container">
@@ -359,6 +359,7 @@ function Home() {
             <div className="container">
               <div className="separator product-panel"></div>
               <SteamSpecials />
+                    <div className="separator product-panel"></div>
               <LastPosts />
             </div>
 

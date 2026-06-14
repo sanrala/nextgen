@@ -348,6 +348,22 @@ const RightNav = ({ open, setOpen }) => {
                 </div>
               </Link>
 
+              {/* Wishlist */}
+              <Link
+                to="/wishlist"
+                onClick={() => setOpen(false)}
+                style={{
+                  display:"flex", alignItems:"center", gap:12,
+                  padding:"11px 16px", borderRadius:10,
+                  background:"rgba(255,255,255,0.03)",
+                  border:"1px solid rgba(255,255,255,0.08)",
+                  textDecoration:"none", transition:"all 0.2s",
+                }}
+              >
+                <span style={{ fontSize:18 }}>❤️</span>
+                <span style={{ color:"#ccc", fontSize:13, fontFamily:"Montserrat,sans-serif", fontWeight:600 }}>Ma Wishlist</span>
+              </Link>
+
               {/* Paramètres */}
               <Link
                 to={`/profile/${user?.uid}?edit=1`}

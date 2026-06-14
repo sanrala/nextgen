@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import {
   collection, addDoc, updateDoc, deleteDoc,
-  doc, query, where, onSnapshot,
+  doc, getDoc, query, where, onSnapshot,
   serverTimestamp, orderBy
 } from "firebase/firestore";
 import { db } from "../../Firebase";
+import { GAMING_AVATARS } from "../Profile/avatars";
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 const REACTIONS = [
@@ -213,6 +214,22 @@ function ReactionButton({ commentId, currentUserId, reactions = {} }) {
   );
 }
 
+
+// ── Hook : récupère le vrai avatar Firestore d'un utilisateur ────────────────
+function useUserAvatar(userId, fallback) {
+  const [avatarUrl, setAvatarUrl] = React.useState(fallback || GAMING_AVATARS[0].url);
+  React.useEffect(() => {
+    if (!userId) return;
+    getDoc(doc(db, "users", userId)).then(snap => {
+      if (snap.exists()) {
+        const url = snap.data().photoURL;
+        if (url) setAvatarUrl(url);
+      }
+    }).catch(() => {});
+  }, [userId]);
+  return avatarUrl;
+}
+
 // ── Formulaire de commentaire / réponse ───────────────────────────────────────
 function CommentForm({ user, userN, onSubmit, placeholder = "Écrire un commentaire...", isReply = false }) {
   const [message, setMessage] = useState("");
@@ -232,11 +249,13 @@ function CommentForm({ user, userN, onSubmit, placeholder = "Écrire un commenta
     setTitle(""); setMessage(""); setRating(0);
   };
 
+  const myAvatar = useUserAvatar(userN?.uid, userN?.photoURL);
+
   return (
     <form onSubmit={handleSubmit} style={isReply ? { marginTop: 10 } : {}}>
       {!isReply && (
         <div style={S.formHeader}>
-          <img src={userN?.photoURL || "https://zupimages.net/up/24/22/cib6.png"} alt="" style={S.avatar} />
+          <img src={myAvatar} alt="" style={S.avatar} />
           <span style={{ color: "#ccc", fontSize: 14, fontFamily: "Montserrat,sans-serif" }}>{user?.displayName}</span>
         </div>
       )}
@@ -285,6 +304,7 @@ function CommentCard({ comment, user, userN, gameKey, isReply = false }) {
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replies, setReplies] = useState([]);
   const currentUserId = userN?.uid || null;
+  const commentAvatar = useUserAvatar(comment.userId, comment.userPhoto);
 
   // Charge les réponses (seulement pour les commentaires top-level)
   useEffect(() => {
@@ -330,7 +350,7 @@ function CommentCard({ comment, user, userN, gameKey, isReply = false }) {
   return (
     <div style={S.card(isReply)}>
       <div style={S.cardHeader}>
-        <img src={comment.userPhoto || "https://zupimages.net/up/24/22/cib6.png"} alt="" style={{ ...S.avatar, width: isReply ? 28 : 36, height: isReply ? 28 : 36 }} />
+        <img src={commentAvatar} alt="" style={{ ...S.avatar, width: isReply ? 28 : 36, height: isReply ? 28 : 36 }} />
         <div>
           <span style={S.userName}>{comment.userName}</span>
           <span style={S.dateStr}>{date}</span>
@@ -388,7 +408,7 @@ function CommentCard({ comment, user, userN, gameKey, isReply = false }) {
 }
 
 // ── Composant principal ───────────────────────────────────────────────────────
-export default function CommentsSection({ gameKey, user, userN }) {
+export default function CommentsSection({ gameKey, user, userN, releaseDate }) {
   const [comments, setComments] = useState([]);
   const [sort, setSort]         = useState("recent"); // "recent" | "popular"
   const [submitting, setSubmitting] = useState(false);
@@ -443,6 +463,9 @@ export default function CommentsSection({ gameKey, user, userN }) {
     return (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0);
   });
 
+  // Jeu sorti ?
+  const isReleased = !releaseDate || new Date(releaseDate) <= new Date();
+
   // Moyenne étoiles
   const withRating = comments.filter(c => c.rating > 0);
   const avg = withRating.length
@@ -471,7 +494,19 @@ export default function CommentsSection({ gameKey, user, userN }) {
       </div>
 
       {/* Formulaire */}
-      {user && userN?.emailVerified === false ? (
+      {!isReleased ? (
+        <div style={S.loginPrompt}>
+          <p style={{ color: "#f39c12", marginBottom: 8, fontFamily: "Montserrat,sans-serif", fontSize: 14, fontWeight: 700 }}>
+            🕐 Ce jeu n'est pas encore disponible
+          </p>
+          <p style={{ color: "#888", marginBottom: 0, fontFamily: "Montserrat,sans-serif", fontSize: 13 }}>
+            Les commentaires seront disponibles à partir du{" "}
+            <strong style={{ color: "#fff" }}>
+              {new Date(releaseDate).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+            </strong>.
+          </p>
+        </div>
+      ) : user && userN?.emailVerified === false ? (
         <div style={S.loginPrompt}>
           <p style={{ color: "#f39c12", marginBottom: 8, fontFamily: "Montserrat,sans-serif", fontSize: 14, fontWeight: 700 }}>
             ✉️ Email non vérifié

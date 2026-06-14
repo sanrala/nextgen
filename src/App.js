@@ -14,6 +14,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "./Firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { GAMING_AVATARS } from "./Components/Profile/avatars";
+import Wishlist from "./Components/Navbar/Wishlist";
 
 function App() {
   const dispatch = useDispatch();
@@ -74,6 +75,7 @@ function App() {
         <Route path="/actualites"          element={<ActualitesPage />} />
         <Route path="/actualités"          element={<ActualitesPage />} />
         <Route path="/profile/:uid"        element={<ProfilePage />} />
+        <Route path="/wishlist"             element={<Wishlist />} />
       </Routes>
     </div>
   );

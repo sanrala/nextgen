@@ -20,7 +20,7 @@ function ImgSlider({ gameData }) {
     setGameInfo({
       id: gameData.id,
       title: gameData.name,
-      price: `${parseFloat(gameData.price).toFixed(2)}€`,
+      price: `${parseFloat(gameData.price).toFixed(2)} €`,
       promo:
         gameData.retail && gameData.price
           ? `-${Math.round(
@@ -42,13 +42,11 @@ function ImgSlider({ gameData }) {
       };
 
       try {
-        // 1. library_hero depuis steam_id IG
         if (gameData.steam_id) {
           const heroUrl = `https://cdn.akamai.steamstatic.com/steam/apps/${gameData.steam_id}/library_hero.jpg`;
           if (await checkImg(heroUrl)) { setHeroUrl(heroUrl); return; }
         }
 
-        // 2. Cherche steamData en Firebase pour avoir le vrai steam_appid
         let steamAppId = gameData.steam_id || null;
         try {
           const { initializeApp, getApps } = await import("firebase/app");
@@ -66,13 +64,11 @@ function ImgSlider({ gameData }) {
             const appId = fbData?.steamData?.steam_appid;
             if (appId) steamAppId = appId;
 
-            // Essai library_hero avec steamAppId Firebase
             if (appId && appId !== gameData.steam_id) {
               const heroFb = `https://cdn.akamai.steamstatic.com/steam/apps/${appId}/library_hero.jpg`;
               if (await checkImg(heroFb)) { setHeroUrl(heroFb); return; }
             }
 
-            // Essai premier screenshot Firebase
             const fbScreenshots = fbData?.steamData?.screenshots || [];
             if (fbScreenshots.length > 0) {
               setHeroUrl(fbScreenshots[0].path_full || fbScreenshots[0].path_thumbnail);
@@ -81,7 +77,6 @@ function ImgSlider({ gameData }) {
           }
         } catch {}
 
-        // 3. Fallback : premier screenshot via API Steam
         if (steamAppId) {
           try {
             const res = await fetch(`${PROXY}/api/steam/${steamAppId}`);
@@ -96,15 +91,12 @@ function ImgSlider({ gameData }) {
           } catch {}
         }
 
-        // 4. Dernier recours : header Steam (petit mais mieux que miniature IG)
         if (steamAppId) {
           const header = `https://cdn.akamai.steamstatic.com/steam/apps/${steamAppId}/header.jpg`;
           if (await checkImg(header)) { setHeroUrl(header); return; }
         }
 
-        // 5. Rien trouvé : null (pas d'image affichée)
         setHeroUrl(null);
-
       } catch (e) {
         setHeroUrl(null);
       }
@@ -115,118 +107,140 @@ function ImgSlider({ gameData }) {
 
   if (!gameInfo || !heroUrl) return null;
 
-  return (
-    <div
-      style={{
-        backgroundImage: `url(${heroUrl})`,
-        backgroundSize: "cover",
-        backgroundPosition: isMobile ? "center center" : "center top",
-        height: "600px",
-        position: "relative",
-        display: "flex",
-        alignItems: isMobile ? "flex-end" : "center",
-        overflow: "hidden",
-        width: "100%",
-      }}
-    >
-      {/* Dégradé principal */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background: isMobile
-            ? "linear-gradient(to top, rgba(0,0,0,0.95) 30%, transparent 70%)"
-            : "linear-gradient(to right, rgba(0,0,0,0.9) 20%, transparent 60%)",
-        }}
-      />
-      {/* Dégradé bas */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background:
-            "linear-gradient(to top, rgba(23,30,34,1) 0%, transparent 40%)",
-        }}
-      />
+  const slug = gameInfo.title.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
 
-      {isMobile ? (
-        <div
-          style={{
-            position: "absolute",
-            bottom: "40px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "90%",
+  return (
+    <Link
+      to={`/store/${gameInfo.id}/0/${slug}`}
+      style={{ display: "block", textDecoration: "none" }}
+    >
+      <div
+        style={{
+          backgroundImage: `url(${heroUrl})`,
+          backgroundSize: "cover",
+          backgroundPosition: isMobile ? "center center" : "center top",
+          ...(isMobile
+            ? { minHeight: "220px", aspectRatio: "16 / 5" }
+            : { height: "600px" }),
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          overflow: "hidden",
+          width: "100%",
+        }}
+      >
+        {/* Dégradé gauche */}
+        <div style={{
+          position: "absolute", inset: 0,
+          background: isMobile
+            ? "linear-gradient(to right, rgba(0,0,0,0.92) 35%, rgba(0,0,0,0.3) 70%, transparent 100%)"
+            : "linear-gradient(to right, rgba(0,0,0,0.9) 20%, transparent 60%)",
+        }} />
+        {/* Dégradé bas */}
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(to top, rgba(23,30,34,1) 0%, transparent 40%)",
+        }} />
+
+        {isMobile ? (
+          <div style={{
+            position: "relative",
             zIndex: 1,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Link
-            to={`/store/${gameInfo.id}/0/${gameInfo.title.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "")}`}
-            style={{
-              textDecoration: "none",
-              width: "100%",
+            padding: "0 16px",
+            maxWidth: "72%",
+          }}>
+            {/* Titre */}
+            <span style={{
               display: "block",
-              textAlign: "center",
-            }}
-          >
-            <h1
-              className="title__price"
-              style={{
-                fontSize: "32px",
-                lineHeight: "1.2",
-                textAlign: "center",
-                width: "100%",
-                margin: "0 0 10px",
-              }}
-            >
+              fontFamily: "'Montserrat', sans-serif",
+              fontWeight: 600,
+              fontSize: "clamp(13px, 3.8vw, 18px)",
+              color: "#ffffff",
+              lineHeight: 1.3,
+              marginBottom: "8px",
+            }}>
               {gameInfo.title}
-            </h1>
-          </Link>
-          <p className="text-white" style={{ margin: "0 0 20px", textAlign: "center" }}>
-            <span className="priceSlidePromo">{gameInfo.promo}</span>{" "}
-            <span className="price">{gameInfo.price}</span>
-          </p>
-          <a
-            href={gameInfo.buy}
-            className="nk-btn nk-btn-rounded nk-btn-color-white nk-btn-hover-color-main-1"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Acheter
-          </a>
-        </div>
-      ) : (
-        <div
-          style={{
+            </span>
+
+            {/* Badge promo + Prix */}
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              {gameInfo.promo && (
+                <span style={{
+                  display: "inline-block",
+                  background: "#dd163b",
+                  color: "#fff",
+                  fontFamily: "'Montserrat', sans-serif",
+                  fontWeight: 700,
+                  fontSize: "13px",
+                  padding: "4px 8px",
+                  borderRadius: "4px",
+                  flexShrink: 0,
+                }}>
+                  {gameInfo.promo}
+                </span>
+              )}
+              <span style={{
+                fontFamily: "'Montserrat', sans-serif",
+                fontWeight: 700,
+                fontSize: "clamp(22px, 6vw, 32px)",
+                color: "#ffffff",
+                lineHeight: 1,
+              }}>
+                {gameInfo.price}
+              </span>
+            </div>
+          </div>
+        ) : (
+          <div style={{
             position: "relative",
             zIndex: 1,
             padding: "0 100px",
             maxWidth: "700px",
-          }}
-        >
-          <Link to={`/store/${gameInfo.id}/0/${gameInfo.title.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "")}`} style={{ textDecoration: "none" }}>
-            <h1 className="title__price" style={{ whiteSpace: "nowrap" }}>
+          }}>
+            {/* Titre */}
+            <span style={{
+              display: "block",
+              fontFamily: "'Montserrat', sans-serif",
+              fontWeight: 600,
+              fontSize: "clamp(18px, 2.5vw, 32px)",
+              color: "#ffffff",
+              lineHeight: 1.3,
+              marginBottom: "14px",
+            }}>
               {gameInfo.title}
-            </h1>
-          </Link>
-          <p className="text-white" style={{ margin: "10px 0 20px" }}>
-            <span className="priceSlidePromo">{gameInfo.promo}</span>{" "}
-            <span className="price">{gameInfo.price}</span>
-          </p>
-          <a
-            href={gameInfo.buy}
-            className="nk-btn nk-btn-rounded nk-btn-color-white nk-btn-hover-color-main-1"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Acheter
-          </a>
-        </div>
-      )}
-    </div>
+            </span>
+
+            {/* Badge promo + Prix */}
+            <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+              {gameInfo.promo && (
+                <span style={{
+                  display: "inline-block",
+                  background: "#dd163b",
+                  color: "#fff",
+                  fontFamily: "'Montserrat', sans-serif",
+                  fontWeight: 700,
+                  fontSize: "16px",
+                  padding: "5px 10px",
+                  borderRadius: "4px",
+                  flexShrink: 0,
+                }}>
+                  {gameInfo.promo}
+                </span>
+              )}
+              <span style={{
+                fontFamily: "'Montserrat', sans-serif",
+                fontWeight: 700,
+                fontSize: "clamp(32px, 4vw, 52px)",
+                color: "#ffffff",
+                lineHeight: 1,
+              }}>
+                {gameInfo.price}
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+    </Link>
   );
 }
 

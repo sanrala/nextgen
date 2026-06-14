@@ -3,8 +3,15 @@ import { Link } from "react-router-dom";
 const PROXY = "https://api.sm-artweb.fr";
 
 function BannerSlider({ gameData }) {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [heroUrl, setHeroUrl] = useState(null);
   const [gameInfo, setGameInfo] = useState(null);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     if (!gameData) return;
@@ -34,68 +41,83 @@ function BannerSlider({ gameData }) {
   if (!gameInfo || !heroUrl) return null;
 
   return (
-    <div style={{
-      backgroundImage: `url(${heroUrl})`,
-      backgroundSize: "cover",
-      backgroundPosition: "center center",
-      position: "relative",
-      display: "flex",
-      alignItems: "center",
-      overflow: "hidden",
-      width: "100%",
-      minHeight: "220px",
-      aspectRatio: "16 / 5",
-    }}>
-      {/* Dégradé gauche */}
+    <Link
+      to={`/store/${gameInfo.id}/0/${gameInfo.slug}`}
+      style={{ display: "block", textDecoration: "none" }}
+    >
       <div style={{
-        position: "absolute", inset: 0,
-        background: "linear-gradient(to right, rgba(0,0,0,0.92) 30%, rgba(0,0,0,0.3) 65%, transparent 100%)",
-      }} />
-      {/* Dégradé bas */}
-      <div style={{
-        position: "absolute", inset: 0,
-        background: "linear-gradient(to top, rgba(23,30,34,1) 0%, transparent 50%)",
-      }} />
-
-      {/* Contenu */}
-      <div style={{
-        position: "relative", zIndex: 1,
-        padding: "20px 28px",
-        maxWidth: "520px",
+        backgroundImage: `url(${heroUrl})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center center",
+        position: "relative",
+        display: "flex",
+        alignItems: "center",
+        overflow: "hidden",
+        width: "100%",
+        minHeight: "220px",
+        aspectRatio: "16 / 5",
       }}>
-        {gameInfo.promo && (
-          <div style={{
-            display: "inline-block",
-            background: "#dd163b", color: "#fff",
-            fontWeight: 700, fontSize: 12,
-            padding: "3px 10px", borderRadius: 4,
-            marginBottom: 8, letterSpacing: 1,
-          }}>
-            {gameInfo.promo}
-          </div>
-        )}
-        <Link to={`/store/${gameInfo.id}/0/${gameInfo.slug}`} style={{ textDecoration: "none" }}>
-          <h2 style={{
-            fontFamily: "Montserrat, sans-serif",
-            fontWeight: 800, fontSize: "clamp(14px, 3.5vw, 26px)",
-            color: "#fff", margin: "0 0 6px",
-            textTransform: "uppercase", lineHeight: 1.2,
+        {/* Dégradé gauche */}
+        <div style={{
+          position: "absolute", inset: 0,
+          background: isMobile
+            ? "linear-gradient(to right, rgba(0,0,0,0.92) 35%, rgba(0,0,0,0.3) 70%, transparent 100%)"
+            : "linear-gradient(to right, rgba(0,0,0,0.95) 25%, rgba(0,0,0,0.4) 55%, transparent 100%)",
+        }} />
+        {/* Dégradé bas */}
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(to top, rgba(23,30,34,1) 0%, transparent 50%)",
+        }} />
+
+        <div style={{
+          position: "relative", zIndex: 1,
+          padding: isMobile ? "0 16px" : "0 60px",
+          maxWidth: isMobile ? "72%" : "600px",
+        }}>
+          {/* Titre */}
+          <span style={{
+            display: "block",
+            fontFamily: "'Montserrat', sans-serif",
+            fontWeight: 600,
+            fontSize: isMobile ? "clamp(13px, 3.8vw, 18px)" : "clamp(16px, 2vw, 24px)",
+            color: "#ffffff",
+            lineHeight: 1.3,
+            marginBottom: isMobile ? "8px" : "12px",
           }}>
             {gameInfo.title}
-          </h2>
-        </Link>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-          <span style={{ color: "#fff", fontSize: "clamp(15px, 3vw, 22px)", fontWeight: 700 }}>
-            {gameInfo.price}
           </span>
+
+          {/* Badge promo + Prix */}
+          <div style={{ display: "flex", alignItems: "center", gap: isMobile ? "10px" : "16px" }}>
+            {gameInfo.promo && (
+              <span style={{
+                display: "inline-block",
+                background: "#dd163b",
+                color: "#fff",
+                fontFamily: "'Montserrat', sans-serif",
+                fontWeight: 700,
+                fontSize: isMobile ? "13px" : "16px",
+                padding: isMobile ? "4px 8px" : "5px 10px",
+                borderRadius: "4px",
+                flexShrink: 0,
+              }}>
+                {gameInfo.promo}
+              </span>
+            )}
+            <span style={{
+              fontFamily: "'Montserrat', sans-serif",
+              fontWeight: 700,
+              fontSize: isMobile ? "clamp(22px, 6vw, 32px)" : "clamp(28px, 4vw, 48px)",
+              color: "#ffffff",
+              lineHeight: 1,
+            }}>
+              {gameInfo.price}
+            </span>
+          </div>
         </div>
-        <a href={gameInfo.buy} target="_blank" rel="noreferrer"
-          className="nk-btn nk-btn-rounded nk-btn-color-main-1"
-          style={{ fontSize: 12, padding: "7px 18px" }}>
-          🛒 Acheter
-        </a>
       </div>
-    </div>
+    </Link>
   );
 }
 
