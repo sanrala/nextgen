@@ -23,8 +23,12 @@ function Banner() {
   }, []);
 
   return (
-    <section className="bann-img">
-      <div className="ig-banner-home"></div>
+    <section className="bann-img"
+    
+    >
+      <div className="ig-banner-home"
+   
+      ></div>
     </section>
   );
 }

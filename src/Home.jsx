@@ -295,7 +295,7 @@ function Home() {
 
             <section
               className="banner-img"
-              style={{ backgroundImage: `url(${bg})` }}
+              style={{ backgroundImage: `url(${bg})`  } }
             >
               <div className="container d-flex justify-content-center">
                 <div className="row">

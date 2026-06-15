@@ -30388,3 +30388,19 @@ div.burgerNav > ul {
   width: 100%;
   display: block;
 }
+.ig-dynamic-banner {
+  height: 350px !important;
+  background-size: cover !important;
+}
+@media (max-width: 768px) {
+  .ig-dynamic-banner {
+    height: 120px !important;
+    background-size: cover !important;
+    background-position: center !important;
+  }
+  
+  .ig-dynamic-banner-text,
+  .ig-dynamic-banner-logo {
+    display: none !important;
+  }
+}
