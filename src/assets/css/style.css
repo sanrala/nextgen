@@ -28676,7 +28676,7 @@ div.burgerNav > ul {
 
 /* ── Container principal ── */
 .gd-container {
-  max-width: 1100px;
+  max-width: 1300px;
   margin: 0 auto;
   padding-top: 100px;
 }
@@ -30403,4 +30403,1154 @@ div.burgerNav > ul {
   .ig-dynamic-banner-logo {
     display: none !important;
   }
+}
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   PRO GAMING THEME - GAME DETAIL
+   ===================================================== */
+:root {
+  --pg-bg-dark: #0b0e14;
+  --pg-panel-bg: rgba(20, 24, 32, 0.6);
+  --pg-panel-border: rgba(255, 255, 255, 0.08);
+  --pg-accent: #dd163b;
+  --pg-accent-hover: #ff2a55;
+  --pg-text-main: #e2e8f0;
+  --pg-text-muted: #8b949e;
+  --pg-radius: 12px;
+}
+
+/* Base Container */
+.pg-wrapper {
+  background-color: var(--pg-bg-dark);
+  min-height: 100vh;
+  color: var(--pg-text-main);
+  font-family: 'Montserrat', sans-serif;
+  padding-bottom: 60px;
+}
+
+/* Hero Section (Immersive Background) */
+.pg-hero {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  background-size: cover;
+  background-position: center 20%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.pg-hero-mask {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(11, 14, 20, 0.2) 0%, rgba(11, 14, 20, 0.8) 60%, var(--pg-bg-dark) 100%);
+}
+
+.pg-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+  z-index: 10;
+  width: 100%;
+}
+
+/* Grid Layout for Main Content */
+.pg-main-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 40px;
+  margin-top: -100px; /* Pulls content up over the hero */
+}
+
+@media (max-width: 992px) {
+  .pg-main-grid {
+    grid-template-columns: 1fr;
+    margin-top: -50px;
+  }
+}
+
+/* --- LEFT COLUMN (Media) --- */
+.pg-media-gallery {
+  background: var(--pg-panel-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--pg-panel-border);
+  border-radius: var(--pg-radius);
+  padding: 10px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.pg-main-media {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+  position: relative;
+}
+
+.pg-main-media video,
+.pg-main-media iframe,
+.pg-main-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pg-thumbnails {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+}
+
+.pg-thumbnails::-webkit-scrollbar { height: 6px; }
+.pg-thumbnails::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px; }
+.pg-thumbnails::-webkit-scrollbar-thumb { background: var(--pg-accent); border-radius: 4px; }
+
+.pg-thumb {
+  width: 90px;
+  height: 50px;
+  border-radius: 6px;
+  cursor: pointer;
+  object-fit: cover;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.pg-thumb:hover { opacity: 0.8; transform: translateY(-2px); }
+.pg-thumb.active { opacity: 1; border-color: var(--pg-accent); }
+
+/* --- RIGHT COLUMN (Info & Buy) --- */
+.pg-info-panel {
+  background: var(--pg-panel-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--pg-panel-border);
+  border-radius: var(--pg-radius);
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  height: fit-content;
+}
+
+.pg-platform-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: fit-content;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.pg-title {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.pg-short-desc {
+  color: var(--pg-text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Scores */
+.pg-scores {
+  display: flex;
+  gap: 15px;
+}
+
+.pg-score-box {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.05);
+  padding: 10px 15px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.pg-score-label { font-size: 10px; text-transform: uppercase; color: #666; font-weight: 700; }
+.pg-score-value { font-size: 16px; font-weight: 800; }
+
+/* Pricing */
+.pg-price-zone {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(0,0,0,0.2);
+  padding: 15px 20px;
+  border-radius: 8px;
+  border-left: 4px solid var(--pg-accent);
+}
+
+.pg-price-promo {
+  background: var(--pg-accent);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.pg-price-original { text-decoration: line-through; color: #666; font-size: 16px; font-weight: 600; }
+.pg-price-final { font-size: 28px; font-weight: 800; color: white; }
+
+/* Selectors */
+.pg-selectors { display: flex; flex-direction: column; gap: 12px; }
+.pg-select-wrap { display: flex; flex-direction: column; gap: 5px; }
+.pg-select-wrap label { font-size: 11px; text-transform: uppercase; color: var(--pg-text-muted); font-weight: 700; }
+.pg-select {
+  background: rgba(0,0,0,0.4);
+  color: white;
+  border: 1px solid var(--pg-panel-border);
+  padding: 12px 15px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.pg-select:focus { border-color: var(--pg-accent); box-shadow: 0 0 10px rgba(221,22,59,0.3); }
+
+/* Buttons */
+.pg-actions { display: flex; gap: 10px; }
+.pg-btn-buy {
+  flex: 1;
+  background: var(--pg-accent);
+  color: white;
+  border: none;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 800;
+  text-transform: uppercase;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(221,22,59,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.pg-btn-buy:hover { background: var(--pg-accent-hover); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(221,22,59,0.6); color: white;}
+.pg-btn-disabled { background: #333 !important; color: #777 !important; box-shadow: none !important; cursor: not-allowed; }
+
+.pg-btn-wishlist {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--pg-panel-border);
+  width: 54px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.pg-btn-wishlist:hover { background: rgba(255,255,255,0.1); }
+.pg-btn-wishlist.active svg { fill: var(--pg-accent); stroke: var(--pg-accent); }
+
+/* --- TABS SECTION --- */
+.pg-tabs-section {
+  margin-top: 60px;
+  background: var(--pg-panel-bg);
+  border-radius: var(--pg-radius);
+  border: 1px solid var(--pg-panel-border);
+  overflow: hidden;
+}
+
+.pg-tabs-header {
+  display: flex;
+  background: rgba(0,0,0,0.3);
+  border-bottom: 1px solid var(--pg-panel-border);
+}
+
+.pg-tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 20px;
+  color: var(--pg-text-muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border-bottom: 3px solid transparent;
+}
+
+.pg-tab-btn:hover { color: white; background: rgba(255,255,255,0.02); }
+.pg-tab-btn.active { color: white; border-bottom-color: var(--pg-accent); background: rgba(255,255,255,0.05); }
+
+.pg-tab-content { padding: 40px; }
+
+/* Config PC Grid */
+.pg-config-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+.pg-config-card {
+  background: rgba(0,0,0,0.2);
+  padding: 25px;
+  border-radius: 8px;
+  border: 1px dashed rgba(255,255,255,0.1);
+}
+.pg-config-card h4 { color: var(--pg-accent); text-transform: uppercase; font-size: 16px; margin-bottom: 15px;}
+.pg-config-card ul { padding-left: 20px; color: var(--pg-text-muted); font-size: 14px; line-height: 1.8;}
+.pg-config-card strong { color: white; }
+
+@media (max-width: 768px) {
+  .pg-config-grid { grid-template-columns: 1fr; }
+  .pg-tab-content { padding: 20px; }
+  .pg-tab-btn { padding: 15px 5px; font-size: 12px;}
+}
+
+
+
+/* =====================================================
+   PRO GAMING THEME - GAME DETAIL
+   ===================================================== */
+:root {
+  --pg-bg-dark: #0a0a0f;
+  --pg-panel-bg: rgba(15, 15, 20, 0.65);
+  --pg-panel-border: rgba(255, 255, 255, 0.06);
+  --pg-accent: #dd163b;
+  --pg-accent-hover: #ff2a55;
+}
+
+/* Base Wrapper */
+.pg-wrapper {
+  background-color: var(--pg-bg-dark);
+  min-height: 100vh;
+  color: #e2e8f0;
+  font-family: 'Montserrat', sans-serif;
+  padding-bottom: 80px;
+}
+
+/* Immersive Hero Background */
+.pg-hero {
+  position: relative;
+  width: 100%;
+  height: 600px;
+  background-size: cover;
+  background-position: center top;
+  z-index: 0;
+}
+
+.pg-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 0%, var(--pg-bg-dark) 100%), 
+              linear-gradient(to top, var(--pg-bg-dark) 0%, transparent 50%);
+}
+
+.pg-container {
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+  z-index: 10;
+  margin-top: -300px; /* Remonte le contenu sur l'image */
+}
+
+/* Main Grid Layout */
+.pg-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+  background: var(--pg-panel-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--pg-panel-border);
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+@media (max-width: 1024px) {
+  .pg-grid { grid-template-columns: 1fr; margin-top: -150px; padding: 20px; }
+  .pg-hero { height: 400px; }
+}
+
+/* --- LECTEUR MULTIMEDIA (GAUCHE) --- */
+.pg-media-col { display: flex; flex-direction: column; gap: 15px; }
+
+.pg-main-media-frame {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  position: relative;
+}
+
+.pg-main-media-frame video, 
+.pg-main-media-frame img, 
+.pg-main-media-frame iframe {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Miniatures */
+.pg-thumb-strip {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+.pg-thumb-strip::-webkit-scrollbar { height: 4px; }
+.pg-thumb-strip::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+
+.pg-thumb-box {
+  width: 110px;
+  height: 62px;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  opacity: 0.5;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  flex-shrink: 0;
+  position: relative;
+}
+.pg-thumb-box:hover { opacity: 0.8; transform: translateY(-2px); }
+.pg-thumb-box.active { opacity: 1; border-color: var(--pg-accent); box-shadow: 0 0 15px rgba(221,22,59,0.4); }
+.pg-thumb-box img { width: 100%; height: 100%; object-fit: cover; }
+
+.pg-thumb-play-icon {
+  position: absolute; inset: 0;
+  display: flex; justify-content: center; align-items: center;
+  background: rgba(0,0,0,0.5); font-size: 22px; color: white;
+}
+
+/* --- INFOS & ACHAT (DROITE) --- */
+.pg-info-col { display: flex; flex-direction: column; gap: 20px; }
+
+.pg-platform-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.08);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.pg-game-title {
+  font-size: 40px;
+  font-weight: 900;
+  line-height: 1.1;
+  margin: 0;
+  color: #fff;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+}
+
+.pg-dev-pub { font-size: 13px; color: #a0a0a0; display: flex; flex-wrap: wrap; gap: 15px; }
+.pg-dev-pub strong { color: #fff; font-weight: 700; }
+
+.pg-scores-row { display: flex; gap: 12px; }
+.pg-score-card {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+.pg-score-label { font-size: 10px; text-transform: uppercase; color: #888; font-weight: 700; letter-spacing: 0.05em; }
+.pg-score-val { font-size: 17px; font-weight: 800; }
+
+/* Bloc Achat */
+.pg-buy-section {
+  background: linear-gradient(135deg, rgba(221, 22, 59, 0.05) 0%, rgba(0,0,0,0.3) 100%);
+  border: 1px solid rgba(221, 22, 59, 0.2);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pg-price-display { display: flex; align-items: center; gap: 15px; }
+.pg-discount-badge { background: var(--pg-accent); color: white; font-size: 16px; font-weight: 800; padding: 6px 10px; border-radius: 6px; }
+.pg-price-numbers { display: flex; flex-direction: column; line-height: 1; }
+.pg-price-old { color: #888; font-size: 14px; text-decoration: line-through; font-weight: 600; margin-bottom: 4px;}
+.pg-price-new { color: white; font-size: 36px; font-weight: 900; }
+
+/* Selecteurs Stylisés */
+.pg-selectors-grid { display: flex; flex-direction: column; gap: 12px; }
+.pg-select-group { display: flex; flex-direction: column; gap: 6px; }
+.pg-select-group label { font-size: 11px; color: #999; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
+.pg-select-input {
+  appearance: none;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: white;
+  padding: 14px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.pg-select-input:hover { border-color: rgba(255,255,255,0.3); }
+.pg-select-input:focus { border-color: var(--pg-accent); outline: none; box-shadow: 0 0 0 2px rgba(221,22,59,0.3); }
+.pg-select-input option { background: #111; color: #fff; }
+
+/* Boutons */
+.pg-actions-row { display: flex; gap: 12px; }
+.pg-btn-primary {
+  flex: 1;
+  background: linear-gradient(90deg, #dd163b 0%, #ff2a55 100%);
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s;
+  text-decoration: none !important;
+  box-shadow: 0 8px 20px rgba(221, 22, 59, 0.4);
+}
+.pg-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(221, 22, 59, 0.6); color: white; }
+.pg-btn-disabled { background: rgba(255,255,255,0.05); color: #666; box-shadow: none; cursor: not-allowed; border: 1px solid rgba(255,255,255,0.1); }
+
+.pg-btn-wishlist {
+  width: 56px;
+  height: 56px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.pg-btn-wishlist:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+.pg-btn-wishlist.active { border-color: var(--pg-accent); background: rgba(221,22,59,0.1); }
+.pg-btn-wishlist.active svg { fill: var(--pg-accent); stroke: var(--pg-accent); }
+
+/* --- TABS SYSTEM --- */
+.pg-tabs-container {
+  margin-top: 40px;
+  background: var(--pg-panel-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--pg-panel-border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.pg-tabs-nav { display: flex; background: rgba(0,0,0,0.4); border-bottom: 1px solid rgba(255,255,255,0.05); }
+.pg-tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 20px;
+  color: #888;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.pg-tab-btn:hover { color: #fff; background: rgba(255,255,255,0.02); }
+.pg-tab-btn.active { color: var(--pg-accent); border-bottom-color: var(--pg-accent); background: rgba(255,255,255,0.05); }
+
+.pg-tab-content { padding: 40px; }
+
+/* Config Cards */
+.pg-config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+.pg-config-card { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); padding: 25px; border-radius: 12px; }
+.pg-config-card h4 { color: var(--pg-accent); font-size: 16px; margin-bottom: 15px; text-transform: uppercase; font-weight: 800; }
+.pg-config-card ul { padding-left: 20px; color: #bbb; line-height: 1.8; font-size: 13px;}
+.pg-config-card strong { color: #fff; }
+
+@media (max-width: 768px) {
+  .pg-game-title { font-size: 28px; }
+  .pg-config-grid { grid-template-columns: 1fr; }
+  .pg-tab-content { padding: 20px; }
+  .pg-tab-btn { padding: 15px 5px; font-size: 11px;}
+  .pg-buy-section { padding: 15px; }
+}
+
+/* =====================================================
+   PRO GAMING - VERSION OPTIMISÉE (HIÉRARCHIE & LISIBILITÉ)
+   ===================================================== */
+:root {
+  --pg-bg: #0a0a0c;
+  --pg-panel: rgba(18, 18, 22, 0.7);
+  --pg-accent: #dd163b;
+  --pg-text: #e2e8f0;
+  --pg-muted: #94a3b8;
+}
+
+/* Container principal : ajout de marges externes pour ne pas "étouffer" */
+.pg-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* Correction de la grille : ajout de padding et shadow plus subtile */
+.pg-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 40px;
+  background: var(--pg-panel);
+  padding: 32px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Titre : plus de graisse pour plus d'impact */
+.pg-game-title {
+  font-size: 38px;
+  line-height: 1.1;
+  font-weight: 800;
+  margin-bottom: 20px;
+  letter-spacing: -0.5px;
+}
+
+/* Zone Prix : rendre les chiffres lisibles et séparés du reste */
+.pg-buy-section {
+  background: rgba(0,0,0,0.3);
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pg-price-new {
+  font-size: 42px;
+  font-weight: 900;
+  color: #fff;
+}
+
+/* Bouton : plus large, plus pro */
+.pg-btn-primary {
+  padding: 18px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 10px;
+  transition: all 0.25s ease;
+}
+
+/* Correction des sélecteurs (les rendre moins "vieil HTML") */
+.pg-select-input {
+  width: 100%;
+  padding: 14px;
+  background: #0f0f12;
+  border: 1px solid #333;
+  color: white;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+/* Tabs : plus propres, liseré plus fin */
+.pg-tab-btn {
+  padding: 20px 30px;
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+}
+.pg-tab-btn.active {
+  border-bottom-color: var(--pg-accent);
+  color: white;
+}
+
+/* --- DESIGN SYSTEM PRO GAMING --- */
+.pg-wrapper { background-color: #0a0a0c; min-height: 100vh; color: #fff; font-family: 'Montserrat', sans-serif; }
+.pg-main-grid { display: grid; grid-template-columns: 1fr 380px; gap: 30px; max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+
+.pg-card { background: #121215; border-radius: 12px; padding: 24px; border: 1px solid rgba(255,255,255,0.05); }
+
+.pg-title { font-size: 2.2rem; font-weight: 800; margin: 0 0 20px 0; color: #fff; }
+
+.pg-price-tag { font-size: 2.5rem; font-weight: 900; color: #dd163b; }
+
+.pg-btn { background: #dd163b; color: #fff; border: none; padding: 16px; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; transition: 0.3s; }
+.pg-btn:hover { background: #ff2a55; }
+
+/* Responsive */
+@media (max-width: 900px) { .pg-main-grid { grid-template-columns: 1fr; } }
+
+
+/* =====================================================
+   PRO GAMING GAMEDETAIL — CSS FINAL (OVERRIDE)
+   À coller TOUT à la fin de style.css
+   ===================================================== */
+
+/* Reset des conflits :root */
+:root {
+  --pg-bg-dark: #0a0a0c;
+  --pg-panel-bg: rgba(15, 18, 25, 0.75);
+  --pg-panel-border: rgba(255, 255, 255, 0.07);
+  --pg-accent: #dd163b;
+  --pg-accent-hover: #ff2a55;
+  --pg-radius: 14px;
+}
+
+/* Wrapper */
+.pg-wrapper {
+  background-color: var(--pg-bg-dark);
+  min-height: 100vh;
+  color: #e2e8f0;
+  font-family: 'Montserrat', sans-serif;
+  padding-bottom: 80px;
+}
+
+/* Hero immersif */
+.pg-hero {
+  position: relative;
+  width: 100%;
+  height: 520px;
+  background-size: cover;
+  background-position: center 20%;
+  z-index: 0;
+}
+
+.pg-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(10,10,15,0.2) 0%, rgba(10,10,15,0.85) 65%, var(--pg-bg-dark) 100%);
+}
+
+/* Container principal — CORRECTION du vide */
+.pg-container {
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 24px 0;
+  position: relative;
+  z-index: 10;
+  margin-top: -220px; /* remonte sur le hero */
+}
+
+/* GRILLE PRINCIPALE */
+.pg-grid {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr;
+  gap: 32px;
+  background: var(--pg-panel-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--pg-panel-border);
+  border-radius: var(--pg-radius);
+  padding: 28px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+@media (max-width: 1024px) {
+  .pg-container { margin-top: -160px; }
+  .pg-grid { grid-template-columns: 1fr; gap: 24px; padding: 20px; }
+  .pg-hero { height: 400px; }
+}
+
+@media (max-width: 768px) {
+  .pg-container { margin-top: -100px; padding: 0 14px; }
+  .pg-hero { height: 280px; }
+  .pg-grid { padding: 16px; gap: 18px; }
+}
+
+/* Colonne gauche : media */
+.pg-media-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pg-main-media-frame {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
+  position: relative;
+}
+
+.pg-main-media-frame video,
+.pg-main-media-frame iframe,
+.pg-main-media-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  vertical-align: top;
+}
+
+/* Strip miniatures */
+.pg-thumb-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pg-accent) #111;
+}
+.pg-thumb-strip::-webkit-scrollbar { height: 4px; }
+.pg-thumb-strip::-webkit-scrollbar-thumb { background: var(--pg-accent); border-radius: 2px; }
+
+.pg-thumb-box {
+  width: 100px;
+  height: 58px;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  opacity: 0.5;
+  transition: all 0.25s;
+  flex-shrink: 0;
+  position: relative;
+}
+.pg-thumb-box:hover { opacity: 0.85; transform: translateY(-2px); }
+.pg-thumb-box.active {
+  opacity: 1;
+  border-color: var(--pg-accent);
+  box-shadow: 0 0 12px rgba(221,22,59,0.4);
+}
+.pg-thumb-box img { width: 100%; height: 100%; object-fit: cover; }
+
+.pg-thumb-play-icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.5);
+  font-size: 20px;
+  color: white;
+}
+
+/* Colonne droite : infos */
+.pg-info-col {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.pg-platform-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  width: fit-content;
+  color: #fff;
+}
+
+.pg-game-title {
+  font-size: clamp(22px, 2.5vw, 36px);
+  font-weight: 900;
+  line-height: 1.15;
+  margin: 0;
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+}
+
+.pg-dev-pub {
+  font-size: 13px;
+  color: #999;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.pg-dev-pub strong { color: #ddd; font-weight: 600; }
+
+/* Scores */
+.pg-scores-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.pg-score-card {
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 100px;
+}
+.pg-score-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  color: #666;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+}
+.pg-score-val { font-size: 15px; font-weight: 800; }
+
+/* Bloc achat */
+.pg-buy-section {
+  background: linear-gradient(145deg, rgba(221,22,59,0.07) 0%, rgba(0,0,0,0.35) 100%);
+  border: 1px solid rgba(221,22,59,0.22);
+  border-radius: 14px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.pg-price-display {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.pg-discount-badge {
+  background: var(--pg-accent);
+  color: white;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 5px 9px;
+  border-radius: 5px;
+}
+.pg-price-numbers {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.pg-price-old {
+  color: #666;
+  font-size: 13px;
+  text-decoration: line-through;
+  margin-bottom: 2px;
+}
+.pg-price-new {
+  color: #fff;
+  font-size: clamp(28px, 3vw, 38px);
+  font-weight: 900;
+}
+
+/* Sélecteurs */
+.pg-selectors-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pg-select-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.pg-select-group label {
+  font-size: 10px;
+  color: #888;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+.pg-select-input {
+  appearance: none;
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  font-family: inherit;
+  width: 100%;
+}
+.pg-select-input:hover { border-color: rgba(255,255,255,0.25); }
+.pg-select-input:focus {
+  border-color: var(--pg-accent);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(221,22,59,0.25);
+}
+.pg-select-input option { background: #111; color: #fff; }
+
+/* Boutons */
+.pg-actions-row {
+  display: flex;
+  gap: 10px;
+}
+.pg-btn-primary {
+  flex: 1;
+  background: linear-gradient(90deg, #dd163b 0%, #ff2a55 100%);
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s;
+  text-decoration: none !important;
+  box-shadow: 0 6px 18px rgba(221,22,59,0.4);
+}
+.pg-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(221,22,59,0.6);
+  color: white;
+}
+.pg-btn-disabled {
+  background: rgba(255,255,255,0.05) !important;
+  color: #555 !important;
+  box-shadow: none !important;
+  cursor: not-allowed;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.pg-btn-wishlist {
+  width: 52px;
+  height: 52px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.pg-btn-wishlist:hover { background: rgba(255,255,255,0.1); }
+.pg-btn-wishlist.active { border-color: var(--pg-accent); background: rgba(221,22,59,0.12); }
+.pg-btn-wishlist.active svg { fill: var(--pg-accent); stroke: var(--pg-accent); }
+
+/* Tags catégories */
+.pg-meta-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.pg-meta-tag {
+  font-size: 10px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #aaa;
+  background: rgba(255,255,255,0.04);
+  white-space: nowrap;
+}
+
+/* TABS */
+.pg-tabs-container {
+  margin-top: 36px;
+  background: var(--pg-panel-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--pg-panel-border);
+  border-radius: var(--pg-radius);
+  overflow: hidden;
+}
+.pg-tabs-nav {
+  display: flex;
+  background: rgba(0,0,0,0.4);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.pg-tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 18px 10px;
+  color: #777;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.pg-tab-btn:hover { color: #fff; }
+.pg-tab-btn.active {
+  color: var(--pg-accent);
+  border-bottom-color: var(--pg-accent);
+  background: rgba(255,255,255,0.03);
+}
+.pg-tab-content { padding: 36px; }
+
+/* Config PC */
+.pg-config-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.pg-config-card {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 22px;
+  border-radius: 10px;
+}
+.pg-config-card h4 {
+  color: var(--pg-accent);
+  font-size: 14px;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+.pg-config-card ul { padding-left: 18px; color: #aaa; line-height: 1.9; font-size: 13px; }
+.pg-config-card strong { color: #ddd; }
+
+/* Mobile */
+@media (max-width: 768px) {
+  .pg-game-title { font-size: 22px; }
+  .pg-price-new { font-size: 28px; }
+  .pg-config-grid { grid-template-columns: 1fr; }
+  .pg-tab-content { padding: 18px; }
+  .pg-tab-btn { padding: 14px 5px; font-size: 11px; }
+  .pg-buy-section { padding: 16px; }
+  .pg-thumb-box { width: 80px; height: 46px; }
 }
