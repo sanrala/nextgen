@@ -31554,3 +31554,1201 @@ div.burgerNav > ul {
   .pg-buy-section { padding: 16px; }
   .pg-thumb-box { width: 80px; height: 46px; }
 }
+/* =====================================================
+   GAMEDETAIL — BLOC ACHAT STYLE "DARK CARD"
+   À coller TOUT à la fin de style.css
+   ===================================================== */
+
+/* ── Wrapper du bloc achat (fond sombre arrondi) ── */
+.gd-right-price,
+.gd-right-scores,
+.gd-buy-btn.gd-buy-btn-right,
+.gd-selectors {
+  /* On regroupe tout dans un seul bloc visuel via le parent gd-right-title */
+}
+
+/* Réinitialise les marges des sous-sections de la col droite */
+.gd-right-scores { margin-top: 14px; }
+.gd-right-price  { margin-top: 0; }
+
+/* ── Bloc visuel sombre qui englobe prix + sélecteurs + bouton ── */
+.gd-buy-card {
+  background: #111318;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 14px;
+  padding: 20px;
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Dev / Éditeur / Date (ligne fine au-dessus du bloc) ── */
+.gd-meta-topline {
+  font-size: 13px;
+  color: #888;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 10px;
+  margin-bottom: 2px;
+}
+.gd-meta-topline strong { color: #ccc; font-weight: 600; }
+
+/* ── Scores Steam + Metacritic ── */
+.gd-scores-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.gd-score-block {
+  background: #111318;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 120px;
+}
+
+.gd-score-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #555;
+  font-weight: 700;
+}
+
+.gd-score-value {
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.gd-score-sub {
+  font-size: 10px;
+  color: #555;
+}
+
+.gd-metacritic {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-start;
+}
+
+.gd-metacritic-score {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 900;
+  color: #fff;
+}
+
+/* ── Prix : badge promo + ancien prix barré + nouveau prix ── */
+.gd-price-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.priceSlidePromo {
+  background: #dd163b;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 5px 9px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.priceOrigin {
+  font-size: 14px;
+  color: #555 !important;
+  text-decoration: line-through;
+  font-weight: 500;
+}
+
+.price {
+  font-size: 36px !important;
+  font-weight: 900 !important;
+  color: #fff !important;
+  line-height: 1;
+}
+
+/* ── Sélecteurs Plateforme / Édition / Région ── */
+.gd-selectors {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 0;
+}
+
+.gd-selector-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.gd-selector-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #666;
+  font-weight: 700;
+}
+
+.gd-select-wrapper {
+  position: relative;
+}
+
+.gd-select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  background: #0c0d10;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #fff;
+  padding: 13px 40px 13px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  font-family: inherit;
+  outline: none;
+}
+
+.gd-select:hover  { border-color: rgba(255,255,255,0.22); }
+.gd-select:focus  { border-color: #dd163b; box-shadow: 0 0 0 2px rgba(221,22,59,0.2); }
+.gd-select option { background: #111; color: #fff; }
+
+.gd-select-arrow {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #555;
+  font-size: 12px;
+  pointer-events: none;
+}
+
+/* ── Bouton achat ── */
+.gd-buy-btn { margin-top: 0; }
+
+.gd-buy-btn-right { display: flex; align-items: center; gap: 10px; }
+.gd-buy-btn-left  { display: none; } /* caché sur desktop */
+
+@media (max-width: 767px) {
+  .gd-buy-btn-right { display: none; }
+  .gd-buy-btn-left  { display: flex; margin-top: 12px; }
+}
+
+.gd-btn-instock {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 15px 20px !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 8px !important;
+  background: linear-gradient(90deg, #dd163b 0%, #ff2a55 100%) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 6px 18px rgba(221,22,59,0.4);
+  transition: all 0.25s ease;
+  text-decoration: none !important;
+}
+
+.gd-btn-instock:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(221,22,59,0.6);
+  color: #fff !important;
+}
+
+.gd-btn-outofstock {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 15px 20px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  cursor: not-allowed !important;
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  color: #555 !important;
+  border-radius: 8px !important;
+  opacity: 0.7;
+}
+
+/* ── Wishlist (bouton cœur) ── */
+.gd-wishlist-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.05);
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.gd-wishlist-btn:hover { border-color: #dd163b; background: rgba(221,22,59,0.1); }
+
+/* ── Meta infos (note communauté, genres, date, dev, éditeur) ── */
+.nk-product-meta.gd-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: #888;
+  line-height: 1.6;
+  margin-top: 4px;
+}
+.nk-product-meta.gd-meta strong { color: #ccc; font-weight: 600; }
+
+/* ── Mobile header (titre + prix dupliqués, cachés sur desktop) ── */
+.gd-mobile-header { display: none; }
+@media (max-width: 767px) {
+  .gd-mobile-header { display: block; }
+  .gd-right-title   { display: none; }
+  .gd-right-scores  { display: none; }
+  .gd-right-price   { display: none; }
+}
+
+/* ── Rassemble prix + sélecteurs + bouton dans un seul bloc visuel ── */
+/* On cible la col droite pour appliquer le fond sombre unifié */
+.col-12.col-md-6 .gd-right-price,
+.col-12.col-md-6 .gd-selectors,
+.col-12.col-md-6 .gd-buy-btn.gd-buy-btn-right {
+  /* regroupés dans un wrapper via JSX .gd-buy-card ci-dessous */
+}
+/* =====================================================
+   GAMEDETAIL — PATCH FINAL
+   À coller TOUT à la fin de style.css
+   ===================================================== */
+
+/* ── Alignement col gauche / col droite au même niveau ── */
+.nk-store-product .row.vertical-gap {
+  align-items: start !important;
+}
+
+/* Retire tout gap-top parasite sur la col droite */
+.nk-store-product .col-12.col-md-6:last-child {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* ── gd-buy-card : fond blur au lieu de #111318 ── */
+.gd-buy-card {
+  background: rgba(10, 12, 18, 0.55) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 14px !important;
+  padding: 20px !important;
+  margin-top: 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+}
+
+/* ── Prix dans le buy-card ── */
+.gd-buy-card .gd-price-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.gd-buy-card .priceSlidePromo {
+  background: #dd163b;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 5px 10px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.gd-buy-card .priceOrigin {
+  font-size: 14px;
+  color: #555 !important;
+  text-decoration: line-through;
+}
+
+.gd-buy-card .price {
+  font-size: 36px !important;
+  font-weight: 900 !important;
+  color: #fff !important;
+  line-height: 1;
+}
+
+/* ── Sélecteurs dans le buy-card ── */
+.gd-buy-card .gd-selectors {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gd-buy-card .gd-selector-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.gd-buy-card .gd-selector-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #666;
+  font-weight: 700;
+}
+
+.gd-buy-card .gd-select-wrapper {
+  position: relative;
+}
+
+.gd-buy-card .gd-select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 13px 40px 13px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  font-family: inherit;
+  outline: none;
+}
+
+.gd-buy-card .gd-select:hover  { border-color: rgba(255,255,255,0.22); }
+.gd-buy-card .gd-select:focus  { border-color: #dd163b; box-shadow: 0 0 0 2px rgba(221,22,59,0.2); }
+.gd-buy-card .gd-select option { background: #111; color: #fff; }
+
+.gd-buy-card .gd-select-arrow {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #555;
+  font-size: 12px;
+  pointer-events: none;
+}
+
+/* ── Bouton acheter ── */
+.gd-btn-instock {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  padding: 15px 20px !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  border-radius: 8px !important;
+  background: linear-gradient(90deg, #dd163b 0%, #ff2a55 100%) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 6px 18px rgba(221,22,59,0.4) !important;
+  transition: all 0.25s ease !important;
+  text-decoration: none !important;
+}
+.gd-btn-instock:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 26px rgba(221,22,59,0.6) !important;
+  color: #fff !important;
+}
+
+.gd-btn-outofstock {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  padding: 15px 20px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  cursor: not-allowed !important;
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  color: #555 !important;
+  border-radius: 8px !important;
+  opacity: 0.7 !important;
+}
+
+/* ── Scores Steam + Metacritic ── */
+.gd-scores-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.gd-score-block {
+  background: rgba(10, 12, 18, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 120px;
+}
+
+.gd-score-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #555;
+  font-weight: 700;
+}
+
+.gd-score-value {
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.gd-score-sub {
+  font-size: 10px;
+  color: #555;
+}
+
+.gd-metacritic {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-start;
+}
+
+.gd-metacritic-score {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 900;
+  color: #fff;
+}
+
+/* ── Note communauté + Genres ── */
+.nk-product-meta.gd-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 13px;
+  color: #888;
+  line-height: 1.6;
+}
+.nk-product-meta.gd-meta strong { color: #ccc; font-weight: 600; }
+
+/* ── Tags Steam (col gauche) ── */
+.gd-steam-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+.gd-feature-tag {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #aaa;
+  background: rgba(255,255,255,0.04);
+  white-space: nowrap;
+}
+
+/* ── Badge plateforme ── */
+.gd-platform-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 20px;
+  padding: 5px 12px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Titre jeu ── */
+.nk-productpro-title.h3pro {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+}
+
+/* ── Mobile header (caché sur desktop) ── */
+.gd-mobile-header { display: none; }
+
+@media (max-width: 767px) {
+  .gd-mobile-header   { display: block; }
+  .gd-right-title     { display: none; }
+  .gd-right-scores    { display: none; }
+  .col-12.col-md-6:last-child > .gd-buy-card { display: none; }
+  .col-12.col-md-6:last-child > .nk-product-meta { display: none; }
+  .col-12.col-md-6:last-child > div[style*="font-size: 13px"] { display: none; }
+}
+/* =====================================================
+   GAMEDETAIL — PATCH FINAL
+   À coller TOUT à la fin de style.css
+   ===================================================== */
+
+/* ── Alignement col gauche / col droite au même niveau ── */
+.nk-store-product .row.vertical-gap {
+  align-items: start !important;
+}
+
+/* Retire tout gap-top parasite sur la col droite */
+.nk-store-product .col-12.col-md-6:last-child {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* ── gd-buy-card : fond blur au lieu de #111318 ── */
+.gd-buy-card {
+  background: rgba(10, 12, 18, 0.55) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 14px !important;
+  padding: 20px !important;
+  margin-top: 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+}
+
+/* ── Prix dans le buy-card ── */
+.gd-buy-card .gd-price-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.gd-buy-card .priceSlidePromo {
+  background: #dd163b;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 5px 10px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.gd-buy-card .priceOrigin {
+  font-size: 14px;
+  color: #555 !important;
+  text-decoration: line-through;
+}
+
+.gd-buy-card .price {
+  font-size: 36px !important;
+  font-weight: 900 !important;
+  color: #fff !important;
+  line-height: 1;
+}
+
+/* ── Sélecteurs dans le buy-card ── */
+.gd-buy-card .gd-selectors {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gd-buy-card .gd-selector-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.gd-buy-card .gd-selector-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #666;
+  font-weight: 700;
+}
+
+.gd-buy-card .gd-select-wrapper {
+  position: relative;
+}
+
+.gd-buy-card .gd-select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 13px 40px 13px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  font-family: inherit;
+  outline: none;
+}
+
+.gd-buy-card .gd-select:hover  { border-color: rgba(255,255,255,0.22); }
+.gd-buy-card .gd-select:focus  { border-color: #dd163b; box-shadow: 0 0 0 2px rgba(221,22,59,0.2); }
+.gd-buy-card .gd-select option { background: #111; color: #fff; }
+
+.gd-buy-card .gd-select-arrow {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #555;
+  font-size: 12px;
+  pointer-events: none;
+}
+
+/* ── Bouton acheter ── */
+.gd-btn-instock {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  padding: 15px 20px !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  border-radius: 8px !important;
+  background: linear-gradient(90deg, #dd163b 0%, #ff2a55 100%) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 6px 18px rgba(221,22,59,0.4) !important;
+  transition: all 0.25s ease !important;
+  text-decoration: none !important;
+}
+.gd-btn-instock:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 26px rgba(221,22,59,0.6) !important;
+  color: #fff !important;
+}
+
+.gd-btn-outofstock {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  padding: 15px 20px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  cursor: not-allowed !important;
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  color: #555 !important;
+  border-radius: 8px !important;
+  opacity: 0.7 !important;
+}
+
+/* ── Scores Steam + Metacritic ── */
+.gd-scores-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.gd-score-block {
+  background: rgba(10, 12, 18, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 120px;
+}
+
+.gd-score-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #555;
+  font-weight: 700;
+}
+
+.gd-score-value {
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.gd-score-sub {
+  font-size: 10px;
+  color: #555;
+}
+
+.gd-metacritic {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-start;
+}
+
+.gd-metacritic-score {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 900;
+  color: #fff;
+}
+
+/* ── Note communauté + Genres ── */
+.nk-product-meta.gd-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 13px;
+  color: #888;
+  line-height: 1.6;
+}
+.nk-product-meta.gd-meta strong { color: #ccc; font-weight: 600; }
+
+/* ── Tags Steam (col gauche) ── */
+.gd-steam-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+.gd-feature-tag {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #aaa;
+  background: rgba(255,255,255,0.04);
+  white-space: nowrap;
+}
+
+/* ── Badge plateforme ── */
+.gd-platform-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 20px;
+  padding: 5px 12px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Titre jeu ── */
+.nk-productpro-title.h3pro {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+}
+
+/* ── Mobile header (caché sur desktop) ── */
+.gd-mobile-header { display: none; }
+
+@media (max-width: 767px) {
+  .gd-mobile-header   { display: block; }
+  .gd-right-title     { display: none; }
+  .gd-right-scores    { display: none; }
+  .col-12.col-md-6:last-child > .gd-buy-card { display: none; }
+  .col-12.col-md-6:last-child > .nk-product-meta { display: none; }
+  .col-12.col-md-6:last-child > div[style*="font-size: 13px"] { display: none; }
+}
+
+/* ── Supprime le padding-top de vertical-gap dans nk-store-product ── */
+/* C'est ce padding qui crée le vide sous les tags quand col gauche < col droite */
+.nk-store-product .row.vertical-gap > [class*="col-"] {
+  padding-top: 0 !important;
+}
+.nk-store-product .row.vertical-gap {
+  margin-top: 0 !important;
+}
+@media (max-width: 767px) {
+  .gd-mobile-header { display: flex !important; }
+}
+@media (max-width: 767px) {
+  .gd-mobile-header { display: flex !important; flex-direction: column; }
+}
+
+/* =====================================================
+   GAMEDETAIL — PATCH FINAL
+   À coller TOUT à la fin de style.css
+   ===================================================== */
+
+/* ── Alignement col gauche / col droite au même niveau ── */
+.nk-store-product .row.vertical-gap {
+  align-items: start !important;
+}
+
+/* Retire tout gap-top parasite sur la col droite */
+.nk-store-product .col-12.col-md-6:last-child {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* ── gd-buy-card : fond blur au lieu de #111318 ── */
+.gd-buy-card {
+  background: rgba(10, 12, 18, 0.55) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 14px !important;
+  padding: 20px !important;
+  margin-top: 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+}
+
+/* ── Prix dans le buy-card ── */
+.gd-buy-card .gd-price-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.gd-buy-card .priceSlidePromo {
+  background: #dd163b;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 5px 10px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.gd-buy-card .priceOrigin {
+  font-size: 14px;
+  color: #555 !important;
+  text-decoration: line-through;
+}
+
+.gd-buy-card .price {
+  font-size: 36px !important;
+  font-weight: 900 !important;
+  color: #fff !important;
+  line-height: 1;
+}
+
+/* ── Sélecteurs dans le buy-card ── */
+.gd-buy-card .gd-selectors {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gd-buy-card .gd-selector-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.gd-buy-card .gd-selector-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #666;
+  font-weight: 700;
+}
+
+.gd-buy-card .gd-select-wrapper {
+  position: relative;
+}
+
+.gd-buy-card .gd-select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 13px 40px 13px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  font-family: inherit;
+  outline: none;
+}
+
+.gd-buy-card .gd-select:hover  { border-color: rgba(255,255,255,0.22); }
+.gd-buy-card .gd-select:focus  { border-color: #dd163b; box-shadow: 0 0 0 2px rgba(221,22,59,0.2); }
+.gd-buy-card .gd-select option { background: #111; color: #fff; }
+
+.gd-buy-card .gd-select-arrow {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #555;
+  font-size: 12px;
+  pointer-events: none;
+}
+
+/* ── Bouton acheter ── */
+.gd-btn-instock {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  padding: 15px 20px !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  border-radius: 8px !important;
+  background: linear-gradient(90deg, #dd163b 0%, #ff2a55 100%) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 6px 18px rgba(221,22,59,0.4) !important;
+  transition: all 0.25s ease !important;
+  text-decoration: none !important;
+}
+.gd-btn-instock:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 26px rgba(221,22,59,0.6) !important;
+  color: #fff !important;
+}
+
+.gd-btn-outofstock {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  padding: 15px 20px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  cursor: not-allowed !important;
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  color: #555 !important;
+  border-radius: 8px !important;
+  opacity: 0.7 !important;
+}
+
+/* ── Scores Steam + Metacritic ── */
+.gd-scores-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.gd-score-block {
+  background: rgba(10, 12, 18, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 120px;
+}
+
+.gd-score-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #555;
+  font-weight: 700;
+}
+
+.gd-score-value {
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.gd-score-sub {
+  font-size: 10px;
+  color: #555;
+}
+
+.gd-metacritic {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-start;
+}
+
+.gd-metacritic-score {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 900;
+  color: #fff;
+}
+
+/* ── Note communauté + Genres ── */
+.nk-product-meta.gd-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 13px;
+  color: #888;
+  line-height: 1.6;
+}
+.nk-product-meta.gd-meta strong { color: #ccc; font-weight: 600; }
+
+/* ── Tags Steam (col gauche) ── */
+.gd-steam-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+.gd-feature-tag {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #aaa;
+  background: rgba(255,255,255,0.04);
+  white-space: nowrap;
+}
+
+/* ── Badge plateforme ── */
+.gd-platform-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 20px;
+  padding: 5px 12px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Titre jeu ── */
+.nk-productpro-title.h3pro {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+}
+
+/* ── Mobile header (caché sur desktop) ── */
+.gd-mobile-header { display: none; }
+
+@media (max-width: 767px) {
+  .gd-mobile-header   { display: block; }
+  .gd-right-title     { display: none; }
+  .gd-right-scores    { display: none; }
+  .col-12.col-md-6:last-child > .gd-buy-card { display: none; }
+  .col-12.col-md-6:last-child > .nk-product-meta { display: none; }
+  .col-12.col-md-6:last-child > div[style*="font-size: 13px"] { display: none; }
+}
+
+/* ── Supprime le padding-top de vertical-gap dans nk-store-product ── */
+/* C'est ce padding qui crée le vide sous les tags quand col gauche < col droite */
+.nk-store-product .row.vertical-gap > [class*="col-"] {
+  padding-top: 0 !important;
+}
+.nk-store-product .row.vertical-gap {
+  margin-top: 0 !important;
+}
+
+/* =====================================================
+   SECTION INFOS SOUS LA GRILLE
+   description + tags + dev/éditeur/sortie/genres
+   ===================================================== */
+
+/* Reset du fond parasite du thème sur cette section */
+.gd-container > div[style*="margin-top: 24px"],
+.gd-container > div[style*="marginTop: 24"] {
+  background: transparent !important;
+}
+
+/* Description courte */
+.gd-info-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.gd-info-section p {
+  color: #a0a8b4;
+  font-size: 13px;
+  line-height: 1.75;
+  margin: 0 0 16px 0;
+}
+
+/* Tags Steam */
+.gd-info-section .gd-feature-tag {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #888;
+  background: rgba(255, 255, 255, 0.04);
+  white-space: nowrap;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.gd-info-section .gd-feature-tag:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #ccc;
+}

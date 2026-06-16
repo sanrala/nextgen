@@ -91,9 +91,9 @@ function PlatformLogo({ type, size = 16 }) {
   );
 }
 
-function Separator({ label }) {
+function Separator({ label, style = {} }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 18, margin: "52px 0 28px" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 18, margin: "52px 0 28px", ...style }}>
       <div style={{ width: 5, height: 28, background: "#dd163b", borderRadius: 3, flexShrink: 0 }} />
       <div style={{ width: 32, height: 3, background: "#dd163b", borderRadius: 2, flexShrink: 0 }} />
       {label && (
@@ -151,7 +151,6 @@ function GameDetail() {
   const navigate = useNavigate();
   const { isAdmin } = useAdmin();
 
-  // ── Admin panel state ──
   const [adminOpen,      setAdminOpen]      = useState(false);
   const [adminSaving,    setAdminSaving]    = useState(false);
   const [adminMsg,       setAdminMsg]       = useState("");
@@ -171,11 +170,12 @@ function GameDetail() {
   const [adminScreenshots, setAdminScreenshots] = useState([]);
   const [adminNewFiles,  setAdminNewFiles]  = useState([]);
   const [adminNewPreviews, setAdminNewPreviews] = useState([]);
+  const [adminRefreshing, setAdminRefreshing] = useState(false);
+  const [tagsExpanded,   setTagsExpanded]   = useState(false);
   const adminScreenRef = useRef();
   const CLOUDINARY_CLOUD  = "dl0eijxyn";
   const CLOUDINARY_PRESET = "ml_default";
 
-  // ── Wishlist ──
   const [inWishlist,     setInWishlist]     = useState(false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
 
@@ -215,9 +215,22 @@ function GameDetail() {
   const [selectedEdition,  setSelectedEdition]  = useState(null);
   const [heroImgError, setHeroImgError] = useState(false);
 
+  // ── Clé partagée commentaires/notes — ig_ du jeu courant (stable dès le début) ──
+  const sharedGameKey = `ig_${igId}`;
+
   useEffect(() => { setHeroImgError(false); }, [igId]);
 
-  // ── Steam + Firebase cache ──
+  const propagateSteamDataToEditions = async (steamDataObj, editions) => {
+    if (!steamDataObj || !editions?.length) return;
+    try {
+      await Promise.all(
+        editions
+          .filter(ed => String(ed.id) !== String(igId))
+          .map(ed => setDoc(doc(db, "games", `ig_${ed.id}`), { steamData: steamDataObj, savedAt: serverTimestamp() }, { merge: true }))
+      );
+    } catch (e) { console.warn("Propagation steamData editions:", e.message); }
+  };
+
   useEffect(() => {
     if (!igId) { setLoadingSteam(false); return; }
     (async () => {
@@ -245,7 +258,14 @@ function GameDetail() {
                   const steamAppId = cached.steamData?.steam_appid;
                   if (!steamAppId) return;
                   const fresh = await fetch(`${BACKEND_URL}/api/steam/${steamAppId}`).then(r => r.ok ? r.json() : null).catch(() => null);
-                  if (fresh) { setSteamData(fresh); await setDoc(fbRef, { igId, savedAt: serverTimestamp(), steamData: fresh }, { merge: true }); }
+                  if (fresh) {
+                    setSteamData(fresh);
+                    await setDoc(fbRef, { igId, savedAt: serverTimestamp(), steamData: fresh }, { merge: true });
+                    const edSnap = await getDoc(fbRef);
+                    if (edSnap.exists() && edSnap.data().editions?.length) {
+                      await propagateSteamDataToEditions(fresh, edSnap.data().editions);
+                    }
+                  }
                 } catch {}
               })();
             }
@@ -282,7 +302,13 @@ function GameDetail() {
         ]);
         if (gameDataRes) {
           setSteamData(gameDataRes);
-          try { await setDoc(fbRef, { igId, savedAt: serverTimestamp(), steamData: gameDataRes }, { merge: true }); } catch (writeErr) { console.warn("Firebase write error:", writeErr.message); }
+          try {
+            await setDoc(fbRef, { igId, savedAt: serverTimestamp(), steamData: gameDataRes }, { merge: true });
+            const edSnap = await getDoc(fbRef);
+            if (edSnap.exists() && edSnap.data().editions?.length) {
+              await propagateSteamDataToEditions(gameDataRes, edSnap.data().editions);
+            }
+          } catch (writeErr) { console.warn("Firebase write error:", writeErr.message); }
         } else if (igGameData) {
           setSteamData({ name: igGameData.name, short_description: "", detailed_description: "", header_image: igGameData.img || "", genres: [], developers: "", publishers: "", release_date: { date: "" }, screenshots: [], movies: [], source: "ig" });
         }
@@ -294,7 +320,6 @@ function GameDetail() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [igId]);
 
-  // ── IG game ──
   useEffect(() => {
     if (!igId) return;
     (async () => {
@@ -312,7 +337,6 @@ function GameDetail() {
     })();
   }, [igId]);
 
-  // ── Articles ──
   useEffect(() => {
     if (!igId) return;
     (async () => {
@@ -333,12 +357,10 @@ function GameDetail() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [igId, igGame?.name, steamData?.name]);
 
-  // ── Éditions ──
   useEffect(() => {
     if (!igId) return;
     (async () => {
       try {
-        let cachedEditions = [];
         const fbRef = doc(db, "games", `ig_${igId}`);
         const fbSnap = await getDoc(fbRef);
         if (fbSnap.exists() && fbSnap.data().editions?.length) {
@@ -353,9 +375,6 @@ function GameDetail() {
           if ((ed.region || "").toLowerCase().includes("latin")) return false;
           return true;
         });
-        if (cachedEditions.length) {
-          filtered = filtered.map(apiEd => { const cached = cachedEditions.find(c => c.id === apiEd.id); if (!cached) return apiEd; return { ...cached, ...apiEd, price: apiEd.price, retail: apiEd.retail }; });
-        }
         const currentInList = filtered.find(e => String(e.id) === String(igId));
         if (!currentInList) { const selfRes = await fetch(`${BACKEND_URL}/api/game/${igId}`); if (selfRes.ok) { const self = await selfRes.json(); if (self?.id) filtered = [self, ...filtered]; } }
         setAllEditions(filtered);
@@ -368,7 +387,13 @@ function GameDetail() {
             if (europeEd) { const slug = europeEd.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, ""); const isEuSteam = (europeEd.type || "").toLowerCase().includes("steam"); navigate(`/store/${europeEd.id}/${isEuSteam ? (europeEd.steam_id || 0) : 0}/${slug}`, { replace: true }); return; }
           }
         }
-        try { await Promise.all(filtered.map(ed => setDoc(doc(db, "games", `ig_${ed.id}`), { editions: filtered }, { merge: true }))); } catch (e) { console.warn("Firebase editions write:", e); }
+        try {
+          await Promise.all(filtered.map(ed => setDoc(doc(db, "games", `ig_${ed.id}`), { editions: filtered }, { merge: true })));
+          const currentSteamSnap = await getDoc(fbRef);
+          if (currentSteamSnap.exists() && currentSteamSnap.data().steamData) {
+            await propagateSteamDataToEditions(currentSteamSnap.data().steamData, filtered);
+          }
+        } catch (e) { console.warn("Firebase editions write:", e); }
       } catch (e) { console.error("Editions fetch error", e); }
     })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -382,7 +407,6 @@ function GameDetail() {
   }, [allEditions, igId]);
 
   const platformGroups = allEditions.reduce((acc, ed) => { if (!acc[ed.type]) acc[ed.type] = []; acc[ed.type].push(ed); return acc; }, {});
-
   const gameBase = (igGame?.name || "").replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g, "'").replace(/\s*(deluxe|ultimate|gold|premium|standard)\s*edition.*/gi, "").replace(/\s*edition.*/gi, "").replace(/[-–].*$/, "").trim();
   const shortEdName = (name) => {
     let short = name.replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g, "'");
@@ -414,7 +438,6 @@ function GameDetail() {
   const chosenUrl    = chosenEntry?.url || null;
   const editionName  = chosenEntry ? shortEdName(chosenEntry.name) : "Standard Edition";
 
-  // ── Admin prefill ──
   useEffect(() => {
     if (!isAdmin || !igId) return;
     (async () => {
@@ -438,7 +461,23 @@ function GameDetail() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin, igId]);
 
-  // ── Admin save ──
+  const handleRefreshEditions = async () => {
+    setAdminRefreshing(true); setAdminMsg("");
+    try {
+      const fbRef = doc(db, "games", `ig_${igId}`);
+      const fbSnap = await getDoc(fbRef);
+      const currentSteamData = fbSnap.exists() ? fbSnap.data().steamData : null;
+      if (!currentSteamData) { setAdminMsg("❌ Aucune donnée Steam trouvée pour ce jeu"); setAdminMsgType("error"); return; }
+      const editions = allEditions.length ? allEditions : (fbSnap.exists() ? fbSnap.data().editions || [] : []);
+      const otherEditions = editions.filter(ed => String(ed.id) !== String(igId));
+      if (!otherEditions.length) { setAdminMsg("ℹ️ Aucune autre édition à mettre à jour"); setAdminMsgType("success"); return; }
+      await Promise.all(otherEditions.map(ed => setDoc(doc(db, "games", `ig_${ed.id}`), { steamData: currentSteamData, savedAt: serverTimestamp() }, { merge: true })));
+      setAdminMsg(`✅ steamData propagé vers ${otherEditions.length} édition(s)`);
+      setAdminMsgType("success");
+    } catch (e) { setAdminMsg("Erreur : " + e.message); setAdminMsgType("error"); }
+    finally { setAdminRefreshing(false); }
+  };
+
   const handleAdminSave = async () => {
     setAdminSaving(true); setAdminMsg("");
     try {
@@ -456,8 +495,9 @@ function GameDetail() {
       const fbRef  = doc(db, "games", `ig_${igId}`);
       const fbSnap = await getDoc(fbRef);
       const existing = fbSnap.exists() ? fbSnap.data() : {};
+      const newSteamData = { ...(existing.steamData || {}), short_description: adminDesc, developers: [adminDev], publishers: [adminPub], release_date: { ...(existing.steamData?.release_date || {}), date: adminDateMode === "global" ? adminDate : "", byPlatform: adminDateMode === "byplatform" ? adminDateByPlatform : null }, screenshots: allScreenshots, ...(ytId ? { youtube_id: ytId } : {}) };
       await setDoc(fbRef, {
-        steamData: { ...(existing.steamData || {}), short_description: adminDesc, developers: [adminDev], publishers: [adminPub], release_date: { ...(existing.steamData?.release_date || {}), date: adminDateMode === "global" ? adminDate : "", byPlatform: adminDateMode === "byplatform" ? adminDateByPlatform : null }, screenshots: allScreenshots, ...(ytId ? { youtube_id: ytId } : {}) },
+        steamData: newSteamData,
         featured: adminReleased ? false : adminFeatured,
         featuredPlatforms: adminReleased ? adminReleasedPlatforms : (adminFeatured ? adminFeaturedPlatforms : []),
         featuredGame: (adminFeatured || adminReleased) ? { id: igId, name: igGame?.name || gameTitle, img: igGame?.img || "", type: igGame?.type || "" } : null,
@@ -466,8 +506,9 @@ function GameDetail() {
         trendingGame: adminTrending ? { id: igId, name: igGame?.name || gameTitle, img: igGame?.img || "", type: igGame?.type || "" } : null,
         savedAt: serverTimestamp(),
       }, { merge: true });
+      await propagateSteamDataToEditions(newSteamData, allEditions);
       setAdminScreenshots(allScreenshots); setAdminNewFiles([]); setAdminNewPreviews([]);
-      setAdminMsg("✅ Fiche mise à jour !"); setAdminMsgType("success");
+      setAdminMsg("✅ Fiche mise à jour et propagée !"); setAdminMsgType("success");
       setSteamData(prev => ({ ...prev, short_description: adminDesc, developers: [adminDev], publishers: [adminPub], screenshots: allScreenshots, ...(ytId ? { youtube_id: ytId } : {}) }));
     } catch (e) { setAdminMsg("Erreur : " + e.message); setAdminMsgType("error"); }
     finally { setAdminSaving(false); }
@@ -482,28 +523,34 @@ function GameDetail() {
 
   useEffect(() => {
     if (!igId) return;
-    const gameKey = `ig_${igId}`;
-    const q = query(collection(db, "comments"), where("gameId", "==", gameKey));
+    // Récupère les commentaires de TOUTES les éditions du jeu
+    const allKeys = allEditions.length > 0
+      ? [...new Set(allEditions.map(ed => `ig_${ed.id}`))]
+      : [`ig_${igId}`];
+    // Firestore limite "in" à 30 valeurs max
+    const keys = allKeys.slice(0, 30);
+    const q = query(collection(db, "comments"), where("gameId", "in", keys));
     const unsub = onSnapshot(q,
       snap => { const arr = []; snap.forEach(d => arr.push({ ...d.data(), id: d.id })); setComments(arr); },
       err  => { console.warn("Firestore read denied:", err.message); setComments([]); }
     );
     return () => unsub();
-  }, [igId]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [igId, allEditions.length]);
 
   useEffect(() => {
     if (!igId || !user || comments.length === 0) return;
     (async () => {
       try {
-        const gameKey = `ig_${igId}`;
+        const gameKey = sharedGameKey;
         const avg = comments.reduce((a, c) => a + parseInt(c.rating || 0), 0) / comments.length;
         await setDoc(doc(db, "games", gameKey), { gameId: gameKey, averageRating: avg }, { merge: true });
       } catch (err) { console.warn("Firestore write denied:", err.message); }
     })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [comments, igId, user]);
 
   const averageRating = comments.length ? comments.reduce((a, c) => a + parseInt(c.rating || 0), 0) / comments.length : 0;
-
   const screenshots    = steamData?.screenshots || [];
   const movies         = steamData?.movies      || [];
   const youtubeId      = steamData?.youtube_id  || null;
@@ -530,11 +577,76 @@ function GameDetail() {
 
   const gameTitle = chosenEntry?.name || steamData?.name || igGame?.name || decodeURIComponent(title || "");
   const pt = (chosenEntry?.type || igGame?.type || "Steam").toLowerCase();
+  // eslint-disable-next-line no-unused-vars
   const platformLabel = pt.includes("rockstar") ? "Rockstar" : pt.includes("ubisoft") ? "Ubisoft Connect" : pt.includes("microsoft") ? "Microsoft Store" : pt.includes("xbox") ? "Xbox" : pt.includes("playstation") ? "PlayStation Store" : pt.includes("epic") ? "Epic Games" : pt.includes("gog") ? "GOG" : pt.includes("nintendo") ? "Nintendo eShop" : "Steam";
   const platformBg = pt.includes("rockstar") ? "#F7941D" : pt.includes("ubisoft") ? "#0070cc" : pt.includes("microsoft") || pt.includes("xbox") ? "#107c10" : pt.includes("playstation") ? "#003087" : pt.includes("epic") ? "#2a2a2a" : pt.includes("gog") ? "#6c4db9" : pt.includes("nintendo") ? "#e4000f" : "#14487b";
 
   function formatEdition(name) { return name.replace(/^[^:]+:\s*/, '').trim(); }
   const heroId = chosenEntry?.steam_id || steamData?.steam_appid || steamId;
+
+  const SelectorsBlock = () => (
+    allEditions.length > 0 ? (
+      <div className="gd-selectors" style={{ marginTop: 0 }}>
+        <div className="gd-selector-group">
+          <label className="gd-selector-label">Plateforme</label>
+          <div className="gd-select-wrapper">
+            <select className="gd-select" value={selectedPlatform || ""} onChange={e => {
+              const type = e.target.value; setSelectedPlatform(type);
+              const first = platformGroups[type]?.find(ed => ed.stock === 1) || platformGroups[type]?.[0];
+              setSelectedEdition(first?.name || null); setSelectedRegion(null);
+              if (first && String(first.id) !== String(igId)) { const clean = first.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, ""); const isSteamType = (first.type || "").toLowerCase().includes("steam"); navigate(`/store/${first.id}/${isSteamType ? (first.steam_id || 0) : 0}/${clean}`); }
+            }}>
+              {Object.keys(platformGroups).map(type => <option key={type} value={type}>{platformShortName(type)}</option>)}
+            </select>
+            <span className="gd-select-arrow">▾</span>
+          </div>
+        </div>
+        {editionNamesForPlatform.length > 1 && (
+          <div className="gd-selector-group">
+            <label className="gd-selector-label">Édition</label>
+            <div className="gd-select-wrapper">
+              <select className="gd-select" value={selectedEdition || ""} onChange={e => {
+                const edName = e.target.value; setSelectedEdition(edName); setSelectedRegion(null);
+                const entries = (platformGroups[selectedPlatform] || []).filter(e => e.name === edName);
+                const best = entries.find(e => e.stock === 1) || entries[0];
+                if (best && String(best.id) !== String(igId)) { const clean = best.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, ""); const isSteamType = (best.type || "").toLowerCase().includes("steam"); navigate(`/store/${best.id}/${isSteamType ? (best.steam_id || 0) : 0}/${clean}`); }
+              }}>
+                {editionNamesForPlatform.map(name => <option key={name} value={name}>{formatEdition(name)}</option>)}
+              </select>
+              <span className="gd-select-arrow">▾</span>
+            </div>
+          </div>
+        )}
+        {regionsForSelection.length > 1 && (
+          <div className="gd-selector-group">
+            <label className="gd-selector-label">Région</label>
+            <div className="gd-select-wrapper">
+              <select className="gd-select" value={selectedRegion || ""} onChange={e => setSelectedRegion(e.target.value)}>
+                {regionsForSelection.map(entry => <option key={entry.region} value={entry.region}>{entry.region}{entry.stock === 0 ? " — Hors stock" : ` ✓ ${parseFloat(entry.price).toFixed(2)} €`}</option>)}
+              </select>
+              <span className="gd-select-arrow">▾</span>
+            </div>
+          </div>
+        )}
+      </div>
+    ) : null
+  );
+
+  const BuyButtons = ({ style = {} }) => (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, ...style }}>
+      {chosenInStock && chosenUrl
+        ? <a href={chosenUrl} target="_blank" rel="noopener noreferrer" className="nk-btn nk-btn-rounded nk-btn-color-main-1 gd-btn-instock" style={{ flex: 1 }}>🛒 Acheter maintenant</a>
+        : <button className="nk-btn nk-btn-rounded gd-btn-outofstock" disabled aria-disabled="true" style={{ flex: 1 }}>⛔ Hors stock — {editionName}</button>
+      }
+      <button onClick={toggleWishlist} disabled={wishlistLoading}
+        title={inWishlist ? "Retirer de la wishlist" : "Ajouter à la wishlist"}
+        style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 48, height: 48, borderRadius: "50%", border: inWishlist ? "1px solid #dd163b" : "1px solid rgba(255,255,255,0.2)", background: inWishlist ? "rgba(221,22,59,0.15)" : "rgba(255,255,255,0.06)", cursor: wishlistLoading ? "default" : "pointer", opacity: wishlistLoading ? 0.6 : 1, transition: "all 0.2s", flexShrink: 0 }}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill={inWishlist ? "#dd163b" : "none"} stroke={inWishlist ? "#dd163b" : "rgba(255,255,255,0.6)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      </button>
+    </div>
+  );
 
   return (
     <div style={{ position: "relative" }}>
@@ -572,14 +684,14 @@ function GameDetail() {
         </ul>
         <div className="nk-gap-1" />
 
+        {/* ══════════════════════════════════════════
+            GRILLE PRINCIPALE : Lecteur | Infos achat
+        ══════════════════════════════════════════ */}
         <div className="nk-store-product">
-          {/* ── alignItems: start supprime le vide en bas col gauche ── */}
           <div className="row vertical-gap" style={{ alignItems: "start" }}>
 
-            {/* ══════ COLONNE GAUCHE ══════ */}
+            {/* ── COL GAUCHE : lecteur + miniatures uniquement ── */}
             <div className="col-12 col-md-6">
-
-              {/* Lecteur */}
               <div className="gd-media-main">
                 {activeMedia === "video" && videoSrc ? (
                   <HlsPlayer key={`hls-${igId}`} src={videoSrc.url} type={videoSrc.type} poster={videoThumb} className="gd-media-video" />
@@ -592,7 +704,6 @@ function GameDetail() {
                 ) : null}
               </div>
 
-              {/* Miniatures */}
               {(videoSrc || youtubeId || screenshots.length > 0) && (
                 <div className="gd-thumbstrip">
                   {(videoSrc || youtubeId) && (
@@ -608,116 +719,15 @@ function GameDetail() {
                   ))}
                 </div>
               )}
+            </div>{/* fin col gauche */}
 
-              {/* ── Description courte sous les miniatures (comble le vide) ── */}
-              {steamData?.short_description && (
-                <div style={{ marginTop: 20, paddingTop: 16, borderTop: "1px solid rgba(255,255,255,0.07)", color: "#a0a8b4", fontSize: "13px", lineHeight: "1.7" }}>
-                  {steamData.short_description}
-                </div>
-              )}
-
-              {/* ── Tags Steam sous la description ── */}
-              {steamCategories.length > 0 && (
-                <div className="gd-steam-features" style={{ marginTop: 14 }}>
-                  {steamCategories.map(cat => (
-                    <span key={cat.id} className="gd-feature-tag">{cat.description}</span>
-                  ))}
-                </div>
-              )}
-
-              {/* Titre + prix dupliqués pour mobile */}
-              <div className="gd-mobile-header">
-                <div className="subinfos" style={{ marginTop: 12 }}>
-                  <span className="platform gd-platform-badge" style={{ background: "rgba(255,255,255,0.1)" }}>
-                    <span style={{ background: platformBg, borderRadius: "50%", width: 42, height: 42, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                      <PlatformLogo type={chosenEntry?.type || igGame?.type || "Steam"} size={32} />
-                    </span>
-                    &nbsp;{platformLabel}
-                  </span>
-                  <h2 className="nk-productpro-title h3pro" style={{ marginLeft: 10, marginBottom: 0, fontSize: "1rem" }}>{gameTitle}</h2>
-                </div>
-                <div className="info gd-price-block" style={{ marginTop: 8 }}>
-                  {chosenRetail && chosenRetail > (chosenPrice || 0) && <div className="priceOrigin text-white">{chosenRetail.toFixed(2)} €</div>}
-                  {chosenPromo && <div className="priceSlidePromo">{chosenPromo}</div>}
-                  {chosenPrice && chosenPrice > 0 && <div className="price text-white">{chosenPrice.toFixed(2)} €</div>}
-                </div>
-              </div>
-
-              {/* Sélecteurs */}
-              {allEditions.length > 0 && (
-                <div className="gd-selectors">
-                  <div className="gd-selector-group">
-                    <label className="gd-selector-label">Plateforme</label>
-                    <div className="gd-select-wrapper">
-                      <select className="gd-select" value={selectedPlatform || ""} onChange={e => {
-                        const type = e.target.value; setSelectedPlatform(type);
-                        const first = platformGroups[type]?.find(ed => ed.stock === 1) || platformGroups[type]?.[0];
-                        setSelectedEdition(first?.name || null); setSelectedRegion(null);
-                        if (first && String(first.id) !== String(igId)) { const clean = first.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, ""); const isSteamType = (first.type || "").toLowerCase().includes("steam"); navigate(`/store/${first.id}/${isSteamType ? (first.steam_id || 0) : 0}/${clean}`); }
-                      }}>
-                        {Object.keys(platformGroups).map(type => <option key={type} value={type}>{platformShortName(type)}</option>)}
-                      </select>
-                      <span className="gd-select-arrow">▾</span>
-                    </div>
-                  </div>
-                  {editionNamesForPlatform.length > 1 && (
-                    <div className="gd-selector-group">
-                      <label className="gd-selector-label">Édition</label>
-                      <div className="gd-select-wrapper">
-                        <select className="gd-select" value={selectedEdition || ""} onChange={e => {
-                          const edName = e.target.value; setSelectedEdition(edName); setSelectedRegion(null);
-                          const entries = (platformGroups[selectedPlatform] || []).filter(e => e.name === edName);
-                          const best = entries.find(e => e.stock === 1) || entries[0];
-                          if (best && String(best.id) !== String(igId)) { const clean = best.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, ""); const isSteamType = (best.type || "").toLowerCase().includes("steam"); navigate(`/store/${best.id}/${isSteamType ? (best.steam_id || 0) : 0}/${clean}`); }
-                        }}>
-                          {editionNamesForPlatform.map(name => <option key={name} value={name}>{formatEdition(name)}</option>)}
-                        </select>
-                        <span className="gd-select-arrow">▾</span>
-                      </div>
-                    </div>
-                  )}
-                  {regionsForSelection.length > 1 && (
-                    <div className="gd-selector-group">
-                      <label className="gd-selector-label">Région</label>
-                      <div className="gd-select-wrapper">
-                        <select className="gd-select" value={selectedRegion || ""} onChange={e => setSelectedRegion(e.target.value)}>
-                          {regionsForSelection.map(entry => <option key={entry.region} value={entry.region}>{entry.region}{entry.stock === 0 ? " — Hors stock" : ` ✓ ${parseFloat(entry.price).toFixed(2)} €`}</option>)}
-                        </select>
-                        <span className="gd-select-arrow">▾</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Bouton achat mobile */}
-              <div className="gd-buy-btn gd-buy-btn-left">
-                {chosenInStock && chosenUrl
-                  ? <a href={chosenUrl} target="_blank" rel="noopener noreferrer" className="nk-btn nk-btn-rounded nk-btn-color-main-1 gd-btn-instock">🛒 Acheter</a>
-                  : <button className="nk-btn nk-btn-rounded gd-btn-outofstock" disabled aria-disabled="true">⛔ Hors stock — {editionName}</button>
-                }
-              </div>
-            </div>
-
-            {/* ══════ COLONNE DROITE ══════ */}
+            {/* ── COL DROITE : titre + scores + buy-card ── */}
             <div className="col-12 col-md-6">
 
-              {/* Badge plateforme + titre */}
-              <div className="gd-right-title">
-                <div className="subinfos">
-                  <span className="platform gd-platform-badge" style={{ background: "rgba(255,255,255,0.1)" }}>
-                    <span style={{ background: platformBg, borderRadius: "50%", width: 42, height: 42, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                      <PlatformLogo type={chosenEntry?.type || igGame?.type || "Steam"} size={32} />
-                    </span>
-                    &nbsp;{platformLabel}
-                  </span>
-                  <h2 className="nk-productpro-title h3pro" style={{ marginLeft: 12, marginBottom: 0 }}>{gameTitle}</h2>
-                </div>
-              </div>
-
-              {/* Scores */}
-              <div className="gd-right-scores">
-                <div className="gd-scores-row">
+              {/* Badge plateforme + Titre */}
+              {/* Scores : Avis Steam + Metacritic + Note communauté */}
+              {(steamReview || metacritic || true) && (
+                <div className="gd-scores-row" style={{ marginTop: 12, marginBottom: 4 }}>
                   {steamReview && steamReviewTotal > 0 && (
                     <div className="gd-score-block">
                       <div className="gd-score-label">Avis Steam</div>
@@ -731,61 +741,120 @@ function GameDetail() {
                       <div className="gd-metacritic-score" style={{ background: metacritic.score >= 75 ? "#66cc33" : metacritic.score >= 50 ? "#ffcc33" : "#ff0000" }}>{metacritic.score}</div>
                     </a>
                   )}
+                  <div className="gd-score-block">
+                    <div className="gd-score-label">Note communauté</div>
+                    <div className="gd-score-value" style={{ fontSize: 13 }}>{getRatingDescription(averageRating)}</div>
+                    <div className="gd-score-sub" style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                      {getRatingIcon(averageRating)}
+                      <span>{comments.length} avis</span>
+                    </div>
+                  </div>
                 </div>
+              )}
+
+              {/* Bloc achat : prix + sélecteurs + bouton */}
+              <div className="gd-buy-card">
+                {/* Prix sur 1 ligne + icône plateforme à droite */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "nowrap" }}>
+                    {chosenRetail && chosenRetail > (chosenPrice || 0) && (
+                      <span style={{ fontSize: 14, color: "#666", textDecoration: "line-through", fontWeight: 500 }}>{chosenRetail.toFixed(2)} €</span>
+                    )}
+                    {chosenPromo && <div className="priceSlidePromo">{chosenPromo}</div>}
+                    {chosenPrice && chosenPrice > 0
+                      ? <div className="price text-white">{chosenPrice.toFixed(2)} €</div>
+                      : <div className="price text-white" style={{ fontSize: 22 }}>Indisponible</div>
+                    }
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 52, height: 52, borderRadius: "50%", background: platformBg, flexShrink: 0, boxShadow: "0 4px 14px rgba(0,0,0,0.4)" }}>
+                    <PlatformLogo type={chosenEntry?.type || igGame?.type || "Steam"} size={28} />
+                  </div>
+                </div>
+                <SelectorsBlock />
+                <BuyButtons style={{ marginTop: 4 }} />
               </div>
 
-              {/* Prix */}
-              <div className="gd-right-price">
-                <div className="info gd-price-block">
-                  {chosenRetail && chosenRetail > (chosenPrice || 0) && <div className="priceOrigin text-white">{chosenRetail.toFixed(2)} €</div>}
-                  {chosenPromo && <div className="priceSlidePromo">{chosenPromo}</div>}
-                  {chosenPrice && chosenPrice > 0 && <div className="price text-white">{chosenPrice.toFixed(2)} €</div>}
-                </div>
-              </div>
+            </div>{/* fin col droite */}
 
-              {/* Bouton achat desktop + wishlist */}
-              <div className="gd-buy-btn gd-buy-btn-right" style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                {chosenInStock && chosenUrl
-                  ? <a href={chosenUrl} target="_blank" rel="noopener noreferrer" className="nk-btn nk-btn-rounded nk-btn-color-main-1 gd-btn-instock" style={{ flex: 1 }}>🛒 Acheter</a>
-                  : <button className="nk-btn nk-btn-rounded gd-btn-outofstock" disabled aria-disabled="true" style={{ flex: 1 }}>⛔ Hors stock — {editionName}</button>
-                }
-                <button onClick={toggleWishlist} disabled={wishlistLoading} title={inWishlist ? "Retirer de la wishlist" : "Ajouter à la wishlist"}
-                  style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 44, height: 44, borderRadius: "50%", border: inWishlist ? "1px solid #dd163b" : "1px solid rgba(255,255,255,0.2)", background: inWishlist ? "rgba(221,22,59,0.15)" : "rgba(255,255,255,0.06)", cursor: wishlistLoading ? "default" : "pointer", opacity: wishlistLoading ? 0.6 : 1, transition: "all 0.2s", flexShrink: 0 }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill={inWishlist ? "#dd163b" : "none"} stroke={inWishlist ? "#dd163b" : "rgba(255,255,255,0.6)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                  </svg>
+          </div>{/* fin row */}
+        </div>{/* fin nk-store-product */}
+
+        {/* ══════════════════════════════════════════
+            SECTION INFOS : description + tags + meta
+        ══════════════════════════════════════════ */}
+        {(steamData?.short_description || steamCategories.length > 0 || steamData?.developers || steamData?.genres?.length) && (
+          <div style={{
+            marginTop: 20,
+            padding: "20px 0 0",
+            borderTop: "1px solid rgba(255,255,255,0.07)",
+            background: "transparent",
+          }}>
+
+            {/* Dev / Éditeur / Sortie / Genres — AU-DESSUS */}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 20 }}>
+              {steamData?.developers && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 2, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "8px 14px", minWidth: 120 }}>
+                  <span style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", color: "#555", fontWeight: 700 }}>Développeur</span>
+                  <span style={{ fontSize: 13, color: "#ddd", fontWeight: 600 }}>{Array.isArray(steamData.developers) ? steamData.developers[0] : steamData.developers}</span>
+                </div>
+              )}
+              {steamData?.publishers && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 2, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "8px 14px", minWidth: 120 }}>
+                  <span style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", color: "#555", fontWeight: 700 }}>Éditeur</span>
+                  <span style={{ fontSize: 13, color: "#ddd", fontWeight: 600 }}>{Array.isArray(steamData.publishers) ? steamData.publishers[0] : steamData.publishers}</span>
+                </div>
+              )}
+              {(() => {
+                const byPlatform = steamData?.release_date?.byPlatform;
+                const platformKey = pt.includes("playstation") || pt.includes("ps") ? "PlayStation" : pt.includes("xbox") || pt.includes("microsoft") ? "Xbox" : pt.includes("nintendo") || pt.includes("switch") ? "Nintendo" : "PC";
+                const date = byPlatform ? (byPlatform[platformKey] || null) : steamData?.release_date?.date;
+                return date ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 2, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "8px 14px", minWidth: 120 }}>
+                    <span style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", color: "#555", fontWeight: 700 }}>Sortie</span>
+                    <span style={{ fontSize: 13, color: "#ddd", fontWeight: 600 }}>{date}</span>
+                  </div>
+                ) : null;
+              })()}
+              {steamData?.genres?.length > 0 && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 2, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "8px 14px" }}>
+                  <span style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", color: "#555", fontWeight: 700 }}>Genres</span>
+                  <span style={{ fontSize: 13, color: "#ddd", fontWeight: 600 }}>{steamData.genres.map(g => g.description).join(", ")}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Titre À PROPOS + description */}
+            {steamData?.short_description && (
+              <div style={{ marginBottom: 14 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                  <div style={{ width: 3, height: 16, background: "#dd163b", borderRadius: 2, flexShrink: 0 }} />
+                  <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", color: "#aaa", fontFamily: "Montserrat, sans-serif" }}>À propos</span>
+                </div>
+                <p style={{ color: "#a0a8b4", fontSize: 13, lineHeight: 1.75, margin: 0 }}>
+                  {steamData.short_description}
+                </p>
+              </div>
+            )}
+
+            {/* Tags Steam avec voir plus */}
+            {steamCategories.length > 0 && (
+              <div style={{ marginTop: 14 }}>
+                <div style={{ display: "flex", flexWrap: tagsExpanded ? "wrap" : "nowrap", gap: 6, overflow: "hidden", maxHeight: tagsExpanded ? "none" : "30px" }}>
+                  {steamCategories.map(cat => (
+                    <span key={cat.id} className="gd-feature-tag" style={{ flexShrink: 0 }}>{cat.description}</span>
+                  ))}
+                </div>
+                <button onClick={() => setTagsExpanded(v => !v)}
+                  style={{ marginTop: 6, background: "none", border: "none", color: "#dd163b", fontSize: 11, fontWeight: 700, cursor: "pointer", padding: 0, fontFamily: "inherit", letterSpacing: "0.03em" }}>
+                  {tagsExpanded ? "▲ Voir moins" : "▼ Voir plus"}
                 </button>
               </div>
+            )}
 
-              <div className="nk-gap-1" />
-
-              {/* ── Meta : note communauté + genres + date + dev + éditeur ── */}
-              <div className="nk-product-meta gd-meta">
-                <div>
-                  <strong>Note communauté</strong>:{" "}
-                  <span>{getRatingDescription(averageRating)} {getRatingIcon(averageRating)}</span>
-                </div>
-                {steamData?.genres && (
-                  <div><strong>Genres</strong>: {steamData.genres.map(g => g.description).join(", ")}</div>
-                )}
-                {(() => {
-                  const byPlatform = steamData?.release_date?.byPlatform;
-                  const platformKey = pt.includes("playstation") || pt.includes("ps") ? "PlayStation" : pt.includes("xbox") || pt.includes("microsoft") ? "Xbox" : pt.includes("nintendo") || pt.includes("switch") ? "Nintendo" : "PC";
-                  const date = byPlatform ? (byPlatform[platformKey] || "Date inconnue") : steamData?.release_date?.date;
-                  return date ? <div><strong>Date de sortie</strong>: {date}</div> : null;
-                })()}
-                {steamData?.developers && (
-                  <div><strong>Développeur</strong>: {Array.isArray(steamData.developers) ? steamData.developers[0] : steamData.developers}</div>
-                )}
-                {steamData?.publishers && (
-                  <div><strong>Éditeur</strong>: {Array.isArray(steamData.publishers) ? steamData.publishers[0] : steamData.publishers}</div>
-                )}
-              </div>
-            </div>
           </div>
-        </div>
+        )}
 
-        <Separator />
+        <Separator style={{ margin: "28px 0" }} />
 
         {/* ── Onglets ── */}
         <div className="nk-tabs">
@@ -825,12 +894,19 @@ function GameDetail() {
             {activeTab === "comment" && (
               <div className="tab-pane fade show active">
                 <Separator label="Commentaires" />
-                <CommentsSection gameKey={`ig_${igId}`} user={user} userN={userN} releaseDate={steamData?.release_date?.date || null} />
+                <CommentsSection
+                  gameKey={sharedGameKey}
+                  gameKeys={allEditions.length > 0 ? allEditions.map(ed => `ig_${ed.id}`) : [`ig_${igId}`]}
+                  user={user}
+                  userN={userN}
+                  releaseDate={steamData?.release_date?.date || null}
+                />
               </div>
             )}
           </div>
         </div>
-      </div>
+
+      </div>{/* fin gd-container */}
 
       {/* ── Articles ── */}
       {articles.length > 0 && (
@@ -933,7 +1009,6 @@ function GameDetail() {
           {adminOpen && <div onClick={() => setAdminOpen(false)} style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.6)", zIndex:8000 }} />}
           <div style={{ position:"fixed", top:0, right: adminOpen ? 0 : "-480px", width:"100%", maxWidth:460, height:"100vh", background:"#0d0e13", borderLeft:"1px solid rgba(221,22,59,0.25)", zIndex:8001, transition:"right 0.3s ease", overflowY:"auto", padding:"24px 24px 100px", boxSizing:"border-box" }}>
 
-            {/* Header panneau */}
             <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:20 }}>
               <div>
                 <div style={{ fontFamily:"Orbitron,sans-serif", fontSize:11, color:"#dd163b", letterSpacing:"0.15em", textTransform:"uppercase" }}>Console Admin</div>
@@ -942,18 +1017,24 @@ function GameDetail() {
               <button onClick={() => setAdminOpen(false)} style={{ background:"rgba(255,255,255,0.06)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:"50%", width:36, height:36, color:"#fff", cursor:"pointer", fontSize:16 }}>✕</button>
             </div>
 
-            {/* Jeu sélectionné */}
             {igGame && (
-              <div style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 12px", background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:8, marginBottom:20 }}>
+              <div style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 12px", background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:8, marginBottom:16 }}>
                 <img src={igGame.img} alt={igGame.name} style={{ width:48, height:30, objectFit:"cover", borderRadius:4 }} />
                 <div>
                   <div style={{ fontFamily:"Rajdhani,sans-serif", fontSize:14, fontWeight:700, color:"#fff" }}>{igGame.name}</div>
-                  <div style={{ fontFamily:"Montserrat,sans-serif", fontSize:10, color:"#555" }}>#{igId} · {igGame.type}</div>
+                  <div style={{ fontFamily:"Montserrat,sans-serif", fontSize:10, color:"#555" }}>#{igId} · {igGame.type} · {allEditions.length} édition(s)</div>
                 </div>
               </div>
             )}
 
-            {/* Champs admin */}
+            <button onClick={handleRefreshEditions} disabled={adminRefreshing}
+              style={{ width:"100%", padding:"12px", marginBottom:4, background: adminRefreshing ? "rgba(255,255,255,0.02)" : "rgba(71,142,255,0.1)", border:`1px solid ${adminRefreshing ? "#333" : "rgba(71,142,255,0.4)"}`, borderRadius:6, color: adminRefreshing ? "#555" : "#478eff", fontFamily:"Montserrat,sans-serif", fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", cursor: adminRefreshing ? "default" : "pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:6, transition:"all 0.2s" }}>
+              {adminRefreshing ? "⏳ Propagation en cours..." : "🔄 Propager steamData vers toutes les éditions"}
+            </button>
+            <div style={{ fontFamily:"Montserrat,sans-serif", fontSize:10, color:"#444", marginBottom:20, textAlign:"center", lineHeight:1.5 }}>
+              Copie les infos Steam du jeu standard vers toutes ses éditions dans Firebase
+            </div>
+
             {(() => {
               const S = ({ children }) => <div style={{ fontFamily:"Montserrat,sans-serif", fontSize:10, fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"#555", marginBottom:8, marginTop:20 }}>{children}</div>;
               const Field = ({ label, children }) => <div style={{ marginBottom:14 }}><div style={{ fontFamily:"Montserrat,sans-serif", fontSize:10, fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase", color:"#444", marginBottom:6 }}>{label}</div>{children}</div>;
@@ -975,7 +1056,6 @@ function GameDetail() {
                     <Field label="Développeur"><Input value={adminDev} onChange={e=>setAdminDev(e.target.value)} placeholder="Ex: CD Projekt" /></Field>
                     <Field label="Éditeur"><Input value={adminPub} onChange={e=>setAdminPub(e.target.value)} placeholder="Ex: CD Projekt" /></Field>
                   </div>
-
                   <S>Date de sortie</S>
                   <div style={{ display:"flex", gap:8, marginBottom:10 }}>
                     {["global","byplatform"].map(m => (
@@ -996,10 +1076,8 @@ function GameDetail() {
                       ))}
                     </div>
                   )}
-
                   <S>Vidéo YouTube</S>
                   <Input value={adminYoutube} onChange={e=>setAdminYoutube(e.target.value)} placeholder="https://youtube.com/watch?v=..." />
-
                   <S>Screenshots</S>
                   {adminScreenshots.length > 0 && (
                     <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:10 }}>
@@ -1026,7 +1104,6 @@ function GameDetail() {
                   </button>
                   <input ref={adminScreenRef} type="file" accept="image/*" multiple style={{ display:"none" }}
                     onChange={e=>{ const files=Array.from(e.target.files); setAdminNewFiles(p=>[...p,...files]); setAdminNewPreviews(p=>[...p,...files.map(f=>URL.createObjectURL(f))]); }} />
-
                   <S>Mise en avant</S>
                   <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
                     <CheckLabel checked={adminFeatured} onChange={e=>{ setAdminFeatured(e.target.checked); if(!e.target.checked) setAdminFeaturedPlatforms([]); }}>
@@ -1059,13 +1136,11 @@ function GameDetail() {
                       </div>
                     )}
                   </div>
-
                   {adminMsg && (
                     <div style={{ marginTop:16, padding:"10px 14px", background: adminMsgType==="success" ? "rgba(39,174,96,0.1)" : "rgba(221,22,59,0.1)", border:`1px solid ${adminMsgType==="success"?"rgba(39,174,96,0.3)":"rgba(221,22,59,0.3)"}`, borderRadius:6, fontFamily:"Rajdhani,sans-serif", fontSize:14, color: adminMsgType==="success"?"#27ae60":"#dd163b" }}>
                       {adminMsg}
                     </div>
                   )}
-
                   <div style={{ position:"sticky", bottom:0, background:"#0d0e13", padding:"16px 0 0", marginTop:20, borderTop:"1px solid rgba(255,255,255,0.06)" }}>
                     <button onClick={handleAdminSave} disabled={adminSaving}
                       style={{ width:"100%", padding:13, background:"#dd163b", border:"none", borderRadius:6, color:"#fff", fontFamily:"Montserrat,sans-serif", fontSize:12, fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase", cursor: adminSaving?"default":"pointer", opacity: adminSaving?0.6:1 }}>
@@ -1078,6 +1153,7 @@ function GameDetail() {
           </div>
         </>
       )}
+
     </div>
   );
 }

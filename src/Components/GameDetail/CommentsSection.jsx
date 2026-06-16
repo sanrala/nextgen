@@ -408,33 +408,33 @@ function CommentCard({ comment, user, userN, gameKey, isReply = false }) {
 }
 
 // ── Composant principal ───────────────────────────────────────────────────────
-export default function CommentsSection({ gameKey, user, userN, releaseDate }) {
+export default function CommentsSection({ gameKey, gameKeys, user, userN, releaseDate }) {
   const [comments, setComments] = useState([]);
   const [sort, setSort]         = useState("recent"); // "recent" | "popular"
   const [submitting, setSubmitting] = useState(false);
 
-  // Écoute commentaires top-level
+  // Écoute commentaires top-level — toutes les éditions du jeu
   useEffect(() => {
     if (!gameKey) return;
-    const q = query(
-      collection(db, "comments"),
-      where("gameId",   "==", gameKey),
-      where("parentId", "==", null),
-      orderBy("createdAt", "desc")
-    );
-    const unsub = onSnapshot(q,
+    // Si on a plusieurs clés (toutes les éditions), on utilise "in"
+    const keys = gameKeys?.length > 0 ? gameKeys.slice(0, 30) : [gameKey];
+    const buildQuery = (withParent) => withParent
+      ? query(collection(db, "comments"), where("gameId", "in", keys), where("parentId", "==", null), orderBy("createdAt", "desc"))
+      : query(collection(db, "comments"), where("gameId", "in", keys), orderBy("createdAt", "desc"));
+
+    const unsub = onSnapshot(buildQuery(true),
       snap => setComments(snap.docs.map(d => ({ ...d.data(), id: d.id }))),
-      err  => {
+      () => {
         // Fallback sans parentId==null si index manquant
-        const q2 = query(collection(db, "comments"), where("gameId", "==", gameKey), orderBy("createdAt", "desc"));
-        onSnapshot(q2,
-          s2 => setComments(s2.docs.map(d => ({...d.data(), id: d.id})).filter(c => !c.parentId)),
+        const unsub2 = onSnapshot(buildQuery(false),
+          s2 => setComments(s2.docs.map(d => ({ ...d.data(), id: d.id })).filter(c => !c.parentId)),
           () => setComments([])
         );
+        return unsub2;
       }
     );
     return () => unsub();
-  }, [gameKey]);
+  }, [gameKey, gameKeys]);
 
   const handleSubmit = async ({ title, message, rating }) => {
     if (!userN || submitting) return;
