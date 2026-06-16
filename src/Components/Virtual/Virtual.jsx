@@ -1,101 +1,89 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../../Firebase";
 
-const FR_MONTHS = {
-  janvier:0, janv:0, fevrier:1, février:1, fev:1, mars:2,
-  avril:3, avr:3, mai:4, juin:5, juillet:6, juil:6,
-  aout:7, août:7, septembre:8, sept:8, octobre:9, oct:9,
-  novembre:10, nov:10, decembre:11, décembre:11, dec:11, déc:11
-};
-function parseRelease(dateStr) {
-  if (!dateStr) return null;
-  const m = dateStr.match(/(\d{1,2})\s+([\wéèêëàâùûüîïôœç]+\.?)\s+(\d{4})/i);
-  if (m) {
-    const mn = m[2].toLowerCase().replace(/\.$/, "");
-    const mo = FR_MONTHS[mn] ?? FR_MONTHS[mn.normalize("NFD").replace(/[\u0300-\u036f]/g,"")];
-    if (mo !== undefined) return new Date(parseInt(m[3]), mo, parseInt(m[1]));
-  }
-  const d = new Date(dateStr);
-  return isNaN(d.getTime()) ? null : d;
-}
+const API_URL = "https://api.sm-artweb.fr/api/steam-vr";
 
 const SLIDER_STYLE = `
-  .mobile-slider {
+  .vr-mobile-slider {
     display: none;
   }
-  .desktop-grid {
+  .vr-desktop-grid {
     display: block;
   }
   @media (max-width: 767px) {
-    .mobile-slider {
+    .vr-mobile-slider {
       display: block;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
     }
-    .mobile-slider::-webkit-scrollbar { display: none; }
-    .mobile-slider-inner {
+    .vr-mobile-slider::-webkit-scrollbar { display: none; }
+    .vr-mobile-slider-inner {
       display: flex;
       gap: 12px;
       padding: 0 4px 8px;
     }
-    .mobile-slider-card {
+    .vr-mobile-slider-card {
       flex: 0 0 75vw;
       max-width: 280px;
       scroll-snap-align: start;
     }
-    .desktop-grid {
+    .vr-desktop-grid {
       display: none;
     }
   }
 `;
 
-function Popular() {
+function Virtual() {
   const [igGames, setIgGames] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const snap = await getDocs(query(collection(db, "games"), where("trending", "==", true)));
-        const today = new Date(); today.setHours(0,0,0,0);
-        const games = snap.docs
-          .map(d => ({ docId: d.id, ...d.data() }))
-          .filter(g => {
-            if (!g.trendingGame) return false;
-            const rd = parseRelease(g.release_date?.date || g.steamData?.release_date?.date || "");
-            return rd && rd <= today;
-          })
-          .map(g => {
-            const ed = (g.editions || []).find(e => e.stock === 1 && parseFloat(e.price) > 0) || (g.editions || [])[0] || {};
-            return {
-              id: g.trendingGame.id,
-              name: g.trendingGame.name,
-              img: g.trendingGame.img,
-              type: g.trendingGame.type,
-              price: ed.price || "0.00",
-              retail: ed.retail || "0.00",
-              steam_id: g.steamData?.steam_appid || ed.steam_id || 0,
-              region: ed.region || "Europe",
-              releaseDate: g.release_date?.date || ed.releaseDate || null,
-              stock: 1,
-            };
-          })
-          .sort((a, b) => {
-            const da = parseRelease(a.releaseDate);
-            const db2 = parseRelease(b.releaseDate);
-            if (!da && !db2) return 0;
-            if (!da) return 1;
-            if (!db2) return -1;
-            return db2 - da;
-          })
-          .slice(0, 6);
-        setIgGames(games);
+        const response = await fetch(API_URL, {
+          headers: { "User-Agent": "IG-ExportCatalog-Fetcher" },
+        });
+        const data = await response.json();
+
+        if (!data || data.length === 0) {
+          setIgGames([]);
+          setLoading(false);
+          return;
+        }
+
+        const uniqueGames = Object.values(
+          data.reduce((acc, game) => {
+            const key = game.name
+              .toLowerCase()
+              .replace(/deluxe|ultimate|gold|premium|standard/gi, "")
+              .replace(/\s+/g, " ")
+              .trim()
+              .split(" ")
+              .slice(0, 3)
+              .join(" ");
+            if (!acc[key]) {
+              acc[key] = game;
+            } else {
+              if (parseFloat(game.price) < parseFloat(acc[key].price)) {
+                acc[key] = game;
+              }
+            }
+            return acc;
+          }, {})
+        );
+
+        const filtered = uniqueGames.filter(game => {
+          const region = (game.region || "").toLowerCase();
+          if (region.includes("latin")) return false;
+          if (region.includes("us") && !region.includes("europe") && !region.includes("australia")) return false;
+          return true;
+        });
+
+        setIgGames(filtered.slice(0, 6));
       } catch (error) {
-        console.error("Erreur fetch Popular :", error);
+        console.error("Erreur fetch Virtual :", error);
       } finally {
         setLoading(false);
       }
@@ -118,24 +106,24 @@ function Popular() {
     <div className="row vertical-gap">
       <style>{SLIDER_STYLE}</style>
       <div className="col-lg-12">
-        <Link to="/Catalogues?catFilter=topseller">
+        <Link to="/Catalogues">
           <h3 className="nk-decorated-h-2">
             <span>
-              <span className="text-main-1">Tendances</span> Récentes
+              <span className="text-main-1">Jeux</span> VR
             </span>
           </h3>
         </Link>
         <div className="nk-gap" />
 
         {/* ── Mobile slider ── */}
-        <div className="mobile-slider">
-          <div className="mobile-slider-inner">
+        <div className="vr-mobile-slider">
+          <div className="vr-mobile-slider-inner">
             {!loading && igGames.map((game) => {
               const promo = getPromo(game.retail, game.price);
               const price = parseFloat(game.price);
               const detailPath = `/store/${game.id}/${game.steam_id || 0}/${cleanTitle(game.name)}`;
               return (
-                <div className="mobile-slider-card" key={game.id}>
+                <div className="vr-mobile-slider-card" key={game.id}>
                   <div className="nk-blog-post">
                     <Link to={detailPath} className="nk-post-img">
                       <img src={game.img} alt={game.name} style={{ width: "100%", objectFit: "cover" }} />
@@ -146,7 +134,7 @@ function Popular() {
                       <Link to={detailPath}>{game.name.length > 22 ? game.name.slice(0, 22) + "…" : game.name}</Link>
                     </h2>
                     <div className="nk-gap" />
-                    <div>{game.releaseDate ? `📅 ${game.releaseDate}` : `🌍 ${game.region}`}</div>
+                    <div>🥽 VR</div>
                     <span>{price ? `${price.toFixed(2)} €` : "N/A"}</span>
                   </div>
                 </div>
@@ -156,7 +144,7 @@ function Popular() {
         </div>
 
         {/* ── Desktop grid ── */}
-        <div className="desktop-grid">
+        <div className="vr-desktop-grid">
           <div className="nk-blog-grid">
             <div className="row">
               {loading && <p>Chargement...</p>}
@@ -176,7 +164,7 @@ function Popular() {
                         <Link to={detailPath}>{game.name}</Link>
                       </h2>
                       <div className="nk-gap" />
-                      <div>{game.releaseDate ? `📅 ${game.releaseDate}` : `🌍 ${game.region}`}</div>
+                      <div>🥽 VR</div>
                       <span>{price ? `${price.toFixed(2)} €` : "N/A"}</span>
                     </div>
                   </div>
@@ -190,4 +178,4 @@ function Popular() {
   );
 }
 
-export default Popular;
+export default Virtual;

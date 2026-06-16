@@ -33,6 +33,24 @@ const SLIDER_STYLE = `
   }
 `;
 
+const FR_MONTHS = {
+  janvier:0, janv:0, fevrier:1, février:1, fev:1, mars:2,
+  avril:3, avr:3, mai:4, juin:5, juillet:6, juil:6,
+  aout:7, août:7, septembre:8, sept:8, octobre:9, oct:9,
+  novembre:10, nov:10, decembre:11, décembre:11, dec:11, déc:11
+};
+function parseRelease(dateStr) {
+  if (!dateStr) return null;
+  const m = dateStr.match(/(\d{1,2})\s+([\wéèêëàâùûüîïôœç]+)\s+(\d{4})/i);
+  if (m) {
+    const mn = m[2].toLowerCase();
+    const mo = FR_MONTHS[mn] ?? FR_MONTHS[mn.normalize("NFD").replace(/[\u0300-\u036f]/g,"")];
+    if (mo !== undefined) return new Date(parseInt(m[3]), mo, parseInt(m[1]));
+  }
+  const d = new Date(dateStr);
+  return isNaN(d.getTime()) ? null : d;
+}
+
 function Precommandes() {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -68,10 +86,30 @@ function Precommandes() {
 
         const filtered = uniqueGames.filter(game => {
           const cats = (game.category || []).map(c => c.toLowerCase());
-          return !cats.some(c => EXCLUDED.includes(c));
+          if (cats.some(c => EXCLUDED.includes(c))) return false;
+          const region = (game.region || "").toLowerCase();
+          if (region.includes("latin")) return false;
+          if (region.includes("us") && !region.includes("europe") && !region.includes("australia")) return false;
+          return true;
         });
 
-        setGames(filtered.slice(0, 6));
+        // Normaliser le champ date (releaseDate ou release_date)
+        const normalized = filtered.map(g => ({
+          ...g,
+          releaseDate: g.releaseDate || g.release_date || null,
+        }));
+
+        // Trier par date de sortie croissante (la plus proche en premier)
+        const sorted = normalized.sort((a, b) => {
+          const da = parseRelease(a.releaseDate);
+          const db = parseRelease(b.releaseDate);
+          if (!da && !db) return 0;
+          if (!da) return 1;
+          if (!db) return -1;
+          return da - db;
+        });
+
+        setGames(sorted.slice(0, 6));
       } catch (err) {
         console.error("Erreur fetch précommandes :", err);
         setGames([]);

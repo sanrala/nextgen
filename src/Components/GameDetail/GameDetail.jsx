@@ -171,6 +171,8 @@ function GameDetail() {
   const [adminNewFiles,  setAdminNewFiles]  = useState([]);
   const [adminNewPreviews, setAdminNewPreviews] = useState([]);
   const [adminRefreshing, setAdminRefreshing] = useState(false);
+  const [adminDeleting,   setAdminDeleting]   = useState(false);
+  const [adminDeleteConfirm, setAdminDeleteConfirm] = useState(false);
   const [tagsExpanded,   setTagsExpanded]   = useState(false);
   const adminScreenRef = useRef();
   const CLOUDINARY_CLOUD  = "dl0eijxyn";
@@ -369,14 +371,56 @@ function GameDetail() {
         }
         const res = await fetch(`${BACKEND_URL}/api/editions/${igId}`);
         const data = await res.json();
-        let filtered = (Array.isArray(data) ? data : []).filter(ed => {
+
+        // ── Fetch aussi depuis le selfGame pour croiser les résultats ──
+        const selfRes = await fetch(`${BACKEND_URL}/api/game/${igId}`);
+        const selfGame = selfRes.ok ? await selfRes.json() : null;
+
+        // Si selfGame a un igId différent (ex: édition standard), fetch ses éditions aussi
+        let extraData = [];
+        if (selfGame?.id && String(selfGame.id) !== String(igId)) {
+          extraData = await fetch(`${BACKEND_URL}/api/editions/${selfGame.id}`)
+            .then(r => r.ok ? r.json() : []).catch(() => []);
+        }
+
+        // Merge et déduplique par id
+        const allData = [...(Array.isArray(data) ? data : []), ...(Array.isArray(extraData) ? extraData : [])];
+        const seen = new Set();
+        const mergedData = allData.filter(ed => {
+          if (seen.has(ed.id)) return false;
+          seen.add(ed.id); return true;
+        });
+
+        // Nom de base du jeu courant (retire edition/deluxe/region etc.)
+        const baseName = (selfGame?.name || "")
+          .toLowerCase()
+          .replace(/[\u2018\u2019:+]/g, "")
+          .replace(/\s*(deluxe|ultimate|gold|premium|standard|complete|collector|digital|accès|avant.première|early access)\s*(edition)?/gi, "")
+          .replace(/\s*-\s*(europe|us|worldwide|fr|global).*/gi, "")
+          .replace(/[^a-z0-9 ]/g, " ")
+          .trim()
+          .split(" ").filter(Boolean).slice(0, 3).join(" ");
+
+        let filtered = mergedData.filter(ed => {
           const n = (ed.name || "").toLowerCase();
+          // Filtre les contenus additionnels
           if (n.includes("upgrade") || n.includes("dlc") || n.includes("season pass") || n.includes("credits") || n.includes("traque") || n.includes("pack") || n.includes("klauen") || n.includes("awaji")) return false;
           if ((ed.region || "").toLowerCase().includes("latin")) return false;
+          // ── Filtre les jeux d'une autre franchise ──
+          if (baseName.length >= 4) {
+            const edNameClean = n
+              .replace(/[\u2018\u2019:+]/g, "")
+              .replace(/[^a-z0-9 ]/g, " ")
+              .replace(/\s+/g, " ")
+              .trim();
+            // L'édition doit contenir AU MOINS les 3 premiers mots du nom de base
+            const baseWords = baseName.split(" ").slice(0, 3).join(" ");
+            if (!edNameClean.includes(baseWords)) return false;
+          }
           return true;
         });
         const currentInList = filtered.find(e => String(e.id) === String(igId));
-        if (!currentInList) { const selfRes = await fetch(`${BACKEND_URL}/api/game/${igId}`); if (selfRes.ok) { const self = await selfRes.json(); if (self?.id) filtered = [self, ...filtered]; } }
+        if (!currentInList && selfGame?.id) filtered = [selfGame, ...filtered];
         setAllEditions(filtered);
         const currentEd = filtered.find(e => String(e.id) === String(igId));
         if (currentEd) {
@@ -460,6 +504,36 @@ function GameDetail() {
     })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin, igId]);
+
+  // ── Vider le cache éditions Firebase (force rechargement depuis l'API) ──
+  const handleClearEditionsCache = async () => {
+    setAdminMsg(""); setAdminMsgType("success");
+    try {
+      const allIds = [...new Set([igId, ...allEditions.map(ed => String(ed.id))])];
+      await Promise.all(allIds.map(id =>
+        setDoc(doc(db, "games", `ig_${id}`), { editions: null }, { merge: true }).catch(() => {})
+      ));
+      setAllEditions([]);
+      setAdminMsg(`✅ Cache éditions vidé pour ${allIds.length} document(s) — rechargement en cours...`);
+      // Recharge les éditions depuis l'API
+      setTimeout(() => window.location.reload(), 1200);
+    } catch (e) { setAdminMsg("Erreur : " + e.message); setAdminMsgType("error"); }
+  };
+
+  const handleDeleteFromFirebase = async () => {
+    setAdminDeleting(true); setAdminMsg("");
+    try {
+      const allIds = [...new Set([igId, ...allEditions.map(ed => String(ed.id))])];
+      await Promise.all(allIds.map(id => deleteDoc(doc(db, "games", `ig_${id}`)).catch(() => {})));
+      setAdminMsg(`✅ ${allIds.length} document(s) supprimé(s) de Firebase`);
+      setAdminMsgType("success");
+      setAdminDeleteConfirm(false);
+      // Reset local
+      setSteamData(null);
+      setAllEditions([]);
+    } catch (e) { setAdminMsg("Erreur suppression : " + e.message); setAdminMsgType("error"); }
+    finally { setAdminDeleting(false); }
+  };
 
   const handleRefreshEditions = async () => {
     setAdminRefreshing(true); setAdminMsg("");
@@ -1031,9 +1105,45 @@ function GameDetail() {
               style={{ width:"100%", padding:"12px", marginBottom:4, background: adminRefreshing ? "rgba(255,255,255,0.02)" : "rgba(71,142,255,0.1)", border:`1px solid ${adminRefreshing ? "#333" : "rgba(71,142,255,0.4)"}`, borderRadius:6, color: adminRefreshing ? "#555" : "#478eff", fontFamily:"Montserrat,sans-serif", fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", cursor: adminRefreshing ? "default" : "pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:6, transition:"all 0.2s" }}>
               {adminRefreshing ? "⏳ Propagation en cours..." : "🔄 Propager steamData vers toutes les éditions"}
             </button>
-            <div style={{ fontFamily:"Montserrat,sans-serif", fontSize:10, color:"#444", marginBottom:20, textAlign:"center", lineHeight:1.5 }}>
+            <div style={{ fontFamily:"Montserrat,sans-serif", fontSize:10, color:"#444", marginBottom:12, textAlign:"center", lineHeight:1.5 }}>
               Copie les infos Steam du jeu standard vers toutes ses éditions dans Firebase
             </div>
+
+            {/* ── Bouton vider cache éditions ── */}
+            <button onClick={handleClearEditionsCache}
+              style={{ width:"100%", padding:"12px", marginBottom:8, background:"rgba(243,156,18,0.08)", border:"1px solid rgba(243,156,18,0.3)", borderRadius:6, color:"#f39c12", fontFamily:"Montserrat,sans-serif", fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:6 }}>
+              🧹 Vider le cache des éditions
+            </button>
+            <div style={{ fontFamily:"Montserrat,sans-serif", fontSize:10, color:"#444", marginBottom:16, textAlign:"center", lineHeight:1.5 }}>
+              Force le rechargement des éditions depuis l'API IG
+            </div>
+
+            {/* ── Bouton suppression Firebase ── */}
+            {!adminDeleteConfirm ? (
+              <button onClick={() => setAdminDeleteConfirm(true)}
+                style={{ width:"100%", padding:"12px", marginBottom:20, background:"rgba(221,22,59,0.07)", border:"1px solid rgba(221,22,59,0.25)", borderRadius:6, color:"#dd163b", fontFamily:"Montserrat,sans-serif", fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:6 }}>
+                🗑 Supprimer le jeu + toutes les éditions de Firebase
+              </button>
+            ) : (
+              <div style={{ marginBottom:20, padding:"14px", background:"rgba(221,22,59,0.08)", border:"1px solid rgba(221,22,59,0.3)", borderRadius:8 }}>
+                <div style={{ fontFamily:"Montserrat,sans-serif", fontSize:12, color:"#fff", fontWeight:700, marginBottom:10, textAlign:"center" }}>
+                  ⚠️ Supprimer {[igId, ...allEditions.map(e => e.id)].filter((v,i,a)=>a.indexOf(v)===i).length} document(s) Firebase ?
+                </div>
+                <div style={{ fontFamily:"Montserrat,sans-serif", fontSize:10, color:"#888", marginBottom:12, textAlign:"center" }}>
+                  Cette action est irréversible. Les données Steam seront rechargées automatiquement à la prochaine visite.
+                </div>
+                <div style={{ display:"flex", gap:8 }}>
+                  <button onClick={() => setAdminDeleteConfirm(false)}
+                    style={{ flex:1, padding:"10px", background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:6, color:"#888", fontFamily:"Montserrat,sans-serif", fontSize:11, fontWeight:700, cursor:"pointer", textTransform:"uppercase" }}>
+                    Annuler
+                  </button>
+                  <button onClick={handleDeleteFromFirebase} disabled={adminDeleting}
+                    style={{ flex:1, padding:"10px", background:"#dd163b", border:"none", borderRadius:6, color:"#fff", fontFamily:"Montserrat,sans-serif", fontSize:11, fontWeight:700, cursor:adminDeleting?"default":"pointer", opacity:adminDeleting?0.6:1, textTransform:"uppercase" }}>
+                    {adminDeleting ? "Suppression..." : "✓ Confirmer"}
+                  </button>
+                </div>
+              </div>
+            )}
 
             {(() => {
               const S = ({ children }) => <div style={{ fontFamily:"Montserrat,sans-serif", fontSize:10, fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"#555", marginBottom:8, marginTop:20 }}>{children}</div>;

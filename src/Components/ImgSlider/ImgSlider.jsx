@@ -1,12 +1,76 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "../../Firebase";
 
 const PROXY = "https://api.sm-artweb.fr";
 
-function ImgSlider({ gameData }) {
+const FR_MONTHS = {
+  janvier:0, janv:0, fevrier:1, février:1, fev:1, mars:2,
+  avril:3, avr:3, mai:4, juin:5, juillet:6, juil:6,
+  aout:7, août:7, septembre:8, sept:8, octobre:9, oct:9,
+  novembre:10, nov:10, decembre:11, décembre:11, dec:11, déc:11
+};
+function parseRelease(dateStr) {
+  if (!dateStr) return null;
+  const m = dateStr.match(/(\d{1,2})\s+([\wéèêëàâùûüîïôœç]+)\s+(\d{4})/i);
+  if (m) {
+    const mn = m[2].toLowerCase();
+    const mo = FR_MONTHS[mn] ?? FR_MONTHS[mn.normalize("NFD").replace(/[\u0300-\u036f]/g,"")];
+    if (mo !== undefined) return new Date(parseInt(m[3]), mo, parseInt(m[1]));
+  }
+  const d = new Date(dateStr);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function ImgSlider() {
+  const [gameData, setGameData] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [heroUrl, setHeroUrl] = useState(null);
   const [gameInfo, setGameInfo] = useState(null);
+
+  useEffect(() => {
+    const fetchTrending = async () => {
+      try {
+        const snap = await getDocs(query(collection(db, "games"), where("trending", "==", true)));
+        const today = new Date(); today.setHours(0,0,0,0);
+        const games = snap.docs
+          .map(d => ({ docId: d.id, ...d.data() }))
+          .filter(g => {
+            if (!g.trendingGame) return false;
+            const rd = parseRelease(g.release_date?.date || g.steamData?.release_date?.date || "");
+            return rd && rd <= today;
+          })
+          .map(g => {
+            const ed = (g.editions || []).find(e => e.stock === 1 && parseFloat(e.price) > 0) || (g.editions || [])[0] || {};
+            return {
+              id: g.trendingGame.id,
+              name: g.trendingGame.name,
+              img: g.trendingGame.img,
+              type: g.trendingGame.type,
+              price: ed.price || "0.00",
+              retail: ed.retail || "0.00",
+              steam_id: g.steamData?.steam_appid || ed.steam_id || 0,
+              region: ed.region || "Europe",
+              releaseDate: g.release_date?.date || ed.releaseDate || null,
+              stock: 1,
+            };
+          })
+          .sort((a, b) => {
+            const da = parseRelease(a.releaseDate);
+            const db2 = parseRelease(b.releaseDate);
+            if (!da && !db2) return 0;
+            if (!da) return 1;
+            if (!db2) return -1;
+            return db2 - da;
+          });
+        if (games[0]) setGameData(games[0]);
+      } catch (e) {
+        console.error("ImgSlider fetch error:", e);
+      }
+    };
+    fetchTrending();
+  }, []);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);

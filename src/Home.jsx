@@ -8,7 +8,7 @@ import Precommandes from "./Components/Precommandes/Precommandes";
 import Popular from "./Components/Popular/Popular";
 import Footer from "./Components/Footer/Footer";
 import gameData from "./exclu.json";
-import Sorties from "./Components/Sorties/Sorties";
+import VR from "./Components/Virtual/Virtual";
 import Banner from "./Components/Banner/Banner.jsx";
 import BoxNews from "./Components/BoxNews/BoxNews.jsx";
 // import FeaturedGames from "./Components/FeaturedGames/FeaturedGames";
@@ -289,7 +289,7 @@ function Home() {
               {/* <div className="separator product-panel"></div> */}
               <BoxNews />
               <div className="separator product-panel"></div>
-              <Sorties />
+              <VR />
               <div className="separator product-panel"></div>
             </div>
 

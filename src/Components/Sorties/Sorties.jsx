@@ -1,114 +1,178 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
+const API_URL = "https://api.sm-artweb.fr/api/rawg-latest";
+
+const SLIDER_STYLE = `
+  .mobile-slider {
+    display: none;
+  }
+  .desktop-grid {
+    display: block;
+  }
+  @media (max-width: 767px) {
+    .mobile-slider {
+      display: block;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .mobile-slider::-webkit-scrollbar { display: none; }
+    .mobile-slider-inner {
+      display: flex;
+      gap: 12px;
+      padding: 0 4px 8px;
+    }
+    .mobile-slider-card {
+      flex: 0 0 75vw;
+      max-width: 280px;
+      scroll-snap-align: start;
+    }
+    .desktop-grid {
+      display: none;
+    }
+  }
+`;
+
 function Sorties() {
-  const [games, setGames] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [igGames, setIgGames] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const res = await fetch("https://api.sm-artweb.fr/api/latest-releases");
-        const data = await res.json();
-        const today = new Date();
+        const response = await fetch(API_URL, {
+          headers: { "User-Agent": "IG-ExportCatalog-Fetcher" },
+        });
+        const data = await response.json();
 
-        const filtered = data
-          .filter(g => {
-            if (!g.releaseDate) return false;
-            if (new Date(g.releaseDate) > today) return false;
-            const cats = Array.isArray(g.category)
-              ? g.category.map(c => c.toLowerCase())
-              : [(g.category || "").toLowerCase()];
-            if (cats.some(c => c.includes("indie"))) return false;
-            return true;
-          })
-          .sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate))
-          .slice(0, 6);
+        if (!data || data.length === 0) {
+          setIgGames([]);
+          setLoading(false);
+          return;
+        }
 
-        setGames(filtered);
-      } catch (err) {
-        console.error(err);
+        const uniqueGames = Object.values(
+          data.reduce((acc, game) => {
+            const key = game.name
+              .toLowerCase()
+              .replace(/deluxe|ultimate|gold|premium|standard/gi, "")
+              .replace(/\s+/g, " ")
+              .trim()
+              .split(" ")
+              .slice(0, 3)
+              .join(" ");
+            if (!acc[key]) {
+              acc[key] = game;
+            } else {
+              if (parseFloat(game.price) < parseFloat(acc[key].price)) {
+                acc[key] = game;
+              }
+            }
+            return acc;
+          }, {})
+        );
+
+        const filtered = uniqueGames.filter(game => {
+          const region = (game.region || "").toLowerCase();
+          if (region.includes("latin")) return false;
+          if (region.includes("us") && !region.includes("europe") && !region.includes("australia")) return false;
+          return true;
+        });
+
+        setIgGames(filtered.slice(0, 6));
+      } catch (error) {
+        console.error("Erreur fetch Sorties :", error);
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchGames();
   }, []);
 
-  useEffect(() => {
-    if (games.length === 0) return;
-    const interval = setInterval(() => {
-      setCurrentIndex(prev => (prev + 1) % games.length);
-    }, 10000);
-    return () => clearInterval(interval);
-  }, [games]);
+  const cleanTitle = (title) =>
+    title.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
 
-  const current = games[currentIndex];
-  if (!current) return null;
-
-  const gameUrl = (g) =>
-    `/store/${g.id}/${g.steam_id || 0}/${g.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "")}`;
+  const getPromo = (retail, price) => {
+    const r = parseFloat(retail);
+    const p = parseFloat(price);
+    if (!r || !p || r <= p) return null;
+    return `-${Math.round(((r - p) / r) * 100)}%`;
+  };
 
   return (
-    <div className="sorties-section">
+    <div className="row vertical-gap">
+      <style>{SLIDER_STYLE}</style>
+      <div className="col-lg-12">
+        <Link to="/Catalogues?catFilter=nouveautes">
+          <h3 className="nk-decorated-h-2">
+            <span>
+              <span className="text-main-1">Dernières</span> Sorties
+            </span>
+          </h3>
+        </Link>
+        <div className="nk-gap" />
 
-   <div className="row vertical-gap">
-  <div className="col-lg-12">
-    <Link to="/Catalogues?catFilter=nouveautes">
-      <h3 className="nk-decorated-h-2">
-        <span>
-          <span className="text-main-1">Les dernières</span> sorties
-        </span>
-      </h3>
-    </Link>
-    <div className="nk-gap" />
-
-    <div className="sr-grid">
-      {/* ... reste du JSX inchangé */}
-    </div>
-  </div>
-</div>
-
-      <div className="sr-grid">
-
-        {/* Grande image à gauche */}
-        <div className="sr-main-card">
-          <div
-            className="sr-main-img"
-            style={{ backgroundImage: `url(${current.img})` }}
-          >
-            <div className="sr-main-gradient" />
-            <div className="sr-main-badge">{current.price}€</div>
-            <div className="sr-main-info">
-              <span className="sr-tag">SORTIE</span>
-              <Link to={gameUrl(current)}>
-                <h2 className="sr-main-title">{current.name}</h2>
-              </Link>
-              <p className="sr-main-date">📅 {current.releaseDate}</p>
-            </div>
+        {/* ── Mobile slider ── */}
+        <div className="mobile-slider">
+          <div className="mobile-slider-inner">
+            {!loading && igGames.map((game) => {
+              const promo = getPromo(game.retail, game.price);
+              const price = parseFloat(game.price);
+              const detailPath = `/store/${game.id}/${game.steam_id || 0}/${cleanTitle(game.name)}`;
+              return (
+                <div className="mobile-slider-card" key={game.id}>
+                  <div className="nk-blog-post">
+                    <Link to={detailPath} className="nk-post-img">
+                      <img src={game.img} alt={game.name} style={{ width: "100%", objectFit: "cover" }} />
+                      {promo && <span className="nk-post-comments-count">{promo}</span>}
+                    </Link>
+                    <div className="nk-gap" />
+                    <h2 className="nk-post-title h4">
+                      <Link to={detailPath}>{game.name.length > 22 ? game.name.slice(0, 22) + "…" : game.name}</Link>
+                    </h2>
+                    <div className="nk-gap" />
+                    <div>{game.releaseDate ? `📅 ${game.releaseDate}` : `🌍 ${game.region}`}</div>
+                    <span>{price ? `${price.toFixed(2)} €` : "N/A"}</span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* Liste droite — clic = sélection */}
-        <div className="sr-list">
-          {games.map((g, i) => (
-            <div
-              key={g.id}
-              className={`sr-item${i === currentIndex ? " sr-item-active" : ""}`}
-              onClick={() => setCurrentIndex(i)}
-            >
-              <div
-                className="sr-item-img"
-                style={{ backgroundImage: `url(${g.img})` }}
-              />
-              <div className="sr-item-body">
-                <span className="sr-tag">SORTIE</span>
-                <p className="sr-item-title">{g.name}</p>
-                <p className="sr-item-date">📅 {g.releaseDate}</p>
-              </div>
-              <div className="sr-item-price">{g.price}€</div>
+        {/* ── Desktop grid ── */}
+        <div className="desktop-grid">
+          <div className="nk-blog-grid">
+            <div className="row">
+              {loading && <p>Chargement...</p>}
+              {!loading && igGames.map((game) => {
+                const promo = getPromo(game.retail, game.price);
+                const price = parseFloat(game.price);
+                const detailPath = `/store/${game.id}/${game.steam_id || 0}/${cleanTitle(game.name)}`;
+                return (
+                  <div className="col-md-6 col-lg-4" key={game.id}>
+                    <div className="nk-blog-post">
+                      <Link to={detailPath} className="nk-post-img">
+                        <img src={game.img} alt={game.name} />
+                        {promo && <span className="nk-post-comments-count">{promo}</span>}
+                      </Link>
+                      <div className="nk-gap" />
+                      <h2 className="nk-post-title h4">
+                        <Link to={detailPath}>{game.name}</Link>
+                      </h2>
+                      <div className="nk-gap" />
+                      <div>{game.releaseDate ? `📅 ${game.releaseDate}` : `🌍 ${game.region}`}</div>
+                      <span>{price ? `${price.toFixed(2)} €` : "N/A"}</span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          ))}
+          </div>
         </div>
-
       </div>
     </div>
   );

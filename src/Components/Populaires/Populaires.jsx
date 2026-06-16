@@ -8,14 +8,14 @@ import { db } from "../../Firebase";
 function parseRelease(dateStr) {
   if (!dateStr) return null;
   const FR = {
-    janvier:0, janv:0, fevrier:1, février:1, fev:1, mars:2,
+    janvier:0, janv:0, fevrier:1, février:1, "févr":1, fev:1, mars:2,
     avril:3, avr:3, mai:4, juin:5, juillet:6, juil:6,
     aout:7, août:7, septembre:8, sept:8, octobre:9, oct:9,
     novembre:10, nov:10, decembre:11, décembre:11, dec:11, déc:11
   };
-  const m = dateStr.match(/(\d{1,2})\s+([\wéèêëàâùûüîïôœç]+)\s+(\d{4})/i);
+  const m = dateStr.match(/(\d{1,2})\s+([\wéèêëàâùûüîïôœç]+\.?)\s+(\d{4})/i);
   if (m) {
-    const mn = m[2].toLowerCase();
+    const mn = m[2].toLowerCase().replace(/\.$/, "");
     const mo = FR[mn] ?? FR[mn.normalize("NFD").replace(/[\u0300-\u036f]/g,"")];
     if (mo !== undefined) return new Date(parseInt(m[3]), mo, parseInt(m[1]));
   }
@@ -747,12 +747,17 @@ function Populaires() {
               const rd = parseRelease(g.release_date?.date || g.steamData?.release_date?.date || "");
               return rd && rd <= today;
             })
-            .map(g => ({
-              id: g.trendingGame.id, name: g.trendingGame.name,
-              img: g.trendingGame.img, type: g.trendingGame.type,
-              price: g.steamData?.price || "0.00", retail: g.steamData?.retail || "0.00",
-              steam_id: g.steamData?.steam_appid || 0, region: "Europe", stock: 1,
-            }));
+            .map(g => {
+              const ed = (g.editions || []).find(e => e.stock === 1 && parseFloat(e.price) > 0) || (g.editions || [])[0] || {};
+              return {
+                id: g.trendingGame.id, name: g.trendingGame.name,
+                img: g.trendingGame.img, type: g.trendingGame.type,
+                price: ed.price || "0.00", retail: ed.retail || "0.00",
+                steam_id: g.steamData?.steam_appid || ed.steam_id || 0,
+                region: ed.region || "Europe", stock: 1,
+                releaseDate: g.release_date?.date || ed.releaseDate || null,
+              };
+            });
           setAllGames(fbGames);
           return;
         }
@@ -775,13 +780,22 @@ function Populaires() {
     .filter(g => {
       if ((g.region || "").toLowerCase().includes("latin")) return false;
       const region = (g.region || "").toLowerCase();
-      if (region.includes("us") && !region.includes("australia")) return false;
+      if (region.includes("us") && !region.includes("europe") && !region.includes("australia")) return false;
       if (platform === "CartesCadeaux") {
         if (!Array.isArray(g.category) || !g.category.some(c => c.toLowerCase().includes("carte"))) return false;
       } else if (platform !== "Tous" && getPlatformKey(g.type) !== platform) return false;
-      if (catFilter === "preorder")   { if (g.preorder !== 1) return false; }
+      if (catFilter === "preorder") {
+        const rd = parseRelease(g.releaseDate || g.release_date);
+        const isFuture = rd && rd > new Date();
+        const hasPrice = parseFloat(g.price) > 0;
+        if (g.preorder !== 1 && !(isFuture && hasPrice)) return false;
+      }
       else if (catFilter === "nouveautes") { if (g.stock !== 1 || parseFloat(g.price) <= 0 || g.preorder === 1) return false; }
-      else if (catFilter === "upcoming")   { if (g.preorder === 1 || g.stock === 1 || parseFloat(g.price) > 0) return false; }
+      else if (catFilter === "upcoming")   {
+        const rd = parseRelease(g.releaseDate || g.release_date);
+        const isFuture = rd && rd > new Date();
+        if (g.preorder === 1 || isFuture || g.stock === 1 || parseFloat(g.price) > 0) return false;
+      }
       if (search.trim()) {
         const ABBREV = {
           "gta 6":"grand theft auto vi","gta 5":"grand theft auto v",
