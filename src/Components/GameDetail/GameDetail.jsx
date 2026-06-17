@@ -172,6 +172,7 @@ function GameDetail() {
   const [adminNewFiles,  setAdminNewFiles]  = useState([]);
   const [adminNewPreviews, setAdminNewPreviews] = useState([]);
   const [adminRefreshing, setAdminRefreshing] = useState(false);
+  const [adminForcingSteam, setAdminForcingSteam] = useState(false);
   const [adminDeleting,   setAdminDeleting]   = useState(false);
   const [adminDeleteConfirm, setAdminDeleteConfirm] = useState(false);
   const [tagsExpanded,   setTagsExpanded]   = useState(false);
@@ -435,7 +436,11 @@ function GameDetail() {
         const currentEd = filtered.find(e => String(e.id) === String(igId));
         if (currentEd) {
           const currentRegion = (currentEd.region || "").toLowerCase();
-          const isUSOrWorldwide = currentRegion.includes("us") || currentRegion === "worldwide";
+          // Une région n'est "US/Worldwide à rediriger" que si elle ne
+          // contient PAS déjà l'Europe — "Europe & US & Canada" ne doit
+          // jamais déclencher cette redirection puisque l'Europe y est déjà.
+          const includesEurope = currentRegion.includes("europe") || currentRegion.includes("fr");
+          const isUSOrWorldwide = !includesEurope && (currentRegion.includes("us") || currentRegion === "worldwide");
           if (isUSOrWorldwide) {
             const europeEd = filtered.find(e => { const r = (e.region || "").toLowerCase(); return (r.includes("europe") || r.includes("fr")) && e.type === currentEd.type && parseFloat(e.price) > 0 && e.stock === 1; });
             if (europeEd) { const slug = europeEd.name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, ""); const isEuSteam = (europeEd.type || "").toLowerCase().includes("steam"); navigate(`/store/${europeEd.id}/${isEuSteam ? (europeEd.steam_id || 0) : 0}/${slug}`, { replace: true }); return; }
@@ -456,9 +461,27 @@ function GameDetail() {
   useEffect(() => {
     if (!allEditions.length) return;
     const current = allEditions.find(e => String(e.id) === String(igId));
-    if (current) { setSelectedPlatform(current.type); setSelectedEdition(current.name); }
-    else { const first = allEditions.find(e => e.stock === 1) || allEditions[0]; setSelectedPlatform(first?.type || null); setSelectedEdition(first?.name || null); }
-  }, [allEditions, igId]);
+    if (current) {
+      // Cas normal : l'igId de l'URL correspond à une entrée connue dans
+      // allEditions (chargement initial, ou allEditions vient d'être
+      // re-fetché pour ce nouvel igId après une navigation). On synchronise.
+      setSelectedPlatform(current.type);
+      setSelectedEdition(current.name);
+    } else if (!selectedEdition) {
+      // Cas "premier rendu" uniquement : aucune édition n'a encore été
+      // sélectionnée, donc pas de risque d'écraser un choix utilisateur.
+      // On choisit une édition par défaut (la première en stock).
+      const first = allEditions.find(e => e.stock === 1) || allEditions[0];
+      setSelectedPlatform(first?.type || null);
+      setSelectedEdition(first?.name || null);
+    }
+    // Si current est introuvable MAIS qu'une édition est déjà sélectionnée,
+    // c'est probablement allEditions qui n'a pas encore été re-fetché pour
+    // le nouvel igId (juste après une navigation manuelle depuis le
+    // dropdown) — on ne touche à rien plutôt que de deviner un fallback
+    // potentiellement faux, en attendant le prochain re-render avec les
+    // données à jour.
+  }, [allEditions, igId, selectedEdition]);
 
   const platformGroups = allEditions.reduce((acc, ed) => { if (!acc[ed.type]) acc[ed.type] = []; acc[ed.type].push(ed); return acc; }, {});
   const gameBase = (igGame?.name || "").replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g, "'").replace(/\s*(deluxe|ultimate|gold|premium|standard)\s*edition.*/gi, "").replace(/\s*edition.*/gi, "").replace(/[-–].*$/, "").trim();
@@ -528,6 +551,20 @@ function GameDetail() {
       // Recharge les éditions depuis l'API
       setTimeout(() => window.location.reload(), 1200);
     } catch (e) { setAdminMsg("Erreur : " + e.message); setAdminMsgType("error"); }
+  };
+
+  const handleForceRefreshSteamData = async () => {
+    setAdminForcingSteam(true); setAdminMsg("");
+    try {
+      // Vide le steamData en cache pour CE jeu précis (souvent une édition
+      // spéciale dont la résolution Steam avait échoué une première fois),
+      // pour que le useEffect de résolution reparte de zéro au rechargement.
+      await setDoc(doc(db, "games", `ig_${igId}`), { steamData: null, savedAt: null }, { merge: true });
+      setAdminMsg("✅ Données Steam vidées — nouvelle récupération en cours...");
+      setAdminMsgType("success");
+      setTimeout(() => window.location.reload(), 1000);
+    } catch (e) { setAdminMsg("Erreur : " + e.message); setAdminMsgType("error"); }
+    finally { setAdminForcingSteam(false); }
   };
 
   const handleDeleteFromFirebase = async () => {
@@ -1206,6 +1243,15 @@ function GameDetail() {
             </button>
             <div style={{ fontFamily:"Montserrat,sans-serif", fontSize:10, color:"#444", marginBottom:16, textAlign:"center", lineHeight:1.5 }}>
               Force le rechargement des éditions depuis l'API IG
+            </div>
+
+            {/* ── Bouton forcer récupération données Steam ── */}
+            <button onClick={handleForceRefreshSteamData} disabled={adminForcingSteam}
+              style={{ width:"100%", padding:"12px", marginBottom:8, background: adminForcingSteam ? "rgba(255,255,255,0.02)" : "rgba(243,156,18,0.08)", border:`1px solid ${adminForcingSteam ? "#333" : "rgba(243,156,18,0.3)"}`, borderRadius:6, color: adminForcingSteam ? "#555" : "#f39c12", fontFamily:"Montserrat,sans-serif", fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", cursor: adminForcingSteam ? "default" : "pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:6 }}>
+              {adminForcingSteam ? "⏳ Récupération en cours..." : "🎮 Forcer la récupération Steam (ce jeu)"}
+            </button>
+            <div style={{ fontFamily:"Montserrat,sans-serif", fontSize:10, color:"#444", marginBottom:16, textAlign:"center", lineHeight:1.5 }}>
+              Utile si la description/config/screenshots Steam manquent (éditions Deluxe, Premium...). Vide le cache Steam de ce jeu précis et relance la résolution.
             </div>
 
             {/* ── Bouton suppression Firebase ── */}
