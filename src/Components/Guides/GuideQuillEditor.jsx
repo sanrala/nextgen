@@ -3,7 +3,7 @@
 // et insertion de l'URL à la position du curseur (texte + image librement mélangés).
 
 import React, { useRef, useMemo, useCallback } from "react";
-import ReactQuill, { Quill } from "react-quill";
+import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
 const CLOUDINARY_CLOUD = "dl0eijxyn";
