@@ -338,7 +338,8 @@
   font-family: "Rajdhani", sans-serif;
   font-size: 13px;
   color: var(--gd-text-muted);
-
+  margin-bottom: 36px;
+  padding-bottom: 24px;
   border-bottom: 1px solid var(--gd-line);
 }
 .ga-article-edit-btn { margin-left: auto; position: static; }
@@ -348,9 +349,17 @@
   font-family: "Rajdhani", sans-serif;
   font-size: 17px;
   line-height: 1.8;
-  color: var(--gd-text);
+  color: var(--gd-white);
   padding: 0;
   border: none;
+}
+/* Force le blanc même sur le texte avec une couleur inline posée par Quill
+   (ex: <span style="color: rgb(255,255,255)">), pour une homogénéité totale
+   peu importe ce que l'éditeur a inline d'un guide à l'autre. */
+.ga-article-content p,
+.ga-article-content span,
+.ga-article-content li {
+  color: var(--gd-white) !important;
 }
 .ga-article-content h2,
 .ga-article-content h3,
@@ -363,7 +372,7 @@
 }
 .ga-article-content h2 {
   font-size: 25px;
-  /* padding-bottom: 10px; */
+  padding-bottom: 10px;
   border-bottom: 1px solid var(--gd-line);
 }
 .ga-article-content h3 { font-size: 20px; }

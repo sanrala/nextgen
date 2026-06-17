@@ -1,0 +1,38 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   Variables CSS du thème "editorial dark / cinema" (--gd-*)
+   Utilisées par GuidesAstuces.css, GameDetail.jsx (tab Guides & Astuces),
+   RecentGuides.css, et tout le module Guides & Astuces.
+
+   Ces variables n'étaient déclarées nulle part dans le projet — chaque
+   composant les utilisait via var(--gd-xxx) en espérant qu'elles existent,
+   ce qui faisait silencieusement retomber le navigateur sur des valeurs
+   héritées/par défaut au lieu d'une vraie erreur visible.
+
+   À IMPORTER UNE SEULE FOIS, GLOBALEMENT (ex: dans index.js / App.js,
+   ou ajouté en haut de style.css) pour que :root soit disponible partout.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Fonds */
+  --gd-ink: #0a0c10;        /* fond le plus sombre (bannières, hero) */
+  --gd-surface: #13161c;    /* cartes, panneaux légèrement plus clairs que le fond */
+  --gd-surface2: #1a1d24;   /* variante de surface, un peu plus claire encore */
+
+  /* Texte */
+  --gd-white: #ffffff;      /* texte principal, titres */
+  --gd-text: #e8e8ea;       /* texte de corps, légèrement moins pur que blanc */
+  --gd-text-dim: #9a9ea6;   /* texte secondaire, légendes */
+  --gd-text-muted: #6a6e76; /* texte tertiaire, métadonnées discrètes */
+
+  /* Accent */
+  --gd-red: #dd163b;        /* couleur de marque, CTA, accents */
+  --gd-red-dim: rgba(221, 22, 59, 0.4); /* rouge atténué pour bordures/halos légers */
+
+  /* Lignes & séparateurs */
+  --gd-line: #20242c;       /* bordures discrètes */
+  --gd-line2: #2a2e36;      /* bordures légèrement plus visibles */
+
+  /* Rayons */
+  --gd-radius: 8px;         /* arrondi standard (images, petites cartes) */
+  --gd-radius-lg: 14px;     /* arrondi large (bannières, grandes cartes) */
+}

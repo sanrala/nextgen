@@ -21,7 +21,7 @@ import RecentReleasesNintendo from "./Components/FeaturedGames/RecentReleasesNin
 import RecentReleasesXbox from "./Components/FeaturedGames/RecentReleasesXbox";
 import SteamSpecials from "./Components/SteamSpecials/SteamSpecials";
 import RecentGuides from "./Components/Home/RecentGuides";
-
+import "./Components/Guides/gd-variables.css";
 
 function LogoLoader() {
   return (

@@ -29,29 +29,44 @@ function groupConsecutiveImageParagraphs(html) {
   const container = document.createElement("div");
   container.innerHTML = html;
 
-  const isSoloImageP = (node) =>
-    node?.tagName === "P" &&
-    node.children.length === 1 &&
-    node.children[0].tagName === "IMG" &&
-    node.textContent.trim() === "";
+  // Trouve l'<img> d'un <p> qu'il soit en enfant direct, ou enveloppé dans
+  // un unique <span> intermédiaire (cas réel généré par Quill/collage avec
+  // une couleur de texte appliquée, ex: <p><span style="..."><img/></span></p>).
+  const getSoloImg = (node) => {
+    if (node?.tagName !== "P" || node.children.length !== 1) return null;
+    const only = node.children[0];
+    if (only.tagName === "IMG" && node.textContent.trim() === "") return only;
+    if (
+      only.tagName === "SPAN" &&
+      only.children.length === 1 &&
+      only.children[0].tagName === "IMG" &&
+      node.textContent.trim() === ""
+    ) {
+      return only.children[0];
+    }
+    return null;
+  };
 
   let node = container.firstChild;
   while (node) {
-    if (isSoloImageP(node)) {
-      const group = [node];
+    const img = getSoloImg(node);
+    if (img) {
+      const group = [{ p: node, img }];
       let next = node.nextSibling;
-      while (next && isSoloImageP(next)) {
-        group.push(next);
+      while (next) {
+        const nextImg = getSoloImg(next);
+        if (!nextImg) break;
+        group.push({ p: next, img: nextImg });
         next = next.nextSibling;
       }
       if (group.length > 1) {
         const wrapper = document.createElement("div");
         wrapper.className = `ga-image-gallery ga-gallery-${Math.min(group.length, 3)}`;
-        group.forEach((p) => {
-          wrapper.appendChild(p.firstChild); // déplace l'<img>
+        group.forEach(({ img }) => {
+          wrapper.appendChild(img); // déplace l'<img>, en l'extrayant du <span> le cas échéant
         });
-        container.insertBefore(wrapper, group[0]);
-        group.forEach((p) => container.removeChild(p));
+        container.insertBefore(wrapper, group[0].p);
+        group.forEach(({ p }) => container.removeChild(p));
         node = next;
         continue;
       }
