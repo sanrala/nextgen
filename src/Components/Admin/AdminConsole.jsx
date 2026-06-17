@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   collection, addDoc, updateDoc, getDocs,
   doc, query, where, orderBy, serverTimestamp,
@@ -15,22 +15,29 @@ const IG_CATALOG_URL =
 const CLOUDINARY_CLOUD = "dl0eijxyn";
 const CLOUDINARY_PRESET = "ml_default";
 
-const QUILL_MODULES = {
-  toolbar: [
-    [{ header: [1, 2, 3, false] }],
-    ["bold", "italic", "underline", "strike"],
-    ["blockquote", "code-block"],
-    [{ list: "ordered" }, { list: "bullet" }],
-    [{ color: [] }, { background: [] }],
-    ["link"],
-    ["clean"],
-  ],
-};
+function getQuillModules(handleImageClick) {
+  return {
+    toolbar: {
+      container: [
+        [{ header: [1, 2, 3, false] }],
+        ["bold", "italic", "underline", "strike"],
+        ["blockquote", "code-block"],
+        [{ list: "ordered" }, { list: "bullet" }],
+        [{ color: [] }, { background: [] }],
+        ["link", "image"],
+        ["clean"],
+      ],
+      handlers: {
+        image: handleImageClick,
+      },
+    },
+  };
+}
 
 const QUILL_FORMATS = [
   "header", "bold", "italic", "underline", "strike",
   "blockquote", "code-block", "list", "bullet",
-  "color", "background", "link",
+  "color", "background", "link", "image",
 ];
 
 function getYouTubeId(url) {
@@ -111,6 +118,44 @@ function AdminConsole({ user }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const fileInputRef = useRef();
+
+  // ── Upload d'image inline dans l'éditeur d'article (même mécanisme que
+  // GuideQuillEditor.jsx : upload Cloudinary, insertion au curseur) ──
+  const quillRef = useRef(null);
+  const inlineImageInputRef = useRef(null);
+
+  const handleInlineImageClick = useCallback(() => {
+    inlineImageInputRef.current?.click();
+  }, []);
+
+  const handleInlineImageFileChange = useCallback(async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    const editor = quillRef.current?.getEditor();
+    if (!editor) return;
+
+    // On mémorise la position du curseur AVANT l'upload (qui est async)
+    const range = editor.getSelection(true) || { index: editor.getLength(), length: 0 };
+
+    setUploadProgress("Upload de l'image...");
+    try {
+      const { url } = await uploadToCloudinary(file);
+      editor.insertEmbed(range.index, "image", url, "user");
+      editor.setSelection(range.index + 1, 0);
+    } catch (err) {
+      console.error("Erreur upload image article:", err);
+      setErrorMsg("Erreur lors de l'upload de l'image : " + err.message);
+    } finally {
+      setUploadProgress("");
+    }
+  }, []);
+
+  const quillModules = useMemo(
+    () => getQuillModules(handleInlineImageClick),
+    [handleInlineImageClick]
+  );
 
   // Chargement catalogue IG
   useEffect(() => {
@@ -684,12 +729,20 @@ function AdminConsole({ user }) {
                 <label className="admin-form-label">Contenu</label>
                 <div className="admin-quill-wrap">
                   <ReactQuill
+                    ref={quillRef}
                     theme="snow"
                     value={content}
                     onChange={setContent}
-                    modules={QUILL_MODULES}
+                    modules={quillModules}
                     formats={QUILL_FORMATS}
-                    placeholder="Rédigez votre article ici..."
+                    placeholder="Rédigez votre article ici. Utilisez le bouton image de la barre d'outils pour insérer une photo n'importe où dans le texte..."
+                  />
+                  <input
+                    ref={inlineImageInputRef}
+                    type="file"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    onChange={handleInlineImageFileChange}
                   />
                 </div>
               </div>
