@@ -18,6 +18,7 @@ import Box from "@mui/material/Box";
 import Header from "../Header/Header";
 import CommentsSection from "./CommentsSection";
 import Footer from "../Footer/Footer";
+import { findGameGuidesDoc } from "../Guides/guidesHelpers";
 
 const BACKEND_URL = "https://api.sm-artweb.fr";
 
@@ -187,6 +188,14 @@ function GameDetail() {
     getDoc(ref).then(snap => setInWishlist(snap.exists())).catch(() => {});
   }, [user?.uid, igId]);
 
+  useEffect(() => {
+    if (!igId) return;
+    setGuidesPreview(undefined); // loading
+    findGameGuidesDoc(igId)
+      .then(found => setGuidesPreview(found && found.guidesCount > 0 ? found : null))
+      .catch(() => setGuidesPreview(null));
+  }, [igId]);
+
   const toggleWishlist = async () => {
     if (!user?.uid) { navigate("/Login"); return; }
     setWishlistLoading(true);
@@ -216,6 +225,7 @@ function GameDetail() {
   const [selectedPlatform, setSelectedPlatform] = useState(null);
   const [selectedEdition,  setSelectedEdition]  = useState(null);
   const [heroImgError, setHeroImgError] = useState(false);
+  const [guidesPreview, setGuidesPreview] = useState(null); // { gameName, gameImg, guidesCount } | null | undefined(loading)
 
   // ── Clé partagée commentaires/notes — ig_ du jeu courant (stable dès le début) ──
   const sharedGameKey = `ig_${igId}`;
@@ -719,6 +729,13 @@ function GameDetail() {
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
         </svg>
       </button>
+      <Link to={`/guides/${igId}`}
+        title="Guides & Astuces de ce jeu"
+        style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 48, height: 48, borderRadius: "50%", border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.06)", transition: "all 0.2s", flexShrink: 0, textDecoration: "none" }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = "#dd163b"; e.currentTarget.style.background = "rgba(221,22,59,0.15)"; }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)"; e.currentTarget.style.background = "rgba(255,255,255,0.06)"; }}>
+        <span style={{ fontSize: 19 }}>📖</span>
+      </Link>
     </div>
   );
 
@@ -940,18 +957,50 @@ function GameDetail() {
             .gd-tab-btn.gd-tab-active{background:#dd163b!important;border-color:#dd163b!important;color:#fff!important;}
           `}</style>
           <ul className="gd-tabs-nav" role="tablist">
-            {[{ key: "description", label: "Description" }, { key: "config", label: "Config requise" }, { key: "comment", label: `Commentaires (${comments.length})` }].map(t => (
+            {[{ key: "description", label: "Description" }, { key: "config", label: "Config requise" }, { key: "comment", label: `Commentaires (${comments.length})` }, { key: "guides", label: "Guides & Astuces" }].map(t => (
               <li className="gd-tab-item" key={t.key}>
                 <span className={`gd-tab-btn${activeTab === t.key ? " gd-tab-active" : ""}`} onClick={() => setActiveTab(t.key)}>{t.label}</span>
               </li>
             ))}
           </ul>
+          <style>{`
+            .gd-tabpane-content{font-family:"Rajdhani",sans-serif;font-size:15.5px;line-height:1.75;color:#cfd2d8;}
+            .gd-tabpane-content h1,.gd-tabpane-content h2,.gd-tabpane-content h3{font-family:"Montserrat",sans-serif;color:#fff;font-weight:700;margin:24px 0 12px;}
+            .gd-tabpane-content p{margin:0 0 14px;}
+            .gd-tabpane-content img{max-width:100%;border-radius:6px;}
+            .gd-tabpane-content a{color:#dd163b;}
+            .gd-tabpane-content ul,.gd-tabpane-content ol{padding-left:22px;margin:0 0 14px;}
+            .gd-tabpane-content strong{color:#fff;}
+
+            .gd-config-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:20px 22px;height:100%;transition:border-color 0.2s, background 0.2s;}
+            .gd-config-card:hover{border-color:rgba(221,22,59,0.35);background:rgba(255,255,255,0.045);}
+            .gd-config-title{font-family:"Montserrat",sans-serif;font-size:14px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;color:#fff;margin:0 0 14px;display:flex;align-items:center;gap:8px;}
+            .gd-config-content{font-family:"Rajdhani",sans-serif;font-size:14.5px;line-height:1.85;color:#b8bcc4;}
+            .gd-config-content p{margin:0 0 6px;}
+            .gd-config-content strong,.gd-config-content b{color:#e8e8ea;font-weight:700;}
+
+            .gd-guides-panel{display:flex;flex-direction:column;gap:18px;}
+            .gd-guides-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:48px 24px;border:1px dashed rgba(255,255,255,0.14);border-radius:12px;background:rgba(255,255,255,0.02);}
+            .gd-guides-empty-icon{font-size:34px;opacity:0.6;}
+            .gd-guides-empty-text{font-family:"Rajdhani",sans-serif;font-size:15px;color:#8a8d94;max-width:380px;}
+            .gd-guides-card{display:flex;align-items:center;gap:20px;padding:22px 24px;border-radius:14px;background:linear-gradient(135deg, rgba(221,22,59,0.10), rgba(255,255,255,0.025));border:1px solid rgba(221,22,59,0.25);text-decoration:none;transition:border-color 0.2s, transform 0.2s, box-shadow 0.2s;}
+            .gd-guides-card:hover{border-color:rgba(221,22,59,0.55);transform:translateY(-2px);box-shadow:0 14px 32px rgba(221,22,59,0.12);}
+            .gd-guides-card-img{width:64px;height:86px;object-fit:cover;border-radius:8px;flex-shrink:0;outline:1px solid rgba(255,255,255,0.12);}
+            .gd-guides-card-body{flex:1;min-width:0;}
+            .gd-guides-card-eyebrow{font-family:"Montserrat",sans-serif;font-size:10.5px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:#dd163b;margin-bottom:6px;}
+            .gd-guides-card-title{font-family:"Montserrat",sans-serif;font-size:18px;font-weight:800;color:#fff;margin:0 0 6px;}
+            .gd-guides-card-sub{font-family:"Rajdhani",sans-serif;font-size:13.5px;color:#9a9ea6;}
+            .gd-guides-card-arrow{font-size:22px;color:#dd163b;flex-shrink:0;transition:transform 0.2s;}
+            .gd-guides-card:hover .gd-guides-card-arrow{transform:translateX(4px);}
+            .gd-guides-cta-btn{align-self:flex-start;font-family:"Montserrat",sans-serif;font-size:12px;font-weight:800;letter-spacing:0.07em;text-transform:uppercase;color:#fff;background:#dd163b;border:none;border-radius:6px;padding:12px 24px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:transform 0.15s, box-shadow 0.15s;}
+            .gd-guides-cta-btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(221,22,59,0.3);}
+          `}</style>
           <div className="tab-content">
             {activeTab === "description" && (
               <div className="tab-pane fade show active">
                 <Separator label="Description" />
                 {steamData?.detailed_description
-                  ? <div className="steam-desc-content" dangerouslySetInnerHTML={{ __html: steamData.detailed_description }} />
+                  ? <div className="steam-desc-content gd-tabpane-content" dangerouslySetInnerHTML={{ __html: steamData.detailed_description }} />
                   : <p style={{ color: "#888" }}>Aucune description disponible.</p>}
               </div>
             )}
@@ -959,8 +1008,8 @@ function GameDetail() {
               <div className="tab-pane fade show active">
                 <Separator label="Configuration PC requise" />
                 <div className="row gd-config-row">
-                  {pcReqs?.minimum && <div className="col-12 col-md-6 gd-config-col"><h4 className="gd-config-title">⚙️ Configuration minimale</h4><div className="gd-config-content" dangerouslySetInnerHTML={{ __html: pcReqs.minimum }} /></div>}
-                  {pcReqs?.recommended && <div className="col-12 col-md-6 gd-config-col"><h4 className="gd-config-title">🚀 Configuration recommandée</h4><div className="gd-config-content" dangerouslySetInnerHTML={{ __html: pcReqs.recommended }} /></div>}
+                  {pcReqs?.minimum && <div className="col-12 col-md-6 gd-config-col"><div className="gd-config-card"><h4 className="gd-config-title">⚙️ Configuration minimale</h4><div className="gd-config-content" dangerouslySetInnerHTML={{ __html: pcReqs.minimum }} /></div></div>}
+                  {pcReqs?.recommended && <div className="col-12 col-md-6 gd-config-col"><div className="gd-config-card"><h4 className="gd-config-title">🚀 Configuration recommandée</h4><div className="gd-config-content" dangerouslySetInnerHTML={{ __html: pcReqs.recommended }} /></div></div>}
                   {!pcReqs?.minimum && !pcReqs?.recommended && <p className="col-12" style={{ color: "#888", padding: "20px 15px" }}>Configuration non disponible.</p>}
                 </div>
               </div>
@@ -975,6 +1024,47 @@ function GameDetail() {
                   userN={userN}
                   releaseDate={steamData?.release_date?.date || null}
                 />
+              </div>
+            )}
+            {activeTab === "guides" && (
+              <div className="tab-pane fade show active">
+                <Separator label="Guides & Astuces" />
+                <div className="gd-guides-panel">
+                  {guidesPreview === undefined && (
+                    <p style={{ color: "#888" }}>Chargement...</p>
+                  )}
+                  {guidesPreview === null && (
+                    <div className="gd-guides-empty">
+                      <span className="gd-guides-empty-icon">📖</span>
+                      <p className="gd-guides-empty-text">
+                        Aucun guide ou astuce n'a encore été publié pour ce jeu.
+                      </p>
+                      {isAdmin && (
+                        <Link to={`/guides/${igId}`} className="gd-guides-cta-btn">+ Créer le premier guide</Link>
+                      )}
+                    </div>
+                  )}
+                  {guidesPreview && (
+                    <>
+                      <Link to={`/guides/${igId}`} className="gd-guides-card">
+                        {guidesPreview.gameImg && (
+                          <img src={guidesPreview.gameImg} alt={guidesPreview.gameName} className="gd-guides-card-img" />
+                        )}
+                        <div className="gd-guides-card-body">
+                          <div className="gd-guides-card-eyebrow">Base de connaissances</div>
+                          <h3 className="gd-guides-card-title">{guidesPreview.gameName}</h3>
+                          <div className="gd-guides-card-sub">
+                            {guidesPreview.guidesCount} {guidesPreview.guidesCount > 1 ? "guides & astuces disponibles" : "guide ou astuce disponible"}
+                          </div>
+                        </div>
+                        <span className="gd-guides-card-arrow">→</span>
+                      </Link>
+                      {isAdmin && (
+                        <Link to={`/guides/${igId}`} className="gd-guides-cta-btn">+ Ajouter un guide ou une astuce</Link>
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
             )}
           </div>

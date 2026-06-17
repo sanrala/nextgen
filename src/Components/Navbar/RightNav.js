@@ -315,6 +315,7 @@ const RightNav = ({ open, setOpen }) => {
         <li><Link to="/Catalogues?catFilter=nouveautes" onClick={() => setOpen(false)}>Nouveautés</Link></li>
         <li><Link to="/Catalogues?catFilter=topseller" onClick={() => setOpen(false)}>Populaires</Link></li>
         <li><Link to="/Catalogues?catFilter=preorder" onClick={() => setOpen(false)}>Précommandes</Link></li>
+        <li><Link to="/guides" onClick={() => setOpen(false)}>Guides &amp; Astuces</Link></li>
 
         <li style={{ padding:"12px 16px", borderTop:"1px solid rgba(255,255,255,0.06)", marginTop:8 }} className="d-lg-none">
           {user ? (

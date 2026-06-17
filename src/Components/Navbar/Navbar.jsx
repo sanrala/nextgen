@@ -94,6 +94,7 @@ function NavBar() {
               <li><Link to="/Catalogues?catFilter=nouveautes">Nouveautés</Link></li>
               <li><Link to="/Catalogues?catFilter=topseller">Populaires</Link></li>
               <li><Link to="/Catalogues?catFilter=preorder">Précommandes</Link></li>
+              <li><Link to="/guides">Guides &amp; Astuces</Link></li>
             
               {isAdmin && (
                 <li><Link to="/admin" style={{ fontSize:"10px", fontWeight:800, letterSpacing:"0.1em", color:"#dd163b", border:"1px solid rgba(221,22,59,0.4)", borderRadius:"4px", padding:"4px 10px", textTransform:"uppercase", textDecoration:"none" }}>Admin</Link></li>

@@ -8,6 +8,9 @@ import Populaires from "./Components/Populaires/Populaires";
 import LoginPage from "./Components/Login/LoginPage";
 import ActualitesPage from "./Components/BoxNews/ActualitesPage";
 import ProfilePage from "./Components/Profile/ProfilePage";
+import GuidesAstuces from "./Components/Guides/GuidesAstuces";
+import GameGuides from "./Components/Guides/GameGuides";
+import GuideReadPage from "./Components/Guides/GuideReadPage";
 import { useDispatch } from "react-redux";
 import { login, logout } from "./features/userSlice";
 import { onAuthStateChanged } from "firebase/auth";
@@ -76,6 +79,9 @@ function App() {
         <Route path="/actualités"          element={<ActualitesPage />} />
         <Route path="/profile/:uid"        element={<ProfilePage />} />
         <Route path="/wishlist"             element={<Wishlist />} />
+        <Route path="/guides"                      element={<GuidesAstuces />} />
+        <Route path="/guides/:gameSlug"            element={<GameGuides />} />
+        <Route path="/guides/:gameSlug/:guideId"   element={<GuideReadPage />} />
       </Routes>
     </div>
   );
