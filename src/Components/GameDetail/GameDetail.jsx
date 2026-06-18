@@ -230,7 +230,8 @@ function GameDetail() {
   const [selectedPlatform, setSelectedPlatform] = useState(null);
   const [selectedEdition,  setSelectedEdition]  = useState(null);
   const [heroImgError, setHeroImgError] = useState(false);
-  const [customCover,  setCustomCover]  = useState(null);
+  const [customCover,  setCustomCover]  = useState(null); // choix admin manuel
+  const [steamHeroUrl, setSteamHeroUrl] = useState(null); // library_hero.jpg résolu
   const [guidesPreview, setGuidesPreview] = useState(null); // { gameName, gameImg, guidesCount } | null | undefined(loading)
 
   // ── Clé partagée commentaires/notes — ig_ du jeu courant (stable dès le début) ──
@@ -259,12 +260,30 @@ function GameDetail() {
           const cached = fbSnap.data();
           // Charger la cover custom si définie
           if (cached.customCover) setCustomCover(cached.customCover);
+          // Charger heroUrl depuis Firebase si déjà résolu
+          if (cached.heroUrl) setSteamHeroUrl(cached.heroUrl);
+
           const savedAt = cached.savedAt?.toMillis?.() || 0;
           const AGE_LIMIT = 7 * 24 * 60 * 60 * 1000;
           const isFresh = (Date.now() - savedAt) < AGE_LIMIT;
           const isConsoleCached = cached.steamData?.source === 'rawg';
           if (cached.steamData && !isConsoleCached) {
             setSteamData(cached.steamData);
+
+            // Résoudre heroUrl en arrière-plan si pas encore fait
+            if (!cached.heroUrl && cached.steamData?.steam_appid) {
+              (async () => {
+                try {
+                  const heroRes = await fetch(`${BACKEND_URL}/api/steam-library-hero/${cached.steamData.steam_appid}`);
+                  const heroData = await heroRes.json();
+                  if (heroData?.url) {
+                    await setDoc(fbRef, { heroUrl: heroData.url }, { merge: true });
+                    setSteamHeroUrl(heroData.url);
+                  }
+                } catch {}
+              })();
+            }
+
             const [frRes, siRes] = await Promise.all([
               fetch(`${BACKEND_URL}/api/franchise/${igId}`).then(r => r.json()).catch(() => []),
               fetch(`${BACKEND_URL}/api/similar/${igId}`).then(r => r.json()).catch(() => []),
@@ -323,7 +342,22 @@ function GameDetail() {
         if (gameDataRes) {
           setSteamData(gameDataRes);
           try {
-            await setDoc(fbRef, { igId, savedAt: serverTimestamp(), steamData: gameDataRes }, { merge: true });
+            // Récupérer heroUrl et le stocker dans Firebase en même temps
+            let heroUrl = null;
+            if (gameDataRes.steam_appid) {
+              try {
+                const heroRes = await fetch(`${BACKEND_URL}/api/steam-library-hero/${gameDataRes.steam_appid}`);
+                const heroData = await heroRes.json();
+                heroUrl = heroData?.url || null;
+                if (heroUrl) setSteamHeroUrl(heroUrl);
+              } catch {}
+            }
+            await setDoc(fbRef, {
+              igId,
+              savedAt: serverTimestamp(),
+              steamData: gameDataRes,
+              ...(heroUrl ? { heroUrl } : {}),
+            }, { merge: true });
             const edSnap = await getDoc(fbRef);
             if (edSnap.exists() && edSnap.data().editions?.length) {
               await propagateSteamDataToEditions(gameDataRes, edSnap.data().editions);
@@ -545,8 +579,37 @@ function GameDetail() {
       // Construire les options de cover
       const steamId = sd?.steam_appid;
       const coverOpts = [];
+
+      const checkImg = async (url) => {
+        try {
+          const r = await fetch(`${BACKEND_URL}/api/check-image?url=${encodeURIComponent(url)}`);
+          const { ok } = await r.json();
+          return ok;
+        } catch { return false; }
+      };
+
       if (steamId) {
-        coverOpts.push({ label: "Cover HD Steam (library hero)", url: `https://cdn.akamai.steamstatic.com/steam/apps/${steamId}/library_hero.jpg`, type: "hero" });
+        // Utiliser heroUrl déjà en cache Firebase si disponible, sinon le chercher
+        const cachedHeroUrl = data?.heroUrl;
+        if (cachedHeroUrl) {
+          coverOpts.push({ label: "Cover HD Steam (library hero)", url: cachedHeroUrl, type: "hero" });
+        } else {
+          try {
+            const heroRes = await fetch(`${BACKEND_URL}/api/steam-library-hero/${steamId}`);
+            const heroData = await heroRes.json();
+            if (heroData?.url) {
+              coverOpts.push({ label: "Cover HD Steam (library hero)", url: heroData.url, type: "hero" });
+              // Stocker pour les prochains accès
+              await setDoc(doc(db, "games", `ig_${igId}`), { heroUrl: heroData.url }, { merge: true });
+            }
+          } catch {}
+        }
+        // Background Steam comme alternative
+        const bgUrl = sd?.background_raw || sd?.background;
+        if (bgUrl && !coverOpts.find(o => o.url === bgUrl)) {
+          const bgOk = await checkImg(bgUrl);
+          if (bgOk) coverOpts.push({ label: "Background Steam", url: bgUrl, type: "hero" });
+        }
       }
       (sd?.screenshots || []).forEach((s, i) => {
         if (s.path_full) coverOpts.push({ label: `Screenshot ${i + 1}`, url: s.path_full, type: "screenshot" });
@@ -811,6 +874,7 @@ function GameDetail() {
           position: "absolute", left: 0, right: 0, height: "580px",
           backgroundImage: (() => {
             if (customCover) return `url(${customCover})`;
+            if (steamHeroUrl) return `url(${steamHeroUrl})`;
             const steamHero = heroId && heroId !== "0" && !heroImgError ? `url(https://images.weserv.nl/?url=cdn.akamai.steamstatic.com/steam/apps/${heroId}/library_hero.jpg)` : null;
             const igFallback = screenshots?.[0]?.path_full || igGame?.img || allEditions?.[0]?.img;
             const igUrl = igFallback ? `url(https://images.weserv.nl/?url=${igFallback.replace(/^https?:\/\//, "")})` : null;

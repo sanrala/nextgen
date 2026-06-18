@@ -570,7 +570,31 @@ function AdminConsole({ user }) {
       // Construire les options de cover
       const steamId = sd?.steam_appid;
       const coverOpts = [];
-      if (steamId) coverOpts.push({ label: "Cover HD Steam (library hero)", url: `https://cdn.akamai.steamstatic.com/steam/apps/${steamId}/library_hero.jpg`, type: "hero" });
+
+      const checkImg = async (url) => {
+        try {
+          const r = await fetch(`https://api.sm-artweb.fr/api/check-image?url=${encodeURIComponent(url)}`);
+          const { ok } = await r.json();
+          return ok;
+        } catch { return false; }
+      };
+
+      if (steamId) {
+        // Récupérer la vraie URL library_hero avec hash depuis le backend
+        try {
+          const heroRes = await fetch(`https://api.sm-artweb.fr/api/steam-library-hero/${steamId}`);
+          const heroData = await heroRes.json();
+          if (heroData?.url) {
+            coverOpts.push({ label: "Cover HD Steam (library hero)", url: heroData.url, type: "hero" });
+          }
+        } catch {}
+        // Background Steam comme alternative
+        const bgUrl = sd?.background_raw || sd?.background;
+        if (bgUrl && !coverOpts.find(o => o.url === bgUrl)) {
+          const bgOk = await checkImg(bgUrl);
+          if (bgOk) coverOpts.push({ label: "Background Steam", url: bgUrl, type: "hero" });
+        }
+      }
       (sd?.screenshots || []).forEach((s, i) => {
         if (s.path_full) coverOpts.push({ label: `Screenshot ${i + 1}`, url: s.path_full, type: "screenshot" });
       });
