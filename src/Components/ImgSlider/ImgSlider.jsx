@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where, doc, getDoc } from "firebase/firestore";
 import { db } from "../../Firebase";
 
 const PROXY = "https://api.sm-artweb.fr";
@@ -30,8 +30,43 @@ function ImgSlider() {
   const [gameInfo, setGameInfo] = useState(null);
 
   useEffect(() => {
-    const fetchTrending = async () => {
+    const fetchGame = async () => {
       try {
+        // 1. Lire la config admin (sliders/config)
+        const configSnap = await getDoc(doc(db, "sliders", "config"));
+        if (configSnap.exists() && configSnap.data().imgSlider?.igId) {
+          const cfg = configSnap.data().imgSlider;
+          // Charger le doc Firebase du jeu pour prix et steam_id
+          try {
+            const gSnap = await getDoc(doc(db, "games", `ig_${cfg.igId}`));
+            const gData = gSnap.exists() ? gSnap.data() : {};
+            const editions = gData.editions || [];
+            const ed = editions.find(e => e.stock === 1 && parseFloat(e.price) > 0) || editions[0] || {};
+
+            const releaseDate = cfg.releaseDate
+              || gData.steamData?.release_date?.date
+              || gData.release_date?.date
+              || ed.releaseDate
+              || null;
+
+            setGameData({
+              id:          cfg.igId,
+              name:        cfg.name,
+              img:         cfg.img,
+              price:       ed.price  || "0.00",
+              retail:      ed.retail || "0.00",
+              steam_id:    gData.steamData?.steam_appid || cfg.steam_id || 0,
+              releaseDate,
+              customCover: cfg.customCover || null,
+            });
+          } catch {
+            setGameData({ id: cfg.igId, name: cfg.name, img: cfg.img,
+              price: "0.00", retail: "0.00", steam_id: cfg.steam_id || 0 });
+          }
+          return;
+        }
+
+        // 2. Fallback : premier jeu trending sorti
         const snap = await getDocs(query(collection(db, "games"), where("trending", "==", true)));
         const today = new Date(); today.setHours(0,0,0,0);
         const games = snap.docs
@@ -44,32 +79,21 @@ function ImgSlider() {
           .map(g => {
             const ed = (g.editions || []).find(e => e.stock === 1 && parseFloat(e.price) > 0) || (g.editions || [])[0] || {};
             return {
-              id: g.trendingGame.id,
-              name: g.trendingGame.name,
-              img: g.trendingGame.img,
-              type: g.trendingGame.type,
-              price: ed.price || "0.00",
-              retail: ed.retail || "0.00",
+              id: g.trendingGame.id, name: g.trendingGame.name, img: g.trendingGame.img,
+              price: ed.price || "0.00", retail: ed.retail || "0.00",
               steam_id: g.steamData?.steam_appid || ed.steam_id || 0,
-              region: ed.region || "Europe",
               releaseDate: g.release_date?.date || ed.releaseDate || null,
-              stock: 1,
             };
           })
           .sort((a, b) => {
-            const da = parseRelease(a.releaseDate);
-            const db2 = parseRelease(b.releaseDate);
-            if (!da && !db2) return 0;
-            if (!da) return 1;
-            if (!db2) return -1;
+            const da = parseRelease(a.releaseDate), db2 = parseRelease(b.releaseDate);
+            if (!da && !db2) return 0; if (!da) return 1; if (!db2) return -1;
             return db2 - da;
           });
         if (games[0]) setGameData(games[0]);
-      } catch (e) {
-        console.error("ImgSlider fetch error:", e);
-      }
+      } catch (e) { console.error("ImgSlider fetch error:", e); }
     };
-    fetchTrending();
+    fetchGame();
   }, []);
 
   useEffect(() => {
@@ -81,22 +105,27 @@ function ImgSlider() {
   useEffect(() => {
     if (!gameData) return;
 
+    const releaseDate = gameData.releaseDate || null;
+    const releaseObj  = parseRelease(releaseDate);
+    const today       = new Date(); today.setHours(0,0,0,0);
+    const isPreco     = releaseObj ? releaseObj > today : false;
+
     setGameInfo({
-      id: gameData.id,
-      title: gameData.name,
-      price: `${parseFloat(gameData.price).toFixed(2)} €`,
-      promo:
-        gameData.retail && gameData.price
-          ? `-${Math.round(
-              ((parseFloat(gameData.retail) - parseFloat(gameData.price)) /
-                parseFloat(gameData.retail)) *
-                100
-            )}%`
-          : "",
-      buy: gameData.url,
+      id:          gameData.id,
+      title:       gameData.name,
+      price:       `${parseFloat(gameData.price || 0).toFixed(2)} €`,
+      promo:       gameData.retail && gameData.price && parseFloat(gameData.retail) > parseFloat(gameData.price)
+                     ? `-${Math.round(((parseFloat(gameData.retail) - parseFloat(gameData.price)) / parseFloat(gameData.retail)) * 100)}%`
+                     : "",
+      isPreco,
+      releaseDate,
+      buy:         gameData.url,
     });
 
     const resolveHero = async () => {
+      // Cover choisie dans l'admin (priorité absolue)
+      if (gameData.customCover) { setHeroUrl(gameData.customCover); return; }
+
       const checkImg = async (url) => {
         try {
           const r = await fetch(`${PROXY}/api/check-image?url=${encodeURIComponent(url)}`);
@@ -173,6 +202,92 @@ function ImgSlider() {
 
   const slug = gameInfo.title.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
 
+  const PriceBlock = ({ mobile }) => (
+    <div style={{ display: "flex", flexDirection: "column", gap: mobile ? 8 : 12 }}>
+      {gameInfo.isPreco ? (
+        <>
+          {/* Badge PRÉCO + date sur une ligne */}
+          <div style={{ display: "flex", alignItems: "center", gap: mobile ? 8 : 12 }}>
+            <span style={{
+              display: "inline-flex", alignItems: "center", gap: 5,
+              background: "#dd163b",
+              color: "#fff",
+              fontFamily: "'Orbitron', sans-serif",
+              fontWeight: 700,
+              fontSize: mobile ? "9px" : "10px",
+              letterSpacing: "1.5px",
+              padding: mobile ? "5px 9px" : "6px 12px",
+              borderRadius: "3px",
+              textTransform: "uppercase",
+              flexShrink: 0,
+            }}>
+              PRÉCO
+            </span>
+            {gameInfo.releaseDate && (
+              <span style={{
+                fontFamily: "'Rajdhani', sans-serif",
+                fontWeight: 600,
+                fontSize: mobile ? "13px" : "16px",
+                color: "rgba(255,255,255,0.65)",
+                letterSpacing: "0.5px",
+              }}>
+                {gameInfo.releaseDate}
+              </span>
+            )}
+          </div>
+          {/* Prix */}
+          <div style={{ display: "flex", alignItems: "baseline", gap: mobile ? 6 : 10 }}>
+            <span style={{
+              fontFamily: "'Montserrat', sans-serif",
+              fontWeight: 800,
+              fontSize: mobile ? "clamp(28px, 7vw, 38px)" : "clamp(38px, 4.5vw, 58px)",
+              color: "#fff",
+              lineHeight: 1,
+              letterSpacing: "-1px",
+            }}>
+              {gameInfo.price}
+            </span>
+            <span style={{
+              fontFamily: "'Rajdhani', sans-serif",
+              fontWeight: 600,
+              fontSize: mobile ? "11px" : "13px",
+              color: "rgba(255,255,255,0.4)",
+              letterSpacing: "1px",
+              textTransform: "uppercase",
+              paddingBottom: 4,
+            }}>
+              Prix préco
+            </span>
+          </div>
+        </>
+      ) : (
+        <>
+          {gameInfo.promo && (
+            <span style={{
+              display: "inline-flex", alignItems: "center",
+              background: "#dd163b", color: "#fff",
+              fontFamily: "'Orbitron', sans-serif", fontWeight: 700,
+              fontSize: mobile ? "9px" : "10px",
+              letterSpacing: "1.5px",
+              padding: mobile ? "5px 9px" : "6px 12px",
+              borderRadius: "3px",
+              width: "fit-content",
+            }}>
+              {gameInfo.promo}
+            </span>
+          )}
+          <span style={{
+            fontFamily: "'Montserrat', sans-serif", fontWeight: 800,
+            fontSize: mobile ? "clamp(28px, 7vw, 38px)" : "clamp(38px, 4.5vw, 58px)",
+            color: "#fff", lineHeight: 1, letterSpacing: "-1px",
+          }}>
+            {gameInfo.price}
+          </span>
+        </>
+      )}
+    </div>
+  );
+
   return (
     <Link
       to={`/store/${gameInfo.id}/0/${slug}`}
@@ -207,100 +322,26 @@ function ImgSlider() {
         }} />
 
         {isMobile ? (
-          <div style={{
-            position: "relative",
-            zIndex: 1,
-            padding: "0 16px",
-            maxWidth: "72%",
-          }}>
-            {/* Titre */}
+          <div style={{ position: "relative", zIndex: 1, padding: "0 16px", maxWidth: "72%" }}>
             <span style={{
-              display: "block",
-              fontFamily: "'Montserrat', sans-serif",
-              fontWeight: 600,
-              fontSize: "clamp(13px, 3.8vw, 18px)",
-              color: "#ffffff",
-              lineHeight: 1.3,
-              marginBottom: "8px",
+              display: "block", fontFamily: "'Montserrat', sans-serif", fontWeight: 600,
+              fontSize: "clamp(13px, 3.8vw, 18px)", color: "#ffffff",
+              lineHeight: 1.3, marginBottom: "8px",
             }}>
               {gameInfo.title}
             </span>
-
-            {/* Badge promo + Prix */}
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              {gameInfo.promo && (
-                <span style={{
-                  display: "inline-block",
-                  background: "#dd163b",
-                  color: "#fff",
-                  fontFamily: "'Montserrat', sans-serif",
-                  fontWeight: 700,
-                  fontSize: "13px",
-                  padding: "4px 8px",
-                  borderRadius: "4px",
-                  flexShrink: 0,
-                }}>
-                  {gameInfo.promo}
-                </span>
-              )}
-              <span style={{
-                fontFamily: "'Montserrat', sans-serif",
-                fontWeight: 700,
-                fontSize: "clamp(22px, 6vw, 32px)",
-                color: "#ffffff",
-                lineHeight: 1,
-              }}>
-                {gameInfo.price}
-              </span>
-            </div>
+            <PriceBlock mobile={true} />
           </div>
         ) : (
-          <div style={{
-            position: "relative",
-            zIndex: 1,
-            padding: "0 100px",
-            maxWidth: "700px",
-          }}>
-            {/* Titre */}
+          <div style={{ position: "relative", zIndex: 1, padding: "0 100px", maxWidth: "700px" }}>
             <span style={{
-              display: "block",
-              fontFamily: "'Montserrat', sans-serif",
-              fontWeight: 600,
-              fontSize: "clamp(18px, 2.5vw, 32px)",
-              color: "#ffffff",
-              lineHeight: 1.3,
-              marginBottom: "14px",
+              display: "block", fontFamily: "'Montserrat', sans-serif", fontWeight: 600,
+              fontSize: "clamp(18px, 2.5vw, 32px)", color: "#ffffff",
+              lineHeight: 1.3, marginBottom: "14px",
             }}>
               {gameInfo.title}
             </span>
-
-            {/* Badge promo + Prix */}
-            <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-              {gameInfo.promo && (
-                <span style={{
-                  display: "inline-block",
-                  background: "#dd163b",
-                  color: "#fff",
-                  fontFamily: "'Montserrat', sans-serif",
-                  fontWeight: 700,
-                  fontSize: "16px",
-                  padding: "5px 10px",
-                  borderRadius: "4px",
-                  flexShrink: 0,
-                }}>
-                  {gameInfo.promo}
-                </span>
-              )}
-              <span style={{
-                fontFamily: "'Montserrat', sans-serif",
-                fontWeight: 700,
-                fontSize: "clamp(32px, 4vw, 52px)",
-                color: "#ffffff",
-                lineHeight: 1,
-              }}>
-                {gameInfo.price}
-              </span>
-            </div>
+            <PriceBlock mobile={false} />
           </div>
         )}
       </div>

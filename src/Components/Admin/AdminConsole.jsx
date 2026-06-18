@@ -76,6 +76,18 @@ function AdminConsole({ user }) {
   const [gameSaving, setGameSaving]       = useState(false);
   const [gameMsg, setGameMsg]             = useState("");
   const [gameMsgType, setGameMsgType]     = useState("success");
+  // ── State onglet Sliders ──────────────────────────────────────────────────
+  const [sliderSearch, setSliderSearch]           = useState({ img: "", banner: "" });
+  const [sliderResults, setSliderResults]         = useState({ img: [], banner: [] });
+  const [sliderSelected, setSliderSelected]       = useState({ img: null, banner: null });
+  const [sliderCurrent, setSliderCurrent]         = useState({ img: null, banner: null });
+  const [sliderSaving, setSliderSaving]           = useState(false);
+  const [sliderMsg, setSliderMsg]                 = useState("");
+  const [sliderLoading, setSliderLoading]         = useState(false);
+  const [sliderScreenshots, setSliderScreenshots] = useState({ img: [], banner: [] });
+  const [sliderCover, setSliderCover]             = useState({ img: null, banner: null });
+  const [sliderUploading, setSliderUploading]     = useState({ img: false, banner: false });
+  const sliderScrollRef                           = useRef({ img: null, banner: null });
   // Champs éditables
   const [editDesc, setEditDesc]           = useState("");
   const [editDev, setEditDev]             = useState("");
@@ -195,6 +207,162 @@ function AdminConsole({ user }) {
   useEffect(() => {
     if (activeTab === "list") fetchArticles();
   }, [activeTab, fetchArticles]);
+
+  // Chargement config sliders au montage
+  useEffect(() => {
+    const loadSliderConfig = async () => {
+      setSliderLoading(true);
+      try {
+        const snap = await getDoc(doc(db, "sliders", "config"));
+        if (snap.exists()) {
+          const data = snap.data();
+          setSliderCurrent({
+            img: data.imgSlider || null,
+            banner: data.bannerSlider || null,
+          });
+          setSliderSelected({
+            img: data.imgSlider || null,
+            banner: data.bannerSlider || null,
+          });
+          setSliderCover({
+            img: data.imgSlider?.customCover || null,
+            banner: data.bannerSlider?.customCover || null,
+          });
+        }
+      } catch (e) { console.error("Erreur chargement sliders", e); }
+      finally { setSliderLoading(false); }
+    };
+    loadSliderConfig();
+  }, []);
+
+  // Recherche jeux pour les sliders
+  useEffect(() => {
+    const searchFor = (key) => {
+      const q = sliderSearch[key].trim();
+      if (q.length < 2) { setSliderResults(r => ({ ...r, [key]: [] })); return; }
+      const lower = q.toLowerCase();
+      setSliderResults(r => ({
+        ...r,
+        [key]: catalog.filter(g => g.name.toLowerCase().includes(lower)).slice(0, 6),
+      }));
+    };
+    searchFor("img");
+    searchFor("banner");
+  }, [sliderSearch, catalog]);
+
+  // Charger les screenshots Firebase quand un jeu est sélectionné
+  const loadSliderScreenshots = async (key, igId) => {
+    setSliderScreenshots(s => ({ ...s, [key]: [] }));
+    setSliderCover(c => ({ ...c, [key]: null }));
+    if (!igId) return;
+    try {
+      const snap = await getDoc(doc(db, "games", `ig_${igId}`));
+      if (snap.exists()) {
+        const d = snap.data();
+        const steamId = d?.steamData?.steam_appid;
+        const shots = d?.steamData?.screenshots || [];
+        const options = [];
+        // library_hero.jpg en premier si steam_id disponible
+        if (steamId) {
+          options.push({
+            label: "Cover HD Steam (library hero)",
+            url: `https://cdn.akamai.steamstatic.com/steam/apps/${steamId}/library_hero.jpg`,
+            type: "hero",
+          });
+        }
+        // Screenshots path_full
+        shots.forEach((s, i) => {
+          if (s.path_full) options.push({
+            label: `Screenshot ${i + 1}`,
+            url: s.path_full,
+            type: "screenshot",
+          });
+        });
+        setSliderScreenshots(prev => ({ ...prev, [key]: options }));
+        // Pré-sélectionner library_hero si dispo
+        if (options.length > 0) setSliderCover(c => ({ ...c, [key]: options[0].url }));
+      }
+    } catch (e) { console.error("Erreur chargement screenshots slider", e); }
+  };
+
+  const saveSliderConfig = async () => {
+    setSliderSaving(true);
+    setSliderMsg("");
+    try {
+      // Récupérer steam_id ET releaseDate depuis Firebase + API précommandes en une fois
+      const enrichGame = async (igId) => {
+        if (!igId) return { steam_id: 0, releaseDate: null };
+        let steam_id = 0;
+        let releaseDate = null;
+        try {
+          // 1. Firebase
+          const snap = await getDoc(doc(db, "games", `ig_${igId}`));
+          if (snap.exists()) {
+            const d = snap.data();
+            steam_id = d?.steamData?.steam_appid || 0;
+            releaseDate = d?.steamData?.release_date?.date
+            || d?.release_date?.date
+            || null;
+            if (!releaseDate) {
+              const eds = d?.editions || [];
+              const ed = eds.find(e => e.stock === 1 && parseFloat(e.price) > 0) || eds[0] || {};
+              releaseDate = ed.releaseDate || null;
+            }
+          }
+        } catch {}
+        // 2. API précommandes si pas de date
+        if (!releaseDate) {
+          try {
+            const preco = await fetch("https://api.sm-artweb.fr/api/precommandes")
+              .then(r => r.ok ? r.json() : null).catch(() => null);
+            if (preco) {
+              const match = preco.find(g => g.id === igId || g.id === Number(igId));
+              releaseDate = match?.releaseDate || match?.release_date || null;
+            }
+          } catch {}
+        }
+        return { steam_id, releaseDate };
+      };
+
+      const imgGame    = sliderSelected.img;
+      const bannerGame = sliderSelected.banner;
+      const imgId      = imgGame    ? (imgGame.id    ?? imgGame.igId    ?? null) : null;
+      const bannerId   = bannerGame ? (bannerGame.id ?? bannerGame.igId ?? null) : null;
+
+      const [imgExtra, bannerExtra] = await Promise.all([
+        imgId    ? enrichGame(imgId)    : Promise.resolve({ steam_id: 0, releaseDate: null }),
+        bannerId ? enrichGame(bannerId) : Promise.resolve({ steam_id: 0, releaseDate: null }),
+      ]);
+
+      await setDoc(doc(db, "sliders", "config"), {
+        imgSlider: imgGame && imgId ? {
+          igId:        imgId,
+          name:        imgGame.name || "",
+          img:         imgGame.img  || "",
+          steam_id:    imgExtra.steam_id    || 0,
+          releaseDate: imgExtra.releaseDate || null,
+          customCover: sliderCover.img || null,
+        } : null,
+        bannerSlider: bannerGame && bannerId ? {
+          igId:        bannerId,
+          name:        bannerGame.name || "",
+          img:         bannerGame.img  || "",
+          steam_id:    bannerExtra.steam_id    || 0,
+          releaseDate: bannerExtra.releaseDate || null,
+          customCover: sliderCover.banner || null,
+        } : null,
+        updatedAt: new Date(),
+      }, { merge: true });
+      setSliderCurrent({ ...sliderSelected });
+      setSliderMsg("✓ Configuration sauvegardée !");
+    } catch (e) {
+      console.error(e);
+      setSliderMsg("✗ Erreur : " + e.message);
+    } finally {
+      setSliderSaving(false);
+      setTimeout(() => setSliderMsg(""), 5000);
+    }
+  };
 
   // Filtrage recherche jeu
   useEffect(() => {
@@ -585,6 +753,15 @@ function AdminConsole({ user }) {
               onClick={() => { setActiveTab("games"); setSidebarOpen(false); }}
             >
               <span className="sidebar-icon">🎮</span> Modifier une fiche
+            </div>
+          </div>
+          <div className="sidebar-section">
+            <div className="sidebar-label">Vitrines</div>
+            <div
+              className={`sidebar-item ${activeTab === "sliders" ? "active" : ""}`}
+              onClick={() => { setActiveTab("sliders"); setSidebarOpen(false); }}
+            >
+              <span className="sidebar-icon">🖼</span> Sliders d'accueil
             </div>
           </div>
           <div className="sidebar-section">
@@ -1322,6 +1499,354 @@ function AdminConsole({ user }) {
                       🔄 VIDER LE CACHE
                     </button>
                   </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {activeTab === "sliders" && (
+            <div>
+              <div className="admin-section-title">
+                <span className="step-badge">🖼</span>
+                Sliders d'accueil
+              </div>
+
+              {sliderLoading && (
+                <div style={{ color: "#666", fontFamily: "Rajdhani", padding: "20px 0" }}>
+                  Chargement de la configuration...
+                </div>
+              )}
+
+              {!sliderLoading && (
+                <>
+                  {/* ── ImgSlider ── */}
+                  <div className="admin-form-group">
+                    <label className="admin-form-label">🎬 Grand slider (ImgSlider)</label>
+                    <div style={{ fontSize: 11, color: "#666", fontFamily: "Rajdhani", marginBottom: 10 }}>
+                      Le grand bandeau en haut de page d'accueil. Choisissez un jeu pour afficher son cover HD Steam.
+                    </div>
+
+                    {sliderCurrent.img && (
+                      <div className="admin-selected-game" style={{ marginBottom: 12 }}>
+                        <img src={sliderCurrent.img.img} alt={sliderCurrent.img.name} onError={e => e.target.style.background="#2a2a2a"} />
+                        <div className="admin-selected-info">
+                          <div className="admin-selected-name">{sliderCurrent.img.name}</div>
+                          <div className="admin-selected-id">Actuellement affiché · ID #{sliderCurrent.img.igId || sliderCurrent.img.id}</div>
+                        </div>
+                        <span className="admin-check">✔</span>
+                      </div>
+                    )}
+
+                    <div className="admin-search-wrap">
+                      <span className="admin-search-icon">🔍</span>
+                      <input
+                        className="admin-search-input"
+                        type="text"
+                        placeholder="Rechercher un jeu..."
+                        value={sliderSearch.img}
+                        onChange={e => {
+                          setSliderSearch(s => ({ ...s, img: e.target.value }));
+                          if (sliderSelected.img && e.target.value !== sliderSelected.img.name)
+                            setSliderSelected(s => ({ ...s, img: null }));
+                        }}
+                        autoComplete="off"
+                      />
+                    </div>
+
+                    {sliderResults.img.length > 0 && !sliderSelected.img && (
+                      <div className="admin-results">
+                        {sliderResults.img.map(game => (
+                          <div key={game.id} className="admin-result-item" onClick={() => {
+                            setSliderSelected(s => ({ ...s, img: game }));
+                            setSliderSearch(s => ({ ...s, img: game.name }));
+                            setSliderResults(r => ({ ...r, img: [] }));
+                            loadSliderScreenshots("img", game.id);
+                          }}>
+                            <img className="admin-result-img" src={game.img} alt={game.name} onError={e => e.target.style.background="#2a2a2a"} />
+                            <div className="admin-result-name">{game.name}</div>
+                            <span className="admin-type-badge">{game.type}</span>
+                            <span className="admin-id-badge">#{game.id}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {sliderSelected.img && (
+                      <div className="admin-selected-game" style={{ marginTop: 10 }}>
+                        <img src={sliderSelected.img.img} alt={sliderSelected.img.name} onError={e => e.target.style.background="#2a2a2a"} />
+                        <div className="admin-selected-info">
+                          <div className="admin-selected-name">{sliderSelected.img.name}</div>
+                          <div className="admin-selected-id">Sélectionné · ID #{sliderSelected.img.id}</div>
+                        </div>
+                        <button onClick={() => { setSliderSelected(s => ({ ...s, img: null })); setSliderSearch(s => ({ ...s, img: "" })); setSliderScreenshots(s => ({ ...s, img: [] })); setSliderCover(c => ({ ...c, img: null })); }}
+                          style={{ background: "none", border: "none", color: "#dd163b", cursor: "pointer", fontSize: 18 }}>✕</button>
+                      </div>
+                    )}
+
+                    {/* Picker de cover */}
+                    {sliderScreenshots.img.length > 0 && (
+                      <div style={{ marginTop: 16 }}>
+                        <div style={{ fontSize: 11, color: "#888", fontFamily: "Rajdhani", marginBottom: 8, letterSpacing: 0.5 }}>
+                          CHOISIR LA COVER — {sliderScreenshots.img.length} options disponibles
+                        </div>
+                        <div ref={el => sliderScrollRef.current.img = el} style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 8 }}>
+                          {sliderScreenshots.img.map((opt, i) => (
+                            <div key={i} onClick={() => setSliderCover(c => ({ ...c, img: opt.url }))}
+                              style={{
+                                flexShrink: 0, cursor: "pointer", borderRadius: 4, overflow: "hidden",
+                                border: `2px solid ${sliderCover.img === opt.url ? "#dd163b" : "rgba(255,255,255,0.1)"}`,
+                                transition: "border-color 0.15s", position: "relative",
+                              }}>
+                              <img src={opt.url} alt={opt.label}
+                                style={{ width: 160, height: 90, objectFit: "cover", display: "block" }}
+                                onError={e => e.target.style.display = "none"}
+                              />
+                              <div style={{
+                                position: "absolute", bottom: 0, left: 0, right: 0,
+                                background: "rgba(0,0,0,0.7)", color: "#fff",
+                                fontSize: 9, fontFamily: "Orbitron", padding: "3px 6px",
+                                letterSpacing: 0.5,
+                              }}>
+                                {opt.type === "hero" ? "⭐ HERO" : opt.type === "upload" ? "📤 UPLOAD" : `#${i}`}
+                              </div>
+                            </div>
+                          ))}
+                          {/* Upload manuel → Cloudinary */}
+                          <label style={{
+                            flexShrink: 0, width: 160, height: 90, cursor: sliderUploading.img ? "wait" : "pointer",
+                            border: "2px dashed rgba(255,255,255,0.15)", borderRadius: 4,
+                            display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                            color: sliderUploading.img ? "#dd163b" : "#555", fontSize: 11, fontFamily: "Rajdhani", gap: 4,
+                            opacity: sliderUploading.img ? 0.7 : 1,
+                          }}>
+                            <span style={{ fontSize: 22 }}>{sliderUploading.img ? "⏳" : "📁"}</span>
+                            {sliderUploading.img ? "Upload..." : "Upload manuel"}
+                            <input type="file" accept="image/*" style={{ display: "none" }}
+                              disabled={sliderUploading.img}
+                              onChange={async e => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                setSliderUploading(u => ({ ...u, img: true }));
+                                try {
+                                  const formData = new FormData();
+                                  formData.append("file", file);
+                                  formData.append("upload_preset", "ml_default");
+                                  const res = await fetch(
+                                    "https://api.cloudinary.com/v1_1/dl0eijxyn/image/upload",
+                                    { method: "POST", body: formData }
+                                  );
+                                  const data = await res.json();
+                                  const url = data.secure_url;
+                                  if (url) {
+                                    setSliderScreenshots(s => ({
+                                      ...s,
+                                      img: [...s.img, { label: "Upload", url, type: "upload" }],
+                                    }));
+                                    setSliderCover(c => ({ ...c, img: url }));
+                                    setTimeout(() => {
+                                      const el = sliderScrollRef.current.img;
+                                      if (el) el.scrollLeft = el.scrollWidth;
+                                    }, 50);
+                                  }
+                                } catch (err) {
+                                  console.error("Erreur upload Cloudinary slider img", err);
+                                } finally {
+                                  setSliderUploading(u => ({ ...u, img: false }));
+                                }
+                              }}
+                            />
+                          </label>
+                        </div>
+                        {sliderCover.img && (
+                          <div style={{ marginTop: 8, fontSize: 11, color: "#27ae60", fontFamily: "Rajdhani" }}>
+                            ✓ Cover sélectionnée
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="admin-divider" />
+
+                  {/* ── BannerSlider ── */}
+                  <div className="admin-form-group">
+                    <label className="admin-form-label">🎞 Petit slider (BannerSlider)</label>
+                    <div style={{ fontSize: 11, color: "#666", fontFamily: "Rajdhani", marginBottom: 10 }}>
+                      Le bandeau secondaire. Choisissez un jeu différent du grand slider.
+                    </div>
+
+                    {sliderCurrent.banner && (
+                      <div className="admin-selected-game" style={{ marginBottom: 12 }}>
+                        <img src={sliderCurrent.banner.img} alt={sliderCurrent.banner.name} onError={e => e.target.style.background="#2a2a2a"} />
+                        <div className="admin-selected-info">
+                          <div className="admin-selected-name">{sliderCurrent.banner.name}</div>
+                          <div className="admin-selected-id">Actuellement affiché · ID #{sliderCurrent.banner.igId || sliderCurrent.banner.id}</div>
+                        </div>
+                        <span className="admin-check">✔</span>
+                      </div>
+                    )}
+
+                    <div className="admin-search-wrap">
+                      <span className="admin-search-icon">🔍</span>
+                      <input
+                        className="admin-search-input"
+                        type="text"
+                        placeholder="Rechercher un jeu..."
+                        value={sliderSearch.banner}
+                        onChange={e => {
+                          setSliderSearch(s => ({ ...s, banner: e.target.value }));
+                          if (sliderSelected.banner && e.target.value !== sliderSelected.banner.name)
+                            setSliderSelected(s => ({ ...s, banner: null }));
+                        }}
+                        autoComplete="off"
+                      />
+                    </div>
+
+                    {sliderResults.banner.length > 0 && !sliderSelected.banner && (
+                      <div className="admin-results">
+                        {sliderResults.banner.map(game => (
+                          <div key={game.id} className="admin-result-item" onClick={() => {
+                            setSliderSelected(s => ({ ...s, banner: game }));
+                            setSliderSearch(s => ({ ...s, banner: game.name }));
+                            setSliderResults(r => ({ ...r, banner: [] }));
+                            loadSliderScreenshots("banner", game.id);
+                          }}>
+                            <img className="admin-result-img" src={game.img} alt={game.name} onError={e => e.target.style.background="#2a2a2a"} />
+                            <div className="admin-result-name">{game.name}</div>
+                            <span className="admin-type-badge">{game.type}</span>
+                            <span className="admin-id-badge">#{game.id}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {sliderSelected.banner && (
+                      <div className="admin-selected-game" style={{ marginTop: 10 }}>
+                        <img src={sliderSelected.banner.img} alt={sliderSelected.banner.name} onError={e => e.target.style.background="#2a2a2a"} />
+                        <div className="admin-selected-info">
+                          <div className="admin-selected-name">{sliderSelected.banner.name}</div>
+                          <div className="admin-selected-id">Sélectionné · ID #{sliderSelected.banner.id}</div>
+                        </div>
+                        <button onClick={() => { setSliderSelected(s => ({ ...s, banner: null })); setSliderSearch(s => ({ ...s, banner: "" })); setSliderScreenshots(s => ({ ...s, banner: [] })); setSliderCover(c => ({ ...c, banner: null })); }}
+                          style={{ background: "none", border: "none", color: "#dd163b", cursor: "pointer", fontSize: 18 }}>✕</button>
+                      </div>
+                    )}
+
+                    {/* Picker de cover banner */}
+                    {sliderScreenshots.banner.length > 0 && (
+                      <div style={{ marginTop: 16 }}>
+                        <div style={{ fontSize: 11, color: "#888", fontFamily: "Rajdhani", marginBottom: 8, letterSpacing: 0.5 }}>
+                          CHOISIR LA COVER — {sliderScreenshots.banner.length} options disponibles
+                        </div>
+                        <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 8 }}>
+                          {sliderScreenshots.banner.map((opt, i) => (
+                            <div key={i} onClick={() => setSliderCover(c => ({ ...c, banner: opt.url }))}
+                              style={{
+                                flexShrink: 0, cursor: "pointer", borderRadius: 4, overflow: "hidden",
+                                border: `2px solid ${sliderCover.banner === opt.url ? "#dd163b" : "rgba(255,255,255,0.1)"}`,
+                                transition: "border-color 0.15s", position: "relative",
+                              }}>
+                              <img src={opt.url} alt={opt.label}
+                                style={{ width: 160, height: 90, objectFit: "cover", display: "block" }}
+                                onError={e => e.target.style.display = "none"}
+                              />
+                              <div style={{
+                                position: "absolute", bottom: 0, left: 0, right: 0,
+                                background: "rgba(0,0,0,0.7)", color: "#fff",
+                                fontSize: 9, fontFamily: "Orbitron", padding: "3px 6px",
+                                letterSpacing: 0.5,
+                              }}>
+                                {opt.type === "hero" ? "⭐ HERO" : opt.type === "upload" ? "📤 UPLOAD" : `#${i}`}
+                              </div>
+                            </div>
+                          ))}
+                          {/* Upload manuel → Cloudinary */}
+                          <label style={{
+                            flexShrink: 0, width: 160, height: 90, cursor: sliderUploading.banner ? "wait" : "pointer",
+                            border: "2px dashed rgba(255,255,255,0.15)", borderRadius: 4,
+                            display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                            color: sliderUploading.banner ? "#dd163b" : "#555", fontSize: 11, fontFamily: "Rajdhani", gap: 4,
+                            opacity: sliderUploading.banner ? 0.7 : 1,
+                          }}>
+                            <span style={{ fontSize: 22 }}>{sliderUploading.banner ? "⏳" : "📁"}</span>
+                            {sliderUploading.banner ? "Upload..." : "Upload manuel"}
+                            <input type="file" accept="image/*" style={{ display: "none" }}
+                              disabled={sliderUploading.banner}
+                              onChange={async e => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                setSliderUploading(u => ({ ...u, banner: true }));
+                                try {
+                                  const formData = new FormData();
+                                  formData.append("file", file);
+                                  formData.append("upload_preset", "ml_default");
+                                  const res = await fetch(
+                                    "https://api.cloudinary.com/v1_1/dl0eijxyn/image/upload",
+                                    { method: "POST", body: formData }
+                                  );
+                                  const data = await res.json();
+                                  const url = data.secure_url;
+                                  if (url) {
+                                    setSliderScreenshots(s => ({
+                                      ...s,
+                                      banner: [...s.banner, { label: "Upload", url, type: "upload" }],
+                                    }));
+                                    setSliderCover(c => ({ ...c, banner: url }));
+                                    setTimeout(() => {
+                                      const el = sliderScrollRef.current.banner;
+                                      if (el) el.scrollLeft = el.scrollWidth;
+                                    }, 50);
+                                  }
+                                } catch (err) {
+                                  console.error("Erreur upload Cloudinary slider banner", err);
+                                } finally {
+                                  setSliderUploading(u => ({ ...u, banner: false }));
+                                }
+                              }}
+                            />
+                          </label>
+                        </div>
+                        {sliderCover.banner && (
+                          <div style={{ marginTop: 8, fontSize: 11, color: "#27ae60", fontFamily: "Rajdhani" }}>
+                            ✓ Cover sélectionnée
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="admin-divider" />
+
+                  {/* ── Bouton Sauvegarder ── */}
+                  {sliderMsg && (
+                    <div className="admin-msg" style={{
+                      background: sliderMsg.startsWith("✓") ? "rgba(39,174,96,0.08)" : "rgba(231,76,60,0.08)",
+                      border: `1px solid ${sliderMsg.startsWith("✓") ? "rgba(39,174,96,0.25)" : "rgba(231,76,60,0.25)"}`,
+                      color: sliderMsg.startsWith("✓") ? "#27ae60" : "#e74c3c",
+                      marginBottom: 16,
+                    }}>
+                      {sliderMsg}
+                    </div>
+                  )}
+
+                  <button
+                    onClick={saveSliderConfig}
+                    disabled={sliderSaving}
+                    style={{
+                      background: "#dd163b",
+                      color: "#fff",
+                      border: "none",
+                      fontFamily: "Orbitron, sans-serif",
+                      fontSize: 12,
+                      letterSpacing: 1,
+                      padding: "12px 28px",
+                      borderRadius: 4,
+                      cursor: sliderSaving ? "not-allowed" : "pointer",
+                      opacity: sliderSaving ? 0.7 : 1,
+                    }}
+                  >
+                    {sliderSaving ? "Sauvegarde..." : "💾 SAUVEGARDER"}
+                  </button>
                 </>
               )}
             </div>
