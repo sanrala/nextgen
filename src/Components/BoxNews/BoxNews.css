@@ -1,4 +1,72 @@
 /* ════════════════════════════════════════════════════════════════
+   Structure 3 sections — espacements & titres
+   ════════════════════════════════════════════════════════════════ */
+
+.bn-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.bn-section {
+  padding: 36px 0 0;
+}
+
+.bn-section:first-child {
+  padding-top: 0;
+}
+
+.bn-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 16px;
+}
+
+.bn-section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bn-section-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.bn-section-title {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  color: #e8eaf0;
+  letter-spacing: -0.3px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.bn-section-title-link {
+  text-decoration: none;
+}
+
+.bn-section-title-link:hover .bn-section-title {
+  color: #dd163b;
+}
+
+.bn-accent {
+  color: #dd163b;
+}
+
+/* Ligne de séparation sous chaque titre de section */
+.bn-section-header::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+  margin-left: 16px;
+}
+
+/* ════════════════════════════════════════════════════════════════
    BoxNews.css
    Disposition "Actualités du jour" :
    - 1 grande carte à gauche (pleine hauteur)
@@ -135,7 +203,7 @@
 }
 
 /* ════════════════════════════════════════════════════════════════
-   Liste "Actualités jeux vidéo du moment" (2 colonnes)
+   Liste "Actualités jeux vidéo du moment" — style magazine premium
    ════════════════════════════════════════════════════════════════ */
 
 .nk-more-news-header {
@@ -144,51 +212,117 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
+  padding-bottom: 0;
+  border-bottom: none;
+  margin-bottom: 0;
 }
 
 .nk-more-news-btn {
-  display: inline-block;
-  background: #dd163b;
-  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: #dd163b;
+  border: 1px solid #dd163b;
   font-family: "Orbitron", sans-serif;
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.5px;
+  letter-spacing: 2px;
   padding: 8px 16px;
-  border-radius: 20px;
+  border-radius: 2px;
   text-decoration: none;
   white-space: nowrap;
-  transition: background 0.2s, transform 0.2s;
+  text-transform: uppercase;
+  transition: background 0.2s, color 0.2s;
+}
+
+.nk-more-news-btn::after {
+  content: "→";
+  font-size: 14px;
+  font-family: sans-serif;
 }
 
 .nk-more-news-btn:hover {
-  background: #ff2249;
-  transform: translateY(-1px);
+  background: #dd163b;
+  color: #fff;
 }
 
+/* Ligne rouge sous le header */
+.nk-more-news-rule {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, #dd163b 0%, #dd163b 60px, rgba(255,255,255,0.07) 60px);
+  margin: 10px 0 2px;
+}
+
+/* Grille 2 colonnes */
 .nk-more-news-list {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px 28px;
+  grid-template-columns: 1fr 1px 1fr;
+  gap: 0;
   width: 100%;
 }
 
-.nk-more-news-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  text-decoration: none;
-  padding-bottom: 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+.nk-more-news-divider {
+  background: rgba(255, 255, 255, 0.06);
+  margin: 0 28px;
 }
 
+.nk-more-news-col {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Article row */
+.nk-more-news-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0 16px;
+  text-decoration: none;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+  align-items: center;
+}
+
+.nk-more-news-item:last-child {
+  border-bottom: none;
+}
+
+/* Numéro de rang en arrière-plan */
+.nk-more-news-rank {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: "Orbitron", sans-serif;
+  font-size: 52px;
+  font-weight: 900;
+  color: rgba(221, 22, 59, 0.06);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -2px;
+}
+
+/* Miniature */
 .nk-more-news-thumb {
-  flex: 0 0 64px;
-  width: 64px;
-  height: 64px;
-  border-radius: 6px;
+  flex: none;
+  width: 100px;
+  height: 68px;
+  border-radius: 3px;
   overflow: hidden;
   background: #14161c;
+  position: relative;
+}
+
+.nk-more-news-thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 3px;
+  pointer-events: none;
 }
 
 .nk-more-news-thumb img {
@@ -196,20 +330,34 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 0.4s ease;
 }
 
+.nk-more-news-item:hover .nk-more-news-thumb img {
+  transform: scale(1.07);
+}
+
+/* Corps texte */
 .nk-more-news-body {
-  flex: 1 1 auto;
+  flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding-right: 40px;
 }
 
 .nk-more-news-title {
-  color: #c9d6ff;
+  color: #dde0ea;
   font-family: "Montserrat", sans-serif;
-  font-weight: 600;
-  font-size: 14.5px;
-  line-height: 1.4;
-  margin-bottom: 6px;
+  font-weight: 700;
+  font-size: 13.5px;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color 0.15s;
 }
 
 .nk-more-news-item:hover .nk-more-news-title {
@@ -219,22 +367,27 @@
 .nk-more-news-meta {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  color: #777;
+  gap: 10px;
+  color: #444;
   font-family: "Rajdhani", sans-serif;
   font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+}
+
+/* Séparateur · entre temps et tag */
+.nk-more-news-meta span:first-child::after {
+  content: "·";
+  margin-left: 10px;
+  color: #333;
 }
 
 .nk-more-news-tag {
-  display: inline-block;
-  background: rgba(255, 255, 255, 0.06);
-  color: #999;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  padding: 2px 8px;
-  border-radius: 3px;
+  font-family: "Orbitron", sans-serif;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: #555;
   text-transform: uppercase;
 }
 
@@ -288,6 +441,9 @@
 @media (max-width: 768px) {
   .nk-more-news-list {
     grid-template-columns: 1fr;
-    gap: 14px;
+  }
+
+  .nk-more-news-divider {
+    display: none;
   }
 }

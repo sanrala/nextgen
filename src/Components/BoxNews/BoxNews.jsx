@@ -88,25 +88,36 @@ function BoxNews() {
   const moreArticles = articles.slice(5, 13);
 
   return (
-    <div>
-      <Link to="/actualites">
-        <h3 className="nk-decorated-h-2">
-          <span>
-            <span className="text-main-1">Actualités</span> du jour
-          </span>
-        </h3>
-      </Link>
-      <div className="nk-gap"></div>
+    <div className="bn-wrapper">
 
+      {/* ══════════════════════════════════════════
+          SECTION 1 — ⚡ NEWS IMPORTANTES (carousel)
+          ══════════════════════════════════════════ */}
       {!breakingLoading && breakingArticles.length > 0 && (
-        <>
+        <div className="bn-section">
+          <h3 className="nk-decorated-h-2">
+            <span>
+              <span className="text-main-1">⚡ À ne pas</span> manquer
+            </span>
+          </h3>
+          <div className="nk-gap" />
           <BreakingCover articles={breakingArticles} />
-          <div className="nk-gap"></div>
-        </>
+        </div>
       )}
 
-      <div className="nk-news-box">
-        <div className="gallery-container">
+      {/* SECTION 2 — ACTUALITÉS DU JOUR */}
+      <div className="bn-section">
+        <Link to="/actualites">
+          <h3 className="nk-decorated-h-2">
+            <span>
+              <span className="text-main-1">Actualités</span> du jour
+            </span>
+          </h3>
+        </Link>
+        <div className="nk-gap" />
+
+        <div className="nk-news-box">
+          <div className="gallery-container">
 
           {/* ── Grande carte ── */}
           {(() => {
@@ -285,53 +296,77 @@ function BoxNews() {
 
         </div>
       </div>
+      </div>{/* fin bn-section grille */}
 
+      {/* ══════════════════════════════════════════
+          SECTION 3 — ACTUALITÉS JEUX VIDÉO DU MOMENT
+          ══════════════════════════════════════════ */}
       {moreArticles.length > 0 && (
-        <>
-          <div className="nk-gap"></div>
+        <div className="bn-section">
           <div className="nk-more-news-header">
-            <h3 className="nk-decorated-h-2">
+            <h3 className="nk-decorated-h-2" style={{ margin: 0 }}>
               <span>
                 <span className="text-main-1">Actualités</span> jeux vidéo du moment
               </span>
             </h3>
             <Link to="/actualites" className="nk-more-news-btn">
-              TOUTES LES NEWS
+              Toutes les news
             </Link>
           </div>
-          <div className="nk-gap"></div>
-
+          <div className="nk-gap" />
           <div className="nk-more-news-list">
-            {moreArticles.map((article) => {
-              const ytId = getYoutubeId(article.youtube_url);
-              const img = article.photos?.[0]?.url || article.game_img;
-              return (
-                <Link
-                  key={article.doc_id}
-                  to={`/article/${article.doc_id}`}
-                  className="nk-more-news-item"
-                >
-                  <div className="nk-more-news-thumb">
-                    <img
-                      src={ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : img}
-                      alt={article.title}
-                      onError={(e) => (e.target.style.display = "none")}
-                    />
-                  </div>
-                  <div className="nk-more-news-body">
-                    <div className="nk-more-news-title">{article.title}</div>
-                    <div className="nk-more-news-meta">
-                      <span>{formatTimeAgo(article.created_at)}</span>
-                      {article.game_type && (
-                        <span className="nk-more-news-tag">{article.game_type}</span>
-                      )}
+            {/* Colonne gauche : articles pairs */}
+            <div className="nk-more-news-col">
+              {moreArticles.filter((_, i) => i % 2 === 0).map((article, colIdx) => {
+                const ytId = getYoutubeId(article.youtube_url);
+                const img = article.photos?.[0]?.url || article.game_img;
+                const rank = String(colIdx * 2 + 1).padStart(2, "0");
+                return (
+                  <Link key={article.doc_id} to={`/article/${article.doc_id}`} className="nk-more-news-item">
+                    <div className="nk-more-news-thumb">
+                      <img src={ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : img} alt={article.title} onError={(e) => (e.target.style.display = "none")} />
                     </div>
-                  </div>
-                </Link>
-              );
-            })}
+                    <div className="nk-more-news-body">
+                      <div className="nk-more-news-title">{article.title}</div>
+                      <div className="nk-more-news-meta">
+                        <span>{formatTimeAgo(article.created_at)}</span>
+                        {article.game_type && <span className="nk-more-news-tag">{article.game_type}</span>}
+                      </div>
+                    </div>
+                    <span className="nk-more-news-rank">{rank}</span>
+                  </Link>
+                );
+              })}
+            </div>
+
+            {/* Séparateur vertical */}
+            <div className="nk-more-news-divider" />
+
+            {/* Colonne droite : articles impairs */}
+            <div className="nk-more-news-col">
+              {moreArticles.filter((_, i) => i % 2 === 1).map((article, colIdx) => {
+                const ytId = getYoutubeId(article.youtube_url);
+                const img = article.photos?.[0]?.url || article.game_img;
+                const rank = String(colIdx * 2 + 2).padStart(2, "0");
+                return (
+                  <Link key={article.doc_id} to={`/article/${article.doc_id}`} className="nk-more-news-item">
+                    <div className="nk-more-news-thumb">
+                      <img src={ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : img} alt={article.title} onError={(e) => (e.target.style.display = "none")} />
+                    </div>
+                    <div className="nk-more-news-body">
+                      <div className="nk-more-news-title">{article.title}</div>
+                      <div className="nk-more-news-meta">
+                        <span>{formatTimeAgo(article.created_at)}</span>
+                        {article.game_type && <span className="nk-more-news-tag">{article.game_type}</span>}
+                      </div>
+                    </div>
+                    <span className="nk-more-news-rank">{rank}</span>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );
@@ -384,7 +419,7 @@ function BreakingCover({ articles }) {
       style={{
         position: "relative",
         width: "100%",
-        height: isMobile() ? 280 : 460,
+        height: isMobile() ? 240 : 460,
         borderRadius: 6,
         overflow: "hidden",
         background: "#0a0a0a",
@@ -404,12 +439,29 @@ function BreakingCover({ articles }) {
               opacity: i === index ? 1 : 0,
               transition: "opacity 0.6s ease",
               pointerEvents: i === index ? "auto" : "none",
+              overflow: "hidden",
             }}
           >
+            {/* Fond flouté pour éviter les bandes noires */}
+            <div style={{
+              position: "absolute", inset: 0,
+              backgroundImage: `url(${aYtId ? `https://img.youtube.com/vi/${aYtId}/maxresdefault.jpg` : aImg})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              filter: "blur(18px) brightness(0.4) saturate(1.2)",
+              transform: "scale(1.1)",
+            }} />
             <img
               src={aYtId ? `https://img.youtube.com/vi/${aYtId}/maxresdefault.jpg` : aImg}
               alt={article.title}
-              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+              style={{
+                position: "relative",
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
+                objectPosition: "center",
+                display: "block",
+              }}
               onError={(e) => {
                 if (aYtId && e.target.src.includes("maxresdefault"))
                   e.target.src = `https://img.youtube.com/vi/${aYtId}/hqdefault.jpg`;
