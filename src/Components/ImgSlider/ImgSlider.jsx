@@ -256,7 +256,7 @@ function ImgSlider() {
               textTransform: "uppercase",
               paddingBottom: 4,
             }}>
-              Prix préco
+             
             </span>
           </div>
         </>

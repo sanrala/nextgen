@@ -100,6 +100,10 @@ function AdminConsole({ user }) {
   const [editScreenshots, setEditScreenshots] = useState([]);
   const [newScreenFiles, setNewScreenFiles]   = useState([]);
   const [newScreenPreviews, setNewScreenPreviews] = useState([]);
+  const [editCoverOptions, setEditCoverOptions]   = useState([]);
+  const [editCover, setEditCover]                 = useState(null);
+  const [editCoverUploading, setEditCoverUploading] = useState(false);
+  const editCoverScrollRef                          = useRef(null);
   // Vidéos
   const [editMovies, setEditMovies]       = useState([]);
   const [newMovieHls, setNewMovieHls]     = useState("");
@@ -562,6 +566,20 @@ function AdminConsole({ user }) {
       setEditYoutubeUrl(sd?.youtube_id ? `https://www.youtube.com/watch?v=${sd.youtube_id}` : "");
       setNewScreenFiles([]);
       setNewScreenPreviews([]);
+
+      // Construire les options de cover
+      const steamId = sd?.steam_appid;
+      const coverOpts = [];
+      if (steamId) coverOpts.push({ label: "Cover HD Steam (library hero)", url: `https://cdn.akamai.steamstatic.com/steam/apps/${steamId}/library_hero.jpg`, type: "hero" });
+      (sd?.screenshots || []).forEach((s, i) => {
+        if (s.path_full) coverOpts.push({ label: `Screenshot ${i + 1}`, url: s.path_full, type: "screenshot" });
+      });
+      // Si une cover uploadée existe déjà, l'ajouter en fin de liste
+      if (data?.customCover && !coverOpts.find(o => o.url === data.customCover)) {
+        coverOpts.push({ label: "Upload", url: data.customCover, type: "upload" });
+      }
+      setEditCoverOptions(coverOpts);
+      setEditCover(data?.customCover || (coverOpts.length > 0 ? coverOpts[0].url : null));
       // Mise en avant
       setEditFeatured(data?.featured || false);
       setEditFeaturedPlatforms(data?.featuredPlatforms || []);
@@ -674,6 +692,7 @@ function AdminConsole({ user }) {
           img: selectedGameEdit.img,
           type: selectedGameEdit.type,
         } : null,
+        customCover: editCover || null,
         savedAt: serverTimestamp(),
       }, { merge: true });
 
@@ -1275,6 +1294,58 @@ function AdminConsole({ user }) {
                         ) : <div style={{ fontSize: 11, color: "#e74c3c", marginTop: 6, fontFamily: "Rajdhani" }}>URL YouTube non reconnue</div>;
                       })()}
                     </div>
+                  </div>
+
+                  {/* Cover du slider */}
+                  <div className="admin-form-group">
+                    <label className="admin-form-label">Cover du slider</label>
+                    <div style={{ fontSize: 11, color: "#666", fontFamily: "Rajdhani", marginBottom: 10 }}>
+                      Image affichée dans ImgSlider / BannerSlider si ce jeu est sélectionné.
+                    </div>
+                    {editCoverOptions.length > 0 ? (
+                      <>
+                        <div ref={editCoverScrollRef} style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 8 }}>
+                          {editCoverOptions.map((opt, i) => (
+                            <div key={i} onClick={() => setEditCover(opt.url)}
+                              style={{ flexShrink: 0, cursor: "pointer", borderRadius: 4, overflow: "hidden", border: `2px solid ${editCover === opt.url ? "#dd163b" : "rgba(255,255,255,0.1)"}`, transition: "border-color 0.15s", position: "relative" }}>
+                              <img src={opt.url} alt={opt.label} style={{ width: 140, height: 80, objectFit: "cover", display: "block" }} onError={e => e.target.style.display = "none"} />
+                              <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "rgba(0,0,0,0.75)", color: "#fff", fontSize: 8, fontFamily: "Orbitron,sans-serif", padding: "2px 6px", letterSpacing: 0.5 }}>
+                                {opt.type === "hero" ? "⭐ HERO" : opt.type === "upload" ? "📤 UPLOAD" : `#${i}`}
+                              </div>
+                            </div>
+                          ))}
+                          {/* Upload Cloudinary */}
+                          <label style={{ flexShrink: 0, width: 140, height: 80, cursor: editCoverUploading ? "wait" : "pointer", border: "2px dashed rgba(255,255,255,0.15)", borderRadius: 4, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: editCoverUploading ? "#dd163b" : "#555", fontSize: 11, fontFamily: "Rajdhani", gap: 4, opacity: editCoverUploading ? 0.7 : 1 }}>
+                            <span style={{ fontSize: 20 }}>{editCoverUploading ? "⏳" : "📁"}</span>
+                            {editCoverUploading ? "Upload..." : "Upload manuel"}
+                            <input type="file" accept="image/*" style={{ display: "none" }} disabled={editCoverUploading}
+                              onChange={async e => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                setEditCoverUploading(true);
+                                try {
+                                  const fd = new FormData();
+                                  fd.append("file", file); fd.append("upload_preset", CLOUDINARY_PRESET); fd.append("folder", "nextgen/covers");
+                                  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method: "POST", body: fd });
+                                  const data = await res.json();
+                                  if (data.secure_url) {
+                                    setEditCoverOptions(prev => [...prev, { label: "Upload", url: data.secure_url, type: "upload" }]);
+                                    setEditCover(data.secure_url);
+                                    setTimeout(() => { if (editCoverScrollRef.current) editCoverScrollRef.current.scrollLeft = editCoverScrollRef.current.scrollWidth; }, 50);
+                                  }
+                                } catch (err) { console.error("Erreur upload cover", err); }
+                                finally { setEditCoverUploading(false); }
+                              }}
+                            />
+                          </label>
+                        </div>
+                        {editCover && <div style={{ fontSize: 11, color: "#27ae60", fontFamily: "Rajdhani", marginTop: 4 }}>✓ Cover sélectionnée</div>}
+                      </>
+                    ) : (
+                      <div style={{ fontSize: 11, color: "#444", fontFamily: "Rajdhani" }}>
+                        Aucune donnée Steam disponible — les options de cover apparaîtront après chargement Steam.
+                      </div>
+                    )}
                   </div>
 
                   {/* Screenshots */}

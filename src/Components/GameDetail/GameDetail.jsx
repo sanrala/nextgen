@@ -175,6 +175,10 @@ function GameDetail() {
   const [adminForcingSteam, setAdminForcingSteam] = useState(false);
   const [adminDeleting,   setAdminDeleting]   = useState(false);
   const [adminDeleteConfirm, setAdminDeleteConfirm] = useState(false);
+  const [adminCoverOptions, setAdminCoverOptions] = useState([]);
+  const [adminCover,      setAdminCover]      = useState(null);
+  const [adminCoverUploading, setAdminCoverUploading] = useState(false);
+  const adminCoverScrollRef = useRef(null);
   const [tagsExpanded,   setTagsExpanded]   = useState(false);
   const adminScreenRef = useRef();
   const CLOUDINARY_CLOUD  = "dl0eijxyn";
@@ -226,6 +230,7 @@ function GameDetail() {
   const [selectedPlatform, setSelectedPlatform] = useState(null);
   const [selectedEdition,  setSelectedEdition]  = useState(null);
   const [heroImgError, setHeroImgError] = useState(false);
+  const [customCover,  setCustomCover]  = useState(null);
   const [guidesPreview, setGuidesPreview] = useState(null); // { gameName, gameImg, guidesCount } | null | undefined(loading)
 
   // ── Clé partagée commentaires/notes — ig_ du jeu courant (stable dès le début) ──
@@ -252,6 +257,8 @@ function GameDetail() {
         const fbSnap = await getDoc(fbRef);
         if (fbSnap.exists()) {
           const cached = fbSnap.data();
+          // Charger la cover custom si définie
+          if (cached.customCover) setCustomCover(cached.customCover);
           const savedAt = cached.savedAt?.toMillis?.() || 0;
           const AGE_LIMIT = 7 * 24 * 60 * 60 * 1000;
           const isFresh = (Date.now() - savedAt) < AGE_LIMIT;
@@ -534,6 +541,22 @@ function GameDetail() {
       setAdminReleased(!!data?.releasedAt);
       setAdminReleasedPlatforms(data?.releasedAt ? (data?.featuredPlatforms || []) : []);
       setAdminScreenshots(sd?.screenshots || []);
+
+      // Construire les options de cover
+      const steamId = sd?.steam_appid;
+      const coverOpts = [];
+      if (steamId) {
+        coverOpts.push({ label: "Cover HD Steam (library hero)", url: `https://cdn.akamai.steamstatic.com/steam/apps/${steamId}/library_hero.jpg`, type: "hero" });
+      }
+      (sd?.screenshots || []).forEach((s, i) => {
+        if (s.path_full) coverOpts.push({ label: `Screenshot ${i + 1}`, url: s.path_full, type: "screenshot" });
+      });
+      // Si une cover uploadée existe déjà, l'ajouter en fin de liste
+      if (data?.customCover && !coverOpts.find(o => o.url === data.customCover)) {
+        coverOpts.push({ label: "Upload", url: data.customCover, type: "upload" });
+      }
+      setAdminCoverOptions(coverOpts);
+      setAdminCover(data?.customCover || (coverOpts.length > 0 ? coverOpts[0].url : null));
     })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin, igId]);
@@ -619,6 +642,7 @@ function GameDetail() {
       const newSteamData = { ...(existing.steamData || {}), short_description: adminDesc, developers: [adminDev], publishers: [adminPub], release_date: { ...(existing.steamData?.release_date || {}), date: adminDateMode === "global" ? adminDate : "", byPlatform: adminDateMode === "byplatform" ? adminDateByPlatform : null }, screenshots: allScreenshots, ...(ytId ? { youtube_id: ytId } : {}) };
       await setDoc(fbRef, {
         steamData: newSteamData,
+        customCover: adminCover || null,
         featured: adminReleased ? false : adminFeatured,
         featuredPlatforms: adminReleased ? adminReleasedPlatforms : (adminFeatured ? adminFeaturedPlatforms : []),
         featuredGame: (adminFeatured || adminReleased) ? { id: igId, name: igGame?.name || gameTitle, img: igGame?.img || "", type: igGame?.type || "" } : null,
@@ -629,6 +653,7 @@ function GameDetail() {
       }, { merge: true });
       await propagateSteamDataToEditions(newSteamData, allEditions);
       setAdminScreenshots(allScreenshots); setAdminNewFiles([]); setAdminNewPreviews([]);
+      if (adminCover) setCustomCover(adminCover);
       setAdminMsg("✅ Fiche mise à jour et propagée !"); setAdminMsgType("success");
       setSteamData(prev => ({ ...prev, short_description: adminDesc, developers: [adminDev], publishers: [adminPub], screenshots: allScreenshots, ...(ytId ? { youtube_id: ytId } : {}) }));
     } catch (e) { setAdminMsg("Erreur : " + e.message); setAdminMsgType("error"); }
@@ -785,6 +810,7 @@ function GameDetail() {
         <div style={{
           position: "absolute", left: 0, right: 0, height: "580px",
           backgroundImage: (() => {
+            if (customCover) return `url(${customCover})`;
             const steamHero = heroId && heroId !== "0" && !heroImgError ? `url(https://images.weserv.nl/?url=cdn.akamai.steamstatic.com/steam/apps/${heroId}/library_hero.jpg)` : null;
             const igFallback = screenshots?.[0]?.path_full || igGame?.img || allEditions?.[0]?.img;
             const igUrl = igFallback ? `url(https://images.weserv.nl/?url=${igFallback.replace(/^https?:\/\//, "")})` : null;
@@ -1324,6 +1350,55 @@ function GameDetail() {
                   )}
                   <S>Vidéo YouTube</S>
                   <Input value={adminYoutube} onChange={e=>setAdminYoutube(e.target.value)} placeholder="https://youtube.com/watch?v=..." />
+                  <S>Cover du slider</S>
+                  {adminCoverOptions.length > 0 ? (
+                    <div style={{ marginBottom: 14 }}>
+                      <div style={{ fontSize: 10, color: "#555", fontFamily: "Montserrat,sans-serif", marginBottom: 8 }}>
+                        Choisissez la cover affichée dans les sliders d'accueil
+                      </div>
+                      <div ref={adminCoverScrollRef} style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 8 }}>
+                        {adminCoverOptions.map((opt, i) => (
+                          <div key={i} onClick={() => setAdminCover(opt.url)}
+                            style={{ flexShrink: 0, cursor: "pointer", borderRadius: 4, overflow: "hidden", border: `2px solid ${adminCover === opt.url ? "#dd163b" : "rgba(255,255,255,0.1)"}`, transition: "border-color 0.15s", position: "relative" }}>
+                            <img src={opt.url} alt={opt.label} style={{ width: 120, height: 68, objectFit: "cover", display: "block" }} onError={e => e.target.style.display = "none"} />
+                            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "rgba(0,0,0,0.75)", color: "#fff", fontSize: 8, fontFamily: "Orbitron,sans-serif", padding: "2px 5px", letterSpacing: 0.5 }}>
+                              {opt.type === "hero" ? "⭐ HERO" : opt.type === "upload" ? "📤 UPLOAD" : `#${i}`}
+                            </div>
+                          </div>
+                        ))}
+                        {/* Upload Cloudinary */}
+                        <label style={{ flexShrink: 0, width: 120, height: 68, cursor: adminCoverUploading ? "wait" : "pointer", border: "2px dashed rgba(255,255,255,0.15)", borderRadius: 4, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: adminCoverUploading ? "#dd163b" : "#555", fontSize: 10, fontFamily: "Rajdhani,sans-serif", gap: 3, opacity: adminCoverUploading ? 0.7 : 1 }}>
+                          <span style={{ fontSize: 18 }}>{adminCoverUploading ? "⏳" : "📁"}</span>
+                          {adminCoverUploading ? "Upload..." : "Upload"}
+                          <input type="file" accept="image/*" style={{ display: "none" }} disabled={adminCoverUploading}
+                            onChange={async e => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              setAdminCoverUploading(true);
+                              try {
+                                const fd = new FormData();
+                                fd.append("file", file); fd.append("upload_preset", CLOUDINARY_PRESET); fd.append("folder", "nextgen/covers");
+                                const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method: "POST", body: fd });
+                                const data = await res.json();
+                                if (data.secure_url) {
+                                  const newOpt = { label: "Upload", url: data.secure_url, type: "upload" };
+                                  setAdminCoverOptions(prev => [...prev, newOpt]);
+                                  setAdminCover(data.secure_url);
+                                  setTimeout(() => { if (adminCoverScrollRef.current) adminCoverScrollRef.current.scrollLeft = adminCoverScrollRef.current.scrollWidth; }, 50);
+                                }
+                              } catch (err) { console.error("Erreur upload cover", err); }
+                              finally { setAdminCoverUploading(false); }
+                            }}
+                          />
+                        </label>
+                      </div>
+                      {adminCover && <div style={{ fontSize: 10, color: "#27ae60", fontFamily: "Rajdhani,sans-serif" }}>✓ Cover sélectionnée</div>}
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: 10, color: "#444", fontFamily: "Montserrat,sans-serif", marginBottom: 14 }}>
+                      Aucun screenshot Steam disponible — visitez la page du jeu pour charger les données Steam d'abord.
+                    </div>
+                  )}
                   <S>Screenshots</S>
                   {adminScreenshots.length > 0 && (
                     <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:10 }}>
