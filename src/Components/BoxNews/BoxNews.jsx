@@ -500,6 +500,11 @@ function BreakingCover({ articles }) {
                   lineHeight: 1.25,
                   textShadow: "0 1px 3px rgba(0,0,0,0.9), 0 2px 14px rgba(0,0,0,0.8)",
                   maxWidth: 800,
+                  ...(isMobile() ? {
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  } : {}),
                 }}
               >
                 {article.title}
@@ -512,7 +517,7 @@ function BreakingCover({ articles }) {
                     textShadow: "0 1px 4px rgba(0,0,0,0.8)",
                   }}
                 >
-                  {article.game_name}
+                  {/* {article.game_name} */}
                 </div>
               )}
             </div>
