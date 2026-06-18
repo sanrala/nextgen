@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { db } from "../../Firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 const SLIDER_STYLE = `
   .preco-mobile-slider {
@@ -41,7 +43,10 @@ const FR_MONTHS = {
 };
 function parseRelease(dateStr) {
   if (!dateStr) return null;
-  const m = dateStr.match(/(\d{1,2})\s+([\wéèêëàâùûüîïôœç]+)\s+(\d{4})/i);
+  // Le \.? tolère les abréviations françaises pointées (ex: "9 juil. 2026"),
+  // qui sinon font échouer tout le match puisque \s+ ne matche pas juste
+  // après le mot s'il y a un point avant l'espace.
+  const m = dateStr.match(/(\d{1,2})\s+([\wéèêëàâùûüîïôœç]+)\.?\s+(\d{4})/i);
   if (m) {
     const mn = m[2].toLowerCase();
     const mo = FR_MONTHS[mn] ?? FR_MONTHS[mn.normalize("NFD").replace(/[\u0300-\u036f]/g,"")];
@@ -99,14 +104,49 @@ function Precommandes() {
           releaseDate: g.releaseDate || g.release_date || null,
         }));
 
+        // Complète la date manquante depuis le cache Firestore (steamData
+        // déjà résolu par GameDetail.jsx pour les jeux déjà visités), pour
+        // les jeux dont l'API IG ne fournit pas releaseDate (ex: éditions
+        // Ubisoft Connect / Microsoft Store sans date à la source).
+        const withFirestoreDates = await Promise.all(
+          normalized.map(async (g) => {
+            if (g.releaseDate) return g;
+            try {
+              const snap = await getDoc(doc(db, "games", `ig_${g.id}`));
+              const sd = snap.exists() ? snap.data()?.steamData : null;
+              const cachedDate = sd?.release_date?.date || null;
+              return cachedDate ? { ...g, releaseDate: cachedDate } : g;
+            } catch {
+              return g;
+            }
+          })
+        );
+
+        // Dernier recours : si toujours aucune date (jeu jamais visité, donc
+        // pas encore en cache Firestore), interroge RAWG directement. Cette
+        // route résout par igId, traduit, et écrit elle-même en cache côté
+        // backend — donc peu coûteux si déjà appelé une fois pour ce jeu.
+        const withRawgDates = await Promise.all(
+          withFirestoreDates.map(async (g) => {
+            if (g.releaseDate) return g;
+            try {
+              const rawg = await fetch(`https://api.sm-artweb.fr/api/rawg/${g.id}`).then(r => r.ok ? r.json() : null).catch(() => null);
+              const rawgDate = rawg?.release_date?.date || null;
+              return rawgDate ? { ...g, releaseDate: rawgDate } : g;
+            } catch {
+              return g;
+            }
+          })
+        );
+
         // Trier par date de sortie croissante (la plus proche en premier)
-        const sorted = normalized.sort((a, b) => {
-          const da = parseRelease(a.releaseDate);
-          const db = parseRelease(b.releaseDate);
-          if (!da && !db) return 0;
-          if (!da) return 1;
-          if (!db) return -1;
-          return da - db;
+        const sorted = withRawgDates.sort((a, b) => {
+          const dateA = parseRelease(a.releaseDate);
+          const dateB = parseRelease(b.releaseDate);
+          if (!dateA && !dateB) return 0;
+          if (!dateA) return 1;
+          if (!dateB) return -1;
+          return dateA - dateB;
         });
 
         setGames(sorted.slice(0, 6));

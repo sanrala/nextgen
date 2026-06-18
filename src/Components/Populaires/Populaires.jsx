@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import {  useLocation } from "react-router-dom";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where, documentId } from "firebase/firestore";
 import { db } from "../../Firebase";
 
 function parseRelease(dateStr) {
@@ -763,6 +763,44 @@ function Populaires() {
         }
         const res  = await fetch(`${BACKEND_URL}/api/allgames`, { headers: { "User-Agent": "IG-ExportCatalog-Fetcher" } });
         const data = await res.json();
+
+        if (catFilter === "preorder") {
+          // L'API IG laisse souvent releaseDate à null pour les précommandes
+          // (notamment hors Steam). On complète depuis le cache Firestore
+          // (steamData déjà résolu par GameDetail.jsx) — en UNE requête
+          // groupée par lots de 30 (limite de l'opérateur "in"), plutôt
+          // que N requêtes individuelles qui ralentissaient le chargement.
+          const preorderGames = (data || []).filter(g => g.preorder === 1);
+          const otherGames    = (data || []).filter(g => g.preorder !== 1);
+
+          const idsNeedingDate = preorderGames
+            .filter(g => !g.releaseDate)
+            .map(g => `ig_${g.id}`);
+
+          const dateById = {};
+          for (let i = 0; i < idsNeedingDate.length; i += 30) {
+            const batch = idsNeedingDate.slice(i, i + 30);
+            if (!batch.length) continue;
+            try {
+              const snap = await getDocs(query(
+                collection(db, "games"),
+                where(documentId(), "in", batch)
+              ));
+              snap.docs.forEach(d => {
+                const cachedDate = d.data()?.steamData?.release_date?.date || null;
+                if (cachedDate) dateById[d.id] = cachedDate;
+              });
+            } catch { /* tant pis pour ce lot, on continue */ }
+          }
+
+          const withFirestoreDates = preorderGames.map(g =>
+            g.releaseDate ? g : (dateById[`ig_${g.id}`] ? { ...g, releaseDate: dateById[`ig_${g.id}`] } : g)
+          );
+
+          setAllGames([...withFirestoreDates, ...otherGames]);
+          return;
+        }
+
         setAllGames(data || []);
       } catch (err) {
         console.error(err);
@@ -775,6 +813,13 @@ function Populaires() {
   }, [catFilter]);
 
   useEffect(() => { setPage(1); }, [platform, sort, search, catFilter]);
+
+  // Quand on arrive sur le filtre Précommandes, on bascule par défaut sur
+  // "date croissante" (sortie la plus proche en premier), plus pertinent
+  // que "Plus récents" pour des jeux qui ne sont pas encore sortis.
+  useEffect(() => {
+    if (catFilter === "preorder") setSort("date_desc");
+  }, [catFilter]);
 
   const filtered = allGames
     .filter(g => {
@@ -812,6 +857,19 @@ function Populaires() {
     })
     .sort((a, b) => {
       if (catFilter === "nouveautes") return b.id - a.id;
+      if (catFilter === "preorder" && (sort === "date_desc" || sort === "date_asc")) {
+        // parseRelease gère le format français abrégé pointé ("9 juil. 2026"),
+        // contrairement à new Date() brut qui le retourne Invalid Date.
+        // Pour les précommandes, "Plus anciens" = sortie la plus lointaine
+        // dans le futur en premier, "Plus récents" = la plus proche en
+        // premier (sens inversé par rapport au catalogue de jeux déjà sortis).
+        const dateA = parseRelease(a.releaseDate);
+        const dateB = parseRelease(b.releaseDate);
+        if (!dateA && !dateB) return 0;
+        if (!dateA) return 1;
+        if (!dateB) return -1;
+        return sort === "date_asc" ? dateB - dateA : dateA - dateB;
+      }
       if (sort === "date_desc")  return new Date(b.releaseDate||0) - new Date(a.releaseDate||0);
       if (sort === "date_asc")   return new Date(a.releaseDate||0) - new Date(b.releaseDate||0);
       if (sort === "price_asc")  return parseFloat(a.price) - parseFloat(b.price);
