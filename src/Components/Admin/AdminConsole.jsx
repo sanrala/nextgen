@@ -107,6 +107,7 @@ function AdminConsole({ user }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [youtubeUrl, setYoutubeUrl] = useState("");
+  const [isBreaking, setIsBreaking] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [photoPreviews, setPhotoPreviews] = useState([]);
   const [existingPhotos, setExistingPhotos] = useState([]);
@@ -217,6 +218,7 @@ function AdminConsole({ user }) {
     setTitle(article.title);
     setContent(article.content);
     setYoutubeUrl(article.youtube_url || "");
+    setIsBreaking(article.isBreaking || false);
     setExistingPhotos(article.photos || []);
     setPhotos([]);
     setPhotoPreviews([]);
@@ -239,6 +241,7 @@ function AdminConsole({ user }) {
     setTitle("");
     setContent("");
     setYoutubeUrl("");
+    setIsBreaking(false);
     setSelectedGame(null);
     setSearch("");
     setPhotos([]);
@@ -296,6 +299,7 @@ function AdminConsole({ user }) {
         photos: allPhotos,
         youtube_id: youtubeId || null,
         youtube_url: youtubeUrl.trim() || null,
+        isBreaking: isBreaking,
         status: "public",
         author_uid: user.uid,
         author_email: user.email,
@@ -623,7 +627,18 @@ function AdminConsole({ user }) {
                         onError={(e) => (e.target.style.display = "none")}
                       />
                       <div className="admin-article-card-body">
-                        <div className="admin-article-card-game">{article.game_name}</div>
+                        <div className="admin-article-card-game">
+                          {article.game_name}
+                          {article.isBreaking && (
+                            <span style={{
+                              marginLeft: 8, fontSize: 10, fontWeight: 700, color: "#fff",
+                              background: "#dd163b", borderRadius: 4, padding: "2px 6px",
+                              fontFamily: "Orbitron", letterSpacing: 0.5,
+                            }}>
+                              ⚡ IMPORTANTE
+                            </span>
+                          )}
+                        </div>
                         <div className="admin-article-card-title">{article.title}</div>
                         <div className="admin-article-card-meta">
                           {formatDate(article.created_at)}
@@ -807,6 +822,44 @@ function AdminConsole({ user }) {
                     <div className="admin-yt-overlay">▶</div>
                   </div>
                 )}
+              </div>
+
+              <div className="admin-divider" />
+
+              <div className="admin-form-group">
+                <label className="admin-form-label">⚡ News importante</label>
+                <div style={{ fontSize: 11, color: "#888", fontFamily: "Rajdhani", marginBottom: 10 }}>
+                  Active pour mettre cet article en avant dans le carousel des actualités importantes.
+                </div>
+                <label
+                  style={{
+                    display: "flex", alignItems: "center", gap: 10, cursor: "pointer", width: "fit-content",
+                  }}
+                  onClick={() => setIsBreaking(prev => !prev)}
+                >
+                  <span
+                    style={{
+                      position: "relative", width: 46, height: 26, borderRadius: 13,
+                      background: isBreaking ? "#dd163b" : "rgba(255,255,255,0.12)",
+                      border: `1px solid ${isBreaking ? "#dd163b" : "#444"}`,
+                      transition: "background 0.2s, border-color 0.2s", flexShrink: 0,
+                    }}
+                  >
+                    <span
+                      style={{
+                        position: "absolute", top: 2, left: isBreaking ? 22 : 2,
+                        width: 20, height: 20, borderRadius: "50%", background: "#fff",
+                        transition: "left 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.4)",
+                      }}
+                    />
+                  </span>
+                  <span style={{
+                    fontFamily: "Rajdhani", fontSize: 15,
+                    color: isBreaking ? "#dd163b" : "#aaa",
+                  }}>
+                    {isBreaking ? "Marquée comme news importante" : "Article standard"}
+                  </span>
+                </label>
               </div>
 
               {uploadProgress && <div className="admin-msg admin-msg-progress">{uploadProgress}</div>}
