@@ -1,27 +1,10 @@
-import React, { useRef } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import logo from "./../../assets/images/logoGames/logo.png";
 import logoGlitch from "./../../assets/video/logo-glitch.mp4";
-import instantgaming from "./../../assets/images/logoGames/instantgaming.png";
 import "./Footer.css";
 
 function Footer() {
-  const logoVideoRef = useRef(null);
-
-  const handleLogoEnter = () => {
-    const v = logoVideoRef.current;
-    if (!v) return;
-    v.currentTime = 0;
-    v.play().catch(() => {});
-  };
-
-  const handleLogoLeave = () => {
-    const v = logoVideoRef.current;
-    if (!v) return;
-    v.pause();
-    v.currentTime = 0;
-  };
-
   return (
     <footer className="f-root">
 
@@ -76,19 +59,15 @@ function Footer() {
           <div className="pc">
             <div className="pc-label">Partenaire officiel</div>
             <Link to="#" className="pc-link">
-              <div
-                className="pc-img-wrap"
-                onMouseEnter={handleLogoEnter}
-                onMouseLeave={handleLogoLeave}
-              >
-                <img src={instantgaming} alt="Instant Gaming" className="pc-img" />
+              <div className="pc-img-wrap">
                 <video
-                  ref={logoVideoRef}
                   className="pc-img-video"
                   src={logoGlitch}
+                  autoPlay
+                  loop
                   muted
                   playsInline
-                  preload="metadata"
+                  preload="auto"
                 />
               </div>
               <div className="pc-sep" />
