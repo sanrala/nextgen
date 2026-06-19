@@ -903,7 +903,7 @@ function GameDetail() {
   const BuyButtons = ({ style = {} }) => (
     <div style={{ display: "flex", alignItems: "center", gap: 10, ...style }}>
       {chosenInStock && chosenUrl
-        ? <a href={chosenUrl} target="_blank" rel="noopener noreferrer" className="nk-btn nk-btn-rounded nk-btn-color-main-1 gd-btn-instock" style={{ flex: 1 }}>🛒 Acheter maintenant</a>
+        ? <a href={chosenUrl} target="_blank" rel="noopener noreferrer" className="nk-btn nk-btn-rounded nk-btn-color-main-1 gd-btn-instock" style={{ flex: 1 }}>🛒 Acheter</a>
         : <button className="nk-btn nk-btn-rounded gd-btn-outofstock" disabled aria-disabled="true" style={{ flex: 1 }}>⛔ Hors stock</button>
       }
       <button onClick={toggleWishlist} disabled={wishlistLoading}

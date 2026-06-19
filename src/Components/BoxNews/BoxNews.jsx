@@ -43,10 +43,13 @@ function BoxNews() {
           collection(db, "articles"),
           where("status", "==", "public"),
           orderBy("created_at", "desc"),
-          limit(13)
+          limit(20)
         );
         const snap = await getDocs(q);
-        const data = snap.docs.map((doc) => ({ doc_id: doc.id, ...doc.data() }));
+        const data = snap.docs
+          .map((doc) => ({ doc_id: doc.id, ...doc.data() }))
+          .filter((a) => !a.isTest)
+          .slice(0, 13);
         setArticles(data);
       } catch (e) {
         console.error("Erreur chargement articles", e);
@@ -65,10 +68,13 @@ function BoxNews() {
           where("status", "==", "public"),
           where("isBreaking", "==", true),
           orderBy("created_at", "desc"),
-          limit(6)
+          limit(10)
         );
         const snap = await getDocs(q);
-        const data = snap.docs.map((doc) => ({ doc_id: doc.id, ...doc.data() }));
+        const data = snap.docs
+          .map((doc) => ({ doc_id: doc.id, ...doc.data() }))
+          .filter((a) => !a.isTest)
+          .slice(0, 6);
         setBreakingArticles(data);
       } catch (e) {
         console.error("Erreur chargement news importantes", e);
