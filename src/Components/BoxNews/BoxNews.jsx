@@ -110,7 +110,7 @@ function BoxNews() {
         <Link to="/actualites">
           <h3 className="nk-decorated-h-2">
             <span>
-              <span className="text-main-1">Actualités</span> du jour
+              <span className="text-main-1">Actualités</span> gaming du jour
             </span>
           </h3>
         </Link>
@@ -306,7 +306,7 @@ function BoxNews() {
           <div className="nk-more-news-header">
             <h3 className="nk-decorated-h-2" style={{ margin: 0 }}>
               <span>
-                <span className="text-main-1">Actualités</span> jeux vidéo du moment
+                <span className="text-main-1">Actualités</span> gaming du moment
               </span>
             </h3>
             <Link to="/actualites" className="nk-more-news-btn">

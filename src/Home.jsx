@@ -129,7 +129,7 @@ function Home() {
             <div className="container">
               <BoxNews />
               <div className="separator product-panel"></div>
-                <Banner />
+                   <BoxNewsDiv />
 
                   <div className="separator product-panel"></div>
               <Popular />
@@ -174,7 +174,7 @@ function Home() {
           
             <div className="separator product-panel"></div>
 
-         <BoxNewsDiv />
+         <Banner />
 
             <div className="separator product-panel"></div>
             {/* {topSeller2 && <BannerSlider gameData={topSeller2} />}
