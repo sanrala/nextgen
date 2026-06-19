@@ -252,7 +252,7 @@ function ActualitesPage() {
                         }}
                       />
                       <span className="actu-card-badge">
-                        {ytId ? "▶ Vidéo" : "News"}
+                        {article.isTest ? (article.testCategory || "TESTS") : ytId ? "▶ Vidéo" : "News"}
                       </span>
                     </div>
                     <div className="actu-card-body">

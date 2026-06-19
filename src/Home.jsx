@@ -11,16 +11,17 @@ import gameData from "./exclu.json";
 import VR from "./Components/Virtual/Virtual";
 import Banner from "./Components/Banner/Banner.jsx";
 import BoxNews from "./Components/BoxNews/BoxNews.jsx";
-import BannerSlider from "./Components/ImgSlider/BannerSlider";
-import FeaturedGamesPlayStation from "./Components/FeaturedGames/FeaturedGamesPlayStation";
-import FeaturedGamesNintendo from "./Components/FeaturedGames/FeaturedGamesNintendo";
-import FeaturedGamesXbox from "./Components/FeaturedGames/FeaturedGamesXbox";
+// import BannerSlider from "./Components/ImgSlider/BannerSlider";
+// import FeaturedGamesPlayStation from "./Components/FeaturedGames/FeaturedGamesPlayStation";
+// import FeaturedGamesNintendo from "./Components/FeaturedGames/FeaturedGamesNintendo";
+// import FeaturedGamesXbox from "./Components/FeaturedGames/FeaturedGamesXbox";
 import FeaturedGamesPC from "./Components/FeaturedGames/FeaturedGamesPC";
-import RecentReleasesPlayStation from "./Components/FeaturedGames/RecentReleasesPlayStation";
-import RecentReleasesNintendo from "./Components/FeaturedGames/RecentReleasesNintendo";
-import RecentReleasesXbox from "./Components/FeaturedGames/RecentReleasesXbox";
+// import RecentReleasesPlayStation from "./Components/FeaturedGames/RecentReleasesPlayStation";
+// import RecentReleasesNintendo from "./Components/FeaturedGames/RecentReleasesNintendo";
+// import RecentReleasesXbox from "./Components/FeaturedGames/RecentReleasesXbox";
 import SteamSpecials from "./Components/SteamSpecials/SteamSpecials";
 import RecentGuides from "./Components/Home/RecentGuides";
+import BoxNewsDiv from "./Components/BoxNews/BoxNewsDiv.jsx";
 import "./Components/Guides/gd-variables.css";
 
 function LogoLoader() {
@@ -61,7 +62,7 @@ function Home() {
   const [randomImage, setRandomImage] = useState(null);
   const [isReady, setIsReady] = useState(false);
   const [topSeller, setTopSeller] = useState(null);
-  const [topSeller2, setTopSeller2] = useState(null);
+  // const [topSeller2, setTopSeller2] = useState(null);
 
   useEffect(() => {
     const getRandomImage = () => {
@@ -102,7 +103,7 @@ function Home() {
         if (!data || data.length === 0) { setIsReady(true); return; }
         const game = data[0];
         setTopSeller(game);
-        if (data[1]) setTopSeller2(data[1]);
+        // if (data[1]) setTopSeller2(data[1]);
         const steamBg = `https://cdn.akamai.steamstatic.com/steam/apps/${game.steam_id}/library_hero.jpg`;
         const img = new Image();
         img.src = steamBg;
@@ -128,8 +129,11 @@ function Home() {
             <div className="container">
               <BoxNews />
               <div className="separator product-panel"></div>
+                <Banner />
+
+                  <div className="separator product-panel"></div>
               <Popular />
-              <div className="separator product-panel"></div>
+             
             </div>
 
             {/* <section className="banner-img" style={{ backgroundImage: `url(${bg})` }}>
@@ -151,44 +155,39 @@ function Home() {
               </div>
             </section> */}
             
-            <RecentGuides />
+            
 
             <div className="container">
               <div className="separator product-panel"></div>
               <Precommandes />
+               <div className="separator product-panel"></div>
             </div>
-
+<RecentGuides />
             <div className="container">
+               <div className="separator product-panel"></div>
               <VR />
               <div className="separator product-panel"></div>
               <FeaturedGamesPC />
               <div className="separator product-panel"></div>
             </div>
 
-            <Banner />
+          
             <div className="separator product-panel"></div>
 
-            <div className="container">
-              <FeaturedGamesPlayStation />
-              <RecentReleasesPlayStation />
-              <FeaturedGamesNintendo />
-              <RecentReleasesNintendo />
-            </div>
+         <BoxNewsDiv />
 
             <div className="separator product-panel"></div>
-            {topSeller2 && <BannerSlider gameData={topSeller2} />}
-            <div className="separator product-panel"></div>
+            {/* {topSeller2 && <BannerSlider gameData={topSeller2} />}
+            <div className="separator product-panel"></div> */}
 
-            <div className="container">
+            {/* <div className="container">
               <FeaturedGamesXbox />
               <div className="separator product-panel"></div>
               <RecentReleasesXbox />
               <div className="separator product-panel"></div>
-            </div>
+            </div> */}
 
-            <a href="/Catalogues?platform=CartesCadeaux" className="f-banner">
-              <img src="/images/BannerCards.png" alt="Cartes cadeaux NextGen Gaming Instant Gaming" />
-            </a>
+         
 
             <div className="container">
               <div className="separator product-panel"></div>
@@ -206,10 +205,12 @@ function Home() {
           </div>
 
           <div className="separator product-panel"></div>
-
-          <a href="https://www.instant-gaming.com/?igr=gamer-707207" target="_blank" rel="noopener noreferrer" className="f-banner">
+   <a href="/Catalogues?platform=CartesCadeaux" className="f-banner">
+              <img src="/images/BannerCards.png" alt="Cartes cadeaux NextGen Gaming Instant Gaming" />
+            </a>
+          {/* <a href="https://www.instant-gaming.com/?igr=gamer-707207" target="_blank" rel="noopener noreferrer" className="f-banner">
             <img src="/images/banner-instant-gaming.png" alt="Promo Instant Gaming" />
-          </a>
+          </a> */}
           <Footer />
         </div>
       ) : (

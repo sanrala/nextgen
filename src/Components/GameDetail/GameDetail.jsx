@@ -1332,37 +1332,42 @@ function GameDetail() {
                       {dlcIds.length > 0 && (
                         <div className="gd-config-card" style={{ padding: "16px 18px" }}>
                           <h4 className="gd-config-title" style={{ fontSize: 12.5, marginBottom: 10 }}>📦 Contenu additionnel</h4>
-                          {dlcGames.length > 0 ? (
-                            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                              {dlcGames.map(g => {
-                                const available = g.stock === 1 && parseFloat(g.price) > 0;
-                                const slug = (g.name || "").replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
-                                const content = (
-                                  <>
-                                    <span style={{ fontSize: 15 }}>📦</span>
-                                    <span style={{ flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{g.name}</span>
-                                    {!available && <span style={{ fontSize: 10, color: "#666", flexShrink: 0 }}>Hors stock</span>}
-                                  </>
-                                );
-                                return available ? (
-                                  <Link key={g.id} to={`/store/${g.id}/${g.steam_id || 0}/${slug}`}
-                                    style={{ display: "flex", alignItems: "center", gap: 10, fontFamily: "Rajdhani,sans-serif", fontSize: 13, color: "#67c1f5", textDecoration: "none" }}
-                                    onMouseEnter={e => e.currentTarget.style.color = "#dd163b"}
-                                    onMouseLeave={e => e.currentTarget.style.color = "#67c1f5"}>
-                                    {content}
-                                  </Link>
-                                ) : (
-                                  <div key={g.id} style={{ display: "flex", alignItems: "center", gap: 10, fontFamily: "Rajdhani,sans-serif", fontSize: 13, color: "#777" }}>
-                                    {content}
+                          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                            {dlcIds.map(steamDlcId => {
+                              const match = dlcGames.find(g => String(g.steam_id) === String(steamDlcId));
+                              const onNextGen = match && match.stock === 1 && parseFloat(match.price) > 0;
+                              const slug = match ? (match.name || "").replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "") : "";
+                              return (
+                                <div key={steamDlcId} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                    <span style={{ fontSize: 15, flexShrink: 0 }}>📦</span>
+                                    <span style={{ flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "Rajdhani,sans-serif", fontSize: 13, color: "#ddd" }}>
+                                      {match?.name || `DLC ${steamDlcId}`}
+                                    </span>
                                   </div>
-                                );
-                              })}
-                            </div>
-                          ) : (
-                            <div style={{ fontFamily: "Rajdhani,sans-serif", fontSize: 12.5, color: "#b8bcc4" }}>
-                              {dlcIds.length} DLC{dlcIds.length > 1 ? "s" : ""} disponible{dlcIds.length > 1 ? "s" : ""} sur Steam
-                            </div>
-                          )}
+                                  <div style={{ display: "flex", alignItems: "center", gap: 8, paddingLeft: 23, flexWrap: "wrap" }}>
+                                    <a href={`https://store.steampowered.com/app/${steamDlcId}`} target="_blank" rel="noopener noreferrer"
+                                      style={{ fontFamily: "Rajdhani,sans-serif", fontSize: 11.5, color: "#67c1f5", textDecoration: "none" }}
+                                      onMouseEnter={e => e.currentTarget.style.color = "#dd163b"}
+                                      onMouseLeave={e => e.currentTarget.style.color = "#67c1f5"}>
+                                      Voir sur Steam ↗
+                                    </a>
+                                    <span style={{ color: "#444", fontSize: 11 }}>•</span>
+                                    {onNextGen ? (
+                                      <Link to={`/store/${match.id}/${match.steam_id || 0}/${slug}`}
+                                        style={{ fontFamily: "Rajdhani,sans-serif", fontSize: 11.5, fontWeight: 700, color: "#27ae60", textDecoration: "none" }}>
+                                        ✓ Disponible sur NextGen
+                                      </Link>
+                                    ) : (
+                                      <span style={{ fontFamily: "Rajdhani,sans-serif", fontSize: 11.5, fontWeight: 600, color: "#666" }}>
+                                        Non disponible sur NextGen
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
                       )}
 

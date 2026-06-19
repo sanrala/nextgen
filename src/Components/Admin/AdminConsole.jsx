@@ -124,6 +124,8 @@ function AdminConsole({ user }) {
   const [content, setContent] = useState("");
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const [isBreaking, setIsBreaking] = useState(false);
+  const [isTestArticle, setIsTestArticle] = useState(false);
+  const [testCategory, setTestCategory] = useState("TESTS");
   const [photos, setPhotos] = useState([]);
   const [photoPreviews, setPhotoPreviews] = useState([]);
   const [existingPhotos, setExistingPhotos] = useState([]);
@@ -370,7 +372,7 @@ function AdminConsole({ user }) {
 
   // Filtrage recherche jeu
   useEffect(() => {
-    if (search.trim().length < 2) { setResults([]); return; }
+    if ((search || "").trim().length < 2) { setResults([]); return; }
     const lower = search.toLowerCase();
     setResults(catalog.filter((g) => {
       const region = (g.region || "").toLowerCase();
@@ -391,6 +393,8 @@ function AdminConsole({ user }) {
     setContent(article.content);
     setYoutubeUrl(article.youtube_url || "");
     setIsBreaking(article.isBreaking || false);
+    setIsTestArticle(article.isTest || false);
+    setTestCategory(article.testCategory || "TESTS");
     setExistingPhotos(article.photos || []);
     setPhotos([]);
     setPhotoPreviews([]);
@@ -398,9 +402,12 @@ function AdminConsole({ user }) {
     if (game) {
       setSelectedGame(game);
       setSearch(game.name);
-    } else {
+    } else if (article.ig_id) {
       setSelectedGame({ id: article.ig_id, name: article.game_name, img: article.game_img, type: article.game_type });
-      setSearch(article.game_name);
+      setSearch(article.game_name || "");
+    } else {
+      setSelectedGame(null);
+      setSearch("");
     }
     setActiveTab("create");
     setSuccessMsg("");
@@ -414,6 +421,8 @@ function AdminConsole({ user }) {
     setContent("");
     setYoutubeUrl("");
     setIsBreaking(false);
+    setIsTestArticle(false);
+    setTestCategory("TESTS");
     setSelectedGame(null);
     setSearch("");
     setPhotos([]);
@@ -444,7 +453,10 @@ function AdminConsole({ user }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg(""); setSuccessMsg("");
-    if (!selectedGame) { setErrorMsg("Veuillez sélectionner un jeu."); return; }
+    if (!isTestArticle && !selectedGame) { setErrorMsg("Veuillez sélectionner un jeu."); return; }
+    if (isTestArticle && photos.length === 0 && existingPhotos.length === 0) {
+      setErrorMsg("Veuillez ajouter une image de couverture pour cet article."); return;
+    }
     if (!title.trim() || !content || content === "<p><br></p>") {
       setErrorMsg("Le titre et le contenu sont obligatoires."); return;
     }
@@ -462,16 +474,18 @@ function AdminConsole({ user }) {
       const isEditing = !!editingArticle;
 
       const articleData = {
-        ig_id: selectedGame.id,
-        game_name: selectedGame.name,
-        game_img: selectedGame.img,
-        game_type: selectedGame.type,
+        ig_id: selectedGame?.id || null,
+        game_name: selectedGame?.name || null,
+        game_img: selectedGame?.img || null,
+        game_type: selectedGame?.type || null,
         title: title.trim(),
         content,
         photos: allPhotos,
         youtube_id: youtubeId || null,
         youtube_url: youtubeUrl.trim() || null,
         isBreaking: isBreaking,
+        isTest: isTestArticle,
+        testCategory: isTestArticle ? testCategory : null,
         status: "public",
         author_uid: user.uid,
         author_email: user.email,
@@ -889,65 +903,98 @@ function AdminConsole({ user }) {
                 </div>
               )}
 
-              <div className="admin-section-title">
-                <span className="step-badge">1</span>
-                Rechercher un jeu
-              </div>
-
-              <div className="admin-search-wrap">
-                <span className="admin-search-icon">🔍</span>
-                <input
-                  className="admin-search-input"
-                  type="text"
-                  placeholder={catalogLoading ? "Chargement du catalogue..." : "Ex: Cyberpunk 2077, Elden Ring..."}
-                  value={search}
-                  onChange={(e) => {
-                    setSearch(e.target.value);
-                    if (selectedGame && e.target.value !== selectedGame.name) setSelectedGame(null);
-                  }}
-                  disabled={catalogLoading}
-                  autoComplete="off"
-                />
-              </div>
-
-              {results.length > 0 && (
-                <div className="admin-results">
-                  {results.map((game) => (
-                    <div key={game.id} className="admin-result-item" onClick={() => handleSelectGame(game)}>
-                      <img className="admin-result-img" src={game.img} alt={game.name} onError={(e) => (e.target.style.background = "#2a2a2a")} />
-                      <div className="admin-result-name">{game.name}</div>
-                      <span className="admin-type-badge">{game.type}</span>
-                      {(() => {
-                        const r = (game.region || "").toLowerCase();
-                        const isEU = r.includes("europe") || r.includes("fr");
-                        const isWW = r === "worldwide";
-                        const isUS = r.includes("us") && !r.includes("australia");
-                        if (!isEU && !isWW && !isUS) return null;
-                        return <span style={{ fontSize: 10, fontWeight: 600, color: isEU ? "#27ae60" : isWW ? "#6666cc" : "#cc7700", opacity: 0.8 }}>{isEU ? "🇪🇺 EU" : isWW ? "🌍 WW" : "🇺🇸 US"}</span>;
-                      })()}
-                      <span className="admin-id-badge">#{game.id}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {selectedGame && (
-                <div className="admin-selected-game">
-                  <img src={selectedGame.img} alt={selectedGame.name} onError={(e) => (e.target.style.background = "#2a2a2a")} />
-                  <div className="admin-selected-info">
-                    <div className="admin-selected-name">{selectedGame.name}</div>
-                    <div className="admin-selected-id">ID Instant Gaming : #{selectedGame.id}</div>
+              {/* Toggle Article Test (hors-sujet jeux vidéo) */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, marginBottom: 18 }}>
+                <div>
+                  <div style={{ fontFamily: "Montserrat,sans-serif", fontSize: 13, fontWeight: 700, color: "#ddd" }}>📝 Article Test (hors jeux vidéo)</div>
+                  <div style={{ fontFamily: "Rajdhani,sans-serif", fontSize: 11.5, color: "#777", marginTop: 2 }}>
+                    Pour tester du matériel, accessoires, etc. — apparaît dans Actualités avec une note sur 10
                   </div>
-                  <span className="admin-check">✔</span>
                 </div>
+                <div onClick={() => { setIsTestArticle(v => !v); setSelectedGame(null); setSearch(""); }}
+                  style={{ width: 44, height: 24, borderRadius: 12, background: isTestArticle ? "#dd163b" : "rgba(255,255,255,0.12)", border: `1px solid ${isTestArticle ? "#dd163b" : "#444"}`, position: "relative", cursor: "pointer", flexShrink: 0, transition: "background 0.2s" }}>
+                  <div style={{ width: 18, height: 18, borderRadius: "50%", background: "#fff", position: "absolute", top: 2, left: isTestArticle ? 22 : 2, transition: "left 0.2s" }} />
+                </div>
+              </div>
+
+              {!isTestArticle && (
+                <>
+                  <div className="admin-section-title">
+                    <span className="step-badge">1</span>
+                    Rechercher un jeu
+                  </div>
+
+                  <div className="admin-search-wrap">
+                    <span className="admin-search-icon">🔍</span>
+                    <input
+                      className="admin-search-input"
+                      type="text"
+                      placeholder={catalogLoading ? "Chargement du catalogue..." : "Ex: Cyberpunk 2077, Elden Ring..."}
+                      value={search}
+                      onChange={(e) => {
+                        setSearch(e.target.value);
+                        if (selectedGame && e.target.value !== selectedGame.name) setSelectedGame(null);
+                      }}
+                      disabled={catalogLoading}
+                      autoComplete="off"
+                    />
+                  </div>
+
+                  {results.length > 0 && (
+                    <div className="admin-results">
+                      {results.map((game) => (
+                        <div key={game.id} className="admin-result-item" onClick={() => handleSelectGame(game)}>
+                          <img className="admin-result-img" src={game.img} alt={game.name} onError={(e) => (e.target.style.background = "#2a2a2a")} />
+                          <div className="admin-result-name">{game.name}</div>
+                          <span className="admin-type-badge">{game.type}</span>
+                          {(() => {
+                            const r = (game.region || "").toLowerCase();
+                            const isEU = r.includes("europe") || r.includes("fr");
+                            const isWW = r === "worldwide";
+                            const isUS = r.includes("us") && !r.includes("australia");
+                            if (!isEU && !isWW && !isUS) return null;
+                            return <span style={{ fontSize: 10, fontWeight: 600, color: isEU ? "#27ae60" : isWW ? "#6666cc" : "#cc7700", opacity: 0.8 }}>{isEU ? "🇪🇺 EU" : isWW ? "🌍 WW" : "🇺🇸 US"}</span>;
+                          })()}
+                          <span className="admin-id-badge">#{game.id}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {selectedGame && (
+                    <div className="admin-selected-game">
+                      <img src={selectedGame.img} alt={selectedGame.name} onError={(e) => (e.target.style.background = "#2a2a2a")} />
+                      <div className="admin-selected-info">
+                        <div className="admin-selected-name">{selectedGame.name}</div>
+                        <div className="admin-selected-id">ID Instant Gaming : #{selectedGame.id}</div>
+                      </div>
+                      <span className="admin-check">✔</span>
+                    </div>
+                  )}
+
+                  <div className="admin-divider" />
+                </>
               )}
 
-              <div className="admin-divider" />
-
-              <div className="admin-section-title">
-                <span className="step-badge">2</span>
-                Rédiger l'article
-              </div>
+              {isTestArticle && (
+                <>
+                  <div className="admin-section-title">
+                    <span className="step-badge">1</span>
+                    Catégorie de l'article
+                  </div>
+                  <div className="admin-form-group" style={{ marginBottom: 18 }}>
+                    <label className="admin-form-label">Badge catégorie</label>
+                    <input
+                      className="admin-form-input"
+                      type="text"
+                      placeholder="TESTS"
+                      value={testCategory}
+                      onChange={(e) => setTestCategory(e.target.value.toUpperCase())}
+                    />
+                  </div>
+                  <div className="admin-divider" />
+                </>
+              )}
 
               <div className="admin-form-group">
                 <label className="admin-form-label">Titre de l'article</label>
@@ -1086,7 +1133,7 @@ function AdminConsole({ user }) {
               {errorMsg && <div className="admin-msg admin-msg-error">{errorMsg}</div>}
               {successMsg && <div className="admin-msg admin-msg-success">{successMsg}</div>}
 
-              <button className="admin-submit-btn" type="submit" disabled={submitting || !selectedGame}>
+              <button className="admin-submit-btn" type="submit" disabled={submitting || (!isTestArticle && !selectedGame)}>
                 {submitting
                   ? uploadProgress || "EN COURS..."
                   : editingArticle ? "METTRE À JOUR L'ARTICLE" : "PUBLIER L'ARTICLE"}

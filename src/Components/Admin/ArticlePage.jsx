@@ -49,18 +49,20 @@ function ArticlePage() {
         if (snap.exists()) {
           const data = { doc_id: snap.id, ...snap.data() };
           setArticle(data);
-          const q = query(
-            collection(db, "articles"),
-            where("ig_id", "==", data.ig_id),
-            where("status", "==", "public")
-          );
-          const similarSnap = await getDocs(q);
-          setSimilarArticles(
-            similarSnap.docs
-              .map((d) => ({ doc_id: d.id, ...d.data() }))
-              .filter((a) => a.doc_id !== doc_id)
-              .slice(0, 4)
-          );
+          if (data.ig_id) {
+            const q = query(
+              collection(db, "articles"),
+              where("ig_id", "==", data.ig_id),
+              where("status", "==", "public")
+            );
+            const similarSnap = await getDocs(q);
+            setSimilarArticles(
+              similarSnap.docs
+                .map((d) => ({ doc_id: d.id, ...d.data() }))
+                .filter((a) => a.doc_id !== doc_id)
+                .slice(0, 4)
+            );
+          }
         }
       } catch (e) {
         console.error("Erreur chargement article", e);
@@ -121,12 +123,16 @@ function ArticlePage() {
           <ul className="nk-breadcrumbs">
             <li><Link to="/">Accueil</Link></li>
             <li><span className="fa fa-angle-right" /></li>
-            <li>
-              <Link to={gameLink(article.ig_id, article.game_name)}>
-                {article.game_name}
-              </Link>
-            </li>
-            <li><span className="fa fa-angle-right" /></li>
+            {article.game_name && (
+              <>
+                <li>
+                  <Link to={gameLink(article.ig_id, article.game_name)}>
+                    {article.game_name}
+                  </Link>
+                </li>
+                <li><span className="fa fa-angle-right" /></li>
+              </>
+            )}
             <li>{article.title}</li>
           </ul>
         </div>
@@ -147,12 +153,23 @@ function ArticlePage() {
                       <i className="fa fa-calendar" style={{ marginRight: 6 }} />
                       {formatDate(article.created_at)}
                     </span>
-                    <span style={{
-                      background: "rgba(204,26,26,0.15)", color: "#cc1a1a",
-                      padding: "2px 10px", borderRadius: 4, fontWeight: 600, fontSize: 12
-                    }}>
-                      {article.game_type}
-                    </span>
+                    {article.game_type && (
+                      <span style={{
+                        background: "rgba(204,26,26,0.15)", color: "#cc1a1a",
+                        padding: "2px 10px", borderRadius: 4, fontWeight: 600, fontSize: 12
+                      }}>
+                        {article.game_type}
+                      </span>
+                    )}
+                    {article.isTest && (
+                      <span style={{
+                        background: "rgba(255,255,255,0.08)", color: "#ddd",
+                        border: "1px solid rgba(255,255,255,0.2)",
+                        padding: "2px 10px", borderRadius: 4, fontWeight: 600, fontSize: 12
+                      }}>
+                        {article.testCategory || "TESTS"}
+                      </span>
+                    )}
                   </div>
 
                   {/* ── Photos ── */}
@@ -230,7 +247,7 @@ function ArticlePage() {
                   {/* ── Autres articles ── */}
                   {similarArticles.length > 0 && (
                     <>
-                      <Separator label={`Autres articles — ${article.game_name}`} />
+                      <Separator label={article.game_name ? `Autres articles — ${article.game_name}` : "Autres articles"} />
                       {similarArticles.map((a) => (
                         <div key={a.doc_id} style={{
                           display: "flex", gap: 14, marginBottom: 12,
@@ -261,41 +278,45 @@ function ArticlePage() {
                   )}
 
                   {/* ── Carte Voir le jeu ── */}
-                  <Separator label="Le jeu" />
-                  <div style={{
-                    display: "flex", alignItems: "center",
-                    background: "#141414", border: "1px solid #1e1e1e",
-                    borderRadius: 10, overflow: "hidden",
-                    boxShadow: "0 2px 16px rgba(0,0,0,0.4)"
-                  }}>
-                    <img
-                      src={article.game_img}
-                      alt={article.game_name}
-                      style={{ width: 180, height: 110, objectFit: "cover", flexShrink: 0 }}
-                      onError={(e) => (e.target.style.display = "none")}
-                    />
-                    <div style={{ padding: "16px 20px", flex: 1 }}>
+                  {article.game_name && (
+                    <>
+                      <Separator label="Le jeu" />
                       <div style={{
-                        fontFamily: "Orbitron, sans-serif", fontSize: 14,
-                        fontWeight: 700, color: "#f0f0f0", marginBottom: 6
+                        display: "flex", alignItems: "center",
+                        background: "#141414", border: "1px solid #1e1e1e",
+                        borderRadius: 10, overflow: "hidden",
+                        boxShadow: "0 2px 16px rgba(0,0,0,0.4)"
                       }}>
-                        {article.game_name}
+                        <img
+                          src={article.game_img}
+                          alt={article.game_name}
+                          style={{ width: 180, height: 110, objectFit: "cover", flexShrink: 0 }}
+                          onError={(e) => (e.target.style.display = "none")}
+                        />
+                        <div style={{ padding: "16px 20px", flex: 1 }}>
+                          <div style={{
+                            fontFamily: "Orbitron, sans-serif", fontSize: 14,
+                            fontWeight: 700, color: "#f0f0f0", marginBottom: 6
+                          }}>
+                            {article.game_name}
+                          </div>
+                          <div style={{
+                            fontSize: 11, color: "#cc1a1a", fontFamily: "Orbitron, sans-serif",
+                            letterSpacing: 1, marginBottom: 14
+                          }}>
+                            {article.game_type} · ID #{article.ig_id}
+                          </div>
+                          <Link
+                            to={gameLink(article.ig_id, article.game_name)}
+                            className="nk-btn nk-btn-rounded nk-btn-color-main-1"
+                            style={{ fontSize: 12 }}
+                          >
+                            Voir le jeu
+                          </Link>
+                        </div>
                       </div>
-                      <div style={{
-                        fontSize: 11, color: "#cc1a1a", fontFamily: "Orbitron, sans-serif",
-                        letterSpacing: 1, marginBottom: 14
-                      }}>
-                        {article.game_type} · ID #{article.ig_id}
-                      </div>
-                      <Link
-                        to={gameLink(article.ig_id, article.game_name)}
-                        className="nk-btn nk-btn-rounded nk-btn-color-main-1"
-                        style={{ fontSize: 12 }}
-                      >
-                        Voir le jeu
-                      </Link>
-                    </div>
-                  </div>
+                    </>
+                  )}
 
                   {/* ── Commentaires ── */}
                   <Separator label="Commentaires" />
