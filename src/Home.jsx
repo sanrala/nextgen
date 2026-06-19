@@ -132,6 +132,10 @@ function Home() {
                    <BoxNewsDiv />
 
                   <div className="separator product-panel"></div>
+                     <a href="/Catalogues?platform=CartesCadeaux" className="f-banner">
+              <img src="/images/BannerCards.png" alt="Cartes cadeaux NextGen Gaming Instant Gaming" />
+            </a>
+                   <div className="separator product-panel"></div>
               <Popular />
              
             </div>
@@ -165,9 +169,9 @@ function Home() {
 <RecentGuides />
             <div className="container">
                <div className="separator product-panel"></div>
-              <VR />
-              <div className="separator product-panel"></div>
               <FeaturedGamesPC />
+              <div className="separator product-panel"></div>
+              <VR />
               <div className="separator product-panel"></div>
             </div>
 
@@ -205,12 +209,10 @@ function Home() {
           </div>
 
           <div className="separator product-panel"></div>
-   <a href="/Catalogues?platform=CartesCadeaux" className="f-banner">
-              <img src="/images/BannerCards.png" alt="Cartes cadeaux NextGen Gaming Instant Gaming" />
-            </a>
-          {/* <a href="https://www.instant-gaming.com/?igr=gamer-707207" target="_blank" rel="noopener noreferrer" className="f-banner">
+
+          <a href="https://www.instant-gaming.com/?igr=gamer-707207" target="_blank" rel="noopener noreferrer" className="f-banner">
             <img src="/images/banner-instant-gaming.png" alt="Promo Instant Gaming" />
-          </a> */}
+          </a>
           <Footer />
         </div>
       ) : (

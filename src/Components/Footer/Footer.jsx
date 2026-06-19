@@ -10,12 +10,12 @@ function Footer() {
 
       {/* Radar background */}
       <svg className="f-radar" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="500" cy="500" r="80"  fill="none" stroke="#cc1818" strokeWidth="1"/>
-        <circle cx="500" cy="500" r="150" fill="none" stroke="#cc1818" strokeWidth="1"/>
-        <circle cx="500" cy="500" r="220" fill="none" stroke="#cc1818" strokeWidth="1"/>
-        <circle cx="500" cy="500" r="290" fill="none" stroke="#cc1818" strokeWidth="1"/>
-        <line x1="500" y1="0"   x2="500" y2="500" stroke="#cc1818" strokeWidth="0.5"/>
-        <line x1="0"   y1="500" x2="500" y2="500" stroke="#cc1818" strokeWidth="0.5"/>
+        <circle cx="500" cy="500" r="80" fill="none" stroke="#cc1818" strokeWidth="1" />
+        <circle cx="500" cy="500" r="150" fill="none" stroke="#cc1818" strokeWidth="1" />
+        <circle cx="500" cy="500" r="220" fill="none" stroke="#cc1818" strokeWidth="1" />
+        <circle cx="500" cy="500" r="290" fill="none" stroke="#cc1818" strokeWidth="1" />
+        <line x1="500" y1="0" x2="500" y2="500" stroke="#cc1818" strokeWidth="0.5" />
+        <line x1="0" y1="500" x2="500" y2="500" stroke="#cc1818" strokeWidth="0.5" />
       </svg>
 
       <div className="f-topbar" />
@@ -26,13 +26,27 @@ function Footer() {
         <div className="f-main">
 
           {/* Brand */}
-          <div>
+          <div className="f-brand">
             <Link to="/" className="f-brand-logo">
               <img src={logo} alt="NextGen Gaming" />
             </Link>
             <p className="f-brand-desc">
-              La plateforme gaming de référence — actualités, bons plans et communauté passionnée.
+              La plateforme gaming de r&eacute;f&eacute;rence - actualit&eacute;s, bons plans et communaut&eacute; passionn&eacute;e.
             </p>
+            <div className="f-brand-highlights" aria-label="Points forts NextGen Gaming">
+              <span>
+                <strong>Actus</strong>
+                <small>gaming</small>
+              </span>
+              <span>
+                <strong>Bons plans</strong>
+                <small>jeux &amp; cartes</small>
+              </span>
+              <span>
+                <strong>Communaut&eacute;</strong>
+                <small>passionn&eacute;e</small>
+              </span>
+            </div>
             {/* <div className="f-socials">
               <Link to="#" className="f-soc ig" aria-label="Instagram">
                 <i className="ti ti-brand-instagram" aria-hidden="true" />
@@ -49,8 +63,8 @@ function Footer() {
             <nav className="f-nav-links">
               <Link to="/">Accueil</Link>
               <Link to="/Catalogues">Catalogue</Link>
-              <Link to="/Catalogues?catFilter=nouveautes">Nouveautés</Link>
-              <Link to="/Catalogues?catFilter=preorder">Précommandes</Link>
+              <Link to="/Catalogues?catFilter=nouveautes">Nouveaut&eacute;s</Link>
+              <Link to="/Catalogues?catFilter=preorder">Pr&eacute;commandes</Link>
               <Link to="/Catalogues?platform=CartesCadeaux">Cartes Cadeaux</Link>
             </nav>
           </div>
@@ -75,11 +89,10 @@ function Footer() {
                 <span className="pc-name">Instant Gaming</span>
                 <span className="pc-sub">Jeux PC &amp; consoles</span>
               </div>
-              <i className="ti ti-arrow-up-right pc-arrow" aria-hidden="true" />
             </Link>
             <p className="pc-note">
               <i className="ti ti-info-circle" aria-hidden="true" />
-              <span>Les prix affichés proviennent d'Instant Gaming, pas de NextGen.</span>
+              <span>Les prix affich&eacute;s proviennent d'Instant Gaming, pas de NextGen.</span>
             </p>
           </div>
 
@@ -90,10 +103,10 @@ function Footer() {
           <div className="f-copy">
             <span className="f-copy-dot" />
             <strong>NextGen Gaming</strong>
-            <span>© 2024 — Tous droits réservés</span>
+            <span>&copy; 2024 - Tous droits r&eacute;serv&eacute;s</span>
           </div>
           <div className="f-legal">
-            <Link to="/confidentialite">Confidentialité</Link>
+            <Link to="/confidentialite">Confidentialit&eacute;</Link>
             <Link to="/cgu">CGU</Link>
             <Link to="/cookies">Cookies</Link>
           </div>
