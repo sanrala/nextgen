@@ -22,6 +22,7 @@ import FeaturedGamesPC from "./Components/FeaturedGames/FeaturedGamesPC";
 import SteamSpecials from "./Components/SteamSpecials/SteamSpecials";
 import RecentGuides from "./Components/Home/RecentGuides";
 import BoxNewsDiv from "./Components/BoxNews/BoxNewsDiv.jsx";
+import CookieConsent from "./Components/CookieConsent/CookieConsent.jsx";
 import "./Components/Guides/gd-variables.css";
 
 function LogoLoader() {
@@ -214,6 +215,7 @@ function Home() {
             <img src="/images/banner-instant-gaming.png" alt="Promo Instant Gaming" />
           </a>
           <Footer />
+          <CookieConsent />
         </div>
       ) : (
         <LogoLoader />
