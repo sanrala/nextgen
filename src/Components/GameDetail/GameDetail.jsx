@@ -225,6 +225,7 @@ function GameDetail() {
   const [activeMedia,  setActiveMedia]  = useState("video");
   const [comments,     setComments]     = useState([]);
   const [franchise,    setFranchise]    = useState([]);
+  const [dlcGames,     setDlcGames]     = useState([]);
   const [similar,      setSimilar]      = useState([]);
   const [articles,     setArticles]     = useState([]);
   const [selectedPlatform, setSelectedPlatform] = useState(null);
@@ -238,6 +239,27 @@ function GameDetail() {
   const sharedGameKey = `ig_${igId}`;
 
   useEffect(() => { setHeroImgError(false); }, [igId]);
+
+  // Résolution des DLC Steam vers leurs fiches IG correspondantes
+  useEffect(() => {
+    const dlcAppIds = steamData?.dlc;
+    if (!Array.isArray(dlcAppIds) || dlcAppIds.length === 0) { setDlcGames([]); return; }
+    (async () => {
+      try {
+        const allGames = await fetch(`${BACKEND_URL}/api/allgames`).then(r => r.ok ? r.json() : []).catch(() => []);
+        const dlcIdSet = new Set(dlcAppIds.map(String));
+        const matched = [];
+        const seen = new Set();
+        for (const g of allGames) {
+          if (!g.steam_id || !dlcIdSet.has(String(g.steam_id))) continue;
+          if (seen.has(String(g.steam_id))) continue;
+          seen.add(String(g.steam_id));
+          matched.push(g);
+        }
+        setDlcGames(matched);
+      } catch { setDlcGames([]); }
+    })();
+  }, [steamData?.dlc]);
 
   const propagateSteamDataToEditions = async (steamDataObj, editions) => {
     if (!steamDataObj || !editions?.length) return;
@@ -525,15 +547,6 @@ function GameDetail() {
   }, [allEditions, igId, selectedEdition]);
 
   const platformGroups = allEditions.reduce((acc, ed) => { if (!acc[ed.type]) acc[ed.type] = []; acc[ed.type].push(ed); return acc; }, {});
-  const gameBase = (igGame?.name || "").replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g, "'").replace(/\s*(deluxe|ultimate|gold|premium|standard)\s*edition.*/gi, "").replace(/\s*edition.*/gi, "").replace(/[-–].*$/, "").trim();
-  const shortEdName = (name) => {
-    let short = name.replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g, "'");
-    const baseNorm = gameBase.replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g, "'");
-    short = short.replace(baseNorm, "").replace(/^\s*[-–]?\s*/, "").trim();
-    if (!short || short.toLowerCase() === "edition") return "Standard Edition";
-    if (!short.toLowerCase().includes("edition")) short = short + " Edition";
-    return short;
-  };
 
   const editionNamesForPlatform = selectedPlatform ? [...new Set(platformGroups[selectedPlatform]?.map(e => e.name) || [])] : [];
   const regionsForSelection = selectedPlatform && selectedEdition ? (platformGroups[selectedPlatform] || []).filter(e => e.name === selectedEdition) : [];
@@ -554,7 +567,6 @@ function GameDetail() {
   const chosenPromo  = chosenRetail && chosenPrice && chosenRetail > chosenPrice ? `-${Math.round(((chosenRetail - chosenPrice) / chosenRetail) * 100)}%` : null;
   const chosenInStock = chosenEntry ? chosenEntry.stock === 1 && chosenPrice > 0 : false;
   const chosenUrl    = chosenEntry?.url || null;
-  const editionName  = chosenEntry ? shortEdName(chosenEntry.name) : "Standard Edition";
 
   useEffect(() => {
     if (!isAdmin || !igId) return;
@@ -779,6 +791,53 @@ function GameDetail() {
   const steamReview      = getSteamReviewLabel(steamReviewTotal);
   const metacritic       = steamData?.metacritic || null;
   const steamCategories  = steamData?.categories || [];
+  const achievements     = steamData?.achievements?.highlighted || [];
+  const achievementsTotal = steamData?.achievements?.total || 0;
+  const supportedLanguagesRaw = steamData?.supported_languages || "";
+  const isFreeGame = steamData?.is_free || false;
+  const controllerSupport = steamData?.controller_support || null;
+  const contentDescriptorNotes = steamData?.content_descriptors?.notes || null;
+  const drmNotice = steamData?.drm_notice || null;
+  const legalNotice = steamData?.legal_notice || null;
+  const dlcIds = steamData?.dlc || [];
+  const packageGroups = steamData?.package_groups?.[0]?.subs || [];
+  const linuxReqs = steamData?.linux_requirements;
+  const macReqs = steamData?.mac_requirements;
+  const hasLinuxReqs = linuxReqs?.minimum && !/^\s*(<strong>.*?<\/strong>\s*:?\s*<br\s*\/?>)?\s*(<ul[^>]*>\s*<\/ul>)?\s*$/i.test(linuxReqs.minimum);
+  const hasMacReqs = macReqs?.minimum && !/^\s*(<strong>.*?<\/strong>\s*:?\s*<br\s*\/?>)?\s*(<ul[^>]*>\s*<\/ul>)?\s*$/i.test(macReqs.minimum);
+  const officialWebsite = steamData?.website || null;
+
+  // Détection précise du support manette par ID de catégorie Steam
+  const catIds = steamCategories.map(c => c.id);
+  const supportsXbox = catIds.includes(28) || catIds.includes(60);
+  const supportsDualSense = catIds.includes(57) || catIds.includes(58);
+
+  // PEGI complet avec descripteurs et icône officielle
+  const pegiData = steamData?.ratings?.pegi || null;
+  const pegiDescriptors = pegiData?.descriptors
+    ? pegiData.descriptors.split(/\s{2,}|(?<=[a-z])(?=[A-Z])/).map(s => s.trim()).filter(Boolean)
+    : [];
+
+  // Réseaux sociaux (peut être un array de liens ou absent selon la source)
+  const socialLinks = Array.isArray(steamData?.social_media) ? steamData.social_media : [];
+  const SOCIAL_ICON_MAP = [
+    { match: /twitter\.com|x\.com/i,      label: "X",         icon: "𝕏" },
+    { match: /instagram\.com/i,           label: "Instagram", icon: "📷" },
+    { match: /tiktok\.com/i,              label: "TikTok",    icon: "🎵" },
+    { match: /youtube\.com/i,             label: "YouTube",   icon: "▶️" },
+    { match: /facebook\.com/i,            label: "Facebook",  icon: "📘" },
+    { match: /reddit\.com/i,              label: "Reddit",    icon: "👽" },
+    { match: /discord\.com|discord\.gg/i, label: "Discord",   icon: "💬" },
+    { match: /bsky\.app/i,                label: "Bluesky",   icon: "🦋" },
+    { match: /bilibili\.com/i,            label: "Bilibili",  icon: "📺" },
+    { match: /douyin\.com/i,              label: "Douyin",    icon: "🎬" },
+    { match: /weibo\.com/i,               label: "Weibo",     icon: "🇨🇳" },
+    { match: /twitch\.tv/i,               label: "Twitch",    icon: "🎮" },
+  ];
+  const resolvedSocials = socialLinks.map(url => {
+    const found = SOCIAL_ICON_MAP.find(s => s.match.test(url));
+    return { url, label: found?.label || "Lien", icon: found?.icon || "🔗" };
+  });
 
   if (!igGame && !steamData) return (
     <><Header /><Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}><CircularProgress /></Box></>
@@ -845,7 +904,7 @@ function GameDetail() {
     <div style={{ display: "flex", alignItems: "center", gap: 10, ...style }}>
       {chosenInStock && chosenUrl
         ? <a href={chosenUrl} target="_blank" rel="noopener noreferrer" className="nk-btn nk-btn-rounded nk-btn-color-main-1 gd-btn-instock" style={{ flex: 1 }}>🛒 Acheter maintenant</a>
-        : <button className="nk-btn nk-btn-rounded gd-btn-outofstock" disabled aria-disabled="true" style={{ flex: 1 }}>⛔ Hors stock — {editionName}</button>
+        : <button className="nk-btn nk-btn-rounded gd-btn-outofstock" disabled aria-disabled="true" style={{ flex: 1 }}>⛔ Hors stock</button>
       }
       <button onClick={toggleWishlist} disabled={wishlistLoading}
         title={inWishlist ? "Retirer de la wishlist" : "Ajouter à la wishlist"}
@@ -975,11 +1034,11 @@ function GameDetail() {
                 {/* Prix sur 1 ligne + icône plateforme à droite */}
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "nowrap" }}>
-                    {chosenRetail && chosenRetail > (chosenPrice || 0) && (
+                    {!!chosenRetail && chosenRetail > (chosenPrice || 0) && (
                       <span style={{ fontSize: 14, color: "#666", textDecoration: "line-through", fontWeight: 500 }}>{chosenRetail.toFixed(2)} €</span>
                     )}
-                    {chosenPromo && <div className="priceSlidePromo">{chosenPromo}</div>}
-                    {chosenPrice && chosenPrice > 0
+                    {!!chosenPromo && <div className="priceSlidePromo">{chosenPromo}</div>}
+                    {!!chosenPrice && chosenPrice > 0
                       ? <div className="price text-white">{chosenPrice.toFixed(2)} €</div>
                       : <div className="price text-white" style={{ fontSize: 22 }}>Indisponible</div>
                     }
@@ -1121,14 +1180,212 @@ function GameDetail() {
             .gd-guides-card:hover .gd-guides-card-arrow{transform:translateX(4px);}
             .gd-guides-cta-btn{align-self:flex-start;font-family:"Montserrat",sans-serif;font-size:12px;font-weight:800;letter-spacing:0.07em;text-transform:uppercase;color:#fff;background:#dd163b;border:none;border-radius:6px;padding:12px 24px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:transform 0.15s, box-shadow 0.15s;}
             .gd-guides-cta-btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(221,22,59,0.3);}
+
+            @media (max-width: 900px) {
+              .gd-desc-row{flex-direction:column;}
+              .gd-desc-sidebar{width:100% !important;}
+            }
           `}</style>
           <div className="tab-content">
             {activeTab === "description" && (
               <div className="tab-pane fade show active">
                 <Separator label="Description" />
-                {steamData?.detailed_description
-                  ? <div className="steam-desc-content gd-tabpane-content" dangerouslySetInnerHTML={{ __html: steamData.detailed_description }} />
-                  : <p style={{ color: "#888" }}>Aucune description disponible.</p>}
+                <div style={{ display: "flex", gap: 28, alignItems: "flex-start" }} className="gd-desc-row">
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    {steamData?.detailed_description
+                      ? <div className="steam-desc-content gd-tabpane-content" dangerouslySetInnerHTML={{ __html: steamData.detailed_description }} />
+                      : <p style={{ color: "#888" }}>Aucune description disponible.</p>}
+                  </div>
+
+                  {/* Sidebar infos complémentaires */}
+                  {(achievements.length > 0 || supportedLanguagesRaw || pegiData?.required_age || isFreeGame || supportsXbox || supportsDualSense || drmNotice || contentDescriptorNotes || dlcIds.length > 0 || packageGroups.length > 0 || officialWebsite || resolvedSocials.length > 0) && (
+                    <div className="gd-desc-sidebar" style={{ width: 280, flexShrink: 0, display: "flex", flexDirection: "column", gap: 16 }}>
+
+                      {/* Badges rapides */}
+                      {(isFreeGame || drmNotice) && (
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                          {isFreeGame && (
+                            <span style={{ background: "rgba(39,174,96,0.15)", border: "1px solid rgba(39,174,96,0.4)", color: "#27ae60", fontFamily: "Orbitron,sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: 0.5, padding: "5px 10px", borderRadius: 4 }}>
+                              FREE TO PLAY
+                            </span>
+                          )}
+                          {drmNotice && (
+                            <span title={drmNotice} style={{ background: "rgba(255,180,0,0.10)", border: "1px solid rgba(255,180,0,0.3)", color: "#e0a800", fontFamily: "Rajdhani,sans-serif", fontSize: 11, fontWeight: 600, padding: "5px 10px", borderRadius: 4, display: "flex", alignItems: "center", gap: 5 }}>
+                              🛡️ {drmNotice}
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      {/* PEGI officiel avec logo + descripteurs */}
+                      {pegiData?.required_age && (
+                        <div className="gd-config-card" style={{ padding: "16px 18px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                            <div style={{
+                              width: 48, height: 56, borderRadius: 6, background: "#ee7203",
+                              display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                              flexShrink: 0, color: "#fff", fontFamily: "Arial,sans-serif",
+                            }}>
+                              <span style={{ fontSize: 20, fontWeight: 800, lineHeight: 1 }}>{pegiData.required_age}</span>
+                              <span style={{ fontSize: 6, opacity: 0.85, marginTop: 2 }}>www.pegi.info</span>
+                            </div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                              {pegiDescriptors.map((d, i) => (
+                                <span key={i} style={{ fontFamily: "Rajdhani,sans-serif", fontSize: 13, color: "#ddd", fontWeight: 500 }}>{d}</span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Manettes supportées style Steam */}
+                      {(supportsXbox || supportsDualSense) && (
+                        <div className="gd-config-card" style={{ padding: "16px 18px" }}>
+                          <h4 className="gd-config-title" style={{ fontSize: 12.5, marginBottom: 12 }}>
+                            {controllerSupport === "full" ? "Prise en charge complète des contrôleurs" : "🎮 Manettes"}
+                          </h4>
+                          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                            {supportsXbox && (
+                              <div style={{ display: "flex", alignItems: "center", gap: 10, fontFamily: "Rajdhani,sans-serif", fontSize: 13, color: "#67c1f5" }}>
+                                <span style={{ fontSize: 17 }}>🎮</span> Manettes Xbox
+                              </div>
+                            )}
+                            {supportsDualSense && (
+                              <div style={{ display: "flex", alignItems: "center", gap: 10, fontFamily: "Rajdhani,sans-serif", fontSize: 13, color: "#67c1f5" }}>
+                                <span style={{ fontSize: 17 }}>🎮</span> Manettes DualSense
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Réseaux sociaux */}
+                      {resolvedSocials.length > 0 && (
+                        <div className="gd-config-card" style={{ padding: "16px 18px" }}>
+                          <h4 className="gd-config-title" style={{ fontSize: 12.5, marginBottom: 10 }}>🔗 Réseaux sociaux</h4>
+                          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                            {resolvedSocials.map((s, i) => (
+                              <a key={i} href={s.url} target="_blank" rel="noopener noreferrer"
+                                style={{ display: "flex", alignItems: "center", gap: 10, fontFamily: "Rajdhani,sans-serif", fontSize: 13, color: "#67c1f5", textDecoration: "none" }}>
+                                <span style={{ fontSize: 15, width: 18, textAlign: "center" }}>{s.icon}</span> {s.label}
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Avertissement contenu */}
+                      {contentDescriptorNotes && (
+                        <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "12px 14px" }}>
+                          <div style={{ fontFamily: "Montserrat,sans-serif", fontSize: 10.5, fontWeight: 800, letterSpacing: 0.06, textTransform: "uppercase", color: "#e0a800", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
+                            ⚠️ Avertissement contenu
+                          </div>
+                          <div style={{ fontFamily: "Rajdhani,sans-serif", fontSize: 12, lineHeight: 1.6, color: "#9a9ea6" }}>
+                            {contentDescriptorNotes}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Succès */}
+                      {achievements.length > 0 && (
+                        <div className="gd-config-card" style={{ padding: "16px 18px" }}>
+                          <h4 className="gd-config-title" style={{ fontSize: 12.5, marginBottom: 12, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <span>🏆 Succès</span>
+                            <span style={{ color: "#888", fontSize: 11, fontWeight: 600 }}>{achievementsTotal} total</span>
+                          </h4>
+                          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                            {achievements.slice(0, 6).map((a, i) => (
+                              <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                                <img src={a.path} alt="" style={{ width: 32, height: 32, borderRadius: 4, flexShrink: 0 }} onError={e => e.target.style.visibility = "hidden"} />
+                                <span style={{ fontFamily: "Rajdhani,sans-serif", fontSize: 12.5, color: "#b8bcc4", lineHeight: 1.3 }}>{a.localized_name || a.name}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Langues supportées */}
+                      {supportedLanguagesRaw && (
+                        <div className="gd-config-card" style={{ padding: "16px 18px" }}>
+                          <h4 className="gd-config-title" style={{ fontSize: 12.5, marginBottom: 10 }}>🌐 Langues</h4>
+                          <div className="gd-config-content" style={{ fontSize: 12.5, lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: supportedLanguagesRaw }} />
+                        </div>
+                      )}
+
+                      {/* Prix officiels Steam (éditions) */}
+                      {packageGroups.length > 0 && (
+                        <div className="gd-config-card" style={{ padding: "16px 18px" }}>
+                          <h4 className="gd-config-title" style={{ fontSize: 12.5, marginBottom: 12 }}>💳 Éditions Steam</h4>
+                          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                            {packageGroups.map((sub, i) => (
+                              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontFamily: "Rajdhani,sans-serif", fontSize: 12.5, color: "#b8bcc4" }}>
+                                <span style={{ flex: 1, paddingRight: 8 }}>{(sub.option_text || "").replace(/\s*-\s*[\d,]+€$/, "")}</span>
+                                <span style={{ color: "#888", fontSize: 11, whiteSpace: "nowrap" }}>{(sub.option_text.match(/[\d,]+€/) || [""])[0]}</span>
+                              </div>
+                            ))}
+                          </div>
+                          <div style={{ fontSize: 10, color: "#666", fontFamily: "Rajdhani,sans-serif", marginTop: 10 }}>Prix officiels Steam, à titre indicatif</div>
+                        </div>
+                      )}
+
+                      {/* DLC disponibles */}
+                      {dlcIds.length > 0 && (
+                        <div className="gd-config-card" style={{ padding: "16px 18px" }}>
+                          <h4 className="gd-config-title" style={{ fontSize: 12.5, marginBottom: 10 }}>📦 Contenu additionnel</h4>
+                          {dlcGames.length > 0 ? (
+                            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                              {dlcGames.map(g => {
+                                const available = g.stock === 1 && parseFloat(g.price) > 0;
+                                const slug = (g.name || "").replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
+                                const content = (
+                                  <>
+                                    <span style={{ fontSize: 15 }}>📦</span>
+                                    <span style={{ flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{g.name}</span>
+                                    {!available && <span style={{ fontSize: 10, color: "#666", flexShrink: 0 }}>Hors stock</span>}
+                                  </>
+                                );
+                                return available ? (
+                                  <Link key={g.id} to={`/store/${g.id}/${g.steam_id || 0}/${slug}`}
+                                    style={{ display: "flex", alignItems: "center", gap: 10, fontFamily: "Rajdhani,sans-serif", fontSize: 13, color: "#67c1f5", textDecoration: "none" }}
+                                    onMouseEnter={e => e.currentTarget.style.color = "#dd163b"}
+                                    onMouseLeave={e => e.currentTarget.style.color = "#67c1f5"}>
+                                    {content}
+                                  </Link>
+                                ) : (
+                                  <div key={g.id} style={{ display: "flex", alignItems: "center", gap: 10, fontFamily: "Rajdhani,sans-serif", fontSize: 13, color: "#777" }}>
+                                    {content}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          ) : (
+                            <div style={{ fontFamily: "Rajdhani,sans-serif", fontSize: 12.5, color: "#b8bcc4" }}>
+                              {dlcIds.length} DLC{dlcIds.length > 1 ? "s" : ""} disponible{dlcIds.length > 1 ? "s" : ""} sur Steam
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Site officiel */}
+                      {officialWebsite && (
+                        <a href={officialWebsite} target="_blank" rel="noopener noreferrer"
+                          style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "12px 16px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.12)", background: "rgba(255,255,255,0.03)", color: "#ddd", fontFamily: "Rajdhani,sans-serif", fontSize: 13, fontWeight: 600, textDecoration: "none", transition: "border-color 0.2s, background 0.2s" }}
+                          onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(221,22,59,0.4)"; e.currentTarget.style.background = "rgba(221,22,59,0.08)"; }}
+                          onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.background = "rgba(255,255,255,0.03)"; }}>
+                          🌍 Site officiel du jeu
+                        </a>
+                      )}
+
+                    </div>
+                  )}
+                </div>
+
+                {/* Mentions légales */}
+                {legalNotice && (
+                  <div style={{ marginTop: 32, paddingTop: 16, borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                    <p style={{ fontFamily: "Rajdhani,sans-serif", fontSize: 11, lineHeight: 1.6, color: "#555" }}>{legalNotice}</p>
+                  </div>
+                )}
               </div>
             )}
             {activeTab === "config" && (
@@ -1138,6 +1395,8 @@ function GameDetail() {
                   {pcReqs?.minimum && <div className="col-12 col-md-6 gd-config-col"><div className="gd-config-card"><h4 className="gd-config-title">⚙️ Configuration minimale</h4><div className="gd-config-content" dangerouslySetInnerHTML={{ __html: pcReqs.minimum }} /></div></div>}
                   {pcReqs?.recommended && <div className="col-12 col-md-6 gd-config-col"><div className="gd-config-card"><h4 className="gd-config-title">🚀 Configuration recommandée</h4><div className="gd-config-content" dangerouslySetInnerHTML={{ __html: pcReqs.recommended }} /></div></div>}
                   {!pcReqs?.minimum && !pcReqs?.recommended && <p className="col-12" style={{ color: "#888", padding: "20px 15px" }}>Configuration non disponible.</p>}
+                  {hasLinuxReqs && <div className="col-12 col-md-6 gd-config-col"><div className="gd-config-card"><h4 className="gd-config-title">🐧 Configuration Linux</h4><div className="gd-config-content" dangerouslySetInnerHTML={{ __html: linuxReqs.minimum }} /></div></div>}
+                  {hasMacReqs && <div className="col-12 col-md-6 gd-config-col"><div className="gd-config-card"><h4 className="gd-config-title">🍎 Configuration Mac</h4><div className="gd-config-content" dangerouslySetInnerHTML={{ __html: macReqs.minimum }} /></div></div>}
                 </div>
               </div>
             )}
