@@ -1,14 +1,28 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 import logo from "./../../assets/images/logoGames/logo.png";
+import logoGlitch from "./../../assets/video/logo-glitch.mp4";
 import instantgaming from "./../../assets/images/logoGames/instantgaming.png";
 import "./Footer.css";
 
 function Footer() {
+  const logoVideoRef = useRef(null);
+
+  const handleLogoEnter = () => {
+    const v = logoVideoRef.current;
+    if (!v) return;
+    v.currentTime = 0;
+    v.play().catch(() => {});
+  };
+
+  const handleLogoLeave = () => {
+    const v = logoVideoRef.current;
+    if (!v) return;
+    v.pause();
+    v.currentTime = 0;
+  };
+
   return (
-
-
-    
     <footer className="f-root">
 
       {/* Radar background */}
@@ -47,28 +61,36 @@ function Footer() {
           </div>
 
           {/* Nav */}
-          <nav className="f-nav">
-            <div className="f-nav-col">
-              <h5>Navigation</h5>
+          <div>
+            <h5 className="f-nav-heading">Navigation</h5>
+            <nav className="f-nav-links">
               <Link to="/">Accueil</Link>
               <Link to="/Catalogues">Catalogue</Link>
-              <Link to="//Catalogues?catFilter=nouveautes">Nouveautés</Link>
+              <Link to="/Catalogues?catFilter=nouveautes">Nouveautés</Link>
               <Link to="/Catalogues?catFilter=preorder">Précommandes</Link>
               <Link to="/Catalogues?platform=CartesCadeaux">Cartes Cadeaux</Link>
-            </div>
-            {/* <div className="f-nav-col">
-              <h5>À propos</h5>
-              <Link to="/about">Qui sommes-nous</Link>
-              <Link to="/actualites">Actualités</Link>
-              <Link to="/contact">Contact</Link>
-            </div> */}
-          </nav>
+            </nav>
+          </div>
 
           {/* Partner card */}
           <div className="pc">
             <div className="pc-label">Partenaire officiel</div>
             <Link to="#" className="pc-link">
-              <img src={instantgaming} alt="Instant Gaming" className="pc-img" />
+              <div
+                className="pc-img-wrap"
+                onMouseEnter={handleLogoEnter}
+                onMouseLeave={handleLogoLeave}
+              >
+                <img src={instantgaming} alt="Instant Gaming" className="pc-img" />
+                <video
+                  ref={logoVideoRef}
+                  className="pc-img-video"
+                  src={logoGlitch}
+                  muted
+                  playsInline
+                  preload="metadata"
+                />
+              </div>
               <div className="pc-sep" />
               <div className="pc-texts">
                 <span className="pc-name">Instant Gaming</span>
@@ -76,10 +98,10 @@ function Footer() {
               </div>
               <i className="ti ti-arrow-up-right pc-arrow" aria-hidden="true" />
             </Link>
-            <div className="pc-note">
+            <p className="pc-note">
               <i className="ti ti-info-circle" aria-hidden="true" />
               <span>Les prix affichés proviennent d'Instant Gaming, pas de NextGen.</span>
-            </div>
+            </p>
           </div>
 
         </div>
