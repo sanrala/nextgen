@@ -16,6 +16,7 @@ import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfi
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import Header from "../Header/Header";
+import GameLiveStream from "../Twitch/GameLiveStream";
 import CommentsSection from "./CommentsSection";
 import Footer from "../Footer/Footer";
 import { findGameGuidesDoc } from "../Guides/guidesHelpers";
@@ -960,6 +961,8 @@ function GameDetail() {
           <li><span>{gameTitle}</span></li>
         </ul>
         <div className="nk-gap-1" />
+
+        <GameLiveStream gameName={gameTitle} />
 
         {/* ══════════════════════════════════════════
             GRILLE PRINCIPALE : Lecteur | Infos achat
