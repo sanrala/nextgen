@@ -174,6 +174,7 @@ function GameDetail() {
   const [adminNewPreviews, setAdminNewPreviews] = useState([]);
   const [adminRefreshing, setAdminRefreshing] = useState(false);
   const [adminForcingSteam, setAdminForcingSteam] = useState(false);
+  const [adminFetchingRawg, setAdminFetchingRawg] = useState(false);
   const [adminDeleting,   setAdminDeleting]   = useState(false);
   const [adminDeleteConfirm, setAdminDeleteConfirm] = useState(false);
   const [adminCoverOptions, setAdminCoverOptions] = useState([]);
@@ -667,6 +668,40 @@ function GameDetail() {
       setTimeout(() => window.location.reload(), 1000);
     } catch (e) { setAdminMsg("Erreur : " + e.message); setAdminMsgType("error"); }
     finally { setAdminForcingSteam(false); }
+  };
+
+  const handleFetchRawg = async () => {
+    setAdminFetchingRawg(true); setAdminMsg("");
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/rawg/${igId}`);
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        setAdminMsg("❌ RAWG : " + (errJson.error || "Jeu introuvable sur RAWG"));
+        setAdminMsgType("error");
+        return;
+      }
+      const rawgData = await res.json();
+      // Fusionne avec les données existantes (Steam reste prioritaire si déjà présent,
+      // RAWG ne complète que les champs manquants ou vides)
+      const merged = {
+        ...rawgData,
+        ...(steamData || {}),
+        short_description: steamData?.short_description || rawgData.short_description,
+        detailed_description: steamData?.detailed_description || rawgData.detailed_description,
+        header_image: steamData?.header_image || rawgData.header_image,
+        genres: (steamData?.genres?.length ? steamData.genres : rawgData.genres) || [],
+        developers: steamData?.developers || rawgData.developers,
+        publishers: steamData?.publishers || rawgData.publishers,
+        release_date: steamData?.release_date?.date ? steamData.release_date : rawgData.release_date,
+        screenshots: (steamData?.screenshots?.length ? steamData.screenshots : rawgData.screenshots) || [],
+        source: steamData?.source || "rawg",
+      };
+      setSteamData(merged);
+      await setDoc(doc(db, "games", `ig_${igId}`), { steamData: merged, savedAt: serverTimestamp() }, { merge: true });
+      setAdminMsg("✅ Données RAWG récupérées et fusionnées");
+      setAdminMsgType("success");
+    } catch (e) { setAdminMsg("Erreur RAWG : " + e.message); setAdminMsgType("error"); }
+    finally { setAdminFetchingRawg(false); }
   };
 
   const handleDeleteFromFirebase = async () => {
@@ -1612,6 +1647,15 @@ function GameDetail() {
             </button>
             <div style={{ fontFamily:"Montserrat,sans-serif", fontSize:10, color:"#444", marginBottom:16, textAlign:"center", lineHeight:1.5 }}>
               Utile si la description/config/screenshots Steam manquent (éditions Deluxe, Premium...). Vide le cache Steam de ce jeu précis et relance la résolution.
+            </div>
+
+            {/* ── Bouton récupération données RAWG ── */}
+            <button onClick={handleFetchRawg} disabled={adminFetchingRawg}
+              style={{ width:"100%", padding:"12px", marginBottom:8, background: adminFetchingRawg ? "rgba(255,255,255,0.02)" : "rgba(52,152,219,0.08)", border:`1px solid ${adminFetchingRawg ? "#333" : "rgba(52,152,219,0.3)"}`, borderRadius:6, color: adminFetchingRawg ? "#555" : "#3498db", fontFamily:"Montserrat,sans-serif", fontSize:11, fontWeight:700, letterSpacing:"0.08em", textTransform:"uppercase", cursor: adminFetchingRawg ? "default" : "pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:6 }}>
+              {adminFetchingRawg ? "⏳ Récupération en cours..." : "🗂️ Récupérer les détails RAWG"}
+            </button>
+            <div style={{ fontFamily:"Montserrat,sans-serif", fontSize:10, color:"#444", marginBottom:16, textAlign:"center", lineHeight:1.5 }}>
+              Pour les jeux absents de Steam (PlayStation, Xbox, Nintendo...). Complète uniquement les champs manquants, sans écraser les données Steam déjà présentes.
             </div>
 
             {/* ── Bouton suppression Firebase ── */}
