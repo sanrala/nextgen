@@ -77,14 +77,45 @@ function NavBar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const getBurgerTop = () => (window.innerWidth <= 765 ? 20 : 30);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 990);
+  const [burgerTop, setBurgerTop] = useState(getBurgerTop());
+  useEffect(() => {
+    const onResize = () => {
+      setIsMobile(window.innerWidth <= 990);
+      setBurgerTop(getBurgerTop());
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   return (
       <nav ref={navRef} className="nk-navbar nk-navbar-top nk-navbar-sticky nk-navbar-autohide">
         <div className="container">
-          <div className="nk-nav-table" style={{ minHeight: "70px" }}>
-            <Link to={{ pathname: `/` }} className="nk-nav-logo">
-            <NextGenLogoAnimated />
-              {/* <img src={logo} alt="NextGen" width="199" /> */}
-            </Link>
+          <div className="nk-nav-table" style={{ minHeight: isMobile ? "56px" : "70px" }}>
+            {isMobile && (
+              <Link
+                to={{ pathname: `/` }}
+                style={{
+                  position: "fixed",
+                  top: `${burgerTop + 20}px`,
+                  left: "16px",
+                  transform: "translateY(-50%)",
+                  zIndex: 1100,
+                  display: "block",
+                  lineHeight: 0,
+                }}
+              >
+                <NextGenLogoAnimated width="200px" />
+              </Link>
+            )}
+
+            {!isMobile && (
+              <Link to={{ pathname: `/` }} className="nk-nav-logo">
+                <NextGenLogoAnimated />
+                {/* <img src={logo} alt="NextGen" width="199" /> */}
+              </Link>
+            )}
 
             <ul
               className="nk-nav nk-nav-right d-none d-lg-table-cell"
