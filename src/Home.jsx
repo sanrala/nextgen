@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import "./assets/css/style.css";
 import Header from "./Components/Header/Header";
 import ImgSlider from "./Components/ImgSlider/ImgSlider.jsx";
@@ -115,6 +116,23 @@ function Home() {
     <div>
       {randomImage ? (
         <div className="App">
+          <Helmet>
+            <title>NextGen Gaming — Jeux PC en promo, sorties et précommandes</title>
+            <meta
+              name="description"
+              content="NextGen Gaming : les meilleures offres de jeux PC, les dernières sorties, précommandes et actualités gaming, en partenariat avec Instant Gaming."
+            />
+            <link rel="canonical" href="https://nextgen-blue.vercel.app/" />
+            <meta property="og:title" content="NextGen Gaming — Jeux PC en promo, sorties et précommandes" />
+            <meta
+              property="og:description"
+              content="Les meilleures offres de jeux PC, les dernières sorties et précommandes, en partenariat avec Instant Gaming."
+            />
+            <meta property="og:type" content="website" />
+            <meta property="og:url" content="https://nextgen-blue.vercel.app/" />
+            <meta property="og:image" content="https://nextgen-blue.vercel.app/images/logoGames/logo.png" />
+            <meta name="twitter:card" content="summary_large_image" />
+          </Helmet>
           <Header />
           <div className="nk-main">
 

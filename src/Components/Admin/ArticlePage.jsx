@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { doc, getDoc, collection, query, where, orderBy, limit, getDocs } from "firebase/firestore";
 import { db, auth } from "../../Firebase";
 import { useParams, Link } from "react-router-dom";
@@ -248,8 +249,33 @@ function ArticlePage() {
     </div>
   );
 
+  const stripHtml = (html) => (html || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  const metaDescription = stripHtml(article.content).slice(0, 155);
+  const metaImage = article.photos?.[0]?.url || article.game_img || "";
+  const canonicalUrl = `https://nextgen-blue.vercel.app/article/${doc_id}`;
+  const articleSchema = {
+    "@context": "https://schema.org/",
+    "@type": "Article",
+    headline: article.title,
+    image: metaImage ? [metaImage] : undefined,
+    datePublished: article.created_at?.toDate ? article.created_at.toDate().toISOString() : undefined,
+    author: { "@type": "Person", name: article.author_email || "NextGen Gaming" },
+  };
+
   return (
     <div>
+      <Helmet>
+        <title>{article.title} — NextGen Gaming</title>
+        <meta name="description" content={metaDescription} />
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:title" content={article.title} />
+        <meta property="og:description" content={metaDescription} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={canonicalUrl} />
+        {metaImage && <meta property="og:image" content={metaImage} />}
+        <meta name="twitter:card" content="summary_large_image" />
+        <script type="application/ld+json">{JSON.stringify(articleSchema)}</script>
+      </Helmet>
       <Header />
 
       <div className="nk-main" style={{ paddingTop: 80, maxWidth: 1400, margin: "0 auto" }}>

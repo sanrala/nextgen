@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Helmet } from "react-helmet-async";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../features/userSlice";
@@ -879,7 +880,10 @@ function GameDetail() {
   });
 
   if (!igGame && !steamData) return (
-    <><Header /><Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}><CircularProgress /></Box></>
+    <>
+      <Helmet><title>Chargement... — NextGen Gaming</title></Helmet>
+      <Header /><Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}><CircularProgress /></Box>
+    </>
   );
 
   const gameTitle = chosenEntry?.name || steamData?.name || igGame?.name || decodeURIComponent(title || "");
@@ -962,8 +966,40 @@ function GameDetail() {
     </div>
   );
 
+  const metaDescription = (steamData?.short_description || `Achetez ${gameTitle} au meilleur prix sur NextGen Gaming, en partenariat avec Instant Gaming.`).slice(0, 155);
+  const metaImage = steamData?.header_image || igGame?.img || allEditions?.[0]?.img || "";
+  const canonicalUrl = `https://nextgen-blue.vercel.app/store/${igId}/${steamId}/${title}`;
+  const productSchema = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    name: gameTitle,
+    image: metaImage ? [metaImage] : undefined,
+    description: metaDescription,
+    ...(chosenPrice ? {
+      offers: {
+        "@type": "Offer",
+        url: canonicalUrl,
+        priceCurrency: "EUR",
+        price: chosenPrice,
+        availability: chosenInStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      }
+    } : {}),
+  };
+
   return (
     <div style={{ position: "relative" }}>
+      <Helmet>
+        <title>{gameTitle} — Acheter au meilleur prix | NextGen Gaming</title>
+        <meta name="description" content={metaDescription} />
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:title" content={`${gameTitle} — NextGen Gaming`} />
+        <meta property="og:description" content={metaDescription} />
+        <meta property="og:type" content="product" />
+        <meta property="og:url" content={canonicalUrl} />
+        {metaImage && <meta property="og:image" content={metaImage} />}
+        <meta name="twitter:card" content="summary_large_image" />
+        <script type="application/ld+json">{JSON.stringify(productSchema)}</script>
+      </Helmet>
       <Header />
 
       {/* ── Hero ── */}
