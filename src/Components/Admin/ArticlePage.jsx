@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { doc, getDoc, collection, query, where, orderBy, limit, getDocs } from "firebase/firestore";
 import { db, auth } from "../../Firebase";
 import { useParams, Link } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
@@ -8,6 +8,116 @@ import Box from "@mui/material/Box";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import CommentsSection from "../GameDetail/CommentsSection";
+
+const SIDEBAR_STYLE = `
+  .as-sidebar { position: sticky; top: 100px; display: flex; flex-direction: column; gap: 36px; }
+  .as-block-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: #fff;
+    margin: 0 0 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .as-block-title .as-dot { width: 4px; height: 14px; background: #cc1a1a; border-radius: 2px; flex-shrink: 0; }
+  .as-block-title .as-accent { color: #cc1a1a; }
+
+  .as-card {
+    display: flex; gap: 12px;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    transition: background 0.15s ease;
+  }
+  .as-card:hover { background: rgba(255,255,255,0.04); }
+  .as-card-img {
+    width: 90px; height: 58px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: #111;
+  }
+  .as-card-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px; font-weight: 700;
+    color: #ddd;
+    line-height: 1.35;
+    margin: 0 0 4px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .as-card-date {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    color: #555;
+  }
+  .as-empty {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px; color: #555;
+  }
+`;
+
+function ArticleSidebar({ gameArticles, divArticles, formatDate }) {
+  return (
+    <div className="as-sidebar">
+      <style>{SIDEBAR_STYLE}</style>
+
+      <div>
+        <h4 className="as-block-title">
+          <span className="as-dot" />
+          <span className="as-accent">Jeux vidéo</span>&nbsp;du moment
+        </h4>
+        {gameArticles.length > 0 ? (
+          gameArticles.map((a) => (
+            <Link key={a.doc_id} to={`/article/${a.doc_id}`} className="as-card">
+              <img
+                className="as-card-img"
+                src={a.photos?.[0]?.url || a.game_img}
+                alt={a.title}
+                onError={(e) => (e.target.style.display = "none")}
+              />
+              <div>
+                <p className="as-card-title">{a.title}</p>
+                <span className="as-card-date">{formatDate(a.created_at)}</span>
+              </div>
+            </Link>
+          ))
+        ) : (
+          <p className="as-empty">Aucun article pour le moment.</p>
+        )}
+      </div>
+
+      <div>
+        <h4 className="as-block-title">
+          <span className="as-dot" />
+          <span className="as-accent">High-tech</span>&nbsp;&amp; diverses
+        </h4>
+        {divArticles.length > 0 ? (
+          divArticles.map((a) => (
+            <Link key={a.doc_id} to={`/article/${a.doc_id}`} className="as-card">
+              <img
+                className="as-card-img"
+                src={a.photos?.[0]?.url || a.game_img}
+                alt={a.title}
+                onError={(e) => (e.target.style.display = "none")}
+              />
+              <div>
+                <p className="as-card-title">{a.title}</p>
+                <span className="as-card-date">{formatDate(a.created_at)}</span>
+              </div>
+            </Link>
+          ))
+        ) : (
+          <p className="as-empty">Aucun article pour le moment.</p>
+        )}
+      </div>
+
+    </div>
+  );
+}
 
 function ArticlePage() {
   const { doc_id } = useParams();
@@ -25,6 +135,8 @@ function ArticlePage() {
   const [similarArticles, setSimilarArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activePhoto, setActivePhoto] = useState(0);
+  const [gameArticles, setGameArticles] = useState([]);
+  const [divArticles, setDivArticles] = useState([]);
 
   const cleanTitle = (name) =>
     (name || "").replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
@@ -73,6 +185,30 @@ function ArticlePage() {
     if (doc_id) fetchArticle();
   }, [doc_id]);
 
+  // Sidebar : articles jeux vidéo récents + articles divers récents
+  useEffect(() => {
+    const fetchSidebarLists = async () => {
+      try {
+        const q = query(
+          collection(db, "articles"),
+          where("status", "==", "public"),
+          orderBy("created_at", "desc"),
+          limit(40)
+        );
+        const snap = await getDocs(q);
+        const all = snap.docs
+          .map((d) => ({ doc_id: d.id, ...d.data() }))
+          .filter((a) => a.doc_id !== doc_id);
+
+        setGameArticles(all.filter((a) => !a.isTest).slice(0, 6));
+        setDivArticles(all.filter((a) => a.isTest).slice(0, 6));
+      } catch (e) {
+        console.error("Erreur chargement sidebar articles", e);
+      }
+    };
+    fetchSidebarLists();
+  }, [doc_id]);
+
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", background: "#0d0d0d" }}>
@@ -116,7 +252,7 @@ function ArticlePage() {
     <div>
       <Header />
 
-      <div className="nk-main" style={{ paddingTop: 80, maxWidth: 1100, margin: "0 auto" }}>
+      <div className="nk-main" style={{ paddingTop: 80, maxWidth: 1400, margin: "0 auto" }}>
 
         {/* Breadcrumb */}
         <div className="container">
@@ -139,7 +275,7 @@ function ArticlePage() {
 
         <div className="container" style={{ paddingBottom: 60 }}>
           <div className="row vertical-gap">
-            <div className="col-lg-12">
+            <div className="col-lg-8">
               <div className="nk-blog-post nk-blog-post-single">
                 <div className="nk-post-text mt-0">
 
@@ -329,6 +465,12 @@ function ArticlePage() {
                 </div>
               </div>
             </div>
+
+            {/* ── SIDEBAR ── */}
+            <div className="col-lg-4">
+              <ArticleSidebar gameArticles={gameArticles} divArticles={divArticles} formatDate={formatDate} />
+            </div>
+
           </div>
         </div>
 

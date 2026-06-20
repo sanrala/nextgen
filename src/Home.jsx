@@ -61,7 +61,6 @@ function LogoLoader() {
 
 function Home() {
   const [randomImage, setRandomImage] = useState(null);
-  const [isReady, setIsReady] = useState(false);
   const [topSeller, setTopSeller] = useState(null);
   // const [topSeller2, setTopSeller2] = useState(null);
 
@@ -97,30 +96,24 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    const fetchBg = async () => {
+    const fetchTopSeller = async () => {
       try {
         const res = await fetch("https://api.sm-artweb.fr/api/topsellers-recent");
         const data = await res.json();
-        if (!data || data.length === 0) { setIsReady(true); return; }
-        const game = data[0];
-        setTopSeller(game);
-        // if (data[1]) setTopSeller2(data[1]);
-        const steamBg = `https://cdn.akamai.steamstatic.com/steam/apps/${game.steam_id}/library_hero.jpg`;
-        const img = new Image();
-        img.src = steamBg;
-        img.onload = () => setIsReady(true);
-        img.onerror = () => setIsReady(true);
+        if (data && data.length > 0) {
+          setTopSeller(data[0]);
+          // if (data[1]) setTopSeller2(data[1]);
+        }
       } catch (e) {
         console.error(e);
-        setIsReady(true);
       }
     };
-    fetchBg();
+    fetchTopSeller();
   }, []);
 
   return (
     <div>
-      {randomImage && isReady ? (
+      {randomImage ? (
         <div className="App">
           <Header />
           <div className="nk-main">
