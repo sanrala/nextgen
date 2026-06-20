@@ -24,7 +24,7 @@ import RecentGuides from "./Components/Home/RecentGuides";
 import BoxNewsDiv from "./Components/BoxNews/BoxNewsDiv.jsx";
 import CookieConsent from "./Components/CookieConsent/CookieConsent.jsx";
 import "./Components/Guides/gd-variables.css";
-
+import TwitchSection from "./Components/Twitch/TwitchSection.jsx";
 function LogoLoader() {
   return (
     <div
@@ -205,6 +205,8 @@ function Home() {
             <div className="container">
               <div className="separator product-panel"></div>
               <LastPosts />
+  <div className="separator product-panel"></div>
+              <TwitchSection/>
             </div>
 
           </div>
