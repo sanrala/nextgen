@@ -420,11 +420,14 @@ function GameDetail() {
       try {
         const rawTitle = steamData?.name || igGame?.name || decodeURIComponent(title || "");
         const baseTitle = rawTitle.replace(/[-–:].*/,'').replace(/deluxe|ultimate|gold|premium|standard|edition/gi,'').trim().toLowerCase().split(' ').slice(0, 3).join(' ');
+        if (!baseTitle || baseTitle.length < 2) { setArticles([]); return; }
         const allSnap = await getDocs(collection(db, "articles"));
         const arts = allSnap.docs.map(d => ({ doc_id: d.id, ...d.data() }))
           .filter(a => {
             if (a.status !== "public") return false;
+            if (a.isTest) return false;
             const artName = (a.game_name || "").replace(/[-–:].*/,'').replace(/deluxe|ultimate|gold|premium|standard|edition/gi,'').trim().toLowerCase().split(' ').slice(0, 3).join(' ');
+            if (!artName || artName.length < 2) return false;
             return artName.includes(baseTitle) || baseTitle.includes(artName);
           })
           .sort((a, b) => (b.created_at?.toMillis?.() || 0) - (a.created_at?.toMillis?.() || 0)).slice(0, 5);
