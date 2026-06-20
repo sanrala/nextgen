@@ -4,7 +4,7 @@ const BACKEND_URL = "https://api.sm-artweb.fr";
 
 // Liste des streamers à mettre en avant — pseudos Twitch (login, pas display name)
 // TODO: remplacer par une config Firebase gérée depuis l'admin
-const FEATURED_STREAMERS = ["ninja", "squeezie", "gotaga","anyme023", "animematue", "locklear", "kamet0","inoxtag" ,"michou", "tonton", "oonolive"];
+const FEATURED_STREAMERS = ["ninja", "squeezie", "gotaga","anyme023", "animematue", "locklear", "kamet0","inoxtag" ,"michou", "tonton", "oonolive", "jbast62"];
 
 const PARENT_DOMAIN =
   typeof window !== "undefined" ? window.location.hostname : "nextgen-gaming.fr";

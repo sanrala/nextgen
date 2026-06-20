@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 const BACKEND_URL = "https://api.sm-artweb.fr";
-const FEATURED_STREAMERS = ["ninja", "squeezie", "gotaga","anyme023", "animematue", "locklear", "kamet0","inoxtag" ,"michou", "tonton", "oonolive"]; // même liste que TwitchSection — à terme: Firebase
+const FEATURED_STREAMERS = ["ninja", "squeezie", "gotaga","anyme023", "animematue", "locklear", "kamet0","inoxtag" ,"michou", "tonton", "oonolive", "jbast62"]; // même liste que TwitchSection — à terme: Firebase
 
 const PARENT_DOMAIN =
   typeof window !== "undefined" ? window.location.hostname : "nextgen-gaming.fr";

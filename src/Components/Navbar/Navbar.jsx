@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import logo from "./../../assets/images/logoGames/logo.png";
+// import logo from "./../../assets/images/logoGames/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import Burger from "./Burger";
 import SearchBar from "./SearchBar";
@@ -8,7 +8,7 @@ import { signOut } from "firebase/auth";
 import { auth, db } from "../../Firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { GAMING_AVATARS } from "../Profile/avatars";
-
+import NextGenLogoAnimated from "./../Logo/NextGenLogoAnimated";
 function NavBar() {
   const { user, isAdmin } = useAdmin();
   const navigate = useNavigate();
@@ -82,7 +82,8 @@ function NavBar() {
         <div className="container">
           <div className="nk-nav-table" style={{ minHeight: "70px" }}>
             <Link to={{ pathname: `/` }} className="nk-nav-logo">
-              <img src={logo} alt="NextGen" width="199" />
+            <NextGenLogoAnimated />
+              {/* <img src={logo} alt="NextGen" width="199" /> */}
             </Link>
 
             <ul
