@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Helmet } from "react-helmet-async";
 import {  useLocation } from "react-router-dom";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
@@ -86,6 +87,14 @@ const PAGE_TITLES = {
   nouveautes: { accent: "Dernières",   rest: "Nouveautés" },
   preorder:   { accent: "Jeux en",     rest: "Précommandes" },
   upcoming:   { accent: "Prochaines",  rest: "Sorties" },
+};
+
+const SEO_META = {
+  all:        { title: "Catalogue complet — Tous les jeux PC en promo | NextGen Gaming", description: "Parcourez tout le catalogue de jeux PC en promotion sur NextGen Gaming, en partenariat avec Instant Gaming." },
+  topseller:  { title: "Jeux PC les plus populaires en promo | NextGen Gaming", description: "Découvrez les jeux PC tendances et les meilleures ventes du moment au meilleur prix sur NextGen Gaming." },
+  nouveautes: { title: "Dernières nouveautés jeux PC | NextGen Gaming", description: "Les derniers jeux PC sortis, disponibles en promotion sur NextGen Gaming." },
+  preorder:   { title: "Précommandes jeux PC en promo | NextGen Gaming", description: "Précommandez vos jeux PC au meilleur prix avant leur sortie, en partenariat avec Instant Gaming." },
+  upcoming:   { title: "Prochaines sorties jeux PC | NextGen Gaming", description: "Découvrez les prochaines sorties de jeux PC à venir sur NextGen Gaming." },
 };
 
 const STYLES = `
@@ -887,6 +896,11 @@ function Populaires() {
   const catLabel  = CAT_FILTERS.find(f => f.key === catFilter)?.label;
   const platLabel = platform !== "Tous" ? PLATFORM_FILTERS.find(f => f.key === platform)?.label : null;
 
+  const seoMeta = SEO_META[catFilter] || SEO_META.all;
+  const canonicalUrl = catFilter === "all"
+    ? "https://nextgen-gaming.fr/Catalogues"
+    : `https://nextgen-gaming.fr/Catalogues?catFilter=${catFilter}`;
+
   const handlePageChange = (p) => {
     setPage(p);
     topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -894,6 +908,11 @@ function Populaires() {
 
   return (
     <div className="App" style={{ background: "transparent" }}>
+      <Helmet>
+        <title>{seoMeta.title}</title>
+        <meta name="description" content={seoMeta.description} />
+        <link rel="canonical" href={canonicalUrl} />
+      </Helmet>
       <style>{STYLES}</style>
       <Header />
       <div className="nk-main">

@@ -1068,7 +1068,7 @@ function GameDetail() {
                   )}
                   {screenshots.slice(0, 7).map((s, i) => (
                     <div key={i} className={`gd-thumb-wrap${activeMedia === i ? " gd-thumb-active" : ""}`} onClick={() => setActiveMedia(i)}>
-                      <img src={s.path_thumbnail} alt="" className="gd-thumb" />
+                      <img src={s.path_thumbnail} alt={`Capture d'écran ${i + 1} de ${gameTitle}`} className="gd-thumb" />
                     </div>
                   ))}
                 </div>
